@@ -1259,53 +1259,68 @@ function html_buttons_view_bug_page( $p_bug_id ) {
 	}
 
 	# MONITOR/UNMONITOR button
-	if( !current_user_is_anonymous() ) {
-		echo '<div class="pull-left padding-right-2">';
-		if( user_is_monitoring_bug( auth_get_current_user_id(), $p_bug_id ) ) {
-			html_button_bug_unmonitor( $p_bug_id );
-		} else {
-			html_button_bug_monitor( $p_bug_id );
+	if(config_get('view_issue_button_monitor')){
+		if( !current_user_is_anonymous() ) {
+			echo '<div class="pull-left padding-right-2">';
+			if( user_is_monitoring_bug( auth_get_current_user_id(), $p_bug_id ) ) {
+				html_button_bug_unmonitor( $p_bug_id );
+			} else {
+				html_button_bug_monitor( $p_bug_id );
+			}
+			echo '</div>';
 		}
-		echo '</div>';
 	}
 
 	# STICK/UNSTICK button
-	if( access_has_bug_level( $t_sticky, $p_bug_id ) ) {
-		echo '<div class="pull-left padding-right-2">';
-		if( !bug_get_field( $p_bug_id, 'sticky' ) ) {
-			html_button_bug_stick( $p_bug_id );
-		} else {
-			html_button_bug_unstick( $p_bug_id );
+	if(config_get('view_issue_button_stick')){
+		if( access_has_bug_level( $t_sticky, $p_bug_id ) ) {
+			echo '<div class="pull-left padding-right-2">';
+			if( !bug_get_field( $p_bug_id, 'sticky' ) ) {
+				html_button_bug_stick( $p_bug_id );
+			} else {
+				html_button_bug_unstick( $p_bug_id );
+			}
+			echo '</div>';
 		}
-		echo '</div>';
 	}
 
 	# CLONE button
-	if( !$t_readonly ) {
-		echo '<div class="pull-left padding-right-2">';
-		html_button_bug_create_child( $p_bug_id );
-		echo '</div>';
+	if(config_get('view_issue_button_clone')){
+		if( !$t_readonly ) {
+			echo '<div class="pull-left padding-right-2">';
+			html_button_bug_create_child( $p_bug_id );
+			echo '</div>';
+		}
 	}
 
 	# REOPEN button
-	echo '<div class="pull-left padding-right-2">';
-	html_button_bug_reopen( $t_bug );
-	echo '</div>';
+	if(config_get('view_issue_button_reopen')){
+		echo '<div class="pull-left padding-right-2">';
+		html_button_bug_reopen( $t_bug );
+		echo '</div>';
+	}
 
 	# CLOSE button
-	echo '<div class="pull-left padding-right-2">';
-	html_button_bug_close( $t_bug );
-	echo '</div>';
+	if(config_get('view_issue_button_close')){
+		echo '<div class="pull-left padding-right-2">';
+		html_button_bug_close( $t_bug );
+		echo '</div>';
+	}
 
 	# MOVE button
-	echo '<div class="pull-left padding-right-2">';
-	html_button_bug_move( $p_bug_id );
-	echo '</div>';
+	if(config_get('view_issue_button_move')){
+		echo '<div class="pull-left padding-right-2">';
+		html_button_bug_move( $p_bug_id );
+		echo '</div>';
+	}
 
 	# DELETE button
-	echo '<div class="pull-left padding-right-2">';
-	html_button_bug_delete( $p_bug_id );
-	echo '</div>';
+	if(config_get('view_issue_button_delete')){
+		echo '<div class="pull-left padding-right-2">';
+		echo '<div class="pull-left padding-right-2">';
+		html_button_bug_delete( $p_bug_id );
+		echo '</div>';
+	}
 
 	helper_call_custom_function( 'print_bug_view_page_custom_buttons', array( $p_bug_id ) );
 
