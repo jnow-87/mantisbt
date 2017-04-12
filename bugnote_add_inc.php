@@ -54,9 +54,8 @@ require_api( 'lang_api.php' );
 		( access_has_bug_level( config_get( 'add_bugnote_threshold' ), $f_bug_id ) ) ) { ?>
 <?php # Bugnote Add Form BEGIN ?>
 
-<div class="col-md-12 col-xs-12 noprint">
+<div class="col-md-6 col-xs-12 noprint">
 <a id="addbugnote"></a>
-<div class="space-10"></div>
 
 <?php
 	$t_collapse_block = is_collapsed( 'bugnote_add' );

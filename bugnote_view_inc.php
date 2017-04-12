@@ -95,10 +95,9 @@ $t_activities_count = count( $t_activities );
 ?>
 
 <?php # Bugnotes BEGIN ?>
-<div class="col-md-12 col-xs-12">
+<div class="col-md-6 col-xs-12">
 <a id="attachments"></a>
 <a id="bugnotes"></a>
-<div class="space-10"></div>
 
 <?php
 $t_collapse_block = is_collapsed( 'bugnotes' );
