@@ -77,39 +77,49 @@ if( access_has_bug_level( config_get( 'show_monitor_list_threshold' ), $f_bug_id
 		<div class="widget-main no-padding">
 
 			<div class="table-responsive">
-				<table class="table table-bordered table-condensed table-striped">
-<tr>
-	<th class="category" width="15%">
-		<?php echo lang_get( 'monitoring_user_list' ); ?>
-	</th>
-	<td>
-<?php
-		if( 0 == $t_num_users ) {
-			echo lang_get( 'no_users_monitoring_bug' );
-		} else {
-			$t_can_delete_others = access_has_bug_level( config_get( 'monitor_delete_others_bug_threshold' ), $f_bug_id );
-	 		for( $i = 0; $i < $t_num_users; $i++ ) {
-				echo ($i > 0) ? ', ' : '';
-				print_user( $t_users[$i] );
-				if( $t_can_delete_others ) {
-					echo ' <a class="btn btn-xs btn-primary btn-white btn-round" href="' . helper_mantis_url( 'bug_monitor_delete.php' ) . '?bug_id=' . $f_bug_id . '&amp;user_id=' . $t_users[$i] . htmlspecialchars(form_security_param( 'bug_monitor_delete' )) . '"><i class="fa fa-times"></i></a>';
+		<table class="table table-bordered table-condensed">
+<tbody>
+	<tr>
+		<th class="category" width="8%">
+			<?php echo lang_get( 'monitoring_user_list' ); ?>
+		</th>
+		<td>
+	<?php
+			if( 0 == $t_num_users ) {
+				echo lang_get( 'no_users_monitoring_bug' );
+			} else {
+				$t_can_delete_others = access_has_bug_level( config_get( 'monitor_delete_others_bug_threshold' ), $f_bug_id );
+				for( $i = 0; $i < $t_num_users; $i++ ) {
+					echo ($i > 0) ? ', ' : '';
+					print_user( $t_users[$i] );
+					if( $t_can_delete_others ) {
+						echo ' <a class="btn btn-xs btn-primary btn-white btn-round" href="' . helper_mantis_url( 'bug_monitor_delete.php' ) . '?bug_id=' . $f_bug_id . '&amp;user_id=' . $t_users[$i] . htmlspecialchars(form_security_param( 'bug_monitor_delete' )) . '"><i class="fa fa-times"></i></a>';
+					}
 				}
-	 		}
-		}
+			}
+	?>
+		</td>
+	</tr>
+</tbody>
 
-		if( access_has_bug_level( config_get( 'monitor_add_others_bug_threshold' ), $f_bug_id ) ) {
-?>
-		<br /><br />
-		<form method="get" action="bug_monitor_add.php" class="form-inline noprint">
-		<?php echo form_security_field( 'bug_monitor_add' ) ?>
-			<input type="hidden" name="bug_id" value="<?php echo (integer)$f_bug_id; ?>" />
-			<label for="bug_monitor_list_username"><?php echo lang_get( 'username' ) ?></label>
-			<input type="text" class="input-sm" id="bug_monitor_list_username" name="username" />
-			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'add_user_to_monitor' ) ?>" />
-		</form>
-		<?php } ?>
+<tfoot>
+	<tr>
+	<td colspan=6>
+	<?php
+			if( access_has_bug_level( config_get( 'monitor_add_others_bug_threshold' ), $f_bug_id ) ) {
+	?>
+			<form method="get" action="bug_monitor_add.php" class="form-inline noprint">
+			<?php echo form_security_field( 'bug_monitor_add' ) ?>
+				<input type="hidden" name="bug_id" value="<?php echo (integer)$f_bug_id; ?>" />
+				<span class="label label-default"> <?php echo lang_get( 'username' ), ':' ?> </span>
+				<input type="text" class="input-xs" id="bug_monitor_list_username" name="username" />
+				<span class="lbl"> &nbsp </span>
+				<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'add_user_to_monitor' ) ?>" />
+			</form>
+	<?php } ?>
 	</td>
-</tr>
+	</tr>
+</tfoot>
 </table>
 </div>
 </div>

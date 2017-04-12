@@ -95,72 +95,31 @@ require_api( 'lang_api.php' );
 		<table class="table table-bordered table-condensed">
 		<tbody>
 
-<?php
-	$t_default_bugnote_view_status = config_get( 'default_bugnote_view_status' );
-	if( access_has_bug_level( config_get( 'set_view_status_threshold' ), $f_bug_id ) ) {
-?>
-			<tr>
-				<th class="category">
-					<?php echo lang_get( 'view_status' ) ?>
-				</th>
-				<td>
-				<label for="bugnote_add_view_status">
-					<input type="checkbox" class="ace" id="bugnote_add_view_status" name="private" <?php check_checked( $t_default_bugnote_view_status, VS_PRIVATE ); ?> />
-					<span class="lbl"> <?php echo lang_get( 'private' ) ?> </span>
-				</label>
-				</td>
-			</tr>
-<?php }?>
-
-			<tr>
-				<th class="category" width="15%">
-					<?php echo lang_get( 'bugnote' ) ?>
-				</th>
-				<td width="85%">
-					<textarea name="bugnote_text" id="bugnote_text" class="form-control" rows="7"></textarea>
-				</td>
-			</tr>
-
+		<tr id="bugnote-attach-files" style="<?php echo $t_attach_style ?>">
+			<th class="category" width="8%">
+				<?php echo lang_get( 'bugnote' ) ?>	
+			</th>
+			<td width="50%">
+				<textarea name="bugnote_text" id="bugnote_text" class="form-control" rows="5"></textarea>
+			</td>
 
 <?php
-	if( config_get( 'time_tracking_enabled' ) ) {
-		if( access_has_bug_level( config_get( 'time_tracking_edit_threshold' ), $f_bug_id ) ) {
-?>
-			<tr>
-				<th class="category">
-					<?php echo lang_get( 'time_tracking' ) ?>
-				</th>
-				<td>
-					<?php if( config_get( 'time_tracking_stopwatch' ) ) { ?>
-					<input type="text" name="time_tracking" class="stopwatch_time input-sm" size="8" placeholder="hh:mm:ss" />
-					<input type="button" name="time_tracking_toggle" class="stopwatch_toggle btn btn-sm btn-white btn-round" value="<?php echo lang_get( 'time_tracking_stopwatch_start' ) ?>" />
-					<input type="button" name="time_tracking_reset" class="stopwatch_reset btn btn-sm btn-white btn-round" value="<?php echo lang_get( 'time_tracking_stopwatch_reset' ) ?>" />
-					<?php } else { ?>
-					<input type="text" name="time_tracking" class="input-sm" size="5" placeholder="hh:mm" />
-					<?php } ?>
-				</td>
-			</tr>
-<?php
-		}
-	}
-
 	if( $t_allow_file_upload ) {
 		$t_file_upload_max_num = max( 1, config_get( 'file_upload_max_num' ) );
 		$t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
 
+		$t_default_bugnote_view_status = config_get( 'default_bugnote_view_status' );
 		$t_attach_style = ( $t_default_bugnote_view_status != VS_PUBLIC ) ? 'display: none;' : '';
 ?>
-			<tr id="bugnote-attach-files" style="<?php echo $t_attach_style ?>">
-				<th class="category">
-					<?php echo lang_get( $t_file_upload_max_num == 1 ? 'upload_file' : 'upload_files' ) ?>
-					<br />
-					<?php print_max_filesize( $t_max_file_size ); ?>
-				</th>
-				<td>
+				<td >
 					<input type="hidden" name="max_file_size" value="<?php echo $t_max_file_size ?>" />
 					<div class="dropzone center">
 						<i class="upload-icon ace-icon fa fa-cloud-upload blue fa-3x"></i><br>
-						<span class="bigger-150 grey"><?php echo lang_get( 'dropzone_default_message' ) ?></span>
+						<span class="bigger-100 grey">
+							<?php echo lang_get( 'dropzone_default_message' ) ?>
+							<br/>
+							<?php print_max_filesize( $t_max_file_size ); ?>
+						</span>
 						<div id="dropzone-previews-box" class="dz dropzone-previews dz-max-files-reached"></div>
 					</div>
 					<div class="fallback">
@@ -173,13 +132,48 @@ require_api( 'lang_api.php' );
 
 	event_signal( 'EVENT_BUGNOTE_ADD_FORM', array( $f_bug_id ) );
 ?>
+
+
 		</tbody>
+
+
+
+		<tfoot>
+		<tr>
+		<td colspan=6>
+			<label for="bugnote_add_view_status">
+				<span class="label label-default"> <?php echo lang_get( 'private' ), ':' ?> </span>
+				<input type="checkbox" class="ace" id="bugnote_add_view_status" name="private" <?php check_checked( $t_default_bugnote_view_status, VS_PRIVATE ); ?> />
+				<span class="lbl"> &nbsp </span>
+			</label>
+
+
+<?php
+			if( config_get( 'time_tracking_enabled' ) ) {
+				if( access_has_bug_level( config_get( 'time_tracking_edit_threshold' ), $f_bug_id ) ) {
+?>
+					<span class="label label-default"> <?php echo lang_get( 'time_tracking' ), ':' ?> </span>
+					<?php if( config_get( 'time_tracking_stopwatch' ) ) { ?>
+					<input type="text" name="time_tracking" class="stopwatch_time input-xs" size="8" placeholder="hh:mm:ss" />
+					<input type="button" name="time_tracking_toggle" class="stopwatch_toggle btn btn-sm btn-white btn-round" value="<?php echo lang_get( 'time_tracking_stopwatch_start' ) ?>" />
+					<input type="button" name="time_tracking_reset" class="stopwatch_reset btn btn-sm btn-white btn-round" value="<?php echo lang_get( 'time_tracking_stopwatch_reset' ) ?>" />
+					<?php } else { ?>
+					<input type="text" name="time_tracking" class="input-xs" size="5" placeholder="hh:mm" />
+					<?php } ?>
+					<span class="lbl"> &nbsp </span>
+<?php
+				}
+			}
+?>
+
+
+			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'add_bugnote_button' ) ?>" />
+		</td>
+		</tr>
+		</tfoot>
 </table>
 </div>
 </div>
-	<div class="widget-toolbox padding-8 clearfix">
-		<input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get( 'add_bugnote_button' ) ?>" />
-	</div>
 </div>
 </div>
 </form>
