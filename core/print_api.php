@@ -361,9 +361,9 @@ function print_tag_attach_form( $p_bug_id, $p_string = '' ) {
 	<form method="post" action="tag_attach.php" class="form-inline">
 	<?php echo form_security_field( 'tag_attach' )?>
 	<label class="inline small"><?php echo sprintf( lang_get( 'tag_separate_by' ), config_get( 'tag_separator' ) )?></label>
-	<input type="hidden" name="bug_id" value="<?php echo $p_bug_id?>" class="input-sm" />
+	<input type="hidden" name="bug_id" value="<?php echo $p_bug_id?>" class="input-xs" />
 	<?php print_tag_input( $p_bug_id, $p_string ); ?>
-	<input type="submit" value="<?php echo lang_get( 'tag_attach' )?>" class="btn btn-primary btn-sm btn-white btn-round" />
+	<input type="submit" value="<?php echo lang_get( 'tag_attach' )?>" class="btn btn-primary btn-xs btn-white btn-round" />
 	</form>
 <?php
 	return true;
@@ -378,8 +378,8 @@ function print_tag_attach_form( $p_bug_id, $p_string = '' ) {
 function print_tag_input( $p_bug_id = 0, $p_string = '' ) {
 ?>
 	<input type="hidden" id="tag_separator" value="<?php echo config_get( 'tag_separator' )?>" />
-	<input type="text" name="tag_string" id="tag_string" class="input-sm" size="40" value="<?php echo string_attribute( $p_string )?>" />
-	<select class="input-sm" <?php echo helper_get_tab_index()?> name="tag_select" id="tag_select" class="input-sm">
+	<input type="text" name="tag_string" id="tag_string" class="input-xs" size="40" value="<?php echo string_attribute( $p_string )?>" />
+	<select class="input-xs" <?php echo helper_get_tab_index()?> name="tag_select" id="tag_select" class="input-xs">
 		<?php print_tag_option_list( $p_bug_id );?>
 	</select>
 <?php
@@ -1496,9 +1496,9 @@ function print_link_button( $p_link, $p_url_text, $p_class = '', $p_new_window =
 	} else {
 		$t_link = htmlspecialchars( $p_link );
 		if( $p_new_window === true ) {
-			echo "<a class=\"btn btn-primary btn-white btn-round $p_class\" href=\"$t_link\" target=\"_blank\">$p_url_text</a>";
+			echo "<a class=\"btn btn-primary btn-xs btn-white btn-round $p_class\" href=\"$t_link\" target=\"_blank\">$p_url_text</a>";
 		} else {
-			echo "<a class=\"btn btn-primary btn-white btn-round $p_class\" href=\"$t_link\">$p_url_text</a>";
+			echo "<a class=\"btn btn-primary btn-xs btn-white btn-round $p_class\" href=\"$t_link\">$p_url_text</a>";
 		}
 	}
 }

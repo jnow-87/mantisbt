@@ -999,7 +999,7 @@ function html_button_bug_change_status( BugData $p_bug ) {
 		$t_button_text = lang_get( 'bug_status_to_button' );
 		echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $t_button_text . '" />';
 
-		echo ' <select name="new_status" class="input-sm">';
+		echo ' <select name="new_status" class="input-xs">';
 
 		# space at beginning of line is important
 		foreach( $t_enum_list as $t_key => $t_val ) {
@@ -1066,7 +1066,7 @@ function html_button_bug_assign_to( BugData $p_bug ) {
 	$t_button_text = lang_get( 'bug_assign_to_button' );
 	echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $t_button_text . '" />';
 
-	echo ' <select class="input-sm" name="handler_id">';
+	echo ' <select class="input-xs" name="handler_id">';
 
 	# space at beginning of line is important
 
