@@ -180,7 +180,7 @@ function custom_function_default_roadmap_print_issue( $p_issue_id, $p_issue_leve
 function custom_function_default_format_issue_summary( $p_issue_id, $p_context = 0 ) {
 	switch( $p_context ) {
 		case SUMMARY_CAPTION:
-			$t_string = bug_format_id( $p_issue_id ) . ': ' . string_attribute( bug_get_field( $p_issue_id, 'summary' ) );
+			$t_string = string_attribute( bug_get_field( $p_issue_id, 'summary' ) );
 			break;
 		case SUMMARY_FIELD:
 			$t_string = bug_format_id( $p_issue_id ) . ': ' . string_display_line_links( bug_get_field( $p_issue_id, 'summary' ) );
