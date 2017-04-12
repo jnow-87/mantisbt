@@ -605,12 +605,15 @@ function category_full_name( $p_category_id, $p_show_project = true, $p_current_
 		return '@' . $p_category_id . '@';
 	} else {
 		$t_row = category_get_row( $p_category_id );
-		$t_project_id = $t_row['project_id'];
 
-		$t_current_project = is_null( $p_current_project ) ? helper_get_current_project() : $p_current_project;
+		if(config_get('category_show_project')){
+			$t_project_id = $t_row['project_id'];
 
-		if( $p_show_project && $t_project_id != $t_current_project ) {
-			return '[' . project_get_name( $t_project_id ) . '] ' . $t_row['name'];
+			$t_current_project = is_null( $p_current_project ) ? helper_get_current_project() : $p_current_project;
+
+			if( $p_show_project && $t_project_id != $t_current_project ) {
+				return '[' . project_get_name( $t_project_id ) . '] ' . $t_row['name'];
+			}
 		}
 
 		return $t_row['name'];
