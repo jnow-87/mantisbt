@@ -45,7 +45,7 @@ layout_page_begin();
 print_account_menu( 'api_tokens_page.php' );
 ?>
 
-<div class="col-md-12 col-xs-12">
+<div class="col-md-6 col-xs-12">
 	<div class="space-10"></div>
 
 <div id="api-token-create-div" class="form-container">

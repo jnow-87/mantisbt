@@ -112,7 +112,7 @@ layout_page_begin();
 
 $t_bugnote_class = bugnote_get_field( $f_bugnote_id, 'view_state' ) == VS_PUBLIC ? '' : 'bugnote-private';
 ?>
-<div class="col-md-12 col-xs-12">
+<div class="col-md-6 col-xs-12">
 
 <form method="post" action="bugnote_update.php">
 <?php echo form_security_field( 'bugnote_update' ) ?>

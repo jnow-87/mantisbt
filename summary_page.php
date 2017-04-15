@@ -128,7 +128,7 @@ print_summary_menu( 'summary_page.php' );
 print_summary_submenu();
 ?>
 
-<div class="col-md-12 col-xs-12">
+<div class="col-md-6 col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">
@@ -359,7 +359,7 @@ print_summary_submenu();
 </div>
 
 <!-- BOTTOM -->
-<div class="col-md-12 col-xs-12">
+<div class="col-md-6 col-xs-12">
 
 	<!-- REPORTER BY RESOLUTION -->
 	<div class="space-10"></div>

@@ -54,7 +54,7 @@ layout_page_begin( __FILE__ );
 print_manage_menu( 'manage_overview_page.php' );
 ?>
 
-<div class="col-md-12 col-xs-12">
+<div class="col-md-6 col-xs-12">
 	<div class="space-10"></div>
 	<div class="widget-box widget-color-blue2">
 	<div class="widget-header widget-header-small">

@@ -94,7 +94,7 @@ layout_page_begin( 'manage_overview_page.php' );
 print_manage_menu( 'manage_user_page.php' );
 ?>
 
-<div class="col-md-12 col-xs-12">
+<div class="col-md-6 col-xs-12">
 	<div class="space-10"></div>
 
 <!-- USER INFO -->

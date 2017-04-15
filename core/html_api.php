@@ -403,7 +403,7 @@ function html_operation_confirmation( array $p_buttons, $p_message = '', $p_type
 	}
 
 	echo '<div class="container-fluid">';
-	echo '<div class="col-md-12 col-xs-12">';
+	echo '<div class="col-md-6 col-xs-12">';
 	echo '<div class="space-0"></div>';
 	echo '<div class="alert ' . $t_alert_css . ' center">';
 
@@ -499,7 +499,7 @@ function print_project_menu_bar() {
 	$t_project_ids = current_user_get_accessible_projects();
 	$t_current_project_id = helper_get_current_project();
 
-	echo '<div class="col-md-12 col-xs-12">' . "\n";
+	echo '<div class="col-md-6 col-xs-12">' . "\n";
 	echo '<div class="btn-group">' . "\n";
 
 	$t_active = ALL_PROJECTS == $t_current_project_id ? 'active' : '';

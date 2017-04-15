@@ -103,7 +103,7 @@ if( news_is_enabled() && access_has_project_level( config_get( 'manage_news_thre
 }
 echo '</div>';
 
-echo '<div class="col-md-12 col-xs-12">';
+echo '<div class="col-md-6 col-xs-12">';
 
 if( news_is_enabled() ) {
 	$t_news_rows = news_get_limited_rows( $f_offset, $t_project_id );

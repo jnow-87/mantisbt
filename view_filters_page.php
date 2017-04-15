@@ -99,7 +99,7 @@ $t_filter = filter_ensure_valid_filter( $t_filter );
 
 ?>
 <div class="space-10"></div>
-<div class="col-md-12 col-xs-12">
+<div class="col-md-6 col-xs-12">
 
 	<form method="post" name="filters" id="filters_form_open" action="<?php echo $t_action; ?>">
 

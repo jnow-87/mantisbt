@@ -61,7 +61,7 @@ $f_parent_id = gpc_get( 'parent_id', null );
 
 ?>
 
-	<div class="col-md-12 col-xs-12">
+	<div class="col-md-6 col-xs-12">
 		<div class="space-10"></div>
 
 <?php if( project_table_empty() ) { ?>
