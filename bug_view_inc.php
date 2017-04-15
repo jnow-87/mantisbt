@@ -340,22 +340,20 @@ echo '<tbody>';
 ####
 
 ## description
-if($t_show_description){
-	echo '<tr class="bug-header">';
-	echo '<th class="bug-description category" colspan="6">', lang_get( 'description' ), '</th>';
-	echo '</tr>';
+echo '<tr class="bug-header">';
+echo '<th class="bug-description category" colspan="6">', lang_get( 'description' ), '</th>';
+echo '</tr>';
 
-	echo '<tr class="bug-header-data">';
-	echo '<td class="bug-description" colspan="6">', $t_description, '</td>';
-	echo '</tr>';
-
-	# spacer
-	echo '<tr class="spacer"><td colspan="6"></td></tr>';
-	echo '<tr class="hidden"></tr>';
-}
+echo '<tr class="bug-header-data">';
+echo '<td class="bug-description" colspan="6">', $t_description, '</td>';
+echo '</tr>';
 
 ## tags
 if( $t_show_tags ) {
+	# spacer
+	echo '<tr class="spacer"><td colspan="6"></td></tr>';
+	echo '<tr class="hidden"></tr>';
+
 	echo '<tr class="noprint">';
 	echo '<th class="bug-tags category">', lang_get( 'tags' ), '</th>';
 
@@ -371,16 +369,18 @@ if( $t_show_tags ) {
 	echo '<td class="bug-tags" colspan="5">';
 	tag_display_attached( $t_bug_id );
 	echo '</td></tr>';
-
-	# spacer
-	echo '<tr class="spacer"><td colspan="6"></td></tr>';
-	echo '<tr class="hidden"></tr>';
 }
+
+
+# spacer
+echo '<tr class="spacer"><td colspan="6"></td></tr>';
+echo '<tr class="hidden"></tr>';
+
 
 ## line
 echo '<tr>';
 	# status
-	echo '<th class="bug-status category" width="15%pt">', lang_get( 'status' ), '</th>';
+	echo '<th class="bug-status category" width="15%">', lang_get( 'status' ), '</th>';
 
 	$t_status_label = html_get_status_css_class( $t_bug->status );
 
@@ -449,11 +449,11 @@ echo '<tr>';
 	table_empty(4);
 echo '</tr>';
 
-
-
 # spacer
+if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $t_show_fixed_in_version){
 echo '<tr class="spacer"><td colspan="6"></td></tr>';
 echo '<tr class="hidden"></tr>';
+}
 
 
 ## optional line
@@ -482,7 +482,7 @@ echo '<tr>';
 
 	# operating system
 	echo '<th class="bug-os category">', $t_show_os ? lang_get( 'os_version') : '', '</th>';
-	echo '<td class="bug-os">', $t_os, ' / ', $t_os_version  , '</td>';
+	echo '<td class="bug-os">', $t_os, $t_os ? ' / ' : '' , $t_os_version  , '</td>';
 
 	# empty
 	table_empty(2);
@@ -501,12 +501,6 @@ echo '<tr>';
 echo '</tr>';
 }
 
-# spacer
-if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $fixed_in_version){
-echo '<tr class="spacer"><td colspan="6"></td></tr>';
-echo '<tr class="hidden"></tr>';
-}
-
 
 ## Bug Details Event Signal
 event_signal( 'EVENT_VIEW_BUG_DETAILS', array( $t_bug_id ) );
@@ -514,6 +508,13 @@ event_signal( 'EVENT_VIEW_BUG_DETAILS', array( $t_bug_id ) );
 ## custom fields
 $t_related_custom_field_ids = custom_field_get_linked_ids( $t_bug->project_id );
 custom_field_cache_values( array( $t_bug->id ) , $t_related_custom_field_ids );
+
+if($t_related_custom_field_ids){
+	# spacer
+	echo '<tr class="spacer"><td colspan="6"></td></tr>';
+	echo '<tr class="hidden"></tr>';
+}
+
 
 $i = 0;
 foreach( $t_related_custom_field_ids as $t_id ) {
@@ -539,6 +540,11 @@ foreach( $t_related_custom_field_ids as $t_id ) {
 	else{
 		$i = $i + 1;
 	}
+}
+
+if($i != 0){
+	table_empty(2 * (3 - $i));
+	echo '</tr>';
 }
 
 echo '</tbody></table>';
