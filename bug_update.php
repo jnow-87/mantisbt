@@ -66,6 +66,8 @@ form_security_validate( 'bug_update' );
 $f_bug_id = gpc_get_int( 'bug_id' );
 $t_existing_bug = bug_get( $f_bug_id, true );
 $f_update_type = gpc_get_string( 'action_type', BUG_UPDATE_TYPE_NORMAL );
+$f_reset_resolution = gpc_get_int('reset_resolution', 0);
+$f_reset_assignee = gpc_get_int('reset_assignee', 0);
 
 $t_current_user_id = auth_get_current_user_id();
 
@@ -202,6 +204,16 @@ if( $t_existing_bug->status != $t_updated_bug->status ) {
 		# for everyone allowed to reopen an issue, set the reopen resolution
 		$t_updated_bug->resolution = $t_reopen_resolution;
 	}
+}
+
+# reset resolution if requested
+if($f_reset_resolution == 1){
+	$t_updated_bug->resolution = $t_reopen_resolution;
+}
+
+# reset assignee if requested
+if($f_reset_resolution == 1){
+	$t_updated_bug->handler_id = config_get("reopen_bug_assignee");
 }
 
 # Validate any change to the handler of an issue.
