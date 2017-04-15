@@ -304,9 +304,10 @@ echo '<span class="badge"> ' . " $v_start - $v_end / $t_bug_count " . ' </span>'
 <tbody>
 
 <tr>
-	<th width="10%"><?php echo lang_get('email_bug') ?></th>
+	<th width="15%"><?php echo lang_get('email_bug') ?></th>
+	<th width="60%"><?php echo lang_get('summary') ?></th>
 	<th width="10%"><?php echo lang_get('category') ?></th>
-	<th width="100%"><?php echo lang_get('summary') ?></th>
+	<th width="100%"><?php echo lang_get('status') ?></th>
 </tr>
 
 
@@ -320,8 +321,12 @@ for( $i = 0;$i < $t_count; $i++ ) {
 
 <tr>
 	<td><?php print_bug_link( $t_bug->id, false ); ?></td>
-	<td><?php echo string_display_line( category_full_name( $t_bug->category_id ) ); ?></td>
 	<td><?php echo bug_format_summary( $t_bug->id, SUMMARY_CAPTION ); ?></td>
+	<td><?php echo string_display_line( category_full_name( $t_bug->category_id ) ); ?></td>
+	<td><?php
+		$t_status_label = html_get_status_css_class( $t_bug->status );
+		echo '<i class="fa fa-square fa-status-box ' . $t_status_label . '"></i> ';
+		echo string_display_line( get_enum_element( 'status', $t_bug->status ) ); ?></td>
 </tr>
 <?php
 }
