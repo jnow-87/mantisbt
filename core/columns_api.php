@@ -1301,13 +1301,6 @@ function print_column_category_id( BugData $p_bug, $p_columns_target = COLUMNS_T
 	echo '<td class="column-category">';
 	echo '<div class="align-left">';
 
-	# type project name if viewing 'all projects' or if issue is in a subproject
-	if( ON == config_get( 'show_bug_project_links' ) && helper_get_current_project() != $p_bug->project_id ) {
-		echo '<span class="small project">[';
-		print_view_bug_sort_link( string_display_line( $t_project_name ), 'project_id', $t_sort, $t_dir, $p_columns_target );
-		echo ']</span>&#160;&#160;';
-	}
-
 	echo string_display_line( category_full_name( $p_bug->category_id, false ) );
 	echo '</div>';
 	echo '</td>';
