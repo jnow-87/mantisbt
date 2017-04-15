@@ -106,41 +106,6 @@ if( ( $t_filter_position & FILTER_POSITION_TOP ) == FILTER_POSITION_TOP ) {
 
 	<div class="widget-body">
 
-	<div class="widget-toolbox padding-8 clearfix">
-		<div class="btn-toolbar">
-			<div class="btn-group pull-left">
-		<?php
-			# -- Print and Export links --
-			print_small_button( 'print_all_bug_page.php', lang_get( 'print_all_bug_page_link' ) );
-			print_small_button( 'csv_export.php', lang_get( 'csv_export' ) );
-			print_small_button( 'excel_xml_export.php', lang_get( 'excel_export' ) );
-
-			$t_event_menu_options = $t_links = event_signal('EVENT_MENU_FILTER');
-
-			foreach ($t_event_menu_options as $t_plugin => $t_plugin_menu_options) {
-				foreach ($t_plugin_menu_options as $t_callback => $t_callback_menu_options) {
-					if (!is_array($t_callback_menu_options)) {
-						$t_callback_menu_options = array($t_callback_menu_options);
-					}
-
-					foreach ($t_callback_menu_options as $t_menu_option) {
-						if ($t_menu_option) {
-							echo $t_menu_option;
-						}
-					}
-				}
-			}
-		?>
-		</div>
-		<div class="btn-group pull-right"><?php
-			# -- Page number links --
-			$f_filter	= gpc_get_int( 'filter', 0);
-			print_page_links( 'view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter );
-			?>
-		</div>
-	</div>
-</div>
-
 <div class="widget-main no-padding">
 	<div class="table-responsive">
 	<table id="buglist" class="table table-bordered table-condensed table-hover table-striped">
@@ -212,35 +177,72 @@ write_bug_rows( $t_rows );
 # -- ====================== MASS BUG MANIPULATION =================== --
 # @@@ ideally buglist-footer would be in <tfoot>, but that's not possible due to global g_checkboxes_exist set via write_bug_rows()
 ?>
-	<div class="form-inline pull-left">
+		<div class="form-inline pull-left">
 <?php
 		if( $g_checkboxes_exist ) {
 			echo '<label class="inline">';
-			echo '<input class="ace check_all input-sm" type="checkbox" id="bug_arr_all" name="bug_arr_all" value="all" />';
+			echo '<input class="ace check_all input-xs" type="checkbox" id="bug_arr_all" name="bug_arr_all" value="all" />';
 			echo '<span class="lbl"> ' . lang_get( 'select_all' ) . ' </span > ';
 			echo '</label>';
+			echo '<span class="lbl"> &nbsp </span>';
+
 		}
 		if( $g_checkboxes_exist ) {
 ?>
-			<select name="action" class="input-sm">
+			<select name="action" class="input-xs">
 				<?php print_all_bug_action_option_list($t_unique_project_ids) ?>
 			</select>
-			<input type="submit" class="btn btn-primary btn-white btn-sm btn-round" value="<?php echo lang_get('ok'); ?>"/>
+			<input type="submit" class="btn btn-primary btn-white btn-xs btn-round" value="<?php echo lang_get('ok'); ?>"/>
+			<span class="lbl"> &nbsp </span>
+
 <?php
 		} else {
 			echo '&#160;';
 		}
 ?>
-			</div>
+		</div>
+		<div class="btn-group pull-right">
+			<?php
+				$f_filter = gpc_get_int('filter', 0);
+				print_page_links('view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter);
+			?>
+		</div>
+
+		<div class="btn-toolbar">
 			<div class="btn-group pull-right">
-				<?php
-					$f_filter = gpc_get_int('filter', 0);
-					print_page_links('view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter);
+			<?php
+				# -- Print and Export links --
+				print_small_button( 'print_all_bug_page.php', lang_get( 'print_all_bug_page_link' ) );
+				print_small_button( 'csv_export.php', lang_get( 'csv_export' ) );
+				print_small_button( 'excel_xml_export.php', lang_get( 'excel_export' ) );
+
+				$t_event_menu_options = $t_links = event_signal('EVENT_MENU_FILTER');
+
+				foreach ($t_event_menu_options as $t_plugin => $t_plugin_menu_options) {
+					foreach ($t_plugin_menu_options as $t_callback => $t_callback_menu_options) {
+						if (!is_array($t_callback_menu_options)) {
+							$t_callback_menu_options = array($t_callback_menu_options);
+						}
+
+						foreach ($t_callback_menu_options as $t_menu_option) {
+							if ($t_menu_option) {
+								echo $t_menu_option;
+							}
+						}
+					}
+				}
+			?>
+			</div>
+			<div class="btn-group pull-right"><?php
+				# -- Page number links --
+				$f_filter	= gpc_get_int( 'filter', 0);
+				print_page_links( 'view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter );
 				?>
 			</div>
+		</div>
+
 <?php # -- ====================== end of MASS BUG MANIPULATION ========================= -- ?>
 </div>
-
 </div>
 </div>
 </div>
