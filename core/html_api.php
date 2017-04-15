@@ -996,9 +996,6 @@ function html_button_bug_change_status( BugData $p_bug ) {
 		echo '<form method="post" action="bug_change_status_page.php" class="form-inline">';
 		# CSRF protection not required here - form does not result in modifications
 
-		$t_button_text = lang_get( 'bug_status_to_button' );
-		echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $t_button_text . '" />';
-
 		echo ' <select name="new_status" class="input-xs">';
 
 		# space at beginning of line is important
@@ -1008,6 +1005,10 @@ function html_button_bug_change_status( BugData $p_bug ) {
 			echo '>' . $t_val . '</option>';
 		}
 		echo '</select>';
+
+		$t_button_text = lang_get( 'bug_status_to_button' );
+		echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $t_button_text . '" />';
+
 
 		$t_bug_id = string_attribute( $p_bug->id );
 		echo '<input type="hidden" name="id" value="' . $t_bug_id . '" />' . "\n";
@@ -1063,9 +1064,6 @@ function html_button_bug_assign_to( BugData $p_bug ) {
 	echo '<input type="hidden" name="last_updated" value="' . $p_bug->last_updated . '" />';
 	echo '<input type="hidden" name="action_type" value="' . BUG_UPDATE_TYPE_ASSIGN . '" />';
 
-	$t_button_text = lang_get( 'bug_assign_to_button' );
-	echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $t_button_text . '" />';
-
 	echo ' <select class="input-xs" name="handler_id">';
 
 	# space at beginning of line is important
@@ -1100,6 +1098,10 @@ function html_button_bug_assign_to( BugData $p_bug ) {
 	# 0 means currently selected
 	print_assign_to_option_list( 0, $p_bug->project_id );
 	echo '</select>';
+
+	$t_button_text = lang_get( 'bug_assign_to_button' );
+	echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $t_button_text . '" />';
+
 
 	$t_bug_id = string_attribute( $p_bug->id );
 	echo '<input type="hidden" name="bug_id" value="' . $t_bug_id . '" />' . "\n";
@@ -1242,21 +1244,16 @@ function html_buttons_view_bug_page( $p_bug_id ) {
 
 	echo '<div class="btn-group">';
 	if( !$t_readonly ) {
-		# UPDATE button
-		echo '<div class="pull-left padding-right-8">';
-		html_button_bug_update( $p_bug_id );
-		echo '</div>';
-
 		# ASSIGN button
 		echo '<div class="pull-left padding-right-8">';
 		html_button_bug_assign_to( $t_bug );
 		echo '</div>';
-
-		# Change status button/dropdown
-		echo '<div class="pull-left padding-right-8">';
-		html_button_bug_change_status( $t_bug );
-		echo '</div>';
 	}
+
+	# Change status button/dropdown
+	echo '<div class="pull-left padding-right-8">';
+	html_button_bug_change_status( $t_bug );
+	echo '</div>';
 
 	# MONITOR/UNMONITOR button
 	if(config_get('view_issue_button_monitor')){
@@ -1301,24 +1298,31 @@ function html_buttons_view_bug_page( $p_bug_id ) {
 	}
 
 	# CLOSE button
-	if(config_get('view_issue_button_close')){
+	if(!$t_readonly && config_get('view_issue_button_close')){
 		echo '<div class="pull-left padding-right-2">';
 		html_button_bug_close( $t_bug );
 		echo '</div>';
 	}
 
 	# MOVE button
-	if(config_get('view_issue_button_move')){
+	if(!$t_readonly && config_get('view_issue_button_move')){
 		echo '<div class="pull-left padding-right-2">';
 		html_button_bug_move( $p_bug_id );
 		echo '</div>';
 	}
 
 	# DELETE button
-	if(config_get('view_issue_button_delete')){
+	if(!$t_readonly && config_get('view_issue_button_delete')){
 		echo '<div class="pull-left padding-right-2">';
 		echo '<div class="pull-left padding-right-2">';
 		html_button_bug_delete( $p_bug_id );
+		echo '</div>';
+	}
+
+	if(!$t_readonly){
+		# UPDATE button
+		echo '<div class="pull-left padding-right-8">';
+		html_button_bug_update( $p_bug_id );
 		echo '</div>';
 	}
 
