@@ -2473,7 +2473,7 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 
 	# expanded
 	echo '<div class="form-inline">';
-	echo '<input type="text" id="filter-search-txt" class="input-sm" size="16" name="', FILTER_PROPERTY_SEARCH, '"
+	echo '<input type="text" id="filter-search-txt" class="input-xs" size="16" name="', FILTER_PROPERTY_SEARCH, '"
 		placeholder="' . lang_get( 'search' ) . '" value="', string_attribute( $t_filter[FILTER_PROPERTY_SEARCH] ), '" />';
 	?>
 	<input type="submit" class="btn btn-primary btn-sm btn-white btn-round no-float" name="filter" value="<?php echo lang_get( 'filter_button' )?>" />
@@ -2483,22 +2483,15 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 	echo '</form></div>';
 	echo '<div class="btn-toolbar pull-right">';
 	echo '<div class="btn-group">';
+	?>
 
-	if( access_has_project_level( config_get( 'stored_query_create_threshold' ) ) ) { ?>
-		<form class="form-inline pull-left" method="post" name="save_query" action="query_store_page.php">
-			<?php # CSRF protection not required here - form does not result in modifications ?>
-			<input type="submit" name="save_query_button" class="btn btn-primary btn-white btn-sm btn-round"
-				value="<?php echo lang_get( 'save_query' )?>" />
-		</form>
 	<?php
-	}
 	if( count( $t_stored_queries_arr ) > 0 ) { ?>
 		<form id="filter-queries-form" class="form-inline pull-left padding-left-8"  method="get" name="list_queries<?php echo $t_form_name_suffix;?>" action="view_all_set.php">
 			<?php # CSRF protection not required here - form does not result in modifications ?>
 			<input type="hidden" name="type" value="3" />
-			<select name="source_query_id">
+			<select name="source_query_id" class="input-xs">
 				<option value="-1"></option>
-				<option value="-1"><?php echo '[' . lang_get( 'reset_query' ) . ']'?></option>
 				<?php
 				$t_source_query_id = isset( $t_filter['_source_query_id'] ) ? (int)$t_filter['_source_query_id'] : -1;
 				foreach( $t_stored_queries_arr as $t_query_id => $t_query_name ) {
@@ -2510,16 +2503,25 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 			</select>
 		</form>
 	<?php
-	} else { ?>
-		<form class="form-inline pull-left" method="get" name="reset_query" action="view_all_set.php">
+	} ?>
+
+	<form class="form-inline pull-left" method="get" name="reset_query" action="view_all_set.php">
+		<?php # CSRF protection not required here - form does not result in modifications ?>
+		<input type="hidden" name="type" value="3" />
+		<input type="hidden" name="source_query_id" value="-1" />
+		<input type="submit" name="reset_query_button" class="btn btn-primary btn-white btn-sm btn-round" value="<?php echo lang_get( 'reset_query' )?>" />
+		<span class="lbl"> &nbsp </span>
+	</form>
+
+	<?php
+	if( access_has_project_level( config_get( 'stored_query_create_threshold' ) ) ) { ?>
+		<form class="form-inline pull-left" method="post" name="save_query" action="query_store_page.php">
 			<?php # CSRF protection not required here - form does not result in modifications ?>
-			<input type="hidden" name="type" value="3" />
-			<input type="hidden" name="source_query_id" value="-1" />
-			<input type="submit" name="reset_query_button" class="btn btn-primary btn-white btn-sm btn-round" value="<?php echo lang_get( 'reset_query' )?>" />
+			<input type="submit" name="save_query_button" class="btn btn-primary btn-white btn-sm btn-round"
+				value="<?php echo lang_get( 'save_query' )?>" />
 		</form>
 	<?php
-	}
-	?>
+	}?>
 
 
 	</div>
