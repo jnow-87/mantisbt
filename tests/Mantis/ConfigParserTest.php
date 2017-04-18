@@ -361,7 +361,6 @@ EOT
 			'Issue #0020787' => array(
 <<<'EOT'
 array (
-	'additional_info',
 	'attachments',
 	'category_id',
 	'date_submitted',

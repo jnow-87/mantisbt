@@ -193,12 +193,6 @@ function filter_get_url( array $p_custom_filter ) {
 		$t_query[] = filter_encode_field_and_value( FILTER_PROPERTY_VIEW_STATE, $p_custom_filter[FILTER_PROPERTY_VIEW_STATE] );
 	}
 
-	if( !filter_field_is_any( $p_custom_filter[FILTER_PROPERTY_STICKY] ) ) {
-		$t_query[] = filter_encode_field_and_value(
-			FILTER_PROPERTY_STICKY,
-			$p_custom_filter[FILTER_PROPERTY_STICKY] ? 'on' : 'off' );
-	}
-
 	if( !filter_field_is_any( $p_custom_filter[FILTER_PROPERTY_VERSION] ) ) {
 		$t_query[] = filter_encode_field_and_value( FILTER_PROPERTY_VERSION, $p_custom_filter[FILTER_PROPERTY_VERSION] );
 	}
@@ -797,7 +791,6 @@ function filter_get_default_array( $p_view_type = null ) {
 		FILTER_PROPERTY_PROFILE_ID => $t_meta_filter_any_array,
 		FILTER_PROPERTY_PRIORITY => $t_meta_filter_any_array,
 		FILTER_PROPERTY_NOTE_USER_ID => $t_meta_filter_any_array,
-		FILTER_PROPERTY_STICKY => gpc_string_to_bool( config_get( 'show_sticky_issues' ) ),
 		FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED => false,
 		FILTER_PROPERTY_START_DATE_SUBMITTED => date( config_get( 'short_date_format' ) ),
 		FILTER_PROPERTY_END_DATE_SUBMITTED => date( config_get( 'short_date_format' ) ),
@@ -1005,11 +998,10 @@ function filter_get_field( $p_filter_id, $p_field_name ) {
 /**
  * Add sort parameters to the query clauses
  * @param array   &$p_filter       Filter to sort.
- * @param boolean $p_show_sticky   Whether to show sticky items.
  * @param array   $p_query_clauses Array of query clauses.
  * @return array $p_query_clauses
  */
-function filter_get_query_sort_data( array &$p_filter, $p_show_sticky, array $p_query_clauses ) {
+function filter_get_query_sort_data( array &$p_filter, array $p_query_clauses ) {
 
 	$p_query_clauses['order'] = array();
 
@@ -1019,10 +1011,6 @@ function filter_get_query_sort_data( array &$p_filter, $p_show_sticky, array $p_
 	$p_sort_properties = filter_get_visible_sort_properties_array( $p_filter );
 	$t_sort_fields = $p_sort_properties[FILTER_PROPERTY_SORT_FIELD_NAME];
 	$t_dir_fields = $p_sort_properties[FILTER_PROPERTY_SORT_DIRECTION];
-
-	if( gpc_string_to_bool( $p_filter[FILTER_PROPERTY_STICKY] ) && ( null !== $p_show_sticky ) ) {
-		$p_query_clauses['order'][] = '{bug}.sticky DESC';
-	}
 
 	$t_count = count( $t_sort_fields );
 	for( $i = 0; $i < $t_count; $i++ ) {
@@ -1160,10 +1148,9 @@ function filter_get_bug_count( array $p_query_clauses, $p_pop_param = true ) {
  * @param mixed   $p_custom_filter Custom Filter to use.
  * @param integer $p_project_id    Project id to use in filtering.
  * @param integer $p_user_id       User id to use as current user when filtering.
- * @param boolean $p_show_sticky   True/false - get sticky issues only.
  * @return boolean|array
  */
-function filter_get_bug_rows( &$p_page_number, &$p_per_page, &$p_page_count, &$p_bug_count, $p_custom_filter = null, $p_project_id = null, $p_user_id = null, $p_show_sticky = null ) {
+function filter_get_bug_rows( &$p_page_number, &$p_per_page, &$p_page_count, &$p_bug_count, $p_custom_filter = null, $p_project_id = null, $p_user_id = null ) {
 	# assigning to $p_* for this function writes the values back in case the caller wants to know
 
 	if( $p_custom_filter === null ) {
@@ -1173,7 +1160,7 @@ function filter_get_bug_rows( &$p_page_number, &$p_per_page, &$p_page_count, &$p
 	}
 
 	# Get the query clauses
-	$t_query_clauses = filter_get_bug_rows_query_clauses( $t_filter, $p_project_id, $p_user_id, $p_show_sticky );
+	$t_query_clauses = filter_get_bug_rows_query_clauses( $t_filter, $p_project_id, $p_user_id, null );
 
 	# Get the total number of bugs that meet the criteria.
 	# Keep the db_params in stack for next query
@@ -1307,10 +1294,9 @@ function filter_get_bug_rows_result( array $p_query_clauses, $p_count = null, $p
  * @param array   $p_filter       Filter array object
  * @param integer $p_project_id   Project id to use in filtering.
  * @param integer $p_user_id      User id to use as current user when filtering.
- * @param boolean $p_show_sticky  True/false - get sticky issues only.
  * @return array
  */
-function filter_get_bug_rows_query_clauses( array $p_filter, $p_project_id = null, $p_user_id = null, $p_show_sticky = null ) {
+function filter_get_bug_rows_query_clauses( array $p_filter, $p_project_id = null, $p_user_id = null ) {
 	log_event( LOG_FILTERING, 'START NEW FILTER QUERY' );
 
 	$t_limit_reporters = config_get( 'limit_reporters' );
@@ -2234,8 +2220,6 @@ function filter_get_bug_rows_query_clauses( array $p_filter, $p_project_id = nul
 			$c_search = '%' . $t_search_term . '%';
 			$t_textsearch_where_clause .= '( ' . db_helper_like( '{bug}.summary' ) .
 				' OR ' . db_helper_like( '{bug_text}.description' ) .
-				' OR ' . db_helper_like( '{bug_text}.steps_to_reproduce' ) .
-				' OR ' . db_helper_like( '{bug_text}.additional_information' ) .
 				' OR ' . db_helper_like( '{bugnote_text}.note' );
 
 			$t_where_params[] = $c_search;
@@ -2288,7 +2272,7 @@ function filter_get_bug_rows_query_clauses( array $p_filter, $p_project_id = nul
 	$t_query_clauses['where_values'] = $t_where_params;
 	$t_query_clauses['project_where'] = $t_project_where_clauses;
 	$t_query_clauses['operator'] = $t_join_operator;
-	$t_query_clauses = filter_get_query_sort_data( $t_filter, $p_show_sticky, $t_query_clauses );
+	$t_query_clauses = filter_get_query_sort_data( $t_filter, $t_query_clauses );
 
 	$t_query_clauses = filter_unique_query_clauses( $t_query_clauses );
 	return $t_query_clauses;
@@ -3085,7 +3069,6 @@ function filter_gpc_get( array $p_filter = null ) {
 	# these are only single values, even when doing advanced filtering
 	$f_per_page = gpc_get_int( FILTER_PROPERTY_ISSUES_PER_PAGE, $t_filter[FILTER_PROPERTY_ISSUES_PER_PAGE] );
 	$f_highlight_changed = gpc_get_int( FILTER_PROPERTY_HIGHLIGHT_CHANGED, $t_filter[FILTER_PROPERTY_HIGHLIGHT_CHANGED] );
-	$f_sticky_issues = gpc_get_bool( FILTER_PROPERTY_STICKY, $t_filter[FILTER_PROPERTY_STICKY] );
 
 	# This sort parameter is a set of comma separated values, and can be an array of parameters.
 	# sort="c1,c2" as used by permalinks
@@ -3315,7 +3298,6 @@ function filter_gpc_get( array $p_filter = null ) {
 	$t_filter_input[FILTER_PROPERTY_MONITOR_USER_ID] 		= $f_user_monitor;
 	$t_filter_input[FILTER_PROPERTY_VIEW_STATE] 				= $f_view_state;
 	$t_filter_input['custom_fields'] 						= $f_custom_fields_data;
-	$t_filter_input[FILTER_PROPERTY_STICKY] 					= $f_sticky_issues;
 	$t_filter_input[FILTER_PROPERTY_RELATIONSHIP_TYPE] 		= $f_relationship_type;
 	$t_filter_input[FILTER_PROPERTY_RELATIONSHIP_BUG] 		= $f_relationship_bug;
 	$t_filter_input[FILTER_PROPERTY_PROFILE_ID] 				= $f_show_profile;

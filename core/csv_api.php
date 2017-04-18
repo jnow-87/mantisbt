@@ -197,16 +197,6 @@ function csv_format_severity( BugData $p_bug ) {
 }
 
 /**
- * return the reproducibility string
- * @param BugData $p_bug A BugData object.
- * @return string formatted reproducibility string
- * @access public
- */
-function csv_format_reproducibility( BugData $p_bug ) {
-	return csv_escape_string( get_enum_element( 'reproducibility', $p_bug->reproducibility, auth_get_current_user_id(), $p_bug->project_id ) );
-}
-
-/**
  * return the version
  * @param BugData $p_bug A BugData object.
  * @return string formatted version string
@@ -253,16 +243,6 @@ function csv_format_tags( BugData $p_bug ) {
 }
 
 /**
- * return the projection
- * @param BugData $p_bug A BugData object.
- * @return string formatted projection string
- * @access public
- */
-function csv_format_projection( BugData $p_bug ) {
-	return csv_escape_string( get_enum_element( 'projection', $p_bug->projection, auth_get_current_user_id(), $p_bug->project_id ) );
-}
-
-/**
  * return the category
  * @param BugData $p_bug A BugData object.
  * @return string formatted category string
@@ -284,16 +264,6 @@ function csv_format_date_submitted( BugData $p_bug ) {
 		$s_date_format = config_get( 'short_date_format' );
 	}
 	return date( $s_date_format, $p_bug->date_submitted );
-}
-
-/**
- * return the eta
- * @param BugData $p_bug A BugData object.
- * @return string formatted eta
- * @access public
- */
-function csv_format_eta( BugData $p_bug ) {
-	return csv_escape_string( get_enum_element( 'eta', $p_bug->eta, auth_get_current_user_id(), $p_bug->project_id ) );
 }
 
 /**
@@ -393,26 +363,6 @@ function csv_format_notes( BugData $p_bug ) {
 }
 
 /**
- * return the steps to reproduce
- * @param BugData $p_bug A BugData object.
- * @return string formatted steps to reproduce
- * @access public
- */
-function csv_format_steps_to_reproduce( BugData $p_bug ) {
-	return csv_escape_string( $p_bug->steps_to_reproduce );
-}
-
-/**
- * return the additional information
- * @param BugData $p_bug A BugData object.
- * @return string formatted additional information
- * @access public
- */
-function csv_format_additional_information( BugData $p_bug ) {
-	return csv_escape_string( $p_bug->additional_information );
-}
-
-/**
  * return the status string
  * @param BugData $p_bug A BugData object.
  * @return string formatted status
@@ -469,16 +419,6 @@ function csv_format_due_date( BugData $p_bug ) {
 		$t_value = date( $s_date_format, $p_bug->due_date );
 	}
 	return csv_escape_string( $t_value );
-}
-
-/**
- * return the sponsorship total for an issue
- * @param BugData $p_bug A BugData object.
- * @return string
- * @access public
- */
-function csv_format_sponsorship_total( BugData $p_bug ) {
-	return csv_escape_string( $p_bug->sponsorship_total );
 }
 
 /**

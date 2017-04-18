@@ -41,7 +41,6 @@
  * @uses logging_api.php
  * @uses project_api.php
  * @uses relationship_api.php
- * @uses sponsorship_api.php
  * @uses string_api.php
  * @uses user_api.php
  * @uses user_pref_api.php
@@ -68,7 +67,6 @@ require_api( 'lang_api.php' );
 require_api( 'logging_api.php' );
 require_api( 'project_api.php' );
 require_api( 'relationship_api.php' );
-require_api( 'sponsorship_api.php' );
 require_api( 'string_api.php' );
 require_api( 'user_api.php' );
 require_api( 'user_pref_api.php' );
@@ -376,7 +374,7 @@ function email_collect_recipients( $p_bug_id, $p_notify_type, array $p_extra_use
 	}
 
 	# FIXME: the value of $p_notify_type could at this stage be either a status
-	# or a built-in actions such as 'owner and 'sponsor'. We have absolutely no
+	# or a built-in actions such as 'owner'. We have absolutely no
 	# idea whether 'new' is indicating a new bug has been filed, or if the
 	# status of an existing bug has been changed to 'new'. Therefore it is best
 	# to just assume built-in actions have precedence over status changes.
@@ -396,7 +394,6 @@ function email_collect_recipients( $p_bug_id, $p_notify_type, array $p_extra_use
 			break;
 		case 'deleted':
 		case 'updated':
-		case 'sponsor':
 		case 'relation':
 		case 'monitor':
 		case 'priority': # This is never used, but exists in the database!
@@ -905,35 +902,6 @@ function email_relationship_child_resolved_closed( $p_bug_id, $p_message_id ) {
 	}
 }
 
-/**
- * send notices when a bug is sponsored
- * @param int $p_bug_id
- * @return null
- */
-function email_sponsorship_added( $p_bug_id ) {
-	log_event( LOG_EMAIL, sprintf( 'Issue #%d sponsorship added', $p_bug_id ) );
-	email_generic( $p_bug_id, 'sponsor', 'email_notification_title_for_action_sponsorship_added' );
-}
-
-/**
- * send notices when a sponsorship is modified
- * @param int $p_bug_id
- * @return null
- */
-function email_sponsorship_updated( $p_bug_id ) {
-	log_event( LOG_EMAIL, sprintf( 'Issue #%d sponsorship updated', $p_bug_id ) );
-	email_generic( $p_bug_id, 'sponsor', 'email_notification_title_for_action_sponsorship_updated' );
-}
-
-/**
- * send notices when a sponsorship is deleted
- * @param int $p_bug_id
- * @return null
- */
-function email_sponsorship_deleted( $p_bug_id ) {
-	log_event( LOG_EMAIL, sprintf( 'Issue #%d sponsorship removed', $p_bug_id ) );
-	email_generic( $p_bug_id, 'sponsor', 'email_notification_title_for_action_sponsorship_deleted' );
-}
 
 /**
  * send notices when a new bug is added
@@ -1694,7 +1662,6 @@ function email_format_bug_message( array $p_visible_bug_data ) {
 	$p_visible_bug_data['email_status'] = get_enum_element( 'status', $t_status );
 	$p_visible_bug_data['email_severity'] = get_enum_element( 'severity', $p_visible_bug_data['email_severity'] );
 	$p_visible_bug_data['email_priority'] = get_enum_element( 'priority', $p_visible_bug_data['email_priority'] );
-	$p_visible_bug_data['email_reproducibility'] = get_enum_element( 'reproducibility', $p_visible_bug_data['email_reproducibility'] );
 
 	$t_message = $t_email_separator1 . " \n";
 
@@ -1714,7 +1681,6 @@ function email_format_bug_message( array $p_visible_bug_data ) {
 		$t_message .= email_format_attribute( $p_visible_bug_data, 'email_tag' );
 	}
 
-	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_reproducibility' );
 	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_severity' );
 	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_priority' );
 	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_status' );
@@ -1749,33 +1715,9 @@ function email_format_bug_message( array $p_visible_bug_data ) {
 
 	$t_message .= lang_get( 'email_description' ) . ": \n" . $p_visible_bug_data['email_description'] . "\n";
 
-	if( !is_blank( $p_visible_bug_data['email_steps_to_reproduce'] ) ) {
-		$t_message .= "\n" . lang_get( 'email_steps_to_reproduce' ) . ": \n" . $p_visible_bug_data['email_steps_to_reproduce'] . "\n";
-	}
-
-	if( !is_blank( $p_visible_bug_data['email_additional_information'] ) ) {
-		$t_message .= "\n" . lang_get( 'email_additional_information' ) . ": \n" . $p_visible_bug_data['email_additional_information'] . "\n";
-	}
-
 	if( isset( $p_visible_bug_data['relations'] ) ) {
 		if( $p_visible_bug_data['relations'] != '' ) {
 			$t_message .= $t_email_separator1 . "\n" . utf8_str_pad( lang_get( 'bug_relationships' ), 20 ) . utf8_str_pad( lang_get( 'id' ), 8 ) . lang_get( 'summary' ) . "\n" . $t_email_separator2 . "\n" . $p_visible_bug_data['relations'];
-		}
-	}
-
-	# Sponsorship
-	if( isset( $p_visible_bug_data['sponsorship_total'] ) && ( $p_visible_bug_data['sponsorship_total'] > 0 ) ) {
-		$t_message .= $t_email_separator1 . " \n";
-		$t_message .= sprintf( lang_get( 'total_sponsorship_amount' ), sponsorship_format_amount( $p_visible_bug_data['sponsorship_total'] ) ) . "\n\n";
-
-		if( isset( $p_visible_bug_data['sponsorships'] ) ) {
-			foreach( $p_visible_bug_data['sponsorships'] as $t_sponsorship ) {
-				$t_date_added = date( config_get( 'normal_date_format' ), $t_sponsorship->date_submitted );
-
-				$t_message .= $t_date_added . ': ';
-				$t_message .= user_get_name( $t_sponsorship->user_id );
-				$t_message .= ' (' . sponsorship_format_amount( $t_sponsorship->amount ) . ')' . " \n";
-			}
 		}
 	}
 
@@ -1885,7 +1827,6 @@ function email_build_visible_bug_data( $p_user_id, $p_bug_id, $p_message_id ) {
 	$t_bug_data['email_status'] = $t_row['status'];
 	$t_bug_data['email_severity'] = $t_row['severity'];
 	$t_bug_data['email_priority'] = $t_row['priority'];
-	$t_bug_data['email_reproducibility'] = $t_row['reproducibility'];
 
 	$t_bug_data['email_resolution'] = $t_row['resolution'];
 	$t_bug_data['email_fixed_in_version'] = $t_row['fixed_in_version'];
@@ -1896,8 +1837,6 @@ function email_build_visible_bug_data( $p_user_id, $p_bug_id, $p_message_id ) {
 
 	$t_bug_data['email_summary'] = $t_row['summary'];
 	$t_bug_data['email_description'] = $t_row['description'];
-	$t_bug_data['email_additional_information'] = $t_row['additional_information'];
-	$t_bug_data['email_steps_to_reproduce'] = $t_row['steps_to_reproduce'];
 
 	$t_bug_data['set_category'] = '[' . $t_bug_data['email_project'] . '] ' . $t_category_name;
 
@@ -1907,19 +1846,6 @@ function email_build_visible_bug_data( $p_user_id, $p_bug_id, $p_message_id ) {
 	# put history data
 	if( ( ON == config_get( 'history_default_visible' ) ) && access_compare_level( $t_user_access_level, config_get( 'view_history_threshold' ) ) ) {
 		$t_bug_data['history'] = history_get_raw_events_array( $p_bug_id, $p_user_id );
-	}
-
-	# Sponsorship Information
-	if( ( config_get( 'enable_sponsorship' ) == ON ) && ( access_has_bug_level( config_get( 'view_sponsorship_total_threshold' ), $p_bug_id, $p_user_id ) ) ) {
-		$t_sponsorship_ids = sponsorship_get_all_ids( $p_bug_id );
-		$t_bug_data['sponsorship_total'] = sponsorship_get_amount( $t_sponsorship_ids );
-
-		if( access_has_bug_level( config_get( 'view_sponsorship_details_threshold' ), $p_bug_id, $p_user_id ) ) {
-			$t_bug_data['sponsorships'] = array();
-			foreach( $t_sponsorship_ids as $t_id ) {
-				$t_bug_data['sponsorships'][] = sponsorship_get( $t_id );
-			}
-		}
 	}
 
 	$t_bug_data['relations'] = relationship_get_summary_text( $p_bug_id );
@@ -1969,10 +1895,6 @@ function email_shutdown_function() {
  */
 function email_get_actions() {
 	$t_actions = array( 'updated', 'owner', 'reopened', 'deleted', 'bugnote', 'relation' );
-
-	if( config_get( 'enable_sponsorship' ) == ON ) {
-		$t_actions[] = 'sponsor';
-	}
 
 	$t_statuses = MantisEnum::getAssocArrayIndexedByValues( config_get( 'status_enum_string' ) );
 	ksort( $t_statuses );

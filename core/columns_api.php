@@ -39,7 +39,6 @@
  * @uses prepare_api.php
  * @uses print_api.php
  * @uses project_api.php
- * @uses sponsorship_api.php
  * @uses string_api.php
  */
 
@@ -60,7 +59,6 @@ require_api( 'lang_api.php' );
 require_api( 'prepare_api.php' );
 require_api( 'print_api.php' );
 require_api( 'project_api.php' );
-require_api( 'sponsorship_api.php' );
 require_api( 'string_api.php' );
 
 /**
@@ -84,31 +82,13 @@ function columns_filter_disabled( array $p_columns ) {
 				}
 				break;
 
-			case 'eta':
-				if( config_get( 'enable_eta' ) == OFF ) {
-					continue 2;
-				}
-				break;
-
-			case 'projection':
-				if( config_get( 'enable_projection' ) == OFF ) {
-					continue 2;
-				}
-				break;
-
 			case 'build':
 				if( config_get( 'enable_product_build' ) == OFF ) {
 					continue 2;
 				}
 				break;
 
-			case 'sponsorship_total':
-				if( config_get( 'enable_sponsorship' ) == OFF ) {
-					continue 2;
-				}
-				break;
-
-				default:
+			default:
 				# don't filter
 				break;
 		}
@@ -138,7 +118,6 @@ function columns_get_standard( $p_enabled_columns_only = true ) {
 	# The following fields are used internally and don't make sense as columns
 	unset( $t_columns['_stats'] );
 	unset( $t_columns['profile_id'] );
-	unset( $t_columns['sticky'] );
 	unset( $t_columns['loading'] );
 
 	# legacy field
@@ -276,8 +255,6 @@ function columns_get_all( $p_project_id = null ) {
 function column_is_extended( $p_column ) {
 	switch( $p_column ) {
 		case 'description':
-		case 'steps_to_reproduce':
-		case 'additional_information':
 			return true;
 		default:
 			return false;
@@ -321,10 +298,8 @@ function column_is_sortable( $p_column ) {
 		case 'attachment_count':
 		case 'tags':
 		case 'overdue':
-		case 'additional_information':
 		case 'description':
 		case 'notes':
-		case 'steps_to_reproduce':
 			return false;
 	}
 
@@ -432,8 +407,6 @@ function column_get_title( $p_column ) {
 			return lang_get( 'reporter' );
 		case 'selection':
 			return '';
-		case 'sponsorship_total':
-			return sponsorship_get_currency();
 		case 'version':
 			return lang_get( 'product_version' );
 		case 'view_state':
@@ -605,54 +578,6 @@ function print_column_title_priority( $p_sort, $p_dir, $p_columns_target = COLUM
 	$t_label = lang_get( config_get( 'show_priority_text' ) ? 'priority' : 'priority_abbreviation' );
 	print_view_bug_sort_link( $t_label, 'priority', $p_sort, $p_dir, $p_columns_target );
 	print_sort_icon( $p_dir, $p_sort, 'priority' );
-	echo '</th>';
-}
-
-/**
- * Print table header for column reproducibility
- *
- * @param string  $p_sort           Sort.
- * @param string  $p_dir            Direction.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_title_reproducibility( $p_sort, $p_dir, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo '<th class="column-reproducibility">';
-	print_view_bug_sort_link( lang_get( 'reproducibility' ), 'reproducibility', $p_sort, $p_dir, $p_columns_target );
-	print_sort_icon( $p_dir, $p_sort, 'reproducibility' );
-	echo '</th>';
-}
-
-/**
- * Print table header for column projection
- *
- * @param string  $p_sort           Sort.
- * @param string  $p_dir            Direction.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_title_projection( $p_sort, $p_dir, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo '<th class="column-projection">';
-	print_view_bug_sort_link( lang_get( 'projection' ), 'projection', $p_sort, $p_dir, $p_columns_target );
-	print_sort_icon( $p_dir, $p_sort, 'projection' );
-	echo '</th>';
-}
-
-/**
- * Print table header for column ETA
- *
- * @param string  $p_sort           Sort.
- * @param string  $p_dir            Direction.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_title_eta( $p_sort, $p_dir, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo '<th class="column-eta">';
-	print_view_bug_sort_link( lang_get( 'eta' ), 'eta', $p_sort, $p_dir, $p_columns_target );
-	print_sort_icon( $p_dir, $p_sort, 'eta' );
 	echo '</th>';
 }
 
@@ -882,22 +807,6 @@ function print_column_title_category( $p_sort, $p_dir, $p_columns_target = COLUM
 }
 
 /**
- * Print table header for column sponsorship total
- *
- * @param string  $p_sort           Sort.
- * @param string  $p_dir            Direction.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_title_sponsorship_total( $p_sort, $p_dir, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo "\t<th class=\"column-sponsorship\">";
-	print_view_bug_sort_link( sponsorship_get_currency(), 'sponsorship_total', $p_sort, $p_dir, $p_columns_target );
-	print_sort_icon( $p_dir, $p_sort, 'sponsorship_total' );
-	echo "</th>\n";
-}
-
-/**
  * Print table header for column severity
  *
  * @param string  $p_sort           Sort.
@@ -1005,36 +914,6 @@ function print_column_title_notes( $p_sort, $p_dir, $p_columns_target = COLUMNS_
 }
 
 /**
- * Print table header for column steps to reproduce
- *
- * @param string  $p_sort           Sort.
- * @param string  $p_dir            Direction.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_title_steps_to_reproduce( $p_sort, $p_dir, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo '<th class="column-steps-to-reproduce">';
-	echo lang_get( 'steps_to_reproduce' );
-	echo '</th>';
-}
-
-/**
- * Print table header for column additional information
- *
- * @param string  $p_sort           Sort.
- * @param string  $p_dir            Direction.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_title_additional_information( $p_sort, $p_dir, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo '<th class="column-additional-information">';
-	echo lang_get( 'additional_information' );
-	echo '</th>';
-}
-
-/**
  * Prints Due Date column header
  * @param string  $p_sort           Sort.
  * @param string  $p_dir            Direction.
@@ -1088,7 +967,6 @@ function print_column_selection( BugData $p_bug, $p_columns_target = COLUMNS_TAR
 		access_has_project_level( config_get( 'delete_bug_threshold', null, null, $p_bug->project_id ), $p_bug->project_id ) ||
 		# !TODO: check to see if the bug actually has any different selectable workflow states
 		access_has_project_level( config_get( 'update_bug_status_threshold', null, null, $p_bug->project_id ), $p_bug->project_id ) ||
-		access_has_project_level( config_get( 'set_bug_sticky_threshold', null, null, $p_bug->project_id ), $p_bug->project_id ) ||
 		access_has_project_level( config_get( 'change_view_status_threshold', null, null, $p_bug->project_id ), $p_bug->project_id ) ||
 		access_has_project_level( config_get( 'add_bugnote_threshold', null, null, $p_bug->project_id ), $p_bug->project_id ) ||
 		access_has_project_level( config_get( 'tag_attach_threshold', null, null, $p_bug->project_id ), $p_bug->project_id ) ||
@@ -1200,25 +1078,6 @@ function print_column_id( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIE
 }
 
 /**
- * Print column content for column sponsorship total
- *
- * @param BugData $p_bug            BugData object.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_sponsorship_total( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo "\t<td class=\"right column-sponsorship\">";
-
-	if( $p_bug->sponsorship_total > 0 ) {
-		$t_sponsorship_amount = sponsorship_format_amount( $p_bug->sponsorship_total );
-		echo string_no_break( $t_sponsorship_amount );
-	}
-
-	echo "</td>\n";
-}
-
-/**
  * Print column content for column bugnotes count
  *
  * @param BugData $p_bug            BugData object.
@@ -1318,42 +1177,6 @@ function print_column_severity( BugData $p_bug, $p_columns_target = COLUMNS_TARG
 	echo '<td class="column-severity">';
 	print_formatted_severity_string( $p_bug );
 	echo '</td>';
-}
-
-/**
- * Print column content for column eta
- *
- * @param BugData $p_bug            BugData object.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_eta( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo '<td class="column-eta">', get_enum_element( 'eta', $p_bug->eta, auth_get_current_user_id(), $p_bug->project_id ), '</td>';
-}
-
-/**
- * Print column content for column projection
- *
- * @param BugData $p_bug            BugData object.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_projection( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo '<td class="column-projection">', get_enum_element( 'projection', $p_bug->projection, auth_get_current_user_id(), $p_bug->project_id ), '</td>';
-}
-
-/**
- * Print column content for column reproducibility
- *
- * @param BugData $p_bug            BugData object.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_reproducibility( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	echo '<td class="column-reproducibility">', get_enum_element( 'reproducibility', $p_bug->reproducibility, auth_get_current_user_id(), $p_bug->project_id ), '</td>';
 }
 
 /**
@@ -1524,34 +1347,6 @@ function print_column_notes( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_
 	$t_notes = bugnote_get_all_visible_as_string( $p_bug->id, /* user_bugnote_order */ 'DESC', /* user_bugnote_limit */ 0 );
 
 	echo '<td class="column-notes">', string_display_links( $t_notes ), '</td>';
-}
-
-/**
- * Print column content for column steps to reproduce
- *
- * @param BugData $p_bug            BugData object.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_steps_to_reproduce( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	$t_steps_to_reproduce = string_display_links( $p_bug->steps_to_reproduce );
-
-	echo '<td class="column-steps-to-reproduce">', $t_steps_to_reproduce, '</td>';
-}
-
-/**
- * Print column content for column additional information
- *
- * @param BugData $p_bug            BugData object.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_additional_information( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	$t_additional_information = string_display_links( $p_bug->additional_information );
-
-	echo '<td class="column-additional-information">', $t_additional_information, '</td>';
 }
 
 /**

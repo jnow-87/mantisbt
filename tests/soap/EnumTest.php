@@ -125,35 +125,6 @@ class EnumTest extends SoapBase {
 		$this->client->mc_enum_priorities( 'administrator', '' );
 	}
 
-	/**
-	 * Tests mc_enum_reproducibilities method.
-	 * @return void
-	 */
-	public function testReproducibility() {
-		$t_reproducibility_object_refs = $this->client->mc_enum_reproducibilities( $this->userName, $this->password );
-
-		$t_reproducibilities = EnumTest::ObjectRefsToAssoc( $t_reproducibility_object_refs );
-
-		# '10:always,30:sometimes,50:random,70:have not tried,90:unable to duplicate,100:N/A'
-
-		$this->assertEquals( 6, count( $t_reproducibilities ) );
-		$this->assertEquals( 'always', $t_reproducibilities[10] );
-		$this->assertEquals( 'sometimes', $t_reproducibilities[30] );
-		$this->assertEquals( 'random', $t_reproducibilities[50] );
-		$this->assertEquals( 'have not tried', $t_reproducibilities[70] );
-		$this->assertEquals( 'unable to reproduce', $t_reproducibilities[90] );
-		$this->assertEquals( 'N/A', $t_reproducibilities[100] );
-	}
-
-	/**
-	 * Tests mc_enum_reproducibilities method with invalid credentials.
-	 *
-	 * @expectedException SoapFault
-	 * @return void
-	 */
-	public function testReproducibilityAccessDenied() {
-		$this->client->mc_enum_reproducibilities( 'administrator', '' );
-	}
 
 	/**
 	 * Tests mc_enum_severities method.
@@ -186,36 +157,6 @@ class EnumTest extends SoapBase {
 	 */
 	public function testSeverityAccessDenied() {
 		$this->client->mc_enum_severities( 'administrator', '' );
-	}
-
-	/**
-	 * Tests mc_enum_projections method.
-	 *
-	 * @return void
-	 */
-	public function testProjection() {
-		$t_projection_object_refs = $this->client->mc_enum_projections( $this->userName, $this->password );
-
-		$t_projections = EnumTest::ObjectRefsToAssoc( $t_projection_object_refs );
-
-		# '10:none,30:tweak,50:minor fix,70:major rework,90:redesign'
-
-		$this->assertEquals( 5, count( $t_projections ) );
-		$this->assertEquals( 'none', $t_projections[10] );
-		$this->assertEquals( 'tweak', $t_projections[30] );
-		$this->assertEquals( 'minor fix', $t_projections[50] );
-		$this->assertEquals( 'major rework', $t_projections[70] );
-		$this->assertEquals( 'redesign', $t_projections[90] );
-	}
-
-	/**
-	 * Tests mc_enum_projections method with invalid credentials.
-	 *
-	 * @expectedException SoapFault
-	 * @return void
-	 */
-	public function testProjectionAccessDenied() {
-		$this->client->mc_enum_projections( 'administrator', '' );
 	}
 
 	/**
@@ -265,7 +206,6 @@ class EnumTest extends SoapBase {
 		$this->assertEquals( 'open', $t_resolutions[10] );
 		$this->assertEquals( 'fixed', $t_resolutions[20] );
 		$this->assertEquals( 'reopened', $t_resolutions[30] );
-		$this->assertEquals( 'unable to reproduce', $t_resolutions[40] );
 		$this->assertEquals( 'not fixable', $t_resolutions[50] );
 		$this->assertEquals( 'duplicate', $t_resolutions[60] );
 		$this->assertEquals( 'no change required', $t_resolutions[70] );

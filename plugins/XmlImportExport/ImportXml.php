@@ -174,10 +174,7 @@ class ImportXML {
 
 			# Using bitwise 'or' here to ensure the all replacements are made
 			# regardless of outcome of the previous one(s)
-			$t_content_replaced =
-				  $this->replaceLinks( $t_bug, 'description' )
-				| $this->replaceLinks( $t_bug, 'steps_to_reproduce' )
-				| $this->replaceLinks( $t_bug, 'additional_information' );
+			$t_content_replaced = $this->replaceLinks( $t_bug, 'description' );
 
 			if( $t_content_replaced ) {
 				# only update bug if necessary (otherwise last update date would be unnecessarily overwritten)
@@ -192,8 +189,7 @@ class ImportXML {
 	/**
 	 * Replace links in the given bug for the specified field
 	 * @param object $p_bug
-	 * @param string $p_field Field to process (one of 'description',
-	 *                        'steps_to_reproduce' or 'additional_information')
+	 * @param string $p_field Field to process (one of 'description')
 	 * @return boolean true if replacements have been made
 	 */
 	private function replaceLinks( $p_bug, $p_field ) {

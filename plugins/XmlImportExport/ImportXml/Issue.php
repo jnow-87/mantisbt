@@ -126,10 +126,7 @@ class ImportXml_Issue implements ImportXml_Interface {
 						}
 						break;
 
-					case 'eta':
 					case 'priority':
-					case 'projection':
-					case 'reproducibility':
 					case 'resolution':
 					case 'severity':
 					case 'status':

@@ -1158,42 +1158,6 @@ function print_filter_view_state( array $p_filter = null ) {
  * @param array $p_filter	Filter array
  * @return void
  */
-function print_filter_values_sticky_issues( array $p_filter ) {
-	$t_filter = $p_filter;
-	$t_sticky_filter_state = gpc_string_to_bool( $t_filter[FILTER_PROPERTY_STICKY] );
-	print( $t_sticky_filter_state ? lang_get( 'yes' ) : lang_get( 'no' ) );
-	?>
-	<input type="hidden" name="<?php
-		echo FILTER_PROPERTY_STICKY; ?>" value="<?php
-		echo $t_sticky_filter_state ? 'on' : 'off'; ?>" />
-	<?php
-}
-
-/**
- * print sticky issues field
- * @global array $g_filter
- * @param array $p_filter Filter array
- * @return void
- */
-function print_filter_sticky_issues( array $p_filter = null ) {
-	global $g_filter;
-	if( null === $p_filter ) {
-		$p_filter = $g_filter;
-	}
-	?><!-- Show or hide sticky bugs -->
-			<input type="hidden" name="<?php echo FILTER_PROPERTY_STICKY ?>" value="<?php echo OFF ?>">
-            <label>
-			    <input class="input-xs ace" type="checkbox" name="<?php echo FILTER_PROPERTY_STICKY;?>"<?php check_checked( gpc_string_to_bool( $p_filter[FILTER_PROPERTY_STICKY] ), true );?> />
-			    <span class="lbl"></span>
-            </label>
-		<?php
-}
-
-/**
- * Print the current value of this filter field, as visible string, and as a hidden form input.
- * @param array $p_filter	Filter array
- * @return void
- */
 function print_filter_values_highlight_changed( array $p_filter ) {
 	$t_filter = $p_filter;
 	echo $t_filter[FILTER_PROPERTY_HIGHLIGHT_CHANGED];
@@ -2340,13 +2304,6 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 			1 /* colspan */,
 			null /* class */,
 			'view_state_filter_target' /* content id */
-			));
-	$t_row1->add_item( new TableFieldsItem(
-			$get_field_header( 'sticky_issues_filter', lang_get( 'sticky' ) ),
-			filter_form_get_input( $t_filter, 'sticky_issues', $t_show_inputs ),
-			1 /* colspan */,
-			null /* class */,
-			'sticky_issues_filter_target' /* content id */
 			));
 
 	$t_row2 = new FilterBoxGridLayout( $t_filter_cols , FilterBoxGridLayout::ORIENTATION_VERTICAL );

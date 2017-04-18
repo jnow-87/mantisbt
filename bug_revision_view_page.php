@@ -110,12 +110,6 @@ function show_revision( array $p_revision ) {
 		case REV_DESCRIPTION:
 			$t_label = lang_get( 'description' );
 			break;
-		case REV_STEPS_TO_REPRODUCE:
-			$t_label = lang_get( 'steps_to_reproduce' );
-			break;
-		case REV_ADDITIONAL_INFO:
-			$t_label = lang_get( 'additional_information' );
-			break;
 		case REV_BUGNOTE:
 			if( is_null( $s_user_access ) ) {
 				$s_user_access = access_has_bug_level( config_get( 'private_bugnote_threshold' ), $p_revision['bug_id'] );

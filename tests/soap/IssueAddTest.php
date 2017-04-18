@@ -78,16 +78,8 @@ class IssueAddTest extends SoapBase {
 		$this->assertEquals( 10, $t_issue->status->id );
 		$this->assertEquals( 'new', $t_issue->status->name );
 		$this->assertEquals( $this->userName, $t_issue->reporter->name );
-		$this->assertEquals( 70, $t_issue->reproducibility->id );
-		$this->assertEquals( 'have not tried', $t_issue->reproducibility->name );
-		$this->assertEquals( 0, $t_issue->sponsorship_total );
-		$this->assertEquals( 10, $t_issue->projection->id );
-		$this->assertEquals( 'none', $t_issue->projection->name );
-		$this->assertEquals( 10, $t_issue->eta->id );
-		$this->assertEquals( 'none', $t_issue->eta->name );
 		$this->assertEquals( 10, $t_issue->resolution->id );
 		$this->assertEquals( 'open', $t_issue->resolution->name );
-		$this->assertEquals( false, $t_issue->sticky );
 
 	}
 
@@ -117,7 +109,7 @@ class IssueAddTest extends SoapBase {
 	/**
 	 * This issue tests the following:
 	 * 1. Creating an issue with some fields that are typically not used at creation time.
-	 *    For example: projection, eta, resolution, status, fixed_in_version, and target_version.
+	 *    For example: resolution, status, fixed_in_version, and target_version.
 	 * 2. Get the issue and confirm that all fields are set as expected.
 	 * 3. Delete the issue.
 	 *
@@ -127,13 +119,10 @@ class IssueAddTest extends SoapBase {
 	public function testCreateIssueWithRareFields() {
 		$t_issue_to_add = $this->getIssueToAdd( 'IssueAddTest.testCreateIssueWithRareFields' );
 
-		$t_issue_to_add['projection'] = array( 'id' => 90 );    # redesign
-		$t_issue_to_add['eta'] = array( 'id' => 60 );           # > 1 month
 		$t_issue_to_add['resolution'] = array( 'id' => 80 );    # suspended
 		$t_issue_to_add['status'] = array( 'id' => 40 );        # confirmed
 		$t_issue_to_add['fixed_in_version'] = 'fixed version';
 		$t_issue_to_add['target_version'] = 'target version';
-		$t_issue_to_add['sticky'] = true;
 
 		$t_dt = DateTime::createFromFormat( 'U', time() );
 		$t_issue_to_add['last_updated'] = $t_dt->format( DateTime::ISO8601 );
@@ -145,13 +134,10 @@ class IssueAddTest extends SoapBase {
 		$t_issue = $this->client->mc_issue_get( $this->userName, $this->password, $t_issue_id );
 
 		# explicitly specified fields
-		$this->assertEquals( $t_issue_to_add['projection']['id'], $t_issue->projection->id );
-		$this->assertEquals( $t_issue_to_add['eta']['id'], $t_issue->eta->id );
 		$this->assertEquals( $t_issue_to_add['resolution']['id'], $t_issue->resolution->id );
 		$this->assertEquals( $t_issue_to_add['status']['id'], $t_issue->status->id );
 		$this->assertEquals( $t_issue_to_add['fixed_in_version'], $t_issue->fixed_in_version );
 		$this->assertEquals( $t_issue_to_add['target_version'], $t_issue->target_version );
-		$this->assertEquals( $t_issue_to_add['sticky'], $t_issue->sticky );
 
 		$t_read_dt = DateTime::createFromFormat( DateTime::ISO8601, $t_issue->last_updated );
 

@@ -138,14 +138,11 @@ $g_upgrade[11] = array( 'CreateTableSQL', array( db_get_table( 'bug' ), "
 	duplicate_id			I		UNSIGNED NOTNULL DEFAULT '0',
 	priority				I2		NOTNULL DEFAULT '30',
 	severity				I2		NOTNULL DEFAULT '50',
-	reproducibility			I2		NOTNULL DEFAULT '10',
 	status					I2		NOTNULL DEFAULT '10',
 	resolution				I2		NOTNULL DEFAULT '10',
-	projection				I2		NOTNULL DEFAULT '10',
 	category				C(64)	NOTNULL DEFAULT \" '' \",
 	date_submitted			T		NOTNULL DEFAULT '" . db_null_date() . "',
 	last_updated			T		NOTNULL DEFAULT '" . db_null_date() . "',
-	eta						I2		NOTNULL DEFAULT '10',
 	bug_text_id				I		UNSIGNED NOTNULL DEFAULT '0',
 	os						C(32)	NOTNULL DEFAULT \" '' \",
 	os_build				C(32)	NOTNULL DEFAULT \" '' \",
@@ -155,20 +152,16 @@ $g_upgrade[11] = array( 'CreateTableSQL', array( db_get_table( 'bug' ), "
 	build					C(32)	NOTNULL DEFAULT \" '' \",
 	profile_id				I		UNSIGNED NOTNULL DEFAULT '0',
 	view_state				I2		NOTNULL DEFAULT '10',
-	summary					C(128)	NOTNULL DEFAULT \" '' \",
-	sponsorship_total		I		NOTNULL DEFAULT '0',
-	sticky					L		$t_notnull DEFAULT  \"'0'\" ",
+	summary					C(128)	NOTNULL DEFAULT \" '' \" ",
 	$t_table_options
 	) );
-$g_upgrade[12] = array( 'CreateIndexSQL', array( 'idx_bug_sponsorship_total', db_get_table( 'bug' ), 'sponsorship_total' ) );
+$g_upgrade[12] = array( );
 $g_upgrade[13] = array( 'CreateIndexSQL', array( 'idx_bug_fixed_in_version', db_get_table( 'bug' ), 'fixed_in_version' ) );
 $g_upgrade[14] = array( 'CreateIndexSQL', array( 'idx_bug_status', db_get_table( 'bug' ), 'status' ) );
 $g_upgrade[15] = array( 'CreateIndexSQL', array( 'idx_project', db_get_table( 'bug' ), 'project_id' ) );
 $g_upgrade[16] = array( 'CreateTableSQL', array( db_get_table( 'bug_text' ), "
 	id						I		PRIMARY UNSIGNED NOTNULL AUTOINCREMENT,
-	description				XL		NOTNULL,
-	steps_to_reproduce		XL		$t_notnull,
-	additional_information	XL		$t_notnull",
+	description				XL		NOTNULL",
 	$t_table_options
 	) );
 $g_upgrade[17] = array( 'CreateTableSQL', array( db_get_table( 'bugnote' ), "
@@ -316,24 +309,13 @@ $g_upgrade[37] = array( 'CreateTableSQL', array( db_get_table( 'project_version'
 	$t_table_options
 	) );
 $g_upgrade[38] = array( 'CreateIndexSQL', array( 'idx_project_version', db_get_table( 'project_version' ), 'project_id,version', array( 'UNIQUE' ) ) );
-$g_upgrade[39] = array( 'CreateTableSQL', array( db_get_table( 'sponsorship' ), "
-	id						I		NOTNULL PRIMARY AUTOINCREMENT,
-	bug_id					I		NOTNULL DEFAULT '0',
-	user_id					I		NOTNULL DEFAULT '0',
-	amount					I		NOTNULL DEFAULT '0',
-	logo					C(128)	NOTNULL DEFAULT \" '' \",
-	url						C(128)	NOTNULL DEFAULT \" '' \",
-	paid					L		NOTNULL DEFAULT \" '0' \",
-	date_submitted			T		NOTNULL DEFAULT '" . db_null_date() . "',
-	last_updated			T		NOTNULL DEFAULT '" . db_null_date() . "'",
-	$t_table_options
-	) );
+$g_upgrade[39] = array( );
 
 # ----------------------------------------------------------------------------
 # Schema version: 40
 #
-$g_upgrade[40] = array( 'CreateIndexSQL', array( 'idx_sponsorship_bug_id', db_get_table( 'sponsorship' ), 'bug_id' ) );
-$g_upgrade[41] = array( 'CreateIndexSQL', array( 'idx_sponsorship_user_id', db_get_table( 'sponsorship' ), 'user_id' ) );
+$g_upgrade[40] = array( );
+$g_upgrade[41] = array( );
 $g_upgrade[42] = array( 'CreateTableSQL', array( db_get_table( 'tokens' ), "
 	id						I		NOTNULL PRIMARY AUTOINCREMENT,
 	owner					I		NOTNULL,
@@ -753,23 +735,19 @@ $g_upgrade[163] = array( 'DropColumnSQL', array( db_get_table( 'project_version'
 $g_upgrade[164] = array( 'RenameColumnSQL', array( db_get_table( 'project_version' ), 'date_order_int', 'date_order', "
 	date_order_int			I		UNSIGNED NOTNULL DEFAULT '1' " ) );
 
-$g_upgrade[165] = array( 'AddColumnSQL', array( db_get_table( 'sponsorship' ), "
-	date_submitted_int		I		UNSIGNED NOTNULL DEFAULT '1' " ) );
-$g_upgrade[166] = array( 'AddColumnSQL', array( db_get_table( 'sponsorship' ), "
-	last_updated_int		I		UNSIGNED NOTNULL DEFAULT '1' " ) );
+$g_upgrade[165] = array( );
+$g_upgrade[166] = array( );
 
-$g_upgrade[167] = array( 'UpdateFunction', 'date_migrate', array( db_get_table( 'sponsorship' ), 'id', array( 'date_submitted', 'last_updated' ), array( 'date_submitted_int', 'last_updated_int' ) ) );
+$g_upgrade[167] = array( );
 
-$g_upgrade[168] = array( 'DropColumnSQL', array( db_get_table( 'sponsorship' ), 'last_updated' ) );
-$g_upgrade[169] = array( 'RenameColumnSQL', array( db_get_table( 'sponsorship' ), 'last_updated_int', 'last_updated', "
-	last_updated_int		I		UNSIGNED NOTNULL DEFAULT '1' " ) );
+$g_upgrade[168] = array( );
+$g_upgrade[169] = array( );
 
 # ----------------------------------------------------------------------------
 # Schema version: 170
 #
-$g_upgrade[170] = array( 'DropColumnSQL', array( db_get_table( 'sponsorship' ), 'date_submitted' ) );
-$g_upgrade[171] = array( 'RenameColumnSQL', array( db_get_table( 'sponsorship' ), 'date_submitted_int', 'date_submitted', "
-date_submitted_int			I		UNSIGNED NOTNULL DEFAULT '1' " ) );
+$g_upgrade[170] = array( );
+$g_upgrade[171] = array( );
 
 $g_upgrade[172] = array( 'AddColumnSQL', array( db_get_table( 'project_file' ), "
 	user_id					I		UNSIGNED NOTNULL DEFAULT '0' " ) );

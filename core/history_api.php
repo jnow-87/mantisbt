@@ -38,7 +38,6 @@
  * @uses lang_api.php
  * @uses project_api.php
  * @uses relationship_api.php
- * @uses sponsorship_api.php
  * @uses user_api.php
  * @uses utility_api.php
  */
@@ -58,7 +57,6 @@ require_api( 'helper_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'project_api.php' );
 require_api( 'relationship_api.php' );
-require_api( 'sponsorship_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 
@@ -546,11 +544,6 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 			$p_new_value = get_enum_element( 'severity', $p_new_value );
 			$t_field_localized = lang_get( 'severity' );
 			break;
-		case 'reproducibility':
-			$p_old_value = get_enum_element( 'reproducibility', $p_old_value );
-			$p_new_value = get_enum_element( 'reproducibility', $p_new_value );
-			$t_field_localized = lang_get( 'reproducibility' );
-			break;
 		case 'resolution':
 			$p_old_value = get_enum_element( 'resolution', $p_old_value );
 			$p_new_value = get_enum_element( 'resolution', $p_new_value );
@@ -561,25 +554,10 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 			$p_new_value = get_enum_element( 'priority', $p_new_value );
 			$t_field_localized = lang_get( 'priority' );
 			break;
-		case 'eta':
-			$p_old_value = get_enum_element( 'eta', $p_old_value );
-			$p_new_value = get_enum_element( 'eta', $p_new_value );
-			$t_field_localized = lang_get( 'eta' );
-			break;
 		case 'view_state':
 			$p_old_value = get_enum_element( 'view_state', $p_old_value );
 			$p_new_value = get_enum_element( 'view_state', $p_new_value );
 			$t_field_localized = lang_get( 'view_status' );
-			break;
-		case 'projection':
-			$p_old_value = get_enum_element( 'projection', $p_old_value );
-			$p_new_value = get_enum_element( 'projection', $p_new_value );
-			$t_field_localized = lang_get( 'projection' );
-			break;
-		case 'sticky':
-			$p_old_value = gpc_string_to_bool( $p_old_value ) ? lang_get( 'yes' ) : lang_get( 'no' );
-			$p_new_value = gpc_string_to_bool( $p_new_value ) ? lang_get( 'yes' ) : lang_get( 'no' );
-			$t_field_localized = lang_get( 'sticky_issue' );
 			break;
 		case 'project_id':
 			if( project_exists( $p_old_value ) ) {
@@ -652,9 +630,6 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 		case 'duplicate_id':
 			$t_field_localized = lang_get( 'duplicate_id' );
 			break;
-		case 'sponsorship_total':
-			$t_field_localized = lang_get( 'sponsorship_total' );
-			break;
 		case 'due_date':
 			if( $p_old_value !== '' ) {
 				$p_old_value = date( config_get( 'normal_date_format' ), (int)$p_old_value );
@@ -713,24 +688,6 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 						$t_raw = false;
 					}
 					break;
-				case ADDITIONAL_INFO_UPDATED:
-					$t_note = lang_get( 'additional_information_updated' );
-					$t_old_value = (int)$p_old_value;
-					if( $p_linkify && bug_revision_exists( $t_old_value ) ) {
-						$t_change = '<a href="bug_revision_view_page.php?rev_id=' . $t_old_value . '#r' . $t_old_value . '">' .
-							lang_get( 'view_revisions' ) . '</a>';
-						$t_raw = false;
-					}
-					break;
-				case STEP_TO_REPRODUCE_UPDATED:
-					$t_note = lang_get( 'steps_to_reproduce_updated' );
-					$t_old_value = (int)$p_old_value;
-					if( $p_linkify && bug_revision_exists( $t_old_value ) ) {
-						$t_change = '<a href="bug_revision_view_page.php?rev_id=' . $t_old_value . '#r' . $t_old_value . '">' .
-							lang_get( 'view_revisions' ) . '</a>';
-						$t_raw = false;
-					}
-					break;
 				case FILE_ADDED:
 					$t_note = lang_get( 'file_added' ) . ': ' . $p_old_value;
 					break;
@@ -753,22 +710,6 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 					break;
 				case BUG_DELETED:
 					$t_note = lang_get( 'bug_deleted' ) . ': ' . $p_old_value;
-					break;
-				case BUG_ADD_SPONSORSHIP:
-					$t_note = lang_get( 'sponsorship_added' );
-					$t_change = user_get_name( $p_old_value ) . ': ' . sponsorship_format_amount( $p_new_value );
-					break;
-				case BUG_UPDATE_SPONSORSHIP:
-					$t_note = lang_get( 'sponsorship_updated' );
-					$t_change = user_get_name( $p_old_value ) . ': ' . sponsorship_format_amount( $p_new_value );
-					break;
-				case BUG_DELETE_SPONSORSHIP:
-					$t_note = lang_get( 'sponsorship_deleted' );
-					$t_change = user_get_name( $p_old_value ) . ': ' . sponsorship_format_amount( $p_new_value );
-					break;
-				case BUG_PAID_SPONSORSHIP:
-					$t_note = lang_get( 'sponsorship_paid' );
-					$t_change = user_get_name( $p_old_value ) . ': ' . get_enum_element( 'sponsorship', $p_new_value );
 					break;
 				case BUG_ADD_RELATIONSHIP:
 					$t_note = lang_get( 'relationship_added' );

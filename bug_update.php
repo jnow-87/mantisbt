@@ -77,7 +77,6 @@ if( helper_get_current_project() != $t_existing_bug->project_id ) {
 
 $t_updated_bug = clone $t_existing_bug;
 
-$t_updated_bug->additional_information = gpc_get_string( 'additional_information', $t_existing_bug->additional_information );
 $t_updated_bug->build = gpc_get_string( 'build', $t_existing_bug->build );
 $t_updated_bug->category_id = gpc_get_int( 'category_id', $t_existing_bug->category_id );
 $t_updated_bug->description = gpc_get_string( 'description', $t_existing_bug->description );
@@ -90,7 +89,6 @@ if( $t_due_date !== null ) {
 	}
 }
 $t_updated_bug->duplicate_id = gpc_get_int( 'duplicate_id', 0 );
-$t_updated_bug->eta = gpc_get_int( 'eta', $t_existing_bug->eta );
 $t_updated_bug->fixed_in_version = gpc_get_string( 'fixed_in_version', $t_existing_bug->fixed_in_version );
 $t_updated_bug->handler_id = gpc_get_int( 'handler_id', $t_existing_bug->handler_id );
 $t_updated_bug->last_updated = gpc_get_string( 'last_updated' );
@@ -98,13 +96,10 @@ $t_updated_bug->os = gpc_get_string( 'os', $t_existing_bug->os );
 $t_updated_bug->os_build = gpc_get_string( 'os_build', $t_existing_bug->os_build );
 $t_updated_bug->platform = gpc_get_string( 'platform', $t_existing_bug->platform );
 $t_updated_bug->priority = gpc_get_int( 'priority', $t_existing_bug->priority );
-$t_updated_bug->projection = gpc_get_int( 'projection', $t_existing_bug->projection );
 $t_updated_bug->reporter_id = gpc_get_int( 'reporter_id', $t_existing_bug->reporter_id );
-$t_updated_bug->reproducibility = gpc_get_int( 'reproducibility', $t_existing_bug->reproducibility );
 $t_updated_bug->resolution = gpc_get_int( 'resolution', $t_existing_bug->resolution );
 $t_updated_bug->severity = gpc_get_int( 'severity', $t_existing_bug->severity );
 $t_updated_bug->status = gpc_get_int( 'status', $t_existing_bug->status );
-$t_updated_bug->steps_to_reproduce = gpc_get_string( 'steps_to_reproduce', $t_existing_bug->steps_to_reproduce );
 $t_updated_bug->summary = gpc_get_string( 'summary', $t_existing_bug->summary );
 $t_updated_bug->target_version = gpc_get_string( 'target_version', $t_existing_bug->target_version );
 $t_updated_bug->version = gpc_get_string( 'version', $t_existing_bug->version );
@@ -218,18 +213,9 @@ if($f_reset_resolution == 1){
 
 # Validate any change to the handler of an issue.
 if( $t_existing_bug->handler_id != $t_updated_bug->handler_id ) {
-	$t_issue_is_sponsored = config_get( 'enable_sponsorship' )
-		&& sponsorship_get_amount( sponsorship_get_all_ids( $f_bug_id ) ) > 0;
-	access_ensure_bug_level( config_get( 'update_bug_assign_threshold' ), $f_bug_id );
-	if( $t_issue_is_sponsored && !access_has_bug_level( config_get( 'handle_sponsored_bugs_threshold' ), $f_bug_id ) ) {
-		trigger_error( ERROR_SPONSORSHIP_HANDLER_ACCESS_LEVEL_TOO_LOW, ERROR );
-	}
 	if( $t_updated_bug->handler_id != NO_USER ) {
 		if( !access_has_bug_level( config_get( 'handle_bug_threshold' ), $f_bug_id, $t_updated_bug->handler_id ) ) {
 			trigger_error( ERROR_HANDLER_ACCESS_TOO_LOW, ERROR );
-		}
-		if( $t_issue_is_sponsored && !access_has_bug_level( config_get( 'assign_sponsored_bugs_threshold' ), $f_bug_id ) ) {
-			trigger_error( ERROR_SPONSORSHIP_ASSIGNER_ACCESS_LEVEL_TOO_LOW, ERROR );
 		}
 	}
 }
@@ -395,9 +381,7 @@ helper_call_custom_function( 'issue_update_validate', array( $f_bug_id, $t_updat
 $t_updated_bug = event_signal( 'EVENT_UPDATE_BUG_DATA', $t_updated_bug, $t_existing_bug );
 
 # Commit the bug updates to the database.
-$t_text_field_update_required = ( $t_existing_bug->description != $t_updated_bug->description ) ||
-								( $t_existing_bug->additional_information != $t_updated_bug->additional_information ) ||
-								( $t_existing_bug->steps_to_reproduce != $t_updated_bug->steps_to_reproduce );
+$t_text_field_update_required = ( $t_existing_bug->description != $t_updated_bug->description );
 $t_updated_bug->update( $t_text_field_update_required, true );
 
 # Update custom field values.

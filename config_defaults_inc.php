@@ -492,7 +492,6 @@ $g_email_notifications_verbose = OFF;
  *         'deleted': a bug has been deleted
  *         'updated': a bug has been updated
  *         'bugnote': a bugnote has been added to a bug
- *         'sponsor': sponsorship has changed on this bug
  *        'relation': a relationship has changed on this bug
  *         'monitor': an issue is monitored.
  *        '<status>': eg: 'resolved', 'closed', 'feedback', 'acknowledged', etc.
@@ -964,22 +963,21 @@ $g_severity_significant_threshold = MAJOR;
  * Also each user can configure their own columns using My Account -> Manage
  * Columns. Some of the columns specified here can be removed automatically if
  * they conflict with other configuration. Or if the current user doesn't have
- * the necessary access level to view them. For example, sponsorship_total will
- * be removed if sponsorships are disabled. To include custom field 'xyz',
+ * the necessary access level to view them. To include custom field 'xyz',
  * include the column name as 'custom_xyz'.
  *
  * Standard Column Names (i.e. names to choose from):
  * id, project_id, reporter_id, handler_id, duplicate_id, priority, severity,
- * reproducibility, status, resolution, category_id, date_submitted, last_updated,
+ * status, resolution, category_id, date_submitted, last_updated,
  * os, os_build, platform, version, fixed_in_version, target_version, view_state,
- * summary, sponsorship_total, due_date, description, steps_to_reproduce,
- * additional_info, attachment_count, bugnotes_count, selection, edit,
+ * summary, due_date, description,
+ * attachment_count, bugnotes_count, selection, edit,
  * overdue
  *
  * @global array $g_view_issues_page_columns
  */
 $g_view_issues_page_columns = array(
-	'selection', 'edit', 'priority', 'id', 'sponsorship_total',
+	'selection', 'edit', 'priority', 'id',
 	'bugnotes_count', 'attachment_count', 'category_id', 'severity', 'status',
 	'last_updated', 'summary'
 );
@@ -991,7 +989,7 @@ $g_view_issues_page_columns = array(
  * @global array $g_print_issues_page_columns
  */
 $g_print_issues_page_columns = array(
-	'selection', 'priority', 'id', 'sponsorship_total', 'bugnotes_count',
+	'selection', 'priority', 'id', 'bugnotes_count',
 	'attachment_count', 'category_id', 'severity', 'status', 'last_updated',
 	'summary'
 );
@@ -1004,8 +1002,8 @@ $g_print_issues_page_columns = array(
  */
 $g_csv_columns = array(
 	'id', 'project_id', 'reporter_id', 'handler_id', 'priority',
-	'severity', 'reproducibility', 'version', 'projection', 'category_id',
-	'date_submitted', 'eta', 'os', 'os_build', 'platform', 'view_state',
+	'severity', 'version', 'category_id',
+	'date_submitted', 'os', 'os_build', 'platform', 'view_state',
 	'last_updated', 'summary', 'status', 'resolution', 'fixed_in_version'
 );
 
@@ -1017,8 +1015,8 @@ $g_csv_columns = array(
  */
 $g_excel_columns = array(
 	'id', 'project_id', 'reporter_id', 'handler_id', 'priority', 'severity',
-	'reproducibility', 'version', 'projection', 'category_id',
-	'date_submitted', 'eta', 'os', 'os_build', 'platform', 'view_state',
+	'version', 'category_id',
+	'date_submitted', 'os', 'os_build', 'platform', 'view_state',
 	'last_updated', 'summary', 'status', 'resolution', 'fixed_in_version'
 );
 
@@ -1252,18 +1250,6 @@ $g_default_project_view_status = VS_PUBLIC;
 $g_default_bug_view_status = VS_PUBLIC;
 
 /**
- * Default value for steps to reproduce field.
- * @global string $g_default_bug_steps_to_reproduce
- */
-$g_default_bug_steps_to_reproduce = '';
-
-/**
- * Default value for addition information field.
- * @global string $g_default_bug_additional_info
- */
-$g_default_bug_additional_info = '';
-
-/**
  * Default Bugnote View Status (VS_PUBLIC or VS_PRIVATE)
  * @global integer $g_default_bugnote_view_status
  */
@@ -1286,24 +1272,6 @@ $g_default_bug_severity = MINOR;
  * @global integer $g_default_bug_priority
  */
 $g_default_bug_priority = NORMAL;
-
-/**
- * Default bug reproducibility when reporting a new bug
- * @global integer $g_default_bug_reproducibility
- */
-$g_default_bug_reproducibility = REPRODUCIBILITY_HAVENOTTRIED;
-
-/**
- * Default bug projection when reporting a new bug
- * @global integer $g_default_bug_projection
- */
-$g_default_bug_projection = PROJECTION_NONE;
-
-/**
- * Default bug ETA when reporting a new bug
- * @global integer $g_default_bug_eta
- */
-$g_default_bug_eta = ETA_NONE;
 
 /**
  * Default relationship between a new bug and its parent when cloning it
@@ -1341,12 +1309,6 @@ $g_default_show_changed = 6;
  * @global integer $g_hide_status_default
  */
 $g_hide_status_default = CLOSED;
-
-/**
- *
- * @global string $g_show_sticky_issues
- */
-$g_show_sticky_issues = ON;
 
 /**
  * make sure people are not refreshing too often
@@ -1624,62 +1586,6 @@ $g_mentions_enabled = ON;
  * @var string $g_mentions_tag
  */
 $g_mentions_tag = '@';
-
-#################################
-# MantisBT Sponsorship Settings #
-#################################
-
-/**
- * Whether to enable/disable the whole issue sponsorship feature
- * @global integer $g_enable_sponsorship
- */
-$g_enable_sponsorship = OFF;
-
-/**
- * Currency used for all sponsorships.
- * @global string $g_sponsorship_currency
- */
-$g_sponsorship_currency = 'US$';
-
-/**
- * Access level threshold needed to view the total sponsorship for an issue by
- * all users.
- * @global integer $g_view_sponsorship_total_threshold
- */
-$g_view_sponsorship_total_threshold = VIEWER;
-
-/**
- * Access level threshold needed to view the users sponsoring an issue and the
- * sponsorship amount for each.
- * @global integer $g_view_sponsorship_details_threshold
- */
-$g_view_sponsorship_details_threshold = VIEWER;
-
-/**
- * Access level threshold needed to allow user to sponsor issues.
- * @global integer $g_sponsor_threshold
- */
-$g_sponsor_threshold = REPORTER;
-
-/**
- * Access level required to be able to handle sponsored issues.
- * @global integer $g_handle_sponsored_bugs_threshold
- */
-$g_handle_sponsored_bugs_threshold = DEVELOPER;
-
-/**
- * Access level required to be able to assign a sponsored issue to a user with
- * access level greater or equal to 'handle_sponsored_bugs_threshold'.
- * @global integer $g_assign_sponsored_bugs_threshold
- */
-$g_assign_sponsored_bugs_threshold = MANAGER;
-
-/**
- * Minimum sponsorship amount. If the user enters a value less than this, an
- * error will be prompted.
- * @global integer $g_minimum_sponsorship_amount
- */
-$g_minimum_sponsorship_amount = 5;
 
 #################################
 # MantisBT File Upload Settings #
@@ -2201,18 +2107,6 @@ $g_allow_delete_own_attachments = OFF;
 ####################
 
 /**
- * Enable or disable usage of the ETA field.
- * @global integer $g_enable_eta
- */
-$g_enable_eta = OFF;
-
-/**
- * Enable or disable usage of the Projection field.
- * @global integer $g_enable_projection
- */
-$g_enable_projection = OFF;
-
-/**
  * Enable or disable usage of the Product Build field.
  * @global integer $g_enable_product_build
  */
@@ -2222,7 +2116,6 @@ $g_enable_product_build = OFF;
  * An array of optional fields to show on the bug report page.
  *
  * The following optional fields are allowed:
- *   - additional_info
  *   - attachments
  *   - category_id
  *   - due_date
@@ -2233,11 +2126,9 @@ $g_enable_product_build = OFF;
  *   - priority
  *   - product_build
  *   - product_version
- *   - reproducibility
  *   - resolution
  *   - severity
  *   - status
- *   - steps_to_reproduce
  *   - target_version
  *   - view_state
  *
@@ -2252,7 +2143,6 @@ $g_enable_product_build = OFF;
  * @global array $g_bug_report_page_fields
  */
 $g_bug_report_page_fields = array(
-	'additional_info',
 	'attachments',
 	'category_id',
 	'due_date',
@@ -2263,9 +2153,7 @@ $g_bug_report_page_fields = array(
 	'priority',
 	'product_build',
 	'product_version',
-	'reproducibility',
 	'severity',
-	'steps_to_reproduce',
 	'tags',
 	'target_version',
 	'view_state',
@@ -2275,13 +2163,11 @@ $g_bug_report_page_fields = array(
  * An array of optional fields to show on the bug view page.
  *
  * The following optional fields are allowed:
- *   - additional_info
  *   - attachments
  *   - category_id
  *   - date_submitted
  *   - description
  *   - due_date
- *   - eta
  *   - fixed_in_version
  *   - handler
  *   - id
@@ -2293,13 +2179,10 @@ $g_bug_report_page_fields = array(
  *   - product_build
  *   - product_version
  *   - project
- *   - projection
  *   - reporter
- *   - reproducibility
  *   - resolution
  *   - severity
  *   - status
- *   - steps_to_reproduce
  *   - summary
  *   - tags
  *   - target_version
@@ -2315,13 +2198,11 @@ $g_bug_report_page_fields = array(
  * @global array $g_bug_view_page_fields
  */
 $g_bug_view_page_fields = array(
-	'additional_info',
 	'attachments',
 	'category_id',
 	'date_submitted',
 	'description',
 	'due_date',
-	'eta',
 	'fixed_in_version',
 	'handler',
 	'id',
@@ -2333,13 +2214,10 @@ $g_bug_view_page_fields = array(
 	'product_build',
 	'product_version',
 	'project',
-	'projection',
 	'reporter',
-	'reproducibility',
 	'resolution',
 	'severity',
 	'status',
-	'steps_to_reproduce',
 	'summary',
 	'tags',
 	'target_version',
@@ -2350,12 +2228,10 @@ $g_bug_view_page_fields = array(
  * An array of optional fields to show on the bug update page.
  *
  * The following optional fields are allowed:
- *   - additional_info
  *   - category_id
  *   - date_submitted
  *   - description
  *   - due_date
- *   - eta
  *   - fixed_in_version
  *   - handler
  *   - id
@@ -2367,13 +2243,10 @@ $g_bug_view_page_fields = array(
  *   - product_build
  *   - product_version
  *   - project
- *   - projection
  *   - reporter
- *   - reproducibility
  *   - resolution
  *   - severity
  *   - status
- *   - steps_to_reproduce
  *   - summary
  *   - target_version
  *   - view_state
@@ -2388,12 +2261,10 @@ $g_bug_view_page_fields = array(
  * @global array $g_bug_update_page_fields
  */
 $g_bug_update_page_fields = array(
-	'additional_info',
 	'category_id',
 	'date_submitted',
 	'description',
 	'due_date',
-	'eta',
 	'fixed_in_version',
 	'handler',
 	'id',
@@ -2405,13 +2276,10 @@ $g_bug_update_page_fields = array(
 	'product_build',
 	'product_version',
 	'project',
-	'projection',
 	'reporter',
-	'reproducibility',
 	'resolution',
 	'severity',
 	'status',
-	'steps_to_reproduce',
 	'summary',
 	'target_version',
 	'view_state',
@@ -2423,13 +2291,11 @@ $g_bug_update_page_fields = array(
  * updating the status of an issue.
  *
  * The following optional fields are allowed:
- *   - additional_info
  *   - attachments
  *   - category_id
  *   - date_submitted
  *   - description
  *   - due_date
- *   - eta
  *   - fixed_in_version
  *   - handler
  *   - id
@@ -2441,13 +2307,10 @@ $g_bug_update_page_fields = array(
  *   - product_build
  *   - product_version
  *   - project
- *   - projection
  *   - reporter
- *   - reproducibility
  *   - resolution
  *   - severity
  *   - status
- *   - steps_to_reproduce
  *   - summary
  *   - tags
  *   - target_version
@@ -2464,13 +2327,11 @@ $g_bug_update_page_fields = array(
  * @global array $g_bug_change_status_page_fields
  */
 $g_bug_change_status_page_fields = array(
-	'additional_info',
 	'attachments',
 	'category_id',
 	'date_submitted',
 	'description',
 	'due_date',
-	'eta',
 	'fixed_in_version',
 	'handler',
 	'id',
@@ -2482,13 +2343,10 @@ $g_bug_change_status_page_fields = array(
 	'product_build',
 	'product_version',
 	'project',
-	'projection',
 	'reporter',
-	'reproducibility',
 	'resolution',
 	'severity',
 	'status',
-	'steps_to_reproduce',
 	'summary',
 	'tags',
 	'target_version',
@@ -2813,12 +2671,6 @@ $g_reopen_bug_threshold = DEVELOPER;
  * @global integer $g_report_issues_for_unreleased_versions_threshold
  */
 $g_report_issues_for_unreleased_versions_threshold = DEVELOPER;
-
-/**
- * access level needed to set a bug sticky
- * @global integer $g_set_bug_sticky_threshold
- */
-$g_set_bug_sticky_threshold = MANAGER;
 
 /**
  * The minimum access level for someone to be a member of the development team
@@ -3221,12 +3073,6 @@ $g_severity_enum_string = '10:feature,20:trivial,30:text,40:tweak,50:minor,60:ma
 
 /**
  *
- * @global string $g_reproducibility_enum_string
- */
-$g_reproducibility_enum_string = '10:always,30:sometimes,50:random,70:have not tried,90:unable to duplicate,100:N/A';
-
-/**
- *
  * @global string $g_status_enum_string
  */
 $g_status_enum_string = '10:new,20:feedback,30:acknowledged,40:confirmed,50:assigned,80:resolved,90:closed';
@@ -3240,24 +3086,6 @@ $g_status_enum_string = '10:new,20:feedback,30:acknowledged,40:confirmed,50:assi
  * @global string $g_resolution_enum_string
  */
 $g_resolution_enum_string = '10:open,20:fixed,30:reopened,40:unable to duplicate,50:not fixable,60:duplicate,70:not a bug,80:suspended,90:wont fix';
-
-/**
- *
- * @global string $g_projection_enum_string
- */
-$g_projection_enum_string = '10:none,30:tweak,50:minor fix,70:major rework,90:redesign';
-
-/**
- *
- * @global string $g_eta_enum_string
- */
-$g_eta_enum_string = '10:none,20:< 1 day,30:2-3 days,40:< 1 week,50:< 1 month,60:> 1 month';
-
-/**
- *
- * @global string $g_sponsorship_enum_string
- */
-$g_sponsorship_enum_string = '0:Unpaid,1:Requested,2:Paid';
 
 /**
  *
@@ -4241,7 +4069,6 @@ $g_public_config_names = array(
 	'anonymous_account',
 	'antispam_max_event_count',
 	'antispam_time_window_in_seconds',
-	'assign_sponsored_bugs_threshold',
 	'auto_set_status_to_assigned',
 	'backward_year_count',
 	'bottom_include_page',
@@ -4292,16 +4119,11 @@ $g_public_config_names = array(
 	'custom_headers',
 	'date_partitions',
 	'datetime_picker_format',
-	'default_bug_additional_info',
-	'default_bug_eta',
 	'default_bug_priority',
-	'default_bug_projection',
 	'default_bug_relationship_clone',
 	'default_bug_relationship',
-	'default_bug_reproducibility',
 	'default_bug_resolution',
 	'default_bug_severity',
-	'default_bug_steps_to_reproduce',
 	'default_bug_view_status',
 	'default_bugnote_order',
 	'default_bugnote_view_status',
@@ -4360,13 +4182,9 @@ $g_public_config_names = array(
 	'email_separator1',
 	'email_separator2',
 	'enable_email_notification',
-	'enable_eta',
 	'enable_product_build',
 	'enable_profiles',
 	'enable_project_documentation',
-	'enable_projection',
-	'enable_sponsorship',
-	'eta_enum_string',
 	'excel_columns',
 	'fallback_language',
 	'favicon_image',
@@ -4380,7 +4198,6 @@ $g_public_config_names = array(
 	'from_email',
 	'from_name',
 	'handle_bug_threshold',
-	'handle_sponsored_bugs_threshold',
 	'hide_status_default',
 	'history_default_visible',
 	'history_order',
@@ -4419,7 +4236,6 @@ $g_public_config_names = array(
 	'mentions_tag',
 	'meta_include_file',
 	'min_refresh_delay',
-	'minimum_sponsorship_amount',
 	'monitor_add_others_bug_threshold',
 	'monitor_bug_threshold',
 	'monitor_delete_others_bug_threshold',
@@ -4453,7 +4269,6 @@ $g_public_config_names = array(
 	'project_status_enum_string',
 	'project_user_threshold',
 	'project_view_state_enum_string',
-	'projection_enum_string',
 	'reassign_on_feedback',
 	'reauthentication_expiry',
 	'reauthentication',
@@ -4470,7 +4285,6 @@ $g_public_config_names = array(
 	'report_bug_threshold',
 	'report_issues_for_unreleased_versions_threshold',
 	'reporter_summary_limit',
-	'reproducibility_enum_string',
 	'resolution_enum_string',
 	'resolution_multipliers',
 	'return_path_email',
@@ -4478,7 +4292,6 @@ $g_public_config_names = array(
 	'roadmap_view_threshold',
 	'rss_enabled',
 	'search_title',
-	'set_bug_sticky_threshold',
 	'set_configuration_threshold',
 	'set_status_threshold',
 	'set_view_status_threshold',
@@ -4501,7 +4314,6 @@ $g_public_config_names = array(
 	'show_queries_count',
 	'show_realname',
 	'show_roadmap_dates',
-	'show_sticky_issues',
 	'show_timer',
 	'show_user_email_threshold',
 	'show_user_realname_threshold',
@@ -4510,9 +4322,6 @@ $g_public_config_names = array(
 	'signup_use_captcha',
 	'sort_by_last_name',
 	'sort_icon_arr',
-	'sponsor_threshold',
-	'sponsorship_currency',
-	'sponsorship_enum_string',
 	'status_colors',
 	'status_enum_string',
 	'status_enum_workflow',
@@ -4566,17 +4375,13 @@ $g_public_config_names = array(
 	'view_history_threshold',
 	'view_issues_page_columns',
 	'view_proj_doc_threshold',
-	'view_sponsorship_details_threshold',
-	'view_sponsorship_total_threshold',
 	'view_state_enum_string',
 	'view_summary_threshold',
 	'unread_icon_arr',
 	'webmaster_email',
 	'webservice_admin_access_level_threshold',
 	'webservice_error_when_version_not_found',
-	'webservice_eta_enum_default_when_not_found',
 	'webservice_priority_enum_default_when_not_found',
-	'webservice_projection_enum_default_when_not_found',
 	'webservice_readonly_access_level_threshold',
 	'webservice_readwrite_access_level_threshold',
 	'webservice_resolution_enum_default_when_not_found',
@@ -4668,24 +4473,6 @@ $g_webservice_status_enum_default_when_not_found = 0;
  * @global integer $g_webservice_resolution_enum_default_when_not_found
  */
 $g_webservice_resolution_enum_default_when_not_found = 0;
-
-/**
- * The following enum id is used when the webservices get enum labels that are not
- * defined in the associated MantisBT installation.  In this case, the enum id is set
- * to the value specified by the corresponding configuration option.
- *
- * @global integer $g_webservice_projection_enum_default_when_not_found
- */
-$g_webservice_projection_enum_default_when_not_found = 0;
-
-/**
- * The following enum id is used when the webservices get enum labels that are not
- * defined in the associated MantisBT installation.  In this case, the enum id is set
- * to the value specified by the corresponding configuration option.
- *
- * @global integer $g_webservice_eta_enum_default_when_not_found
- */
-$g_webservice_eta_enum_default_when_not_found = 0;
 
 /**
  * If ON and the supplied version is not found, then a SoapException will be raised.

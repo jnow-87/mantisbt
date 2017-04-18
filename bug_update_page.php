@@ -117,8 +117,6 @@ $t_show_reporter = in_array( 'reporter', $t_fields );
 $t_show_handler = in_array( 'handler', $t_fields ) && access_has_bug_level( config_get( 'view_handler_threshold' ), $t_bug_id );
 $t_show_priority = in_array( 'priority', $t_fields );
 $t_show_severity = in_array( 'severity', $t_fields );
-$t_show_reproducibility = in_array( 'reproducibility', $t_fields );
-$t_show_eta = in_array( 'eta', $t_fields ) && config_get( 'enable_eta' ) == ON;
 $t_show_profiles = config_get( 'enable_profiles' ) == ON;
 $t_show_platform = $t_show_profiles && in_array( 'platform', $t_fields );
 $t_show_os = $t_show_profiles && in_array( 'os', $t_fields );
@@ -133,10 +131,6 @@ $t_show_due_date = in_array( 'due_date', $t_fields ) && access_has_bug_level( co
 $t_show_summary = in_array( 'summary', $t_fields );
 $t_summary_attribute = $t_show_summary ? string_attribute( $t_bug->summary ) : '';
 $t_description_textarea = string_textarea( $t_bug->description );
-$t_show_additional_information = in_array( 'additional_info', $t_fields );
-$t_additional_information_textarea = $t_show_additional_information ? string_textarea( $t_bug->additional_information ) : '';
-$t_show_steps_to_reproduce = in_array( 'steps_to_reproduce', $t_fields );
-$t_steps_to_reproduce_textarea = $t_show_steps_to_reproduce ? string_textarea( $t_bug->steps_to_reproduce ) : '';
 if( NO_USER == $t_bug->handler_id ) {
 	$t_handler_name =  '';
 } else {

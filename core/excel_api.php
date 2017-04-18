@@ -283,39 +283,12 @@ function excel_format_severity( BugData $p_bug ) {
 }
 
 /**
- * Gets the formatted reproducibility.
- * @param BugData $p_bug A bug object.
- * @return string the reproducibility text.
- */
-function excel_format_reproducibility( BugData $p_bug ) {
-	return excel_prepare_string( get_enum_element( 'reproducibility', $p_bug->reproducibility, auth_get_current_user_id(), $p_bug->project_id ) );
-}
-
-/**
  * Gets the formatted view state,
  * @param BugData $p_bug A bug object.
  * @return string The view state
  */
 function excel_format_view_state( BugData $p_bug ) {
 	return excel_prepare_string( get_enum_element( 'view_state', $p_bug->view_state, auth_get_current_user_id(), $p_bug->project_id ) );
-}
-
-/**
- * Gets the formatted projection.
- * @param BugData $p_bug A bug object.
- * @return string the projection text.
- */
-function excel_format_projection( BugData $p_bug ) {
-	return excel_prepare_string( get_enum_element( 'projection', $p_bug->projection, auth_get_current_user_id(), $p_bug->project_id ) );
-}
-
-/**
- * Gets the formatted eta.
- * @param BugData $p_bug A bug object.
- * @return string the eta text.
- */
-function excel_format_eta( BugData $p_bug ) {
-	return excel_prepare_string( get_enum_element( 'eta', $p_bug->eta, auth_get_current_user_id(), $p_bug->project_id ) );
 }
 
 /**
@@ -479,24 +452,6 @@ function excel_format_notes( BugData $p_bug ) {
 }
 
 /**
- * Gets the formatted 'steps to reproduce' field.
- * @param BugData $p_bug A bug object.
- * @return string The formatted steps to reproduce (multi-line).
- */
-function excel_format_steps_to_reproduce( BugData $p_bug ) {
-	return excel_prepare_string( $p_bug->steps_to_reproduce );
-}
-
-/**
- * Gets the formatted 'additional information' field.
- * @param BugData $p_bug A bug object.
- * @return string The formatted additional information (multi-line).
- */
-function excel_format_additional_information( BugData $p_bug ) {
-	return excel_prepare_string( $p_bug->additional_information );
-}
-
-/**
  * Gets the formatted value for the specified issue id, project and custom field.
  * @param integer $p_issue_id     The issue id.
  * @param integer $p_project_id   The project id.
@@ -555,16 +510,6 @@ function excel_format_due_date( BugData $p_bug ) {
 		$t_value = date( config_get( 'short_date_format' ), $p_bug->due_date );
 	}
 	return excel_prepare_string( $t_value );
-}
-
-/**
- * Gets the sponsorship total for an issue
- * @param BugData $p_bug A bug object.
- * @return string
- * @access public
- */
-function excel_format_sponsorship_total( BugData $p_bug ) {
-	return excel_prepare_string( $p_bug->sponsorship_total );
 }
 
 /**

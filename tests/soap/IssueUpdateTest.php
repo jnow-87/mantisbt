@@ -77,13 +77,6 @@ class IssueUpdateTest extends SoapBase {
 		$this->assertEquals( 10, $t_issue->status->id );
 		$this->assertEquals( 'new', $t_issue->status->name );
 		$this->assertEquals( $this->userName, $t_issue->reporter->name );
-		$this->assertEquals( 70, $t_issue->reproducibility->id );
-		$this->assertEquals( 'have not tried', $t_issue->reproducibility->name );
-		$this->assertEquals( 0, $t_issue->sponsorship_total );
-		$this->assertEquals( 10, $t_issue->projection->id );
-		$this->assertEquals( 'none', $t_issue->projection->name );
-		$this->assertEquals( 10, $t_issue->eta->id );
-		$this->assertEquals( 'none', $t_issue->eta->name );
 		$this->assertEquals( 10, $t_issue->resolution->id );
 		$this->assertEquals( 'open', $t_issue->resolution->name );
 	}
@@ -103,7 +96,6 @@ class IssueUpdateTest extends SoapBase {
 		$this->deleteAfterRun( $t_issue_id );
 
 		$t_issue_to_update = $this->getIssueToAdd( 'IssueUpdateTest.testUpdateSummaryBasedOnMandatoryFields' );
-		$t_issue_to_update['sticky'] = true;
 
 		$this->client->mc_issue_update( $this->userName, $this->password, $t_issue_id, $t_issue_to_update );
 
@@ -116,7 +108,6 @@ class IssueUpdateTest extends SoapBase {
 		$this->assertEquals( $t_issue_to_update['summary'], $t_issue->summary );
 		$this->assertEquals( $t_issue_to_update['description'], $t_issue->description );
 		$this->assertEquals( $t_issue_to_update['project']['id'], $t_issue->project->id );
-		$this->assertEquals( $t_issue_to_update['sticky'], $t_issue->sticky );
 
 		# defaulted fields
 		$this->assertEquals( $t_issue_id, $t_issue->id );
@@ -129,13 +120,6 @@ class IssueUpdateTest extends SoapBase {
 		$this->assertEquals( 10, $t_issue->status->id );
 		$this->assertEquals( 'new', $t_issue->status->name );
 		$this->assertEquals( $this->userName, $t_issue->reporter->name );
-		$this->assertEquals( 70, $t_issue->reproducibility->id );
-		$this->assertEquals( 'have not tried', $t_issue->reproducibility->name );
-		$this->assertEquals( 0, $t_issue->sponsorship_total );
-		$this->assertEquals( 10, $t_issue->projection->id );
-		$this->assertEquals( 'none', $t_issue->projection->name );
-		$this->assertEquals( 10, $t_issue->eta->id );
-		$this->assertEquals( 'none', $t_issue->eta->name );
 		$this->assertEquals( 10, $t_issue->resolution->id );
 		$this->assertEquals( 'open', $t_issue->resolution->name );
 	}

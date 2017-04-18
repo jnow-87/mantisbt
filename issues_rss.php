@@ -170,7 +170,6 @@ if( $f_username !== null ) {
 } else {
 	$t_user_id = user_get_id_by_name( config_get( 'anonymous_account' ) );
 }
-$t_show_sticky = null;
 
 if( $f_filter_id == 0 ) {
 	$t_custom_filter = filter_get_default();
@@ -186,7 +185,7 @@ if( $f_filter_id == 0 ) {
 }
 
 $t_issues = filter_get_bug_rows( $t_page_number, $t_issues_per_page, $t_page_count, $t_issues_count,
-								 $t_custom_filter, $t_project_id, $t_user_id, $t_show_sticky );
+								 $t_custom_filter, $t_project_id, $t_user_id );
 $t_issues_count = count( $t_issues );
 
 # Loop through results

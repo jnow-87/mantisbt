@@ -73,7 +73,6 @@ define( 'FILTER_PROPERTY_PROJECT_ID', 'project_id' );
 define( 'FILTER_PROPERTY_RESOLUTION', 'resolution' ); #show_resolution
 define( 'FILTER_PROPERTY_BUILD', 'build' ); #show_build
 define( 'FILTER_PROPERTY_VERSION', 'version' ); #show_version
-define( 'FILTER_PROPERTY_STICKY', 'sticky' );
 define( 'FILTER_PROPERTY_VIEW_STATE', 'view_state' ); # view_state
 define( 'FILTER_PROPERTY_FIXED_IN_VERSION', 'fixed_in_version' );
 define( 'FILTER_PROPERTY_TARGET_VERSION', 'target_version' );

@@ -132,10 +132,7 @@ foreach( $t_result as $t_row ) {
 
 				break;
 
-			case 'eta':
 			case 'priority':
-			case 'projection':
-			case 'reproducibility':
 			case 'resolution':
 			case 'severity':
 			case 'status':

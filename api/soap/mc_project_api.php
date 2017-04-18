@@ -61,7 +61,6 @@ function mc_project_get_issues_for_user( $p_username, $p_password, $p_project_id
 	$t_page_count = 0;
 	$t_bug_count = 0;
 	$t_target_user_id = mci_get_user_id( $p_target_user );
-	$t_show_sticky = true;
 
 	if( strcasecmp( $p_filter_type, 'assigned' ) == 0 ) {
 		$t_filter = filter_create_assigned_to_unresolved( $p_project_id, $t_target_user_id );
@@ -78,7 +77,7 @@ function mc_project_get_issues_for_user( $p_username, $p_password, $p_project_id
 		return ApiObjectFactory::faultBadRequest( 'Unknown filter type \'' . $p_filter_type . '\'.' );
 	}
 
-	$t_rows = filter_get_bug_rows( $p_page_number, $p_per_page, $t_page_count, $t_bug_count, $t_filter, $p_project_id, $t_target_user_id, $t_show_sticky );
+	$t_rows = filter_get_bug_rows( $p_page_number, $p_per_page, $t_page_count, $t_bug_count, $t_filter, $p_project_id, $t_target_user_id );
 
 	$t_result = array();
 

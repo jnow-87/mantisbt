@@ -48,7 +48,6 @@ $g_soap_api_to_filter_names = array(
 	'hide_status_id' => FILTER_PROPERTY_HIDE_STATUS,
 	'sort' => FILTER_PROPERTY_SORT_FIELD_NAME,
 	'sort_direction' => FILTER_PROPERTY_SORT_DIRECTION,
-	'sticky' => FILTER_PROPERTY_STICKY,
 	'view_state' => FILTER_PROPERTY_VIEW_STATE,
 	'fixed_in_version' => FILTER_PROPERTY_FIXED_IN_VERSION,
 	'target_version' => FILTER_PROPERTY_TARGET_VERSION,

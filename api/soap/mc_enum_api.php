@@ -69,51 +69,6 @@ function mc_enum_severities( $p_username, $p_password ) {
 }
 
 /**
- * Get all available reproducibility's.
- *
- * @param string $p_username The name of the user trying to access the enumeration.
- * @param string $p_password The password of the user.
- * @return array  The requested enumeration
- */
-function mc_enum_reproducibilities( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
-		return mci_fault_login_failed();
-	}
-
-	return mci_explode_to_objectref( 'reproducibility' );
-}
-
-/**
- * Get all available projections.
- *
- * @param string $p_username The name of the user trying to access the enumeration.
- * @param string $p_password The password of the user.
- * @return array  The requested enumeration
- */
-function mc_enum_projections( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
-		return mci_fault_login_failed();
-	}
-
-	return mci_explode_to_objectref( 'projection' );
-}
-
-/**
- * Get all available etas.
- *
- * @param string $p_username The name of the user trying to access the enumeration.
- * @param string $p_password The password of the user.
- * @return array  The requested enumeration
- */
-function mc_enum_etas( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
-		return mci_fault_login_failed();
-	}
-
-	return mci_explode_to_objectref( 'eta' );
-}
-
-/**
  * Get all available resolutions.
  *
  * @param string $p_username The name of the user trying to access the enumeration.
@@ -273,7 +228,7 @@ function mci_validate_enum_access( $p_username, $p_password ) {
  * Get a localized enumeration element.
  *
  * @param integer $p_enum_id   The id of the enumeration element to retrieve.
- * @param string  $p_enum_type The type of the enumeration element (e.g. 'status', 'reproducibility' etc.).
+ * @param string  $p_enum_type The type of the enumeration element (e.g. 'status' etc.).
  * @param string  $p_lang      The language for the name field.
  * @return array an array containing the id and the name of the enumeration element.
  */

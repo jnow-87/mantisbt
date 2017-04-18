@@ -41,8 +41,6 @@ class MentionTest extends SoapBase {
 		$t_issue_to_add = $this->getIssueToAdd( 'MentionTest.testCreateIssue' );
 		$t_issue_to_add['summary'] .= ' @administrator';
 		$t_issue_to_add['description'] .= ' @administrator';
-		$t_issue_to_add['additional_information'] = 'additional info @administrator';
-		$t_issue_to_add['steps_to_reproduce'] = 'steps to reproduce @administrator';
 
 		$t_issue_id = $this->client->mc_issue_add( $this->userName, $this->password, $t_issue_to_add );
 
@@ -53,8 +51,6 @@ class MentionTest extends SoapBase {
 		# explicitly specified fields
 		$this->assertEquals( $t_issue_to_add['summary'], $t_issue->summary );
 		$this->assertEquals( $t_issue_to_add['description'], $t_issue->description );
-		$this->assertEquals( $t_issue_to_add['additional_information'], $t_issue->additional_information );
-		$this->assertEquals( $t_issue_to_add['steps_to_reproduce'], $t_issue->steps_to_reproduce );
 	}
 
 	/**

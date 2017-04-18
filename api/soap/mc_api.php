@@ -586,39 +586,12 @@ function mci_get_priority_id( $p_priority ) {
 }
 
 /**
- * Return Reproducibility
- * @param object $p_reproducibility Reproducibility.
- * @return integer reproducibility id
- */
-function mci_get_reproducibility_id( $p_reproducibility ) {
-	return mci_get_enum_id_from_objectref( 'reproducibility', $p_reproducibility );
-}
-
-/**
  * Return Resolution
  * @param object $p_resolution Resolution object.
  * @return integer Resolution id
  */
 function mci_get_resolution_id( $p_resolution ) {
 	return mci_get_enum_id_from_objectref( 'resolution', $p_resolution );
-}
-
-/**
- * Return projection
- * @param object $p_projection Projection object.
- * @return integer projection id
- */
-function mci_get_projection_id( $p_projection ) {
-	return mci_get_enum_id_from_objectref( 'projection', $p_projection );
-}
-
-/**
- * Return ETA id
- * @param object $p_eta ETA object.
- * @return integer eta id
- */
-function mci_get_eta_id( $p_eta ) {
-	return mci_get_enum_id_from_objectref( 'eta', $p_eta );
 }
 
 /**

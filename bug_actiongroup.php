@@ -305,17 +305,6 @@ foreach( $f_bug_arr as $t_bug_id ) {
 				$t_failed_ids[$t_bug_id] = lang_get( 'bug_actiongroup_access' );
 			}
 			break;
-		case 'SET_STICKY':
-			if( access_has_bug_level( config_get( 'set_bug_sticky_threshold' ), $t_bug_id ) ) {
-				$f_sticky = bug_get_field( $t_bug_id, 'sticky' );
-				# The new value is the inverted old value
-				# @todo we need to issue a helper_call_custom_function( 'issue_update_validate', array( $t_bug_id, $t_bug_data, $f_bugnote_text ) );
-				bug_set_field( $t_bug_id, 'sticky', intval( !$f_sticky ) );
-				helper_call_custom_function( 'issue_update_notify', array( $t_bug_id ) );
-			} else {
-				$t_failed_ids[$t_bug_id] = lang_get( 'bug_actiongroup_access' );
-			}
-			break;
 		case 'CUSTOM':
 			if( 0 === $f_custom_field_id ) {
 				trigger_error( ERROR_GENERIC, ERROR );

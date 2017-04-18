@@ -105,29 +105,6 @@ define( 'MAJOR', 60 );
 define( 'CRASH', 70 );
 define( 'BLOCK', 80 );
 
-# reproducibility
-define( 'REPRODUCIBILITY_ALWAYS', 10 );
-define( 'REPRODUCIBILITY_SOMETIMES', 30 );
-define( 'REPRODUCIBILITY_RANDOM', 50 );
-define( 'REPRODUCIBILITY_HAVENOTTRIED', 70 );
-define( 'REPRODUCIBILITY_UNABLETODUPLICATE', 90 );
-define( 'REPRODUCIBILITY_NOTAPPLICABLE', 100 );
-
-# projection
-define( 'PROJECTION_NONE', 10 );
-define( 'PROJECTION_TWEAK', 30 );
-define( 'PROJECTION_MINOR_FIX', 50 );
-define( 'PROJECTION_MAJOR_REWORK', 70 );
-define( 'PROJECTION_REDESIGN', 90 );
-
-# ETA
-define( 'ETA_NONE', 10 );
-define( 'ETA_UNDER_ONE_DAY', 20 );
-define( 'ETA_TWO_TO_THREE_DAYS', 30 );
-define( 'ETA_UNDER_ONE_WEEK', 40 );
-define( 'ETA_UNDER_ONE_MONTH', 50 );
-define( 'ETA_OVER_ONE_MONTH', 60 );
-
 # project view_state
 define( 'VS_PUBLIC', 10 );
 define( 'VS_PRIVATE', 50 );
@@ -188,15 +165,11 @@ define( 'BUGNOTE_STATE_CHANGED', 11 );
 define( 'BUG_MONITOR', 12 );
 define( 'BUG_UNMONITOR', 13 );
 define( 'BUG_DELETED', 14 );
-define( 'BUG_ADD_SPONSORSHIP', 15 );
-define( 'BUG_UPDATE_SPONSORSHIP', 16 );
-define( 'BUG_DELETE_SPONSORSHIP', 17 );
 define( 'BUG_ADD_RELATIONSHIP', 18 );
 define( 'BUG_DEL_RELATIONSHIP', 19 );
 define( 'BUG_CLONED_TO', 20 );
 define( 'BUG_CREATED_FROM', 21 );
 define( 'BUG_REPLACE_RELATIONSHIP', 23 );
-define( 'BUG_PAID_SPONSORSHIP', 24 );
 define( 'TAG_ATTACHED', 25 );
 define( 'TAG_DETACHED', 26 );
 define( 'TAG_RENAMED', 27 );
@@ -358,14 +331,6 @@ define( 'ERROR_CATEGORY_CANNOT_DELETE_HAS_ISSUES', 1505 );
 # ERROR_VERSION_*
 define( 'ERROR_VERSION_DUPLICATE', 1600 );
 define( 'ERROR_VERSION_NOT_FOUND', 1601 );
-
-# ERROR_SPONSORSHIP_*
-define( 'ERROR_SPONSORSHIP_NOT_ENABLED', 1700 );
-define( 'ERROR_SPONSORSHIP_NOT_FOUND', 1701 );
-define( 'ERROR_SPONSORSHIP_AMOUNT_TOO_LOW', 1702 );
-define( 'ERROR_SPONSORSHIP_HANDLER_ACCESS_LEVEL_TOO_LOW', 1703 );
-define( 'ERROR_SPONSORSHIP_ASSIGNER_ACCESS_LEVEL_TOO_LOW', 1704 );
-define( 'ERROR_SPONSORSHIP_SPONSOR_NO_EMAIL', 1705 );
 
 # ERROR RELATIONSHIP
 define( 'ERROR_RELATIONSHIP_ALREADY_EXISTS', 1800 );  # TODO: remove once no longer used in lang files
@@ -556,11 +521,6 @@ define( 'COLUMNS_TARGET_VIEW_PAGE', 1 );
 define( 'COLUMNS_TARGET_PRINT_PAGE', 2 );
 define( 'COLUMNS_TARGET_CSV_PAGE', 3 );
 define( 'COLUMNS_TARGET_EXCEL_PAGE', 4 );
-
-# sponsorship "paid" values
-define( 'SPONSORSHIP_UNPAID', 0 );
-define( 'SPONSORSHIP_REQUESTED', 1 );
-define( 'SPONSORSHIP_PAID', 2 );
 
 # Plugin events
 define( 'EVENT_TYPE_DEFAULT', 0 );

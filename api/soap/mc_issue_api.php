@@ -119,19 +119,7 @@ function mc_issue_get( $p_username, $p_password, $p_issue_id ) {
 	$t_issue_data['platform'] = mci_null_if_empty( $t_bug->platform );
 	$t_issue_data['os'] = mci_null_if_empty( $t_bug->os );
 	$t_issue_data['os_build'] = mci_null_if_empty( $t_bug->os_build );
-	$t_issue_data['reproducibility'] = mci_enum_get_array_by_id( $t_bug->reproducibility, 'reproducibility', $t_lang );
 	$t_issue_data['date_submitted'] = ApiObjectFactory::datetime( $t_bug->date_submitted );
-
-	if( ApiObjectFactory::$soap ) {
-		$t_issue_data['sticky'] = (int)$t_bug->sticky;
-	} else {
-		$t_issue_data['sticky'] = (int)$t_bug->sticky != 1;
-	}
-
-	# Don't show sponsorship data in REST API
-	if( ApiObjectFactory::$soap ) {
-		$t_issue_data['sponsorship_total'] = (int)$t_bug->sponsorship_total;
-	}
 
 	if( !empty( $t_bug->handler_id ) ) {
 		if( access_has_bug_level( config_get( 'view_handler_threshold', null, null, $t_project_id ), $p_issue_id, $t_user_id ) ) {
@@ -139,17 +127,12 @@ function mc_issue_get( $p_username, $p_password, $p_issue_id ) {
 		}
 	}
 
-	$t_issue_data['projection'] = mci_enum_get_array_by_id( $t_bug->projection, 'projection', $t_lang );
-	$t_issue_data['eta'] = mci_enum_get_array_by_id( $t_bug->eta, 'eta', $t_lang );
-
 	$t_issue_data['resolution'] = mci_enum_get_array_by_id( $t_bug->resolution, 'resolution', $t_lang );
 	$t_issue_data['fixed_in_version'] = mci_null_if_empty( $t_bug->fixed_in_version );
 	$t_issue_data['target_version'] = mci_null_if_empty( $t_bug->target_version );
 	$t_issue_data['due_date'] = mci_issue_get_due_date( $t_bug );
 
 	$t_issue_data['description'] = mci_sanitize_xml_string( $t_bug->description );
-	$t_issue_data['steps_to_reproduce'] = mci_null_if_empty( mci_sanitize_xml_string( $t_bug->steps_to_reproduce ) );
-	$t_issue_data['additional_information'] = mci_null_if_empty( mci_sanitize_xml_string( $t_bug->additional_information ) );
 
 	$t_issue_data['attachments'] = mci_issue_get_attachments( $p_issue_id );
 	$t_issue_data['relationships'] = mci_issue_get_relationships( $p_issue_id, $t_user_id );
@@ -730,10 +713,7 @@ function mc_issue_add( $p_username, $p_password, $p_issue ) {
 	$t_priority_id = isset( $p_issue['priority'] ) ? mci_get_priority_id( $p_issue['priority'] ) : config_get( 'default_bug_priority' );
 	$t_severity_id = isset( $p_issue['severity'] ) ?  mci_get_severity_id( $p_issue['severity'] ) : config_get( 'default_bug_severity' );
 	$t_status_id = isset( $p_issue['status'] ) ? mci_get_status_id( $p_issue['status'] ) : config_get( 'bug_submit_status' );
-	$t_reproducibility_id = isset( $p_issue['reproducibility'] ) ?  mci_get_reproducibility_id( $p_issue['reproducibility'] ) : config_get( 'default_bug_reproducibility' );
 	$t_resolution_id =  isset( $p_issue['resolution'] ) ? mci_get_resolution_id( $p_issue['resolution'] ) : config_get( 'default_bug_resolution' );
-	$t_projection_id = isset( $p_issue['projection'] ) ? mci_get_projection_id( $p_issue['projection'] ) : config_get( 'default_bug_resolution' );
-	$t_eta_id = isset( $p_issue['eta'] ) ? mci_get_eta_id( $p_issue['eta'] ) : config_get( 'default_bug_eta' );
 	$t_view_state_id = isset( $p_issue['view_state'] ) ?  mci_get_view_state_id( $p_issue['view_state'] ) : config_get( 'default_bug_view_status' );
 	$t_summary = $p_issue['summary'];
 	$t_description = $p_issue['description'];
@@ -812,14 +792,11 @@ function mc_issue_add( $p_username, $p_password, $p_issue ) {
 	$t_bug_data->handler_id = $t_handler_id;
 	$t_bug_data->priority = $t_priority_id;
 	$t_bug_data->severity = $t_severity_id;
-	$t_bug_data->reproducibility = $t_reproducibility_id;
 	$t_bug_data->status = $t_status_id;
 	$t_bug_data->resolution = $t_resolution_id;
-	$t_bug_data->projection = $t_projection_id;
 	$t_bug_data->category_id = $t_category_id;
 	$t_bug_data->date_submitted = isset( $p_issue['date_submitted'] ) ? strtotime( $p_issue['date_submitted'] ) : '';
 	$t_bug_data->last_updated = isset( $p_issue['last_updated'] ) ? strtotime( $p_issue['last_updated'] ) : '';
-	$t_bug_data->eta = $t_eta_id;
 	$t_bug_data->profile_id = isset( $p_issue['profile_id'] ) ? $p_issue['profile_id'] : 0;
 	$t_bug_data->os = isset( $p_issue['os'] ) ? $p_issue['os'] : '';
 	$t_bug_data->os_build = isset( $p_issue['os_build'] ) ? $p_issue['os_build'] : '';
@@ -829,11 +806,6 @@ function mc_issue_add( $p_username, $p_password, $p_issue ) {
 	$t_bug_data->build = isset( $p_issue['build'] ) ? $p_issue['build'] : '';
 	$t_bug_data->view_state = $t_view_state_id;
 	$t_bug_data->summary = $t_summary;
-	$t_bug_data->sponsorship_total = isset( $p_issue['sponsorship_total'] ) ? $p_issue['sponsorship_total'] : 0;
-	if( isset( $p_issue['sticky'] ) &&
-		 access_has_project_level( config_get( 'set_bug_sticky_threshold', null, null, $t_project_id ), $t_project_id ) ) {
-		$t_bug_data->sticky = $p_issue['sticky'];
-	}
 
 	if( isset( $p_issue['due_date'] ) && access_has_global_level( config_get( 'due_date_update_threshold' ) ) ) {
 		$t_bug_data->due_date = strtotime( $p_issue['due_date'] );
@@ -850,8 +822,6 @@ function mc_issue_add( $p_username, $p_password, $p_issue ) {
 	# $t_bug_data->profile_id;
 	# extended info
 	$t_bug_data->description = $t_description;
-	$t_bug_data->steps_to_reproduce = isset( $p_issue['steps_to_reproduce'] ) ? $p_issue['steps_to_reproduce'] : '';
-	$t_bug_data->additional_information = isset( $p_issue['additional_information'] ) ? $p_issue['additional_information'] : '';
 
 	# submit the issue
 	$t_issue_id = $t_bug_data->create();
@@ -1020,12 +990,6 @@ function mc_issue_update( $p_username, $p_password, $p_issue_id, stdClass $p_iss
 	$t_bug_data->description = $t_description;
 
 	# fields which might not be set
-	if( isset( $p_issue['steps_to_reproduce'] ) ) {
-		$t_bug_data->steps_to_reproduce = $p_issue['steps_to_reproduce'];
-	}
-	if( isset( $p_issue['additional_information'] ) ) {
-		$t_bug_data->additional_information = $p_issue['additional_information'];
-	}
 	if( isset( $p_issue['priority'] ) ) {
 		$t_bug_data->priority = mci_get_priority_id( $p_issue['priority'] );
 	}
@@ -1035,17 +999,8 @@ function mc_issue_update( $p_username, $p_password, $p_issue_id, stdClass $p_iss
 	if( isset( $p_issue['status'] ) ) {
 		$t_bug_data->status = mci_get_status_id( $p_issue['status'] );
 	}
-	if( isset( $p_issue['reproducibility'] ) ) {
-		$t_bug_data->reproducibility = mci_get_reproducibility_id( $p_issue['reproducibility'] );
-	}
 	if( isset( $p_issue['resolution'] ) ) {
 		$t_bug_data->resolution = mci_get_resolution_id( $p_issue['resolution'] );
-	}
-	if( isset( $p_issue['projection'] ) ) {
-		$t_bug_data->projection = mci_get_projection_id( $p_issue['projection'] );
-	}
-	if( isset( $p_issue['eta'] ) ) {
-		$t_bug_data->eta = mci_get_eta_id( $p_issue['eta'] );
 	}
 	if( isset( $p_issue['view_state'] ) ) {
 		$t_bug_data->view_state = mci_get_view_state_id( $p_issue['view_state'] );
@@ -1076,9 +1031,6 @@ function mc_issue_update( $p_username, $p_password, $p_issue_id, stdClass $p_iss
 	}
 	if( isset( $p_issue['fixed_in_version'] ) ) {
 		$t_bug_data->fixed_in_version = $p_issue['fixed_in_version'];
-	}
-	if( isset( $p_issue['sticky'] ) && access_has_bug_level( config_get( 'set_bug_sticky_threshold' ), $t_bug_data->id ) ) {
-		$t_bug_data->sticky = $p_issue['sticky'];
 	}
 
 	if( isset( $p_issue['due_date'] ) && access_has_global_level( config_get( 'due_date_update_threshold' ) ) ) {
@@ -1598,29 +1550,17 @@ function mci_issue_data_as_array( BugData $p_issue_data, $p_user_id, $p_lang ) {
 		$t_issue['platform'] = mci_null_if_empty( $p_issue_data->platform );
 		$t_issue['os'] = mci_null_if_empty( $p_issue_data->os );
 		$t_issue['os_build'] = mci_null_if_empty( $p_issue_data->os_build );
-		$t_issue['reproducibility'] = mci_enum_get_array_by_id( $p_issue_data->reproducibility, 'reproducibility', $p_lang );
 		$t_issue['date_submitted'] = ApiObjectFactory::datetime( $p_issue_data->date_submitted );
-		$t_issue['sticky'] = $p_issue_data->sticky;
-
-		$t_issue['sponsorship_total'] = $p_issue_data->sponsorship_total;
 
 		if( !empty( $p_issue_data->handler_id ) ) {
 			$t_issue['handler'] = mci_account_get_array_by_id( $p_issue_data->handler_id );
 		}
-		$t_issue['projection'] = mci_enum_get_array_by_id( $p_issue_data->projection, 'projection', $p_lang );
-		$t_issue['eta'] = mci_enum_get_array_by_id( $p_issue_data->eta, 'eta', $p_lang );
 
 		$t_issue['resolution'] = mci_enum_get_array_by_id( $p_issue_data->resolution, 'resolution', $p_lang );
 		$t_issue['fixed_in_version'] = mci_null_if_empty( $p_issue_data->fixed_in_version );
 		$t_issue['target_version'] = mci_null_if_empty( $p_issue_data->target_version );
 
 		$t_issue['description'] = mci_sanitize_xml_string( bug_get_text_field( $t_id, 'description' ) );
-
-		$t_steps_to_reproduce = bug_get_text_field( $t_id, 'steps_to_reproduce' );
-		$t_issue['steps_to_reproduce'] = mci_null_if_empty( mci_sanitize_xml_string( $t_steps_to_reproduce ) );
-
-		$t_additional_information = bug_get_text_field( $t_id, 'additional_information' );
-		$t_issue['additional_information'] = mci_null_if_empty( mci_sanitize_xml_string( $t_additional_information ) );
 
 		$t_issue['due_date'] = ApiObjectFactory::datetime( $p_issue_data->due_date );
 

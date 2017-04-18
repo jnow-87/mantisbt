@@ -140,11 +140,6 @@ switch( $f_action ) {
 		$t_question_title		= lang_get( 'delete_bugs_conf_msg' );
 		$t_button_title 		= lang_get( 'delete_group_bugs_button' );
 		break;
-	case 'SET_STICKY' :
-		$t_finished 			= true;
-		$t_question_title		= lang_get( 'set_sticky_bugs_conf_msg' );
-		$t_button_title 		= lang_get( 'set_sticky_group_bugs_button' );
-		break;
 	# ...else we define the variables used in the form
 	case 'MOVE' :
 		$t_question_title 		= lang_get( 'move_bugs_conf_msg' );

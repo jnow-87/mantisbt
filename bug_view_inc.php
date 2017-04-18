@@ -190,10 +190,8 @@ if( $t_show_due_date ) {
 
 $t_show_reporter = in_array( 'reporter', $t_fields );
 $t_show_handler = in_array( 'handler', $t_fields ) && access_has_bug_level( config_get( 'view_handler_threshold' ), $f_bug_id );
-$t_show_steps_to_reproduce = !is_blank( $t_bug->steps_to_reproduce ) && in_array( 'steps_to_reproduce', $t_fields );
 $t_show_monitor_box = !$t_force_readonly;
 $t_show_relationships_box = !$t_force_readonly;
-$t_show_sponsorships_box = config_get( 'enable_sponsorship' ) && access_has_bug_level( config_get( 'view_sponsorship_total_threshold' ), $f_bug_id );
 $t_show_history = $f_history;
 $t_show_profiles = config_get( 'enable_profiles' );
 $t_show_platform = $t_show_profiles && in_array( 'platform', $t_fields );
@@ -202,17 +200,11 @@ $t_show_os = $t_show_profiles && in_array( 'os', $t_fields );
 $t_os = $t_show_os ? string_display_line( $t_bug->os ) : '';
 $t_show_os_version = $t_show_profiles && in_array( 'os_version', $t_fields );
 $t_os_version = $t_show_os_version ? string_display_line( $t_bug->os_build ) : '';
-$t_show_projection = in_array( 'projection', $t_fields );
-$t_projection = $t_show_projection ? string_display_line( get_enum_element( 'projection', $t_bug->projection ) ) : '';
-$t_show_eta = in_array( 'eta', $t_fields );
-$t_eta = $t_show_eta ? string_display_line( get_enum_element( 'eta', $t_bug->eta ) ) : '';
 $t_can_attach_tag = $t_show_tags && !$t_force_readonly && access_has_bug_level( config_get( 'tag_attach_threshold' ), $f_bug_id );
 $t_show_priority = in_array( 'priority', $t_fields );
 $t_priority = $t_show_priority ? string_display_line( get_enum_element( 'priority', $t_bug->priority ) ) : '';
 $t_show_severity = in_array( 'severity', $t_fields );
 $t_severity = $t_show_severity ? string_display_line( get_enum_element( 'severity', $t_bug->severity ) ) : '';
-$t_show_reproducibility = in_array( 'reproducibility', $t_fields );
-$t_reproducibility = $t_show_reproducibility ? string_display_line( get_enum_element( 'reproducibility', $t_bug->reproducibility ) ): '';
 $t_show_status = in_array( 'status', $t_fields );
 $t_status = $t_show_status ? string_display_line( get_enum_element( 'status', $t_bug->status ) ) : '';
 $t_show_resolution = in_array( 'resolution', $t_fields );
@@ -220,7 +212,6 @@ $t_resolution = $t_show_resolution ? string_display_line( get_enum_element( 'res
 $t_show_description = in_array( 'description', $t_fields );
 
 $t_description = $t_show_description ? string_display_links( $t_bug->description ) : '';
-$t_steps_to_reproduce = $t_show_steps_to_reproduce ? string_display_links( $t_bug->steps_to_reproduce ) : '';
 
 $t_links = event_signal( 'EVENT_MENU_ISSUE', $f_bug_id );
 
@@ -614,14 +605,6 @@ if( config_get( 'time_tracking_enabled' ) &&
 	include( $t_mantis_dir . 'bugnote_stats_inc.php' );
 }
 
-
-####
-## user list sponsoring the bug
-####
-if( $t_show_sponsorships_box ) {
-	define( 'BUG_SPONSORSHIP_LIST_VIEW_INC_ALLOW', true );
-	include( $t_mantis_dir . 'bug_sponsorship_list_view_inc.php' );
-}
 
 
 layout_page_end();

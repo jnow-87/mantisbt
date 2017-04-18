@@ -175,17 +175,6 @@ echo get_capability_row( lang_get( 'manage_custom_field_link' ), config_get( 'ma
 echo get_capability_row( lang_get( 'link_custom_fields_to_projects' ), config_get( 'custom_field_link_threshold' ) );
 echo get_section_end();
 
-# Sponsorships
-if( config_get( 'enable_sponsorship' ) == ON ) {
-	echo get_section_begin_apr( lang_get( 'sponsorships' ) );
-	echo get_capability_row( lang_get( 'view_sponsorship_details' ), config_get( 'view_sponsorship_details_threshold' ) );
-	echo get_capability_row( lang_get( 'view_sponsorship_total' ), config_get( 'view_sponsorship_total_threshold' ) );
-	echo get_capability_row( lang_get( 'sponsor_issue' ), config_get( 'sponsor_threshold' ) );
-	echo get_capability_row( lang_get( 'assign_sponsored_issue' ), config_get( 'assign_sponsored_bugs_threshold' ) );
-	echo get_capability_row( lang_get( 'handle_sponsored_issue' ), config_get( 'handle_sponsored_bugs_threshold' ) );
-	echo get_section_end();
-}
-
 # Others
 echo get_section_begin_apr( lang_get( 'others' ) );
 echo get_capability_row( lang_get( 'view' ) . ' ' . lang_get( 'summary_link' ), config_get( 'view_summary_threshold' ) );

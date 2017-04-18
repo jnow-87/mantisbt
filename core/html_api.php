@@ -735,10 +735,6 @@ function print_account_menu( $p_page = '' ) {
 		$t_pages['account_prof_menu_page.php'] = array( 'url'=>'account_prof_menu_page.php', 'label'=>'manage_profiles_link' );
 	}
 
-	if( config_get( 'enable_sponsorship' ) == ON && access_has_project_level( config_get( 'view_sponsorship_total_threshold' ) ) && !current_user_is_anonymous() ) {
-		$t_pages['account_sponsor_page.php'] = array( 'url'=>'account_sponsor_page.php', 'label'=>'my_sponsorship' );
-	}
-
 	$t_pages['api_tokens_page.php'] = array( 'url' => 'api_tokens_page.php', 'label' => 'api_tokens_link' );
 
 	# Plugin / Event added options
@@ -1186,28 +1182,6 @@ function html_button_bug_unmonitor( $p_bug_id ) {
 }
 
 /**
- * Print a button to stick the given bug
- * @param integer $p_bug_id A valid bug identifier.
- * @return void
- */
-function html_button_bug_stick( $p_bug_id ) {
-	if( access_has_bug_level( config_get( 'set_bug_sticky_threshold' ), $p_bug_id ) ) {
-		html_button( 'bug_stick.php', lang_get( 'stick_bug_button' ), array( 'bug_id' => $p_bug_id, 'action' => 'stick' ) );
-	}
-}
-
-/**
- * Print a button to unstick the given bug
- * @param integer $p_bug_id A valid bug identifier.
- * @return void
- */
-function html_button_bug_unstick( $p_bug_id ) {
-	if( access_has_bug_level( config_get( 'set_bug_sticky_threshold' ), $p_bug_id ) ) {
-		html_button( 'bug_stick.php', lang_get( 'unstick_bug_button' ), array( 'bug_id' => $p_bug_id, 'action' => 'unstick' ) );
-	}
-}
-
-/**
  * Print a button to delete the given bug
  * @param integer $p_bug_id A valid bug identifier.
  * @return void
@@ -1238,7 +1212,6 @@ function html_button_wiki( $p_bug_id ) {
  */
 function html_buttons_view_bug_page( $p_bug_id ) {
 	$t_readonly = bug_is_readonly( $p_bug_id );
-	$t_sticky = config_get( 'set_bug_sticky_threshold' );
 
 	$t_bug = bug_get( $p_bug_id );
 
@@ -1263,19 +1236,6 @@ function html_buttons_view_bug_page( $p_bug_id ) {
 				html_button_bug_unmonitor( $p_bug_id );
 			} else {
 				html_button_bug_monitor( $p_bug_id );
-			}
-			echo '</div>';
-		}
-	}
-
-	# STICK/UNSTICK button
-	if(config_get('view_issue_button_stick')){
-		if( access_has_bug_level( $t_sticky, $p_bug_id ) ) {
-			echo '<div class="pull-left padding-right-2">';
-			if( !bug_get_field( $p_bug_id, 'sticky' ) ) {
-				html_button_bug_stick( $p_bug_id );
-			} else {
-				html_button_bug_unstick( $p_bug_id );
 			}
 			echo '</div>';
 		}

@@ -124,7 +124,6 @@ $t_lang_bug_view_title = lang_get( 'bug_view_title' );
 $t_lang_id = lang_get( 'id' );
 $t_lang_category = lang_get( 'category' );
 $t_lang_severity = lang_get( 'severity' );
-$t_lang_reproducibility = lang_get( 'reproducibility' );
 $t_lang_date_submitted = lang_get( 'date_submitted' );
 $t_lang_last_update = lang_get( 'last_update' );
 $t_lang_reporter = lang_get( 'reporter' );
@@ -137,16 +136,12 @@ $t_lang_fixed_in_version = lang_get( 'fixed_in_version' );
 $t_lang_resolution = lang_get( 'resolution' );
 $t_lang_priority = lang_get( 'priority' );
 $t_lang_product_build = lang_get( 'product_build' );
-$t_lang_eta = lang_get( 'eta' );
 $t_lang_status = lang_get( 'status' );
 $t_lang_product_version = lang_get( 'product_version' );
 $t_lang_no_bugnotes_msg = lang_get( 'no_bugnotes_msg' );
-$t_lang_projection = lang_get( 'projection' );
 $t_lang_target_version = lang_get( 'target_version' );
 $t_lang_summary = lang_get( 'summary' );
 $t_lang_description = lang_get( 'description' );
-$t_lang_steps_to_reproduce = lang_get( 'steps_to_reproduce' );
-$t_lang_additional_information = lang_get( 'additional_information' );
 $t_lang_bug_notes_title = lang_get( 'bug_notes_title' );
 $t_lang_system_profile = lang_get( 'system_profile' );
 $t_lang_attached_files = lang_get( 'attached_files' );
@@ -204,13 +199,12 @@ for( $j=0; $j < $t_row_count; $j++ ) {
 		<?php echo sprintf( lang_get( 'label' ), $t_lang_severity ) ?>
 	</td>
 	<td width="16%">
-		<?php echo sprintf( lang_get( 'label' ), $t_lang_reproducibility ) ?>
-	</td>
-	<td width="16%">
 		<?php echo sprintf( lang_get( 'label' ), $t_lang_date_submitted ) ?>
 	</td>
 	<td width="16%">
 		<?php echo sprintf( lang_get( 'label' ), $t_lang_last_update ) ?>
+	</td>
+	<td width="16%">
 	</td>
 </tr>
 <tr>
@@ -224,13 +218,12 @@ for( $j=0; $j < $t_row_count; $j++ ) {
 		<?php echo get_enum_element( 'severity', $t_bug->severity, auth_get_current_user_id(), $t_bug->project_id ) ?>
 	</td>
 	<td>
-		<?php echo get_enum_element( 'reproducibility', $t_bug->reproducibility, auth_get_current_user_id(), $t_bug->project_id ) ?>
-	</td>
-	<td>
 		<?php echo date( $t_date_format, $t_bug->date_submitted ) ?>
 	</td>
 	<td>
 		<?php echo date( $t_date_format, $t_bug->last_updated ) ?>
+	</td>
+	<td>
 	</td>
 </tr>
 <tr class="spacer" >
@@ -336,25 +329,8 @@ for( $j=0; $j < $t_row_count; $j++ ) {
 </tr>
 <tr>
 	<td class="bold">
-		<?php echo sprintf( lang_get( 'label' ), $t_lang_projection ) ?>
 	</td>
 	<td>
-		<?php echo get_enum_element( 'projection', $t_bug->projection, auth_get_current_user_id(), $t_bug->project_id ) ?>
-	</td>
-	<td class="bold">
-		&#160;
-	</td>
-	<td>
-		&#160;
-	</td>
-	<td colspan="2">&#160;</td>
-</tr>
-<tr>
-	<td class="bold">
-		<?php echo sprintf( lang_get( 'label' ), $t_lang_eta ) ?>
-	</td>
-	<td>
-		<?php echo get_enum_element( 'eta', $t_bug->eta, auth_get_current_user_id(), $t_bug->project_id ) ?>
 	</td>
 	<td class="bold">
 		<?php echo sprintf( lang_get( 'label' ), $t_lang_fixed_in_version ) ?>
@@ -430,22 +406,6 @@ foreach( $t_related_custom_field_ids as $t_custom_field_id ) {
 	</td>
 </tr>
 <?php }?>
-<tr>
-	<td class="bold">
-		<?php echo sprintf( lang_get( 'label' ), $t_lang_steps_to_reproduce ) ?>
-	</td>
-	<td colspan="5">
-		<?php echo string_display_links( $t_bug->steps_to_reproduce ) ?>
-	</td>
-</tr>
-<tr>
-	<td class="bold">
-		<?php echo sprintf( lang_get( 'label' ), $t_lang_additional_information ) ?>
-	</td>
-	<td colspan="5">
-		<?php echo string_display_links( $t_bug->additional_information ) ?>
-	</td>
-</tr>
 <?php
 	# account profile description
 	if( $t_bug->profile_id > 0 ) {

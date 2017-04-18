@@ -216,11 +216,6 @@ function bug_group_action_get_commands( array $p_project_ids = null ) {
 			$t_commands['RESOLVE'] = lang_get( 'actiongroup_menu_resolve' );
 		}
 
-		if( !isset( $t_commands['SET_STICKY'] ) &&
-			access_has_project_level( config_get( 'set_bug_sticky_threshold', null, null, $t_project_id ), $t_project_id ) ) {
-			$t_commands['SET_STICKY'] = lang_get( 'actiongroup_menu_set_sticky' );
-		}
-
 		if( !isset( $t_commands['UP_PRIOR'] ) &&
 			access_has_project_level( config_get( 'update_bug_threshold', null, null, $t_project_id ), $t_project_id ) ) {
 			$t_commands['UP_PRIOR'] = lang_get( 'actiongroup_menu_update_priority' );

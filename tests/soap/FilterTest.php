@@ -581,7 +581,6 @@ class FilterTest extends SoapBase {
         $t_issue_to_add['reporter'] = array( 'id' => 1 );
         $t_issue_to_add['handler'] = array( 'id' => 1 );
         $t_issue_to_add['resolution'] = array( 'id' => FIXED );
-        $t_issue_to_add['sticky'] = true;
         $t_issue_to_add['view_state'] = array( 'id' => VS_PUBLIC );
         $t_issue_to_add['fixed_in_version'] = 'test_69';
         $t_issue_to_add['target_version'] = 'test_70';
@@ -606,7 +605,6 @@ class FilterTest extends SoapBase {
                            'hide_status_id' => array( -2 ),
                            'sort' => 'last_updated',
                            'sort_direction' => 'DESC',
-                           'sticky' => true,
                            'view_state' => array( VS_PUBLIC ),
                            'fixed_in_version' => array( 'test_69' ),
                            'target_version' => array( 'test_70' ),

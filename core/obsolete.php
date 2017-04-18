@@ -180,7 +180,6 @@ config_obsolete( 'mc_priority_enum_default_when_not_found', 'webservice_priority
 config_obsolete( 'mc_severity_enum_default_when_not_found', 'webservice_severity_enum_default_when_not_found' );
 config_obsolete( 'mc_status_enum_default_when_not_found', 'webservice_status_enum_default_when_not_found' );
 config_obsolete( 'mc_resolution_enum_default_when_not_found', 'webservice_resolution_enum_default_when_not_found' );
-config_obsolete( 'mc_projection_enum_default_when_not_found', 'webservice_projection_enum_default_when_not_found' );
 config_obsolete( 'mc_eta_enum_default_when_not_found', 'webservice_eta_enum_default_when_not_found' );
 config_obsolete( 'mc_error_when_version_not_found', 'webservice_error_when_version_not_found' );
 config_obsolete( 'mc_version_when_not_found', 'webservice_version_when_not_found' );

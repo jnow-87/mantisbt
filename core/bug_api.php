@@ -43,7 +43,6 @@
  * @uses lang_api.php
  * @uses mention_api.php
  * @uses relationship_api.php
- * @uses sponsorship_api.php
  * @uses tag_api.php
  * @uses user_api.php
  * @uses utility_api.php
@@ -69,7 +68,6 @@ require_api( 'history_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'mention_api.php' );
 require_api( 'relationship_api.php' );
-require_api( 'sponsorship_api.php' );
 require_api( 'tag_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
@@ -114,11 +112,6 @@ class BugData {
 	protected $severity = MINOR;
 
 	/**
-	 * Reproducibility
-	 */
-	protected $reproducibility = 10;
-
-	/**
 	 * Status
 	 */
 	protected $status = NEW_;
@@ -127,11 +120,6 @@ class BugData {
 	 * Resolution
 	 */
 	protected $resolution = OPEN;
-
-	/**
-	 * Projection
-	 */
-	protected $projection = 10;
 
 	/**
 	 * Category ID
@@ -147,11 +135,6 @@ class BugData {
 	 * Last Updated
 	 */
 	protected $last_updated = '';
-
-	/**
-	 * ETA
-	 */
-	protected $eta = 10;
 
 	/**
 	 * OS
@@ -199,16 +182,6 @@ class BugData {
 	protected $summary = '';
 
 	/**
-	 * Sponsorship Total
-	 */
-	protected $sponsorship_total = 0;
-
-	/**
-	 * Sticky
-	 */
-	protected $sticky = 0;
-
-	/**
 	 * Due Date
 	 */
 	protected $due_date = '';
@@ -222,16 +195,6 @@ class BugData {
 	 * Description
 	 */
 	protected $description = '';
-
-	/**
-	 * Steps to reproduce
-	 */
-	protected $steps_to_reproduce = '';
-
-	/**
-	 * Additional Information
-	 */
-	protected $additional_information = '';
 
 	/**
 	 * Stats
@@ -297,10 +260,8 @@ class BugData {
 			case 'duplicate_id':
 			case 'priority':
 			case 'severity':
-			case 'reproducibility':
 			case 'status':
 			case 'resolution':
-			case 'projection':
 			case 'category_id':
 				$p_value = (int)$p_value;
 				break;
@@ -327,8 +288,6 @@ class BugData {
 				}
 				break;
 			case 'description':
-			case 'steps_to_reproduce':
-			case 'additional_information':
 				# MySQL 4-bytes UTF-8 chars workaround #21101
 				$p_value = db_mysql_fix_utf8( $p_value );
 				break;
@@ -385,8 +344,6 @@ class BugData {
 			$t_text = bug_text_cache_row( $this->id );
 
 			$this->description = $t_text['description'];
-			$this->steps_to_reproduce = $t_text['steps_to_reproduce'];
-			$this->additional_information = $t_text['additional_information'];
 		}
 	}
 
@@ -399,8 +356,6 @@ class BugData {
 	private function is_extended_field( $p_field_name ) {
 		switch( $p_field_name ) {
 			case 'description':
-			case 'steps_to_reproduce':
-			case 'additional_information':
 				return true;
 			default:
 				return false;
@@ -493,10 +448,10 @@ class BugData {
 		# Insert text information
 		db_param_push();
 		$t_query = 'INSERT INTO {bug_text}
-					    ( description, steps_to_reproduce, additional_information )
+					    ( description )
 					  VALUES
-					    ( ' . db_param() . ',' . db_param() . ',' . db_param() . ')';
-		db_query( $t_query, array( $this->description, $this->steps_to_reproduce, $this->additional_information ) );
+					    ( ' . db_param() . ')';
+		db_query( $t_query, array( $this->description ) );
 
 		# Get the id of the text information we just inserted
 		# NOTE: this is guaranteed to be the correct one.
@@ -529,22 +484,22 @@ class BugData {
 		db_param_push();
 		$t_query = 'INSERT INTO {bug}
 					    ( project_id,reporter_id, handler_id,duplicate_id,
-					      priority,severity, reproducibility,status,
-					      resolution,projection, category_id,date_submitted,
-					      last_updated,eta, bug_text_id,
+					      priority,severity, status,
+					      resolution,category_id,date_submitted,
+					      last_updated,bug_text_id,
 					      os, os_build,platform, version,build,
-					      profile_id, summary, view_state, sponsorship_total, sticky, fixed_in_version,
+					      profile_id, summary, view_state, fixed_in_version,
 					      target_version, due_date
 					    )
 					  VALUES
 					    ( ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
+					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',
+					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',
+					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',
 					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
 					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
-					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
-					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
-					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
-					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ')';
-		db_query( $t_query, array( $this->project_id, $this->reporter_id, $this->handler_id, $this->duplicate_id, $this->priority, $this->severity, $this->reproducibility, $t_status, $this->resolution, $this->projection, $this->category_id, $this->date_submitted, $this->last_updated, $this->eta, $t_text_id, $this->os, $this->os_build, $this->platform, $this->version, $this->build, $this->profile_id, $this->summary, $this->view_state, $this->sponsorship_total, $this->sticky, $this->fixed_in_version, $this->target_version, $this->due_date ) );
+					      ' . db_param() . ',' . db_param() . ')';
+		db_query( $t_query, array( $this->project_id, $this->reporter_id, $this->handler_id, $this->duplicate_id, $this->priority, $this->severity, $t_status, $this->resolution, $this->category_id, $this->date_submitted, $this->last_updated, $t_text_id, $this->os, $this->os_build, $this->platform, $this->version, $this->build, $this->profile_id, $this->summary, $this->view_state, $this->fixed_in_version, $this->target_version, $this->due_date ) );
 
 		$this->id = db_insert_id( db_get_table( 'bug' ) );
 
@@ -573,16 +528,6 @@ class BugData {
 		$t_mentioned_user_ids = mention_get_users( $this->description );
 		$t_all_mentioned_user_ids = array_merge( $t_all_mentioned_user_ids, $t_mentioned_user_ids );
 
-		if( !is_blank( $this->steps_to_reproduce ) ) {
-			$t_mentioned_user_ids = mention_get_users( $this->steps_to_reproduce );
-			$t_all_mentioned_user_ids = array_merge( $t_all_mentioned_user_ids, $t_mentioned_user_ids );
-		}
-
-		if( !is_blank( $this->additional_information ) ) {
-			$t_mentioned_user_ids = mention_get_users( $this->additional_information );
-			$t_all_mentioned_user_ids = array_merge( $t_all_mentioned_user_ids, $t_mentioned_user_ids );
-		}
-
 		$t_filtered_mentioned_user_ids = access_has_bug_level_filter(
 			config_get( 'view_bug_threshold' ),
 			$this->id,
@@ -592,16 +537,6 @@ class BugData {
 
 		if( !empty( $t_all_mentioned_user_ids ) ) {
 			$t_mention_text = $this->description . "\n\n";
-
-			if( !is_blank( $this->steps_to_reproduce ) ) {
-				$t_mention_text .= lang_get( 'email_steps_to_reproduce' ) . "\n\n";
-				$t_mention_text .= $this->steps_to_reproduce . "\n\n";
-			}
-
-			if( !is_blank( $this->additional_information ) ) {
-				$t_mention_text .= lang_get( 'email_additional_information' ) . "\n\n";
-				$t_mention_text .= $this->additional_information . "\n\n";
-			}
 
 			mention_process_user_mentions(
 				$this->id,
@@ -641,9 +576,9 @@ class BugData {
 					SET project_id=' . db_param() . ', reporter_id=' . db_param() . ',
 						handler_id=' . db_param() . ', duplicate_id=' . db_param() . ',
 						priority=' . db_param() . ', severity=' . db_param() . ',
-						reproducibility=' . db_param() . ', status=' . db_param() . ',
-						resolution=' . db_param() . ', projection=' . db_param() . ',
-						category_id=' . db_param() . ', eta=' . db_param() . ',
+						status=' . db_param() . ',
+						resolution=' . db_param() . ',
+						category_id=' . db_param() . ',
 						os=' . db_param() . ', os_build=' . db_param() . ',
 						platform=' . db_param() . ', version=' . db_param() . ',
 						build=' . db_param() . ', fixed_in_version=' . db_param() . ',';
@@ -652,9 +587,9 @@ class BugData {
 			$this->project_id, $this->reporter_id,
 			$this->handler_id, $this->duplicate_id,
 			$this->priority, $this->severity,
-			$this->reproducibility, $this->status,
-			$this->resolution, $this->projection,
-			$this->category_id, $this->eta,
+			$this->status,
+			$this->resolution,
+			$this->category_id,
 			$this->os, $this->os_build,
 			$this->platform, $this->version,
 			$this->build, $this->fixed_in_version,
@@ -670,14 +605,10 @@ class BugData {
 		$t_query .= '
 						view_state=' . db_param() . ',
 						summary=' . db_param() . ',
-						sponsorship_total=' . db_param() . ',
-						sticky=' . db_param() . ',
 						due_date=' . db_param() . '
 					WHERE id=' . db_param();
 		$t_fields[] = $this->view_state;
 		$t_fields[] = $this->summary;
-		$t_fields[] = $this->sponsorship_total;
-		$t_fields[] = (bool)$this->sticky;
 		$t_fields[] = $this->due_date;
 		$t_fields[] = $this->id;
 
@@ -691,12 +622,9 @@ class BugData {
 		history_log_event_direct( $c_bug_id, 'handler_id', $t_old_data->handler_id, $this->handler_id );
 		history_log_event_direct( $c_bug_id, 'priority', $t_old_data->priority, $this->priority );
 		history_log_event_direct( $c_bug_id, 'severity', $t_old_data->severity, $this->severity );
-		history_log_event_direct( $c_bug_id, 'reproducibility', $t_old_data->reproducibility, $this->reproducibility );
 		history_log_event_direct( $c_bug_id, 'status', $t_old_data->status, $this->status );
 		history_log_event_direct( $c_bug_id, 'resolution', $t_old_data->resolution, $this->resolution );
-		history_log_event_direct( $c_bug_id, 'projection', $t_old_data->projection, $this->projection );
 		history_log_event_direct( $c_bug_id, 'category', category_full_name( $t_old_data->category_id, false ), category_full_name( $this->category_id, false ) );
-		history_log_event_direct( $c_bug_id, 'eta', $t_old_data->eta, $this->eta );
 		history_log_event_direct( $c_bug_id, 'os', $t_old_data->os, $this->os );
 		history_log_event_direct( $c_bug_id, 'os_build', $t_old_data->os_build, $this->os_build );
 		history_log_event_direct( $c_bug_id, 'platform', $t_old_data->platform, $this->platform );
@@ -708,8 +636,6 @@ class BugData {
 		}
 		history_log_event_direct( $c_bug_id, 'view_state', $t_old_data->view_state, $this->view_state );
 		history_log_event_direct( $c_bug_id, 'summary', $t_old_data->summary, $this->summary );
-		history_log_event_direct( $c_bug_id, 'sponsorship_total', $t_old_data->sponsorship_total, $this->sponsorship_total );
-		history_log_event_direct( $c_bug_id, 'sticky', $t_old_data->sticky, $this->sticky );
 
 		history_log_event_direct( $c_bug_id, 'due_date', ( $t_old_data->due_date != date_get_null() ) ? $t_old_data->due_date : null, ( $this->due_date != date_get_null() ) ? $this->due_date : null );
 
@@ -720,13 +646,9 @@ class BugData {
 			db_param_push();
 			$t_query = 'UPDATE {bug_text}
 							SET description=' . db_param() . ',
-								steps_to_reproduce=' . db_param() . ',
-								additional_information=' . db_param() . '
 							WHERE id=' . db_param();
 			db_query( $t_query, array(
 				$this->description,
-				$this->steps_to_reproduce,
-				$this->additional_information,
 				$t_bug_text_id ) );
 
 			bug_text_clear_cache( $c_bug_id );
@@ -739,22 +661,6 @@ class BugData {
 				}
 				$t_revision_id = bug_revision_add( $c_bug_id, $t_current_user, REV_DESCRIPTION, $this->description );
 				history_log_event_special( $c_bug_id, DESCRIPTION_UPDATED, $t_revision_id );
-			}
-
-			if( $t_old_data->steps_to_reproduce != $this->steps_to_reproduce ) {
-				if( bug_revision_count( $c_bug_id, REV_STEPS_TO_REPRODUCE ) < 1 ) {
-					bug_revision_add( $c_bug_id, $t_old_data->reporter_id, REV_STEPS_TO_REPRODUCE, $t_old_data->steps_to_reproduce, 0, $t_old_data->date_submitted );
-				}
-				$t_revision_id = bug_revision_add( $c_bug_id, $t_current_user, REV_STEPS_TO_REPRODUCE, $this->steps_to_reproduce );
-				history_log_event_special( $c_bug_id, STEP_TO_REPRODUCE_UPDATED, $t_revision_id );
-			}
-
-			if( $t_old_data->additional_information != $this->additional_information ) {
-				if( bug_revision_count( $c_bug_id, REV_ADDITIONAL_INFO ) < 1 ) {
-					bug_revision_add( $c_bug_id, $t_old_data->reporter_id, REV_ADDITIONAL_INFO, $t_old_data->additional_information, 0, $t_old_data->date_submitted );
-				}
-				$t_revision_id = bug_revision_add( $c_bug_id, $t_current_user, REV_ADDITIONAL_INFO, $this->additional_information );
-				history_log_event_special( $c_bug_id, ADDITIONAL_INFO_UPDATED, $t_revision_id );
 			}
 		}
 
@@ -1185,12 +1091,8 @@ function bug_copy( $p_bug_id, $p_target_project_id = null, $p_copy_custom_fields
 	bug_set_field( $t_new_bug_id, 'duplicate_id', $t_bug_data->duplicate_id );
 	bug_set_field( $t_new_bug_id, 'status', $t_bug_data->status );
 	bug_set_field( $t_new_bug_id, 'resolution', $t_bug_data->resolution );
-	bug_set_field( $t_new_bug_id, 'projection', $t_bug_data->projection );
-	bug_set_field( $t_new_bug_id, 'eta', $t_bug_data->eta );
 	bug_set_field( $t_new_bug_id, 'fixed_in_version', $t_bug_data->fixed_in_version );
 	bug_set_field( $t_new_bug_id, 'target_version', $t_bug_data->target_version );
-	bug_set_field( $t_new_bug_id, 'sponsorship_total', 0 );
-	bug_set_field( $t_new_bug_id, 'sticky', 0 );
 	bug_set_field( $t_new_bug_id, 'due_date', $t_bug_data->due_date );
 
 	# COPY CUSTOM FIELDS
@@ -1372,9 +1274,6 @@ function bug_delete( $p_bug_id ) {
 
 	# Delete bugnotes
 	bugnote_delete_all( $p_bug_id );
-
-	# Delete all sponsorships
-	sponsorship_delete_all( $p_bug_id );
 
 	# Delete all relationships
 	relationship_delete_all( $p_bug_id );
@@ -1715,11 +1614,6 @@ function bug_set_field( $p_bug_id, $p_field_name, $p_value ) {
 	$c_value = null;
 
 	switch( $p_field_name ) {
-		# boolean
-		case 'sticky':
-			$c_value = $p_value;
-			break;
-
 		# integer
 		case 'project_id':
 		case 'reporter_id':
@@ -1727,15 +1621,11 @@ function bug_set_field( $p_bug_id, $p_field_name, $p_value ) {
 		case 'duplicate_id':
 		case 'priority':
 		case 'severity':
-		case 'reproducibility':
 		case 'status':
 		case 'resolution':
-		case 'projection':
 		case 'category_id':
-		case 'eta':
 		case 'view_state':
 		case 'profile_id':
-		case 'sponsorship_total':
 			$c_value = (int)$p_value;
 			break;
 

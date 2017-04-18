@@ -120,7 +120,6 @@ if( $f_master_bug_id > 0 ) {
 	$f_handler_id			= $t_bug->handler_id;
 
 	$f_category_id			= $t_bug->category_id;
-	$f_eta					= $t_bug->eta;
 	$f_severity				= $t_bug->severity;
 	$f_priority				= $t_bug->priority;
 	$f_summary				= $t_bug->summary;
@@ -172,7 +171,6 @@ if( $f_master_bug_id > 0 ) {
 	$f_handler_id			= gpc_get_int( 'handler_id', 0 );
 
 	$f_category_id			= gpc_get_int( 'category_id', 0 );
-	$f_eta					= gpc_get_int( 'eta', (int)config_get( 'default_bug_eta' ) );
 	$f_severity				= gpc_get_int( 'severity', (int)config_get( 'default_bug_severity' ) );
 	$f_priority				= gpc_get_int( 'priority', (int)config_get( 'default_bug_priority' ) );
 	$f_summary				= gpc_get_string( 'summary', '' );
@@ -194,7 +192,6 @@ $t_fields = config_get( 'bug_report_page_fields' );
 $t_fields = columns_filter_disabled( $t_fields );
 
 $t_show_category = in_array( 'category_id', $t_fields );
-$t_show_eta = in_array( 'eta', $t_fields );
 $t_show_severity = in_array( 'severity', $t_fields );
 $t_show_priority = in_array( 'priority', $t_fields );
 $t_show_handler = in_array( 'handler', $t_fields ) && access_has_project_level( config_get( 'update_bug_assign_threshold' ) );

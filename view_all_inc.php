@@ -133,25 +133,11 @@ if( ( $t_filter_position & FILTER_POSITION_TOP ) == FILTER_POSITION_TOP ) {
 function write_bug_rows( array $p_rows ) {
 	global $g_columns, $g_filter;
 
-	$t_in_stickies = ( $g_filter && ( 'on' == $g_filter[FILTER_PROPERTY_STICKY] ) );
-
 	# -- Loop over bug rows --
 
 	$t_rows = count( $p_rows );
 	for( $i=0; $i < $t_rows; $i++ ) {
 		$t_row = $p_rows[$i];
-
-		if( ( 0 == $t_row->sticky ) && ( 0 == $i ) ) {
-			$t_in_stickies = false;
-		}
-		if( ( 0 == $t_row->sticky ) && $t_in_stickies ) {	# demarcate stickies, if any have been shown
-?>
-		   <tr>
-				   <td colspan="<?php echo count( $g_columns ); ?>" bgcolor="#d3d3d3"></td>
-		   </tr>
-<?php
-			$t_in_stickies = false;
-		}
 
 		echo '<tr>';
 

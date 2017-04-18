@@ -119,12 +119,6 @@ function bug_revision_get_type_name( $p_revision_type_id ) {
 		case REV_DESCRIPTION:
 			$t_type_name = lang_get( 'description' );
 			break;
-		case REV_STEPS_TO_REPRODUCE:
-			$t_type_name = lang_get( 'steps_to_reproduce' );
-			break;
-		case REV_ADDITIONAL_INFO:
-			$t_type_name = lang_get( 'additional_information' );
-			break;
 		case REV_BUGNOTE:
 			$t_type_name = lang_get( 'bugnote' );
 			break;
