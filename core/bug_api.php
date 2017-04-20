@@ -645,7 +645,7 @@ class BugData {
 
 			db_param_push();
 			$t_query = 'UPDATE {bug_text}
-							SET description=' . db_param() . ',
+							SET description=' . db_param() . '
 							WHERE id=' . db_param();
 			db_query( $t_query, array(
 				$this->description,
