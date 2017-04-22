@@ -202,6 +202,22 @@ class BugData {
 	private $_stats = null;
 
 	/**
+	 * Time tracking information
+	 *	this field is only in order to be able to check the time through
+	 *	check_fields_builtin(), since the actual content is stored in the
+	 *	bugnotes class
+	 */
+	public $time_tracking;
+
+	/**
+	 * Notes
+	 *	this field is only in order to be able to check bug notes through
+	 *	check_fields_builtin(), since the actual content is stored in the
+	 *	bugnotes class
+	 */
+	public $notes;
+
+	/**
 	 * Attachment Count
 	 */
 	public $attachment_count = null;
@@ -713,7 +729,7 @@ class BugData {
 
 			# check field content against the regular expression
 			if(preg_match($field_regex[$field], $this->$field) == 0){
-				trigger_error( 'built-in field \'' . $field . '\' is required but not set', ERROR);
+				trigger_error( 'built-in field \'' . $field . '\' is required but not set: ' . $this->$field, ERROR);
 			}
 		}
 	}

@@ -67,7 +67,6 @@ $t_file = __FILE__;
 $t_mantis_dir = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
 $t_show_page_header = false;
 $t_force_readonly = true;
-$t_fields_config_option = 'bug_change_status_page_fields';
 
 if( $t_bug->project_id != helper_get_current_project() ) {
 	# in case the current project is not the same project of the bug we are viewing...
@@ -115,54 +114,35 @@ $t_status_label = str_replace( ' ', '_', MantisEnum::getLabel( config_get( 'stat
 ## check state transition
 ####
 
-$t_show_assignee = 0;
-$t_show_due_date = 0;
-$t_show_notes = 0;
-$t_show_custom_fields = 0;
-$t_show_time_tracking = 0;
-$t_show_resolution = 0;
-$t_show_fixed_in_version = 0;
+$state_transition = $f_old_status . '_to_' . $f_new_status;
+
+$t_fields = config_get( 'bug_field_show' )[$state_transition];
+$t_fields = columns_filter_disabled( $t_fields );
+
+$t_required_fields = config_get('bug_field_required')[$state_transition];
+
+
+$t_show_priority = in_array('priority', $t_fields) || in_array('priority', $t_required_fields);
+$t_show_severity = in_array('severity', $t_fields) || in_array('severity', $t_required_fields);
+$t_show_notes = in_array('notes', $t_fields) || in_array('notes', $t_required_fields);
+$t_show_time_tracking = in_array('time_tracking', $t_fields) || in_array('time_tracking', $t_required_fields);
+
+
+$t_show_assignee = in_array('handler_id', $t_fields) || in_array('handler_id', $t_required_fields);
+$t_show_due_date = in_array('due_date', $t_fields) || in_array('due_date', $t_required_fields);
+$t_show_resolution = in_array('resolution', $t_fields) || in_array('resolution', $t_required_fields);
+$t_show_fixed_in_version = in_array('fixed_in_version', $t_fields) || in_array('fixed_in_version', $t_required_fields);
+
 $t_reset_assignee = 0;
 $t_reset_resolution = 0;
 
-if($f_old_status == STATUS_OPEN && $f_new_status == STATUS_ASSIGNED){
-	## transition STATUS_OPEN -> STATUS_ASSIGNED
-	$t_show_assignee = 1;
-	$t_show_notes = 1;
-	$t_show_due_date = 1;
-}
-else if($f_old_status == STATUS_ASSIGNED && $f_new_status == STATUS_INDEVELOPMENT){
-	## transition STATUS_ASSIGNED -> STATUS_INDEVELOPMENT
-	$t_show_notes = 1;
-}
-else if($f_old_status == STATUS_INDEVELOPMENT && $f_new_status == STATUS_INREVIEW){
-	## transition STATUS_INDEVELOPMENT -> STATUS_INREVIEW
-	$t_show_resolution = 1;
-	$t_show_custom_fields = 1;
-	$t_show_time_tracking = 1;
-	$t_show_notes = 1;
-}
-else if($f_old_status == STATUS_INREVIEW && $f_new_status == STATUS_CLOSED){
-	## transition STATUS_INREVIEW -> STATUS_CLOSED
-	$t_show_fixed_in_version = 1;
-	$t_show_time_tracking = 1;
-	$t_show_notes = 1;
-}
-else if($f_old_status == STATUS_INREVIEW && $f_new_status == STATUS_INDEVELOPMENT){
-	## transition STATUS_INREVIEW -> STATUS_INDEVELOPMENT
-	$t_show_notes = 1;
+if($f_old_status == STATUS_INREVIEW && $f_new_status == STATUS_INDEVELOPMENT){
 	$t_reset_resolution = 1;
-}else if($f_new_status == STATUS_OPEN){
-	## transition to STATUS_ASSIGNED
-	$t_show_notes = 1;
+}
+else if($f_new_status == STATUS_OPEN){
 	$t_reset_resolution = 1;
 	$t_reset_assignee = 1;
 }
-else{
-	# unknown/unhandled state transition
-	trigger_error("unhandled state transistion", E_USER_ERROR);
-}
-
 
 
 
@@ -217,6 +197,33 @@ layout_page_begin();
 ## generate form
 ####
 ?>
+
+<?php if($t_show_priority){
+	# priority
+?>
+	<tr>
+		<th class="category"><?php echo lang_get( 'priority' ) ?></th>
+		<td>
+			<select <?php helper_get_tab_index() ?> id="priority" name="priority" class="input-xs">
+			<?php print_enum_string_option_list( 'priority', $t_bug->priority ); ?>
+			</select>		
+		</td>
+	</tr>
+<?php } ?>
+
+
+<?php if($t_show_severity){
+	# severity
+?>
+	<tr>
+		<th class="category"><?php echo lang_get( 'severity' ) ?></th>
+		<td>
+			<select <?php helper_get_tab_index() ?> id="severity" name="severity" class="input-xs">
+			<?php print_enum_string_option_list( 'severity', $t_bug->severity ); ?>
+		</td>
+	</tr>
+<?php } ?>
+
 
 <?php if($t_show_assignee == 1){
 	# assignee
@@ -303,7 +310,6 @@ layout_page_begin();
 <?php if($t_show_time_tracking == 1){
 	# time tracking 
 	if( config_get( 'time_tracking_enabled' )
-		&& access_has_bug_level( config_get( 'private_bugnote_threshold' ), $f_bug_id )
 		&& access_has_bug_level( config_get( 'time_tracking_edit_threshold' ), $f_bug_id )
 	) {
 	?>
@@ -341,57 +347,42 @@ layout_page_begin();
 ?>
 
 
-<?php if($t_show_custom_fields == 1){
-	# custom fields
+<?php
+# custom fields
+$t_related_custom_field_ids = custom_field_get_linked_ids( $t_bug->project_id );
+$custom_fields_show = config_get('bug_custom_field_show')[$state_transition];
+$custom_fields_required = config_get('bug_custom_field_required')[$state_transition];
 
-	/**
-	 * @todo thraxisp - I undid part of the change for #5068 for #5527
-	 * We really need to say what fields are shown in which statusses. For now,
-	 * this page will show required custom fields in update mode, or
-	 * display or required fields on resolve or close
-	 */
-	$t_custom_status_label = 'update'; # Don't show custom fields by default
-	if( ( $f_new_status >= $t_resolved ) && ( $f_new_status < $t_closed ) ) {
-		$t_custom_status_label = 'resolved';
-	}
-	if( $t_closed == $f_new_status ) {
-		$t_custom_status_label = 'closed';
+foreach( $t_related_custom_field_ids as $t_id ) {
+	# check if the field is required for the current state transition
+	$field_name = custom_field_get_field( $t_id, 'name' );
+
+	if(!in_array($field_name, $custom_fields_show) && !in_array($field_name, $custom_fields_required)){
+		continue;
 	}
 
-	$t_related_custom_field_ids = custom_field_get_linked_ids( $t_bug->project_id );
-
-	foreach( $t_related_custom_field_ids as $t_id ) {
-		$t_def = custom_field_get_definition( $t_id );
-		$t_display = $t_def['display_' . $t_custom_status_label];
-		$t_require = $t_def['require_' . $t_custom_status_label];
-
-		if( ( 'update' == $t_custom_status_label ) && ( !$t_require ) ) {
-			continue;
-		}
-		if( in_array( $t_custom_status_label, array( 'resolved', 'closed' ) ) && !( $t_display || $t_require ) ) {
-			continue;
-		}
-		$t_has_write_access = custom_field_has_write_access( $t_id, $f_bug_id );
-		$t_class_required = $t_require && $t_has_write_access ? 'class="required"' : '';
+	# display field
+	$t_def = custom_field_get_definition( $t_id );
+	$t_has_write_access = custom_field_has_write_access( $t_id, $f_bug_id );
 ?>
-	<tr>
-		<th class="category">
-			<?php echo lang_get_defaulted( $t_def['name'] ) ?>
-		</th>
-		<td>
+<tr>
+	<th class="category">
+		<?php echo lang_get_defaulted( $t_def['name'] ) ?>
+	</th>
+	<td>
 <?php
-			if( $t_has_write_access ) {
-				print_custom_field_input( $t_def, $f_bug_id );
-			} elseif( custom_field_has_read_access( $t_id, $f_bug_id ) ) {
-				print_custom_field_value( $t_def, $t_id, $f_bug_id );
-			}
+		if( $t_has_write_access ) {
+			print_custom_field_input( $t_def, $f_bug_id );
+		} elseif( custom_field_has_read_access( $t_id, $f_bug_id ) ) {
+			print_custom_field_value( $t_def, $t_id, $f_bug_id );
+		}
 ?>
-		</td>
-	</tr>
+	</td>
+</tr>
 
 <?php
-	} # foreach( $t_related_custom_field_ids as $t_id )
-} ?>
+} # foreach( $t_related_custom_field_ids as $t_id )
+?>
 
 
 <?php if($t_show_notes == 1){

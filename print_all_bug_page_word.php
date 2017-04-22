@@ -147,7 +147,7 @@ $t_lang_system_profile = lang_get( 'system_profile' );
 $t_lang_attached_files = lang_get( 'attached_files' );
 $t_lang_tags = lang_get( 'tags' );
 
-$t_fields = config_get( 'bug_view_page_fields' );
+$t_fields = config_get( 'bug_field_show' )['view'];
 $t_fields = columns_filter_disabled( $t_fields );
 
 $t_show_tags = in_array( 'tags', $t_fields ) && access_has_global_level( config_get( 'tag_view_threshold' ) );

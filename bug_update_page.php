@@ -96,48 +96,31 @@ if( bug_is_readonly( $f_bug_id ) ) {
 
 access_ensure_bug_level( config_get( 'update_bug_threshold' ), $f_bug_id );
 
-$t_fields = config_get( 'bug_update_page_fields' );
+$state_transition = $t_bug->status . '_to_' . $t_bug->status;
+
+$t_fields = config_get( 'bug_field_show' )[$state_transition];
 $t_fields = columns_filter_disabled( $t_fields );
+
+$t_required_fields = config_get('bug_field_required')[$state_transition];
 
 $t_bug_id = $f_bug_id;
 
-$t_action_button_position = config_get( 'action_button_position' );
-
-$t_top_buttons_enabled = $t_action_button_position == POSITION_TOP || $t_action_button_position == POSITION_BOTH;
-$t_bottom_buttons_enabled = $t_action_button_position == POSITION_BOTTOM || $t_action_button_position == POSITION_BOTH;
-
-$t_show_id = in_array( 'id', $t_fields );
-$t_show_project = in_array( 'project', $t_fields );
-$t_show_category = in_array( 'category_id', $t_fields );
 $t_show_view_state = in_array( 'view_state', $t_fields );
 $t_view_state = $t_show_view_state ? string_display_line( get_enum_element( 'view_state', $t_bug->view_state ) ) : '';
-$t_show_date_submitted = in_array( 'date_submitted', $t_fields );
-$t_show_last_updated = in_array( 'last_updated', $t_fields );
-$t_show_reporter = in_array( 'reporter', $t_fields );
-$t_show_handler = in_array( 'handler', $t_fields ) && access_has_bug_level( config_get( 'view_handler_threshold' ), $t_bug_id );
-$t_show_priority = in_array( 'priority', $t_fields );
-$t_show_severity = in_array( 'severity', $t_fields );
-$t_show_profiles = config_get( 'enable_profiles' ) == ON;
-$t_show_platform = $t_show_profiles && in_array( 'platform', $t_fields );
-$t_show_os = $t_show_profiles && in_array( 'os', $t_fields );
-$t_show_os_version = $t_show_profiles && in_array( 'os_version', $t_fields );
-$t_show_versions = version_should_show_product_version( $t_bug->project_id );
-$t_show_product_version = in_array( 'product_version', $t_fields );
-$t_show_product_build = in_array( 'product_build', $t_fields );
-$t_product_build_attribute = $t_show_product_build ? string_attribute( $t_bug->build ) : '';
-$t_show_target_version = $t_show_versions && in_array( 'target_version', $t_fields ) && access_has_bug_level( config_get( 'roadmap_update_threshold' ), $t_bug_id );
-$t_show_fixed_in_version = in_array( 'fixed_in_version', $t_fields );
-$t_show_due_date = in_array( 'due_date', $t_fields ) && access_has_bug_level( config_get( 'due_date_view_threshold' ), $t_bug_id );
-$t_show_summary = in_array( 'summary', $t_fields );
-$t_summary_attribute = $t_show_summary ? string_attribute( $t_bug->summary ) : '';
-$t_description_textarea = string_textarea( $t_bug->description );
+$t_can_change_view_state = $t_show_view_state && access_has_project_level( config_get( 'change_view_status_threshold' ) );
+
+$t_show_platform = in_array( 'platform', $t_fields ) || in_array('platform', $t_required_fields);
+$t_show_os = in_array( 'os', $t_fields ) || in_array('os', $t_required_fields);
+$t_show_product_version = in_array( 'product_version', $t_fields ) || in_array('product_version', $t_required_fields);
+$t_show_product_build = in_array( 'product_build', $t_fields ) || in_array('product_build', $t_required_fields);
+$t_show_fixed_in_version = in_array( 'fixed_in_version', $t_fields ) || in_array('fixed_in_version', $t_required_fields);
+
 if( NO_USER == $t_bug->handler_id ) {
 	$t_handler_name =  '';
 } else {
 	$t_handler_name = string_display_line( user_get_name( $t_bug->handler_id ) );
 }
 
-$t_can_change_view_state = $t_show_view_state && access_has_project_level( config_get( 'change_view_status_threshold' ) );
 
 if( $t_show_product_version ) {
 	$t_product_version_released_mask = VERSION_RELEASED;
@@ -147,8 +130,10 @@ if( $t_show_product_version ) {
 	}
 }
 
-$t_formatted_bug_id = $t_show_id ? bug_format_id( $f_bug_id ) : '';
-$t_project_name = $t_show_project ? string_display_line( project_get_name( $t_bug->project_id ) ) : '';
+$t_action_button_position = config_get( 'action_button_position' );
+$t_top_buttons_enabled = $t_action_button_position == POSITION_TOP || $t_action_button_position == POSITION_BOTH;
+$t_bottom_buttons_enabled = $t_action_button_position == POSITION_BOTTOM || $t_action_button_position == POSITION_BOTH;
+
 
 layout_page_header( bug_format_summary( $f_bug_id, SUMMARY_CAPTION ) );
 
@@ -199,14 +184,14 @@ event_signal( 'EVENT_UPDATE_BUG_FORM_TOP', array( $t_bug_id ) );
 # summary
 echo '<tr class="bug-header">';
 echo '<th class="category" width="15%">' . lang_get( 'summary' ) . '</th>';
-echo '<td colspan="5">', '<input class="input-xs" ', helper_get_tab_index(), ' type="text" id="summary" name="summary" size="100" maxlength="128" value="', $t_summary_attribute, '" />';
+echo '<td colspan="5">', '<input class="input-xs" ', helper_get_tab_index(), ' type="text" id="summary" name="summary" size="100" maxlength="128" value="', string_attribute( $t_bug->summary ), '" />';
 echo '</td></tr>';
 
 # description
 echo '<tr class="bug-header">';
 echo '<th class="bug-description category" colspan=6>' . lang_get( 'description' ) . '</th></tr>';
 echo '<tr><td colspan="6">';
-echo '<textarea class="form-control input-xs" ', helper_get_tab_index(), ' cols="116" rows="10" id="description" name="description">', $t_description_textarea, '</textarea>';
+echo '<textarea class="form-control input-xs" ', helper_get_tab_index(), ' cols="116" rows="10" id="description" name="description">', string_textarea( $t_bug->description ), '</textarea>';
 echo '</td></tr>';
 
 
@@ -224,7 +209,7 @@ echo '<tr class="bug-header">';
 	echo '</select></td>';
 
 	# category
-	echo '<td class="category" width="12%">', $t_show_category ? '' . lang_get( 'category' ) . '' : '', '</td>';
+	echo '<td class="category" width="12%">', '' . lang_get( 'category' ) . '', '</td>';
 
 	echo '<td width="15%">';
 	echo '<select ' . helper_get_tab_index() . ' id="category_id" name="category_id" class="input-xs">';
@@ -288,7 +273,7 @@ echo '</tr>';
 
 
 # spacer
-if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $t_show_fixed_in_version || $t_show_os){
+if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $t_show_fixed_in_version){
 	echo '<tr class="spacer"><td colspan="6"></td></tr>';
 	echo '<tr class="hidden"></tr>';
 }
@@ -301,7 +286,7 @@ echo '<tr class="bug-header">';
 	echo '<th class="category">', $t_show_product_build ? lang_get( 'product_build' ) : '', '</th>';
 	echo '<td>';
 	if($t_show_product_build){
-		echo '<input type="text" id="build" name="build" class="input-xs" size="16" maxlength="32" ' . helper_get_tab_index() . ' value="' . $t_product_build_attribute . '" />';
+		echo '<input type="text" id="build" name="build" class="input-xs" size="16" maxlength="32" ' . helper_get_tab_index() . ' value="' . string_attribute( $t_bug->build ) . '" />';
 	}
 	echo '</td>';
 
@@ -410,8 +395,11 @@ echo '</tr>';
 event_signal( 'EVENT_UPDATE_BUG_FORM', array( $t_bug_id ) );
 
 # Custom Fields
-$t_custom_fields_found = false;
 $t_related_custom_field_ids = custom_field_get_linked_ids( $t_bug->project_id );
+
+$state_transition = $t_bug->status . '_to_' . $t_bug->status;
+$custom_fields_show = config_get('bug_custom_field_show')[$state_transition];
+$custom_fields_required = config_get('bug_custom_field_required')[$state_transition];
 
 # spacer
 if($t_related_custom_field_ids){
@@ -423,17 +411,7 @@ if($t_related_custom_field_ids){
 $i = 0;
 foreach ( $t_related_custom_field_ids as $t_id ) {
 	$t_def = custom_field_get_definition( $t_id );
-	if( ( $t_def['display_update'] || $t_def['require_update'] ) && custom_field_has_write_access( $t_id, $t_bug_id ) ) {
-		$t_custom_fields_found = true;
-
-		$t_required_class = $t_def['require_update'] ? ' class="required" ' : '';
-
-		if( $t_def['type'] != CUSTOM_FIELD_TYPE_RADIO && $t_def['type'] != CUSTOM_FIELD_TYPE_CHECKBOX ) {
-			$t_label_for = ' for="custom_field_' . string_attribute( $t_def['id'] ) . '" ';
-		} else {
-			$t_label_for = '';
-		}
-
+	if( (in_array($t_def['name'], $custom_fields_show) || in_array($t_def['name'], $custom_fields_required)) && custom_field_has_write_access( $t_id, $t_bug_id ) ) {
 		if($i == 0){
 			echo '<tr>';
 		}
@@ -452,7 +430,7 @@ foreach ( $t_related_custom_field_ids as $t_id ) {
 			$i = $i + 1;
 		}
 	}
-} # foreach( $t_related_custom_field_ids as $t_id )
+}
 
 if($i != 0){
 	table_empty(2 * (3 - $i));

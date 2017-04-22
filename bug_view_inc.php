@@ -90,16 +90,8 @@ bug_ensure_exists( $f_bug_id );
 
 $t_bug = bug_get( $f_bug_id, true );
 
-# In case the current project is not the same project of the bug we are
-# viewing, override the current project. This ensures all config_get and other
-# per-project function calls use the project ID of this bug.
-$g_project_override = $t_bug->project_id;
-
 access_ensure_bug_level( config_get( 'view_bug_threshold' ), $f_bug_id );
-
-$f_history = gpc_get_bool( 'history', config_get( 'history_default_visible' ) );
-
-$t_fields = config_get( $t_fields_config_option );
+$t_fields = config_get( 'bug_field_show' )['view'];
 $t_fields = columns_filter_disabled( $t_fields );
 
 compress_enable();
@@ -113,37 +105,21 @@ $t_action_button_position = config_get( 'action_button_position' );
 
 $t_bugslist = gpc_get_cookie( config_get( 'bug_list_cookie' ), false );
 
-$t_show_versions = version_should_show_product_version( $t_bug->project_id );
 $t_show_product_version = in_array( 'product_version', $t_fields );
+$t_product_version_string  = $t_show_product_version ? prepare_version_string( $t_bug->project_id, version_get_id( $t_bug->version, $t_bug->project_id ) ) : '';
+$t_product_version_string = string_display_line( $t_product_version_string );
+
+
 $t_show_fixed_in_version = in_array( 'fixed_in_version', $t_fields );
+$t_fixed_in_version_string = $t_show_fixed_in_version ? prepare_version_string( $t_bug->project_id, version_get_id( $t_bug->fixed_in_version, $t_bug->project_id ) ) : '';
+$t_fixed_in_version_string = string_display_line( $t_fixed_in_version_string );
+
 $t_show_product_build = in_array( 'product_build', $t_fields );
 $t_product_build = $t_show_product_build ? string_display_line( $t_bug->build ) : '';
-$t_show_target_version = $t_show_versions && in_array( 'target_version', $t_fields )
-	&& access_has_bug_level( config_get( 'roadmap_view_threshold' ), $f_bug_id );
 
-$t_product_version_string  = '';
-$t_target_version_string   = '';
-$t_fixed_in_version_string = '';
-
-if( $t_show_product_version || $t_show_fixed_in_version || $t_show_target_version ) {
-	$t_version_rows = version_get_all_rows( $t_bug->project_id );
-
-	if( $t_show_product_version ) {
-		$t_product_version_string  = prepare_version_string( $t_bug->project_id, version_get_id( $t_bug->version, $t_bug->project_id ) );
-	}
-
-	if( $t_show_target_version ) {
-		$t_target_version_string   = prepare_version_string( $t_bug->project_id, version_get_id( $t_bug->target_version, $t_bug->project_id ) );
-	}
-
-	if( $t_show_fixed_in_version ) {
-		$t_fixed_in_version_string = prepare_version_string( $t_bug->project_id, version_get_id( $t_bug->fixed_in_version, $t_bug->project_id ) );
-	}
-}
-
-$t_product_version_string = string_display_line( $t_product_version_string );
+$t_show_target_version = in_array( 'target_version', $t_fields ) && access_has_bug_level( config_get( 'roadmap_view_threshold' ), $f_bug_id );
+$t_target_version_string   = $t_show_target_version ? prepare_version_string( $t_bug->project_id, version_get_id( $t_bug->target_version, $t_bug->project_id ) ) : '';
 $t_target_version_string = string_display_line( $t_target_version_string );
-$t_fixed_in_version_string = string_display_line( $t_fixed_in_version_string );
 
 $t_bug_id = $f_bug_id;
 $t_form_title = bug_format_id($f_bug_id) . " [" . string_display_line( category_full_name( $t_bug->category_id ) ) . "]: " . bug_format_summary( $f_bug_id, SUMMARY_CAPTION );
@@ -155,21 +131,18 @@ if( access_has_bug_level( config_get( 'view_history_threshold' ), $f_bug_id ) ) 
 	$t_history_link = '';
 }
 
-$t_show_reminder_link = !current_user_is_anonymous() && !bug_is_readonly( $f_bug_id ) &&
-	  access_has_bug_level( config_get( 'bug_reminder_threshold' ), $f_bug_id );
+$t_show_reminder_link = !current_user_is_anonymous() && !bug_is_readonly( $f_bug_id ) && access_has_bug_level( config_get( 'bug_reminder_threshold' ), $f_bug_id );
 $t_bug_reminder_link = 'bug_reminder_page.php?bug_id=' . $f_bug_id;
 
 $t_top_buttons_enabled = !$t_force_readonly && ( $t_action_button_position == POSITION_TOP || $t_action_button_position == POSITION_BOTH );
 $t_bottom_buttons_enabled = !$t_force_readonly && ( $t_action_button_position == POSITION_BOTTOM || $t_action_button_position == POSITION_BOTH );
 
-$t_show_project = in_array( 'project', $t_fields );
-$t_show_id = in_array( 'id', $t_fields );
+$t_show_platform = in_array( 'platform', $t_fields );
+$t_platform = $t_show_platform ? string_display_line( $t_bug->platform ) : '';
 
-$t_show_date_submitted = in_array( 'date_submitted', $t_fields );
-$t_date_submitted = $t_show_date_submitted ? date( config_get( 'normal_date_format' ), $t_bug->date_submitted ) : '';
-
-$t_show_last_updated = in_array( 'last_updated', $t_fields );
-$t_last_updated = $t_show_last_updated ? date( config_get( 'normal_date_format' ), $t_bug->last_updated ) : '';
+$t_show_os = in_array( 'os', $t_fields );
+$t_os = $t_show_os ? string_display_line( $t_bug->os ) : '';
+$t_os_version = $t_show_os ? string_display_line( $t_bug->os_build ) : '';
 
 $t_show_tags = in_array( 'tags', $t_fields ) && access_has_global_level( config_get( 'tag_view_threshold' ) );
 
@@ -178,40 +151,20 @@ $t_bug_overdue = bug_is_overdue( $f_bug_id );
 $t_show_view_state = in_array( 'view_state', $t_fields );
 $t_bug_view_state_enum = $t_show_view_state ? string_display_line( get_enum_element( 'view_state', $t_bug->view_state ) ) : '';
 
-$t_show_due_date = in_array( 'due_date', $t_fields ) && access_has_bug_level( config_get( 'due_date_view_threshold' ), $f_bug_id );
 
 if( $t_show_due_date ) {
-	if( !date_is_null( $t_bug->due_date ) ) {
+	if( access_has_bug_level( config_get( 'due_date_view_threshold' ), $f_bug_id ) && !date_is_null( $t_bug->due_date ) ) {
 		$t_bug_due_date = date( config_get( 'normal_date_format' ), $t_bug->due_date );
 	} else {
 		$t_bug_due_date = '';
 	}
 }
 
-$t_show_reporter = in_array( 'reporter', $t_fields );
-$t_show_handler = in_array( 'handler', $t_fields ) && access_has_bug_level( config_get( 'view_handler_threshold' ), $f_bug_id );
 $t_show_monitor_box = !$t_force_readonly;
 $t_show_relationships_box = !$t_force_readonly;
-$t_show_history = $f_history;
-$t_show_profiles = config_get( 'enable_profiles' );
-$t_show_platform = $t_show_profiles && in_array( 'platform', $t_fields );
-$t_platform = $t_show_platform ? string_display_line( $t_bug->platform ) : '';
-$t_show_os = $t_show_profiles && in_array( 'os', $t_fields );
-$t_os = $t_show_os ? string_display_line( $t_bug->os ) : '';
-$t_show_os_version = $t_show_profiles && in_array( 'os_version', $t_fields );
-$t_os_version = $t_show_os_version ? string_display_line( $t_bug->os_build ) : '';
+$t_show_history = gpc_get_bool( 'history', config_get( 'history_default_visible' ) );
 $t_can_attach_tag = $t_show_tags && !$t_force_readonly && access_has_bug_level( config_get( 'tag_attach_threshold' ), $f_bug_id );
-$t_show_priority = in_array( 'priority', $t_fields );
-$t_priority = $t_show_priority ? string_display_line( get_enum_element( 'priority', $t_bug->priority ) ) : '';
-$t_show_severity = in_array( 'severity', $t_fields );
-$t_severity = $t_show_severity ? string_display_line( get_enum_element( 'severity', $t_bug->severity ) ) : '';
-$t_show_status = in_array( 'status', $t_fields );
-$t_status = $t_show_status ? string_display_line( get_enum_element( 'status', $t_bug->status ) ) : '';
-$t_show_resolution = in_array( 'resolution', $t_fields );
-$t_resolution = $t_show_resolution ? string_display_line( get_enum_element( 'resolution', $t_bug->resolution ) ) : '';
-$t_show_description = in_array( 'description', $t_fields );
 
-$t_description = $t_show_description ? string_display_links( $t_bug->description ) : '';
 
 $t_links = event_signal( 'EVENT_MENU_ISSUE', $f_bug_id );
 
@@ -336,7 +289,7 @@ echo '<th class="bug-description category" colspan="6">', lang_get( 'description
 echo '</tr>';
 
 echo '<tr class="bug-header-data">';
-echo '<td class="bug-description" colspan="6">', $t_description, '</td>';
+echo '<td class="bug-description" colspan="6">', string_display_links( $t_bug->description ), '</td>';
 echo '</tr>';
 
 ## tags
@@ -377,7 +330,7 @@ echo '<tr>';
 
 	echo '<td class="bug-status" width=15%>';
 	echo '<i class="fa fa-square fa-status-box ' . $t_status_label . '"></i> ';
-	echo $t_status, '</td>';
+	echo string_display_line( get_enum_element( 'status', $t_bug->status ) ), '</td>';
 
 	# reporter
 	echo '<th class="bug-reporter category" width="15%">', lang_get( 'reporter' ), '</th>';
@@ -386,8 +339,8 @@ echo '<tr>';
 	echo '</td>';
 
 	# date submitted
-	echo '<th class="bug-date-submitted category" width="15%">', $t_show_date_submitted ? lang_get( 'date_submitted' ) : '', '</th>';
-	echo '<td class="bug-date-submitted" width=100%>', $t_date_submitted, '</td>';
+	echo '<th class="bug-date-submitted category" width="15%">', lang_get( 'date_submitted' ), '</th>';
+	echo '<td class="bug-date-submitted" width=100%>', date( config_get( 'normal_date_format' ), $t_bug->date_submitted ), '</td>';
 echo '</tr>';
 
 
@@ -395,7 +348,7 @@ echo '</tr>';
 echo '<tr>';
 	# priority
 	echo '<th class="bug-priority category">', lang_get( 'priority' ), '</th>';
-	echo '<td class="bug-priority">', $t_priority, '</td>';
+	echo '<td class="bug-priority">', string_display_line( get_enum_element( 'priority', $t_bug->priority ) ), '</td>';
 
 	# assignee
 	echo '<th class="bug-assigned-to category">', lang_get( 'assigned_to' ), '</th>';
@@ -419,14 +372,14 @@ echo '</tr>';
 echo '<tr>';
 	# resolution
 	echo '<th class="bug-resolution category">', lang_get( 'resolution' ), '</th>';
-	echo '<td class="bug-resolution">', $t_resolution, '</td>';
+	echo '<td class="bug-resolution">', string_display_line( get_enum_element( 'resolution', $t_bug->resolution ) ), '</td>';
 
 	# empty
 	table_empty(2);
 
 	# date updated
-	echo '<th class="bug-last-modified category">', $t_show_last_updated ? lang_get( 'last_update' ) : '','</th>';
-	echo '<td class="bug-last-modified">', $t_last_updated, '</td>';
+	echo '<th class="bug-last-modified category">', lang_get( 'last_update' ),'</th>';
+	echo '<td class="bug-last-modified">', date( config_get( 'normal_date_format' ), $t_bug->last_updated ), '</td>';
 echo '</tr>';
 
 
@@ -434,7 +387,7 @@ echo '</tr>';
 echo '<tr>';
 	# severity
 	echo '<th class="bug-severity category">', lang_get( 'severity' ), '</th>';
-	echo '<td class="bug-severity">', $t_severity, '</td>';
+	echo '<td class="bug-severity">', string_display_line( get_enum_element( 'severity', $t_bug->severity ) ), '</td>';
 
 	# empty
 	table_empty(4);
@@ -498,6 +451,8 @@ event_signal( 'EVENT_VIEW_BUG_DETAILS', array( $t_bug_id ) );
 
 ## custom fields
 $t_related_custom_field_ids = custom_field_get_linked_ids( $t_bug->project_id );
+$custom_fields_show = config_get('bug_custom_field_show')['view'];
+
 custom_field_cache_values( array( $t_bug->id ) , $t_related_custom_field_ids );
 
 if($t_related_custom_field_ids){
@@ -511,9 +466,14 @@ $i = 0;
 foreach( $t_related_custom_field_ids as $t_id ) {
 	if( !custom_field_has_read_access( $t_id, $f_bug_id ) ) {
 		continue;
-	} # has read access
+	}
 
 	$t_def = custom_field_get_definition( $t_id );
+
+	# ignore field if it shall not be shown
+	if(!in_array($t_def['name'], $custom_fields_show)){
+		continue;
+	}
 
 	if($i == 0){
 		echo '<tr>';

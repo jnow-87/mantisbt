@@ -130,14 +130,6 @@ $t_definition = custom_field_get_definition( $f_field_id );
 			</div>
 		</td>
 	</tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_valid_regexp' ) ?>
-		</td>
-		<td>
-			<input type="text" id="custom-field-valid-regexp" name="valid_regexp" class="input-sm" size="32" maxlength="255" value="<?php echo string_attribute( $t_definition['valid_regexp'] ) ?>" />
-		</td>
-	</tr>
 
 	<tr>
 		<td class="category">
@@ -193,94 +185,6 @@ $t_definition = custom_field_get_definition( $f_field_id );
             </label>
         </td>
     </tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_display_report' ) ?>
-		</td>
-		<td>
-			<label>
-				<input type="checkbox" class="ace" id="custom-field-display-report" name="display_report" value="1" <?php check_checked( (bool)$t_definition['display_report'] ) ?> />
-				<span class="lbl"></span>
-			</label>
-		</td>
-	</tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_display_update' ) ?>
-		</td>
-		<td>
-			<label>
-				<input type="checkbox" class="ace" id="custom-field-display-update" name="display_update" value="1" <?php check_checked( (bool)$t_definition['display_update'] ) ?> />
-				<span class="lbl"></span>
-			</label>
-		</td>
-	</tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_display_resolved' ) ?>
-		</td>
-		<td>
-			<label>
-				<input type="checkbox" class="ace" id="custom-field-display-resolved" name="display_resolved" value="1" <?php check_checked( (bool)$t_definition['display_resolved'] ) ?> />
-				<span class="lbl"></span>
-			</label>
-		</td>
-	</tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_display_closed' ) ?>
-		</td>
-		<td>
-			<label>
-				<input type="checkbox" class="ace" id="custom-field-display-closed" name="display_closed" value="1" <?php check_checked( (bool)$t_definition['display_closed'] ) ?> />
-				<span class="lbl"></span>
-			</label>
-		</td>
-	</tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_require_report' ) ?>
-		</td>
-		<td>
-			<label>
-				<input type="checkbox" class="ace" id="custom-field-require-report" name="require_report" value="1" <?php check_checked( (bool)$t_definition['require_report'] ) ?> />
-				<span class="lbl"></span>
-			</label>
-		</td>
-	</tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_require_update' ) ?>
-		</td>
-		<td>
-			<label>
-				<input type="checkbox" class="ace" id="custom-field-require-update" name="require_update" value="1" <?php check_checked( (bool)$t_definition['require_update'] ) ?> />
-				<span class="lbl"></span>
-			</label>
-		</td>
-	</tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_require_resolved' ) ?>
-		</td>
-		<td>
-			<label>
-				<input type="checkbox" class="ace" id="custom-field-require-resolved" name="require_resolved" value="1" <?php check_checked( (bool)$t_definition['require_resolved'] ) ?> />
-				<span class="lbl"></span>
-			</label>
-		</td>
-	</tr>
-	<tr>
-		<td class="category">
-			<?php echo lang_get( 'custom_field_require_closed' ) ?>
-		</td>
-		<td>
-			<label>
-				<input type="checkbox" class="ace" id="custom-field-require-closed" name="require_closed" value="1" <?php check_checked( (bool)$t_definition['require_closed'] ) ?> />
-				<span class="lbl"></span>
-			</label>
-		</td>
-	</tr>
 </fieldset>
 </table>
 </div>

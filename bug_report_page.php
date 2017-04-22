@@ -115,8 +115,6 @@ if( $f_master_bug_id > 0 ) {
 	$f_os					= $t_bug->os;
 	$f_os_build				= $t_bug->os_build;
 	$f_product_version		= $t_bug->version;
-	$f_target_version		= $t_bug->target_version;
-	$f_profile_id			= 0;
 	$f_handler_id			= $t_bug->handler_id;
 
 	$f_category_id			= $t_bug->category_id;
@@ -124,7 +122,6 @@ if( $f_master_bug_id > 0 ) {
 	$f_priority				= $t_bug->priority;
 	$f_summary				= $t_bug->summary;
 	$f_description			= $t_bug->description;
-	$f_view_state			= (int)$t_bug->view_state;
 	$f_due_date				= $t_bug->due_date;
 
 	$t_project_id			= $t_bug->project_id;
@@ -166,8 +163,6 @@ if( $f_master_bug_id > 0 ) {
 	$f_os					= gpc_get_string( 'os', '' );
 	$f_os_build				= gpc_get_string( 'os_build', '' );
 	$f_product_version		= gpc_get_string( 'product_version', '' );
-	$f_target_version		= gpc_get_string( 'target_version', '' );
-	$f_profile_id			= gpc_get_int( 'profile_id', 0 );
 	$f_handler_id			= gpc_get_int( 'handler_id', 0 );
 
 	$f_category_id			= gpc_get_int( 'category_id', 0 );
@@ -175,7 +170,6 @@ if( $f_master_bug_id > 0 ) {
 	$f_priority				= gpc_get_int( 'priority', (int)config_get( 'default_bug_priority' ) );
 	$f_summary				= gpc_get_string( 'summary', '' );
 	$f_description			= gpc_get_string( 'description', '' );
-	$f_view_state			= gpc_get_int( 'view_state', (int)config_get( 'default_bug_view_status' ) );
 	$f_due_date				= gpc_get_string( 'due_date', date_strtotime( config_get( 'due_date_default' ) ) );
 
 	if( $f_due_date == '' ) {
@@ -185,35 +179,33 @@ if( $f_master_bug_id > 0 ) {
 	$t_changed_project		= false;
 }
 
-$f_copy_notes_from_parent         = gpc_get_bool( 'copy_notes_from_parent', false );
-$f_copy_attachments_from_parent   = gpc_get_bool( 'copy_attachments_from_parent', false );
-
-$t_fields = config_get( 'bug_report_page_fields' );
+$t_fields = config_get( 'bug_field_show' )['report'];
 $t_fields = columns_filter_disabled( $t_fields );
 
-$t_show_category = in_array( 'category_id', $t_fields );
-$t_show_severity = in_array( 'severity', $t_fields );
-$t_show_priority = in_array( 'priority', $t_fields );
-$t_show_handler = in_array( 'handler', $t_fields ) && access_has_project_level( config_get( 'update_bug_assign_threshold' ) );
-$t_show_profiles = config_get( 'enable_profiles' );
-$t_show_platform = $t_show_profiles && in_array( 'platform', $t_fields );
-$t_show_os = $t_show_profiles && in_array( 'os', $t_fields );
-$t_show_os_version = $t_show_profiles && in_array( 'os_version', $t_fields );
-$t_show_resolution = in_array( 'resolution', $t_fields );
-$t_show_status = in_array( 'status', $t_fields );
-$t_show_tags =
-	in_array( 'tags', $t_fields ) &&
-	access_has_project_level(
-		config_get( 'tag_attach_threshold', /* default */ null, /* user */ null, $t_project_id ),
-		$t_project_id );
+$t_required_fields = config_get('bug_field_required')['report'];
 
-$t_show_versions = version_should_show_product_version( $t_project_id );
-$t_show_product_version = $t_show_versions && in_array( 'product_version', $t_fields );
-$t_show_product_build = $t_show_versions && in_array( 'product_build', $t_fields ) && config_get( 'enable_product_build' ) == ON;
-$t_show_target_version = $t_show_versions && in_array( 'target_version', $t_fields ) && access_has_project_level( config_get( 'roadmap_update_threshold' ) );
-$t_show_due_date = in_array( 'due_date', $t_fields ) && access_has_project_level( config_get( 'due_date_update_threshold' ), helper_get_current_project(), auth_get_current_user_id() );
-$t_show_attachments = in_array( 'attachments', $t_fields ) && file_allow_bug_upload();
-$t_show_view_state = in_array( 'view_state', $t_fields ) && access_has_project_level( config_get( 'set_view_status_threshold' ) );
+$t_show_platform = in_array( 'platform', $t_fields ) || in_array('platform', $t_required_fields);
+$t_platform_str = $t_show_platform ? lang_get( 'platform' ) : '';
+
+$t_show_os = in_array( 'os', $t_fields ) || in_array('os', $t_required_fields);
+$t_os_str = $t_show_os ? lang_get( 'os' ) : '';
+$t_os_version_str = $t_show_os ? lang_get( 'os_version' ) : '';
+
+$t_show_tags = in_array( 'tags', $t_fields ) && access_has_project_level(config_get( 'tag_attach_threshold', /* default */ null, /* user */ null, $t_project_id ), $t_project_id );
+
+$t_show_product_version = in_array( 'product_version', $t_fields ) || in_array('product_version', $t_required_fields);
+$t_product_version_str = $t_show_product_version ? lang_get( 'product_version' ) : '';
+
+$t_show_product_build = in_array( 'product_build', $t_fields ) || in_array('product_build', $t_required_fields);
+$t_product_build_str = $t_show_product_build ?	lang_get( 'product_build' ) : '';
+
+$t_show_target_version = (in_array( 'target_version', $t_fields ) || in_array('target_version', $t_required_fields)) && access_has_project_level( config_get( 'roadmap_update_threshold' ) );
+$t_target_version_str = $t_show_target_version ? lang_get( 'target_version' ) : '';
+
+$t_show_view_state = (in_array( 'view_state', $t_fields ) || in_array('view_state', $t_required_fields)) && access_has_project_level( config_get( 'set_view_status_threshold' ) );
+$t_view_status_str = $t_show_view_state ? lang_get( 'view_status' ) : '';
+
+
 
 # don't index bug report page
 html_robots_noindex();
@@ -223,9 +215,6 @@ layout_page_header( lang_get( 'report_bug_link' ) );
 layout_page_begin( __FILE__ );
 
 $t_form_encoding = '';
-if( $t_show_attachments ) {
-	$t_form_encoding = 'enctype="multipart/form-data"';
-}
 ?>
 <div class="col-md-6 col-xs-12">
 <form id="report_bug_form"
@@ -353,7 +342,7 @@ if( $t_show_attachments ) {
 
 
 <?php # spacer ?>
-<?php if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $t_show_os || $t_show_target_version || $t_show_tags){ ?>
+<?php if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $t_show_target_version || $t_show_tags){ ?>
 <tr class="spacer"><td colspan="6"></td></tr>
 <tr class="hidden"></tr>
 <?php } ?>
@@ -363,12 +352,17 @@ if( $t_show_attachments ) {
 <?php if($t_show_product_build || $t_show_platform || $t_show_view_state){ ?>
 <tr>
 	<?php # product build ?>
-	<th class="category"><?php echo lang_get( 'product_build' ) ?></th>
-	<td><input class="input-xs" <?php echo helper_get_tab_index() ?> type="text" id="build" name="build" size="16" maxlength="32" value="<?php echo string_attribute( $f_build ) ?>" /></td>
+	<th class="category"><?php echo $t_product_build_str ?></th>
+	<td>
+		<?php if($t_show_product_build){ ?>
+		<input class="input-xs" <?php echo helper_get_tab_index() ?> type="text" id="build" name="build" size="16" maxlength="32" value="<?php echo string_attribute( $f_build ) ?>" />
+		<?php }?>
+	</td>	
 	
 	<?php # platform ?>
-	<th class="category"><?php echo lang_get( 'platform' ) ?></th>
+	<th class="category"><?php echo $t_platform_str ?></th>
 	<td>
+		<?php if($t_show_platform){ ?>
 		<?php if( config_get( 'allow_freetext_in_profile_fields' ) == OFF ) { ?>
 		<select id="platform" name="platform" class="input-xs">
 			<option value=""></option>
@@ -379,19 +373,21 @@ if( $t_show_attachments ) {
 				echo '<input class="typeahead input-xs" type="text" id="platform" name="platform" autocomplete = "off" size="16" maxlength="32" tabindex="' . helper_get_tab_index_value() . '" value="' . string_attribute( $f_platform ) . '" />';
 			}
 		?>
+		<?php }?>
 	</td>
 
 	<?php # view status ?>
 	<th class="category">
-		<?php echo lang_get( 'view_status' ) ?>
+		<?php echo $t_view_status_str ?>
 	</th>
 	<td>
+		<?php if($t_show_view_state){ ?>
 		<?php
 		echo '<select ' . helper_get_tab_index() . ' id="view_state" name="view_state" class="input-xs">';
 		print_enum_string_option_list( 'view_state' );
 		echo '</select>';
 		?>
-
+		<?php }?>
 	</td>
 </tr>
 
@@ -401,16 +397,19 @@ if( $t_show_attachments ) {
 <?php if($t_show_product_version || $t_show_os){ ?>
 <tr>
 	<?php # product version?>
-	<th class="category"><?php echo lang_get( 'product_version' ) ?></th>
+	<th class="category"><?php echo $t_product_version_str ?></th>
 	<td>
+		<?php if($t_show_product_version){ ?>
 		<select <?php echo helper_get_tab_index() ?> id="product_version" name="product_version" class="input-xs">
 			<?php print_version_option_list( $f_product_version, $t_project_id, $t_product_version_released_mask ) ?>
 		</select>
+		<?php } ?>
 	</td>
 
 	<?php # operating system?>
-	<th class="category"><?php echo lang_get( 'os' ) ?></th>
+	<th class="category"><?php echo $t_os_str ?></th>
 	<td>
+		<?php if($t_show_os){ ?>
 		<?php if( config_get( 'allow_freetext_in_profile_fields' ) == OFF ) { ?>
 		<select id="os" name="os" class="input-xs">
 			<option value=""></option>
@@ -420,6 +419,7 @@ if( $t_show_attachments ) {
 			} else {
 				echo '<input class="typeahead input-xs" type="text" id="os" name="os" autocomplete = "off" size="16" maxlength="32" tabindex="' . helper_get_tab_index_value() . '" value="' . string_attribute( $f_os ) . '" />';
 			}
+		}
 		?>
 	</td>
 
@@ -432,16 +432,19 @@ if( $t_show_attachments ) {
 <?php if($t_show_os || $t_show_target_version){ ?>
 <tr>
 	<?php # target version?>
-	<th class="category"><?php echo lang_get( 'target_version' ) ?></th>
+	<th class="category"><?php echo $t_target_version_str ?></th>
 	<td>
+		<?php if($t_show_target_version){ ?>	
 		<select <?php echo helper_get_tab_index() ?> id="target_version" name="target_version" class="input-xs">
 			<?php print_version_option_list( '', null, VERSION_FUTURE ) ?>
 		</select>
+		<?php } ?>
 	</td>
 
 	<?php # os version?>
-	<th class="category"><?php echo lang_get( 'os_version' ) ?></th>
+	<th class="category"><?php echo $t_os_version_str ?></th>
 	<td>
+		<?php if($t_show_os){ ?>
 		<?php
 			if( config_get( 'allow_freetext_in_profile_fields' ) == OFF ) {
 		?>
@@ -453,6 +456,7 @@ if( $t_show_attachments ) {
 			} else {
 				echo '<input class="typeahead input-xs" type="text" id="os_build" name="os_build" autocomplete = "off" size="16" maxlength="16" tabindex="' . helper_get_tab_index_value() . '" value="' . string_attribute( $f_os_build ) . '" />';
 			}
+		}
 		?>
 	</td>
 
@@ -484,18 +488,27 @@ if( $t_show_attachments ) {
 	}
 
 	$i=0;
+
+	$custom_fields_show = config_get('bug_custom_field_show')['report'];
+	$custom_fields_required = config_get('bug_custom_field_required')['report'];
+
 	foreach( $t_related_custom_field_ids as $t_id ) {
+		# check if the field is required when reporting an issue
+		$field_name = custom_field_get_field( $t_id, 'name' );
+
+		if(!in_array($field_name, $custom_fields_show) && !in_array($field_name, $custom_fields_required) ){
+			continue;
+		}
+
+		# display field if access is granted
 		$t_def = custom_field_get_definition( $t_id );
-		if( ( $t_def['display_report'] || $t_def['require_report']) && custom_field_has_write_access_to_project( $t_id, $t_project_id ) ) {
-
-			$t_required_class = $t_def['require_report'] ? 'class="required" ' : '';
-
+		if( custom_field_has_write_access_to_project( $t_id, $t_project_id ) ) {
 			if($i == 0){
 				echo '<tr>';
 			}
 	?>
 			<th class="category">
-				<?php if( $t_def['require_report'] ) {?><span class="required">*</span><?php } ?>
+				<span class="required">*</span>
 				<?php if( $t_def['type'] != CUSTOM_FIELD_TYPE_RADIO && $t_def['type'] != CUSTOM_FIELD_TYPE_CHECKBOX ) { ?>
 						<?php echo string_display( lang_get_defaulted( $t_def['name'] ) ) ?>
 				<?php } else { echo string_display( lang_get_defaulted( $t_def['name'] ) ); } ?>
@@ -512,7 +525,10 @@ if( $t_show_attachments ) {
 				$i = $i + 1;
 			}
 		}
-	} # foreach( $t_related_custom_field_ids as $t_id )
+		else{
+			trigger_error('custom field \'' . $field_name . '\' is required but not configured with write access', ERROR);
+		}
+	}
 
 	if($i != 0){
 		table_empty(2 * (3 - $i));

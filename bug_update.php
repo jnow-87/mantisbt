@@ -110,6 +110,11 @@ $t_bug_note->note = gpc_get_string( 'bugnote_text', '' );
 $t_bug_note->view_state = gpc_get_bool( 'private', config_get( 'default_bugnote_view_status' ) == VS_PRIVATE ) ? VS_PRIVATE : VS_PUBLIC;
 $t_bug_note->time_tracking = gpc_get_string( 'time_tracking', '0:00' );
 
+# copy time tracking and bug notes to be able to check the content with bug::check_fields_builtin()
+$t_updated_bug->time_tracking = &$t_bug_note->time_tracking;
+$t_updated_bug->notes = &$t_bug_note->note;
+
+
 if( $t_existing_bug->last_updated != $t_updated_bug->last_updated ) {
 	trigger_error( ERROR_BUG_CONFLICTING_EDIT, ERROR );
 }
