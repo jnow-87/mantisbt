@@ -164,6 +164,10 @@ if( 0 != $t_bug_data->profile_id ) {
 }
 helper_call_custom_function( 'issue_create_validate', array( $t_bug_data ) );
 
+$t_bug_data->check_fields_builtin('report');
+$t_bug_data->check_fields_custom('report');
+
+
 # Validate the custom fields before adding the bug.
 $t_related_custom_field_ids = custom_field_get_linked_ids( $t_bug_data->project_id );
 foreach( $t_related_custom_field_ids as $t_id ) {

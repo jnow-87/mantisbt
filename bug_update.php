@@ -220,16 +220,6 @@ if( $t_existing_bug->handler_id != $t_updated_bug->handler_id ) {
 	}
 }
 
-# Check whether the category has been undefined when it's compulsory.
-if( $t_existing_bug->category_id != $t_updated_bug->category_id ) {
-	if( $t_updated_bug->category_id == 0 &&
-		!config_get( 'allow_no_category' )
-	) {
-		error_parameters( lang_get( 'category' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
-	}
-}
-
 # Don't allow changing the Resolution in the following cases:
 # - new status < RESOLVED and resolution denoting completion (>= fixed_threshold)
 # - new status >= RESOLVED and resolution < fixed_threshold
@@ -265,6 +255,12 @@ if( $t_existing_bug->target_version !== $t_updated_bug->target_version ) {
 if( $t_existing_bug->view_state != $t_updated_bug->view_state ) {
 	access_ensure_bug_level( config_get( 'change_view_status_threshold' ), $f_bug_id );
 }
+
+
+
+$t_updated_bug->check_fields_custom($t_existing_bug->status . '_to_' . $t_updated_bug->status);
+
+
 
 # Determine the custom field "require check" to use for validating
 # whether fields can be undefined during this bug update.
@@ -379,6 +375,14 @@ helper_call_custom_function( 'issue_update_validate', array( $f_bug_id, $t_updat
 
 # Allow plugins to validate/modify the update prior to it being committed.
 $t_updated_bug = event_signal( 'EVENT_UPDATE_BUG_DATA', $t_updated_bug, $t_existing_bug );
+
+
+
+$t_updated_bug->check_fields_builtin($t_existing_bug->status . '_to_' . $t_updated_bug->status);
+
+
+
+
 
 # Commit the bug updates to the database.
 $t_text_field_update_required = ( $t_existing_bug->description != $t_updated_bug->description );

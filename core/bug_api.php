@@ -689,6 +689,96 @@ class BugData {
 
 		return true;
 	}
+
+	public function check_fields_builtin($p_state){
+		# get array of required fields for all state transistions
+		$required_fields = config_get('bug_field_required');
+
+		# get regular expressions used to check field content
+		$field_regex = config_get('bug_field_required_regex');
+
+
+		# check if there is any field that needs to be checked
+		if(empty($required_fields[$p_state])){
+			return;
+		}
+
+
+		# check all required fields
+		foreach($required_fields[$p_state] as $field){
+			# check if regular expression for the current field is defined
+			if(empty($field_regex[$field])){
+				trigger_error('regex to match against field \'' . $field . '\' missing, cf. configuration variable \'bug_field_required_regex\'', ERROR);
+			}
+
+			# check field content against the regular expression
+			if(preg_match($field_regex[$field], $this->$field) == 0){
+				trigger_error( 'built-in field \'' . $field . '\' is required but not set', ERROR);
+			}
+		}
+	}
+
+	public function check_fields_custom($p_state){
+		# get custom fields related to the bug's project
+		$related_custom_field_ids = custom_field_get_linked_ids( $this->project_id );
+
+		# get required fields for current state transition
+		$required_fields = config_get('bug_custom_field_required');
+
+		# get regular expressions used to check field content
+		$field_regex = config_get('bug_field_required_regex');
+
+
+		# check if there is any field that needs to be checked
+		if(empty($required_fields[$p_state])){
+			return;
+		}
+
+
+		# check all required fields
+		foreach($required_fields[$p_state] as $field_name){
+			$field_id = custom_field_get_id_from_name($field_name);
+
+			# check if regular expression for the current field is defined
+			if(empty($field_regex[$field_name])){
+				trigger_error('regex to match against field \'' . $field_name . '\' missing, cf. configuration variable \'bug_custom_field_required_regex\'', ERROR);
+			}
+
+			# check if the field is linked to the bug
+			if(!in_array($field_id, $related_custom_field_ids)){
+				trigger_error('custom field \'' . $field_name . '\' is not linked to the bug\' project', ERROR);
+			}
+
+			# get field definition
+			$field_def = custom_field_get_definition($field_id);
+
+			# compose form input field name
+			$form_field_name = 'custom_field_' . $field_id;
+
+			if($field_def['type'] == CUSTOM_FIELD_TYPE_DATE){
+				$form_field_name = $form_field_name . '_date';
+			}
+
+			# check field content
+			switch( $field_def['type'] ) {
+				case CUSTOM_FIELD_TYPE_DATE:
+				case CUSTOM_FIELD_TYPE_STRING:
+				case CUSTOM_FIELD_TYPE_NUMERIC:
+				case CUSTOM_FIELD_TYPE_FLOAT:
+				case CUSTOM_FIELD_TYPE_ENUM:
+				case CUSTOM_FIELD_TYPE_EMAIL:
+				case CUSTOM_FIELD_TYPE_TEXTAREA:
+					if(!gpc_isset( $form_field_name ) || !preg_match($field_regex[$field_name], gpc_get_string( $form_field_name ))){
+						trigger_error( 'custom field \'' . $field_name . '\' is required but not set', ERROR);
+					}
+
+					break;
+
+				default:
+					trigger_error('unknown custom field type \'' . $field_def['type'] . '\'');
+			}
+		}
+	}
 }
 
 $g_cache_bug = array();
