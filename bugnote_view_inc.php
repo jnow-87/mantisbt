@@ -72,7 +72,7 @@ $t_show_time_tracking = access_has_bug_level( config_get( 'time_tracking_view_th
 
 # get attachments data
 if( !isset( $t_fields ) ) {
-	$t_fields = config_get( 'bug_field_show' )['view'];
+	$t_fields = config_get( 'bug_fields_show' )['view'];
 	$t_fields = columns_filter_disabled( $t_fields );
 }
 

@@ -147,7 +147,7 @@ $t_lang_system_profile = lang_get( 'system_profile' );
 $t_lang_attached_files = lang_get( 'attached_files' );
 $t_lang_tags = lang_get( 'tags' );
 
-$t_fields = config_get( 'bug_field_show' )['view'];
+$t_fields = config_get( 'bug_fields_show' )['view'];
 $t_fields = columns_filter_disabled( $t_fields );
 
 $t_show_tags = in_array( 'tags', $t_fields ) && access_has_global_level( config_get( 'tag_view_threshold' ) );
@@ -317,7 +317,7 @@ for( $j=0; $j < $t_row_count; $j++ ) {
 		<?php echo sprintf( lang_get( 'label' ), $t_lang_product_build ) ?>
 	</td>
 	<td>
-		<?php echo string_display_line( $t_bug->build ) ?>
+		<?php echo string_display_line( $t_bug->product_build ) ?>
 	</td>
 	<td class="bold">
 		<?php echo sprintf( lang_get( 'label' ), $t_lang_resolution ) ?>

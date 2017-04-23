@@ -123,9 +123,7 @@ $t_bug_data->status                 = gpc_get_string( 'status', config_get( 'bug
 $t_bug_data->summary                = gpc_get_string( 'summary' );
 $t_bug_data->description            = gpc_get_string( 'description' );
 $t_bug_data->due_date               = gpc_get_string( 'due_date', date_strtotime( config_get( 'due_date_default' ) ) );
-if( is_blank( $t_bug_data->due_date ) ) {
-	$t_bug_data->due_date = date_get_null();
-}
+
 
 $f_rel_type                         = gpc_get_int( 'rel_type', BUG_REL_NONE );
 $f_files                            = gpc_get_file( 'ufile', null );
@@ -164,6 +162,10 @@ if( 0 != $t_bug_data->profile_id ) {
 }
 helper_call_custom_function( 'issue_create_validate', array( $t_bug_data ) );
 
+# copy time tracking and bug notes to be able to check the content with bug::check_fields_builtin()
+$t_bug_data->tags = &$f_tag_string;
+
+# check required fields
 $t_bug_data->check_fields_builtin('report');
 $t_bug_data->check_fields_custom('report');
 

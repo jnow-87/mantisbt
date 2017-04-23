@@ -942,7 +942,7 @@ function print_build_option_list( $p_build = '' ) {
  * @param integer|array $p_val	The current value(s)
  * @return void
  */
-function print_enum_string_option_list( $p_enum_name, $p_val = 0 ) {
+function print_enum_string_option_list( $p_enum_name, $p_val = 0, $p_blank_option = 0 ) {
 	$t_config_var_name = $p_enum_name . '_enum_string';
 	$t_config_var_value = config_get( $t_config_var_name );
 
@@ -953,6 +953,10 @@ function print_enum_string_option_list( $p_enum_name, $p_val = 0 ) {
 	}
 
 	$t_enum_values = MantisEnum::getValues( $t_config_var_value );
+
+	if($p_blank_option){
+		echo '<option value="0"></option>';
+	}
 
 	foreach ( $t_enum_values as $t_key ) {
 		$t_elem2 = get_enum_element( $p_enum_name, $t_key );

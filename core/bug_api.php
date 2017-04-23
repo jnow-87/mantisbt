@@ -218,6 +218,14 @@ class BugData {
 	public $notes;
 
 	/**
+	 * Time tracking information
+	 *	this field is only in order to be able to check the time through
+	 *	check_fields_builtin(), since the actual content is stored in the
+	 *	bugnotes class
+	 */
+	public $tags;
+
+	/**
 	 * Attachment Count
 	 */
 	public $attachment_count = null;
@@ -708,10 +716,10 @@ class BugData {
 
 	public function check_fields_builtin($p_state){
 		# get array of required fields for all state transistions
-		$required_fields = config_get('bug_field_required');
+		$required_fields = config_get('bug_fields_required');
 
 		# get regular expressions used to check field content
-		$field_regex = config_get('bug_field_required_regex');
+		$field_regex = config_get('bug_fields_required_regex');
 
 
 		# check if there is any field that needs to be checked
@@ -724,7 +732,7 @@ class BugData {
 		foreach($required_fields[$p_state] as $field){
 			# check if regular expression for the current field is defined
 			if(empty($field_regex[$field])){
-				trigger_error('regex to match against field \'' . $field . '\' missing, cf. configuration variable \'bug_field_required_regex\'', ERROR);
+				trigger_error('regex to match against field \'' . $field . '\' missing, cf. configuration variable \'bug_fields_required_regex\'', ERROR);
 			}
 
 			# check field content against the regular expression
@@ -739,10 +747,10 @@ class BugData {
 		$related_custom_field_ids = custom_field_get_linked_ids( $this->project_id );
 
 		# get required fields for current state transition
-		$required_fields = config_get('bug_custom_field_required');
+		$required_fields = config_get('bug_custom_fields_required');
 
 		# get regular expressions used to check field content
-		$field_regex = config_get('bug_field_required_regex');
+		$field_regex = config_get('bug_fields_required_regex');
 
 
 		# check if there is any field that needs to be checked
@@ -757,7 +765,7 @@ class BugData {
 
 			# check if regular expression for the current field is defined
 			if(empty($field_regex[$field_name])){
-				trigger_error('regex to match against field \'' . $field_name . '\' missing, cf. configuration variable \'bug_custom_field_required_regex\'', ERROR);
+				trigger_error('regex to match against field \'' . $field_name . '\' missing, cf. configuration variable \'bug_fields_required_regex\'', ERROR);
 			}
 
 			# check if the field is linked to the bug

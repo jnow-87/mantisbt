@@ -60,6 +60,14 @@ require_api( 'print_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'version_api.php' );
 
+
+function required_indicator($p_field_name, $p_required_fields){
+	if(in_array($p_field_name, $p_required_fields)){
+		echo '<span class="required">*</span>';
+	}
+}
+
+
 $f_bug_id = gpc_get_int( 'id' );
 $t_bug = bug_get( $f_bug_id );
 
@@ -116,10 +124,9 @@ $t_status_label = str_replace( ' ', '_', MantisEnum::getLabel( config_get( 'stat
 
 $state_transition = $f_old_status . '_to_' . $f_new_status;
 
-$t_fields = config_get( 'bug_field_show' )[$state_transition];
-$t_fields = columns_filter_disabled( $t_fields );
+$t_fields = config_get( 'bug_fields_show' )[$state_transition];
 
-$t_required_fields = config_get('bug_field_required')[$state_transition];
+$t_required_fields = config_get('bug_fields_required')[$state_transition];
 
 
 $t_show_priority = in_array('priority', $t_fields) || in_array('priority', $t_required_fields);
@@ -132,6 +139,7 @@ $t_show_assignee = in_array('handler_id', $t_fields) || in_array('handler_id', $
 $t_show_due_date = in_array('due_date', $t_fields) || in_array('due_date', $t_required_fields);
 $t_show_resolution = in_array('resolution', $t_fields) || in_array('resolution', $t_required_fields);
 $t_show_fixed_in_version = in_array('fixed_in_version', $t_fields) || in_array('fixed_in_version', $t_required_fields);
+$t_show_target_version = in_array('target_version', $t_fields) || in_array('target_version', $t_required_fields);
 
 $t_reset_assignee = 0;
 $t_reset_resolution = 0;
@@ -202,10 +210,10 @@ layout_page_begin();
 	# priority
 ?>
 	<tr>
-		<th class="category"><?php echo lang_get( 'priority' ) ?></th>
+		<th class="category"><?php required_indicator('priority', $t_required_fields); echo lang_get( 'priority' ); ?></th>
 		<td>
 			<select <?php helper_get_tab_index() ?> id="priority" name="priority" class="input-xs">
-			<?php print_enum_string_option_list( 'priority', $t_bug->priority ); ?>
+			<?php print_enum_string_option_list( 'priority', $t_bug->priority, 1 ); ?>
 			</select>		
 		</td>
 	</tr>
@@ -216,10 +224,10 @@ layout_page_begin();
 	# severity
 ?>
 	<tr>
-		<th class="category"><?php echo lang_get( 'severity' ) ?></th>
+		<th class="category"><?php required_indicator('severity', $t_required_fields); echo lang_get( 'severity' ); ?></th>
 		<td>
 			<select <?php helper_get_tab_index() ?> id="severity" name="severity" class="input-xs">
-			<?php print_enum_string_option_list( 'severity', $t_bug->severity ); ?>
+			<?php print_enum_string_option_list( 'severity', $t_bug->severity, 1 ); ?>
 		</td>
 	</tr>
 <?php } ?>
@@ -235,7 +243,7 @@ layout_page_begin();
 		}
 ?>
 		<tr>
-			<th class="category"><?php echo lang_get( 'assigned_to' ) ?></th>
+			<th class="category"><?php required_indicator('handler_id', $t_required_fields); echo lang_get( 'assigned_to' ); ?></th>
 			<td>
 				<select name="handler_id" class="input-xs">
 					<option value="0"></option>
@@ -248,6 +256,24 @@ layout_page_begin();
 } ?>
 
 
+<?php if($t_show_target_version == 1){
+	# target version
+?>
+	<tr>
+		<th class="category">
+			<?php required_indicator('target_version', $t_required_fields); echo lang_get( 'target_version' ); ?>
+		</th>
+		<td>
+			<select name="target_version" class="input-xs">
+				<?php print_version_option_list( $t_bug->target_version, $t_bug->project_id, VERSION_ALL ) ?>
+			</select>
+		</td>
+	</tr>
+<?php
+}
+?>
+
+
 <?php if($t_show_due_date == 1){
 	# due date
 	if( $t_can_update_due_date ) {
@@ -258,7 +284,7 @@ layout_page_begin();
 		}
 ?>
 	<tr>
-		<th class="category"><?php echo lang_get( 'due_date' ) ?></th>
+		<th class="category"><?php required_indicator('due_date', $t_required_fields); echo lang_get( 'due_date' ); ?></th>
 		<td>
 			<input type="text" id="due_date" name="due_date" class="datetimepicker input-xs" size="16" maxlength="20"
 				data-picker-locale="<?php lang_get_current_datetime_locale() ?>"
@@ -275,7 +301,7 @@ layout_page_begin();
 <?php if($t_show_resolution == 1){ ?>
 	<?php # resolution ?>
 	<tr>
-		<th class="category"><?php echo lang_get( 'resolution' ) ?></th>
+		<th class="category"><?php required_indicator('resolution', $t_required_fields); echo lang_get( 'resolution' ); ?></th>
 		<td>
 			<select name="resolution" class="input-xs">
 			<?php
@@ -307,6 +333,24 @@ layout_page_begin();
 ?>
 
 
+<?php if($t_show_fixed_in_version == 1){
+	# fixed in version
+?>
+	<tr>
+		<th class="category">
+			<?php required_indicator('fixed_in_version', $t_required_fields); echo lang_get( 'fixed_in_version' ); ?>
+		</th>
+		<td>
+			<select name="fixed_in_version" class="input-xs">
+				<?php print_version_option_list( $t_bug->fixed_in_version, $t_bug->project_id, VERSION_ALL ) ?>
+			</select>
+		</td>
+	</tr>
+<?php
+}
+?>
+
+
 <?php if($t_show_time_tracking == 1){
 	# time tracking 
 	if( config_get( 'time_tracking_enabled' )
@@ -314,7 +358,7 @@ layout_page_begin();
 	) {
 	?>
 		<tr>
-			<th class="category"><?php echo lang_get( 'time_tracking' ) ?></th>
+			<th class="category"><?php required_indicator('time_tracking', $t_required_fields); echo lang_get( 'time_tracking' ); ?></th>
 			<td><input type="text" name="time_tracking" class="input-xs" size="5" placeholder="hh:mm" /></td>
 		</tr>
 <?php
@@ -322,36 +366,11 @@ layout_page_begin();
 } ?>
 
 
-<?php if($t_show_fixed_in_version == 1){
-	# fixed in version
-	if( ( $f_new_status >= $t_resolved ) ) {
-		if( version_should_show_product_version( $t_bug->project_id )
-			&& !bug_is_readonly( $f_bug_id )
-			&& access_has_bug_level( config_get( 'update_bug_threshold' ), $f_bug_id )
-		) {
-?>
-			<tr>
-				<th class="category">
-					<?php echo lang_get( 'fixed_in_version' ) ?>
-				</th>
-				<td>
-					<select name="fixed_in_version" class="input-xs">
-						<?php print_version_option_list( $t_bug->fixed_in_version, $t_bug->project_id, VERSION_ALL ) ?>
-					</select>
-				</td>
-			</tr>
-<?php
-		}
-	}
-}
-?>
-
-
 <?php
 # custom fields
 $t_related_custom_field_ids = custom_field_get_linked_ids( $t_bug->project_id );
-$custom_fields_show = config_get('bug_custom_field_show')[$state_transition];
-$custom_fields_required = config_get('bug_custom_field_required')[$state_transition];
+$custom_fields_show = config_get('bug_custom_fields_show')[$state_transition];
+$custom_fields_required = config_get('bug_custom_fields_required')[$state_transition];
 
 foreach( $t_related_custom_field_ids as $t_id ) {
 	# check if the field is required for the current state transition
@@ -367,6 +386,7 @@ foreach( $t_related_custom_field_ids as $t_id ) {
 ?>
 <tr>
 	<th class="category">
+		<?php required_indicator($t_def['name'], $custom_fields_required); ?>
 		<?php echo lang_get_defaulted( $t_def['name'] ) ?>
 	</th>
 	<td>
@@ -381,7 +401,7 @@ foreach( $t_related_custom_field_ids as $t_id ) {
 </tr>
 
 <?php
-} # foreach( $t_related_custom_field_ids as $t_id )
+}
 ?>
 
 
@@ -391,7 +411,7 @@ foreach( $t_related_custom_field_ids as $t_id ) {
 
 	<tr id="bug-change-status-note">
 		<th class="category">
-			<?php echo lang_get( 'add_bugnote_title' ) ?><br>
+			<?php required_indicator('notes', $t_required_fields); echo lang_get( 'add_bugnote_title' ); ?><br>
 
 
 <?php if( access_has_bug_level( config_get( 'private_bugnote_threshold' ), $f_bug_id ) ) {
@@ -443,6 +463,7 @@ foreach( $t_related_custom_field_ids as $t_id ) {
 </div>
 </div>
 <div class="widget-toolbox padding-8 clearfix">
+	<span class="required pull-right"> * <?php echo lang_get( 'required' ) ?></span>
 	<input type="submit" class="btn btn-primary btn-white btn-round btn-sm" value="<?php echo lang_get( $t_status_label . '_bug_button' ) ?>" />
 </div>
 </div>

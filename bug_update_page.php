@@ -78,6 +78,13 @@ function table_empty($p_cols){
 }
 
 
+function required_indicator($p_field_name, $p_required_fields){
+	if(in_array($p_field_name, $p_required_fields)){
+		echo '<span class="required">*</span>';
+	}
+}
+
+
 $f_bug_id = gpc_get_int( 'bug_id' );
 $f_reporter_edit = gpc_get_bool( 'reporter_edit' );
 
@@ -98,10 +105,9 @@ access_ensure_bug_level( config_get( 'update_bug_threshold' ), $f_bug_id );
 
 $state_transition = $t_bug->status . '_to_' . $t_bug->status;
 
-$t_fields = config_get( 'bug_field_show' )[$state_transition];
-$t_fields = columns_filter_disabled( $t_fields );
+$t_fields = config_get( 'bug_fields_show' )[$state_transition];
 
-$t_required_fields = config_get('bug_field_required')[$state_transition];
+$t_required_fields = config_get('bug_fields_required')[$state_transition];
 
 $t_bug_id = $f_bug_id;
 
@@ -111,9 +117,11 @@ $t_can_change_view_state = $t_show_view_state && access_has_project_level( confi
 
 $t_show_platform = in_array( 'platform', $t_fields ) || in_array('platform', $t_required_fields);
 $t_show_os = in_array( 'os', $t_fields ) || in_array('os', $t_required_fields);
-$t_show_product_version = in_array( 'product_version', $t_fields ) || in_array('product_version', $t_required_fields);
-$t_show_product_build = in_array( 'product_build', $t_fields ) || in_array('product_build', $t_required_fields);
+$t_show_product_version = in_array( 'version', $t_fields ) || in_array('version', $t_required_fields);
+$t_show_product_build = in_array( 'build', $t_fields ) || in_array('build', $t_required_fields);
 $t_show_fixed_in_version = in_array( 'fixed_in_version', $t_fields ) || in_array('fixed_in_version', $t_required_fields);
+$t_show_target_version = in_array( 'target_version', $t_fields ) || in_array('target_version', $t_required_fields);
+
 
 if( NO_USER == $t_bug->handler_id ) {
 	$t_handler_name =  '';
@@ -183,13 +191,13 @@ event_signal( 'EVENT_UPDATE_BUG_FORM_TOP', array( $t_bug_id ) );
 
 # summary
 echo '<tr class="bug-header">';
-echo '<th class="category" width="15%">' . lang_get( 'summary' ) . '</th>';
+echo '<th class="category" width="15%">', required_indicator('summary', $t_required_fields), lang_get( 'summary' ), '</th>';
 echo '<td colspan="5">', '<input class="input-xs" ', helper_get_tab_index(), ' type="text" id="summary" name="summary" size="100" maxlength="128" value="', string_attribute( $t_bug->summary ), '" />';
 echo '</td></tr>';
 
 # description
 echo '<tr class="bug-header">';
-echo '<th class="bug-description category" colspan=6>' . lang_get( 'description' ) . '</th></tr>';
+echo '<th class="bug-description category" colspan=6>', required_indicator('description', $t_required_fields), lang_get( 'description' ), '</th></tr>';
 echo '<tr><td colspan="6">';
 echo '<textarea class="form-control input-xs" ', helper_get_tab_index(), ' cols="116" rows="10" id="description" name="description">', string_textarea( $t_bug->description ), '</textarea>';
 echo '</td></tr>';
@@ -203,13 +211,13 @@ echo '<tr class="hidden"></tr>';
 ## line
 echo '<tr class="bug-header">';
 	# priority
-	echo '<th class="category">' . lang_get( 'priority' ) . '</th>';
+	echo '<th class="category">', required_indicator('priority', $t_required_fields), lang_get( 'priority' ), '</th>';
 	echo '<td width="20%"><select ' . helper_get_tab_index() . ' id="priority" name="priority" class="input-xs">';
-	print_enum_string_option_list( 'priority', $t_bug->priority );
+	print_enum_string_option_list( 'priority', $t_bug->priority, 1 );
 	echo '</select></td>';
 
 	# category
-	echo '<td class="category" width="12%">', '' . lang_get( 'category' ) . '', '</td>';
+	echo '<td class="category" width="12%">', required_indicator('category_id', $t_required_fields), '' . lang_get( 'category' ) . '', '</td>';
 
 	echo '<td width="15%">';
 	echo '<select ' . helper_get_tab_index() . ' id="category_id" name="category_id" class="input-xs">';
@@ -218,7 +226,7 @@ echo '<tr class="bug-header">';
 	echo '</td>';
 
 	# due date
-	echo '<th class="category" width="12%">' . lang_get( 'due_date' ) . '</th>';
+	echo '<th class="category" width="12%">', required_indicator('due_date', $t_required_fields),  lang_get( 'due_date' ), '</th>';
 
 	if( bug_is_overdue( $t_bug_id ) ) {
 		echo '<td class="overdue" width="20%">';
@@ -250,12 +258,12 @@ echo '</tr>';
 ## line
 echo '<tr class="bug-header">';
 	# severity
-	echo '<th class="category">' . lang_get( 'severity' ) . '</th>';
+	echo '<th class="category">', required_indicator('severity', $t_required_fields),  lang_get( 'severity' ), '</th>';
 	echo '<td><select ' . helper_get_tab_index() . ' id="severity" name="severity" class="input-xs">';
-	print_enum_string_option_list( 'severity', $t_bug->severity );
+	print_enum_string_option_list( 'severity', $t_bug->severity, 1 );
 
 	# assignee
-	echo '<th class="category">' . lang_get( 'assigned_to' ) . '</th>';
+	echo '<th class="category">', required_indicator('handler_id', $t_required_fields),  lang_get( 'assigned_to' ), '</th>';
 	echo '<td>';
 		if(access_has_project_level( config_get( 'update_bug_assign_threshold', config_get( 'update_bug_threshold' ) ) ) ) { 
 			echo '<select ' . helper_get_tab_index() . ' id="handler_id" name="handler_id" class="input-xs">';
@@ -273,7 +281,7 @@ echo '</tr>';
 
 
 # spacer
-if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $t_show_fixed_in_version){
+if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $t_show_fixed_in_version || $t_show_target_version){
 	echo '<tr class="spacer"><td colspan="6"></td></tr>';
 	echo '<tr class="hidden"></tr>';
 }
@@ -283,7 +291,7 @@ if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_pr
 if($t_show_product_build || $t_show_platform || $t_show_view_state){
 echo '<tr class="bug-header">';
 	# product build
-	echo '<th class="category">', $t_show_product_build ? lang_get( 'product_build' ) : '', '</th>';
+	echo '<th class="category">', required_indicator('build', $t_required_fields), $t_show_product_build ? lang_get( 'product_build' ) : '', '</th>';
 	echo '<td>';
 	if($t_show_product_build){
 		echo '<input type="text" id="build" name="build" class="input-xs" size="16" maxlength="32" ' . helper_get_tab_index() . ' value="' . string_attribute( $t_bug->build ) . '" />';
@@ -291,7 +299,7 @@ echo '<tr class="bug-header">';
 	echo '</td>';
 
 	# platform
-	echo '<th class="category">', $t_show_platform ? lang_get( 'platform' ) : '', '</th>';
+	echo '<th class="category">', required_indicator('platform', $t_required_fields), $t_show_platform ? lang_get( 'platform' ) : '', '</th>';
 	echo '<td>';
 
 	if($t_show_platform){
@@ -307,7 +315,7 @@ echo '<tr class="bug-header">';
 	echo '</td>';
 
 	# view status
-	echo '<td class="category">', $t_show_view_state ? lang_get( 'view_status' ) : '', '</td>';
+	echo '<td class="category">', required_indicator('view_state', $t_required_fields), $t_show_view_state ? lang_get( 'view_status' ) : '', '</td>';
 	echo '<td>';
 
 	if( $t_can_change_view_state ) {
@@ -325,7 +333,7 @@ echo '</tr>';
 if($t_show_product_version || $t_show_os){
 echo '<tr class="bug-header">';
 	# product version
-	echo '<th class="category">', $t_show_product_version ? lang_get( 'product_version' ) : '', '</th>';
+	echo '<th class="category">', required_indicator('version', $t_required_fields), $t_show_product_version ? lang_get( 'product_version' ) : '', '</th>';
 	echo '<td>';
 	
 	if($t_show_product_version){
@@ -337,7 +345,7 @@ echo '<tr class="bug-header">';
 	echo '</td>';
 
 	# operating system
-	echo '<th class="category">', $t_show_os ? lang_get( 'os' ) : '', '</th>';
+	echo '<th class="category">', required_indicator('os', $t_required_fields), $t_show_os ? lang_get( 'os' ) : '', '</th>';
 	echo '<td>';
 
 	if($t_show_os){
@@ -361,7 +369,7 @@ echo '</tr>';
 if($t_show_fixed_in_version || $t_show_os){
 echo '<tr class="bug-header">';
 	# fixed in
-	echo '<th class="category">', $t_show_fixed_in_version ? lang_get( 'fixed_in_version' ) : '', '</th>';
+	echo '<th class="category">', required_indicator('fixed_in_version', $t_required_fields), $t_show_fixed_in_version ? lang_get( 'fixed_in_version' ) : '', '</th>';
 	echo '<td>';
 
 	if($t_show_fixed_in_version){
@@ -373,7 +381,7 @@ echo '<tr class="bug-header">';
 	echo '</td>';
 
 	# OS version
-	echo '<th class="category">', $t_show_os ? lang_get( 'os_version' ) : '', '</th>';
+	echo '<th class="category">', required_indicator('os', $t_required_fields), $t_show_os ? lang_get( 'os_version' ) : '', '</th>';
 	echo '<td>';
 
 	if($t_show_os){
@@ -392,14 +400,33 @@ echo '<tr class="bug-header">';
 echo '</tr>';
 }
 
+## optional line
+if($t_show_target_version){
+echo '<tr class="bug-header">';
+	# target version
+	echo '<th class="category">', required_indicator('target_version', $t_required_fields), $t_show_fixed_in_version ? lang_get( 'target_version' ) : '', '</th>';
+	echo '<td>';
+
+	if($t_show_target_version){
+		echo '<select ' . helper_get_tab_index() . ' id="target_version" name="target_version" class="input-xs">';
+		print_version_option_list( $t_bug->target_version, $t_bug->project_id, VERSION_ALL );
+		echo '</select>';
+	}
+
+	echo '</td>';
+
+	table_empty(4);
+echo '</tr>';
+}
+
 event_signal( 'EVENT_UPDATE_BUG_FORM', array( $t_bug_id ) );
 
 # Custom Fields
 $t_related_custom_field_ids = custom_field_get_linked_ids( $t_bug->project_id );
 
 $state_transition = $t_bug->status . '_to_' . $t_bug->status;
-$custom_fields_show = config_get('bug_custom_field_show')[$state_transition];
-$custom_fields_required = config_get('bug_custom_field_required')[$state_transition];
+$custom_fields_show = config_get('bug_custom_fields_show')[$state_transition];
+$custom_fields_required = config_get('bug_custom_fields_required')[$state_transition];
 
 # spacer
 if($t_related_custom_field_ids){
@@ -417,7 +444,7 @@ foreach ( $t_related_custom_field_ids as $t_id ) {
 		}
 
 		echo '<td class="category">';
-		echo '<span>', string_display( lang_get_defaulted( $t_def['name'] ) ), '</span>';
+		echo '<span>', required_indicator($t_def['name'], $custom_fields_required), string_display( lang_get_defaulted( $t_def['name'] ) ), '</span>';
 		echo '</td><td>';
 		print_custom_field_input( $t_def, $t_bug_id );
 		echo '</td>';
@@ -450,6 +477,7 @@ echo '</div>';
 if( $t_bottom_buttons_enabled ) {
 ?>
 	<div class="widget-toolbox padding-8 clearfix">
+		<span class="required pull-right"> * <?php echo lang_get( 'required' ) ?></span>
 		<input <?php helper_get_tab_index(); ?>
 			type="submit" class="btn btn-primary btn-white btn-sm  btn-round"
 			value="<?php echo lang_get( 'update_information_button' ); ?>" />
