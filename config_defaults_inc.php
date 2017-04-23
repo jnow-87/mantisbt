@@ -1102,6 +1102,77 @@ $g_show_changelog_dates = ON;
  */
 $g_show_roadmap_dates = ON;
 
+/**
+ * Show the 'monitor' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_monitor
+ */
+$g_view_issue_button_monitor = 1;
+
+/**
+ * Show the 'clone' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_clone
+ */
+$g_view_issue_button_clone = 1;
+
+/**
+ * Show the 'reopen' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_reopen
+ */
+$g_view_issue_button_reopen = 1;
+
+/**
+ * Show the 'close' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_close
+ */
+$g_view_issue_button_close = 1;
+
+/**
+ * Show the 'move' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_move
+ */
+$g_view_issue_button_move = 1;
+
+/**
+ * Show the 'delete' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_delete
+ */
+$g_view_issue_button_delete = 1;
+
+/**
+ * Show the 'jump to notes' button at the 'issue summary' view.
+ *
+ * @global intege $g_view_issue_button_notes
+ */
+$g_view_issue_button_notes = 1;
+
+/**
+ * Show the 'sendmail' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_sendmail
+ */
+$g_view_issue_button_sendmail = 1;
+
+/**
+ * Show the 'jump to history' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_history
+ */
+$g_view_issue_button_history = 1;
+
+/**
+ * Show the 'next' button at the 'issue summary' view.
+ *
+ * @global integer $g_view_issue_button_next
+ */
+$g_view_issue_button_next = 1;
+
+
 ##########################
 # MantisBT Time Settings #
 ##########################
@@ -1987,6 +2058,13 @@ $g_bug_closed_status_threshold = CLOSED;
 $g_auto_set_status_to_assigned	= ON;
 
 /**
+ * Assigne to set once an issue is reopened
+ *
+ * @global integer $g_reopen_bug_assignee
+ */
+$g_reopen_bug_assignee = ANYBODY;
+
+/**
  * 'status_enum_workflow' defines the workflow, and reflects a simple
  *  2-dimensional matrix. For each existing status, you define which
  *  statuses you can go to from that status, e.g. from NEW_ you might list statuses
@@ -2111,6 +2189,142 @@ $g_allow_delete_own_attachments = OFF;
  * @global integer $g_enable_product_build
  */
 $g_enable_product_build = OFF;
+
+/**
+ * Two dimensional array to control which optional fields to show depending on the current action.
+ * In the first dimension the array should contain an entry for each possible state transition according
+ * to the defined workflow. A state transition is encoded as '<status0>_to_<status1>', with <status[01]>
+ * being the respective enum values. Additionally, 'report' and 'view' are pre-defined entries. They do not
+ * represent state transistions but rather specific views. Each of those arrays contains a list of
+ * fields to show for that respective state transition.
+ *
+ * The following fields can be used, the list in brackets indidates for which view these fields are
+ * relevant. The entries marked with 'edit' are changes to a bug without changing it's status. That is,
+ * it is possible to define the fields per status, e.g. '110_to_120', where 110 and 120 are the respective
+ * status enum values.
+ * If a certain field is not relevant for a view it can still be listed but will still not
+ * be shown.
+ *	- build				(report, view, edit,      )
+ *	- version			(report, view, edit,      )
+ *	- tags				(report, view,     ,      )
+ *	- platform			(report, view, edit,      )
+ *	- os				(report, view, edit,      )
+ *	- view_state		(report, view, edit,      )
+ *	- target_version	(report, view, edit, trans)
+ *  - fixed_in_version	(      , view, edit, trans)
+ *	- priority			(                  , trans)
+ *	- severity			(                  , trans)
+ *	- handler_id		(                  , trans)
+ *	- due_date			(                  , trans)
+ *	- resolution		(                  , trans)
+ *	- time_tracking		(                  , trans)
+ *	- notes				(                  , trans)
+ *
+ * The following fields are always shownand for the respective views listed in brackets:
+ *	- summary			(report, view, edit)
+ *	- description		(report, view, edit)
+ *	- status			(      , view,     )
+ *	- priority			(report, view, edit)
+ *	- severity			(report, view, edit)
+ *	- resolution		(      , view,     )
+ *	- category_id		(report, view, edit)
+ *	- author			(      , view,     )
+ *	- handler_id		(report, view, edit)
+ *	- due_date			(report, view, edit)
+ *	- date_submitted	(      , view,     )
+ *	- last_update		(      , view,     )
+ *
+ * @global array $g_bug_fields_show
+ */
+$g_bug_fields_show = array(
+	'report'		=>	array('build', 'version', 'tags', 'platform', 'os', 'view_state', 'target_version'),
+	'view'			=>	array('build', 'version', 'tags', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version'),
+);
+
+/**
+ * Two dimensional array to control which of the bug fields are requried at a certain status. In the first
+ * dimension the array should contain an entry for each possible state transition according to the defined
+ * workflow. A state transition is encoded as '<status0>_to_<status1>', with <status[01]> being the
+ * respective enum values. Additionally, 'report' is a pre-defined entry, which does not represent a state
+ * transistions but rather a specific view. Each of those arrays contains a list of fields that shall be
+ * check against the regular expression defined in the config option bug_fields_required_regex. If such a
+ * check does not succeed the respective action is aborted with an error message.
+ *
+ * The following fields can be used, however, it is required to consider which of the fields can actually be
+ * present, based on the bug status and history:
+ *	- summary
+ *	- description
+ *	- priority
+ *	- severity
+ *	- resolution
+ *	- category_id
+ *	- handler_id
+ *	- due_date
+ *	- build
+ *	- version
+ *	- tags
+ *	- platform
+ *	- os
+ *	- view_state
+ *	- target_version
+ *	- fixed_in_version
+ *	- time_tracking
+ *	- notes
+ *
+ * @global array $g_bug_fields_required
+ */
+$g_bug_fields_required = array(
+	'report'		=>	array(),
+);
+
+/**
+ * Two dimensional array to control which custom fields are shown, based on the bug status. The arrays are
+ * defined according to the description of g_bug_fields_show, except that custom field names need to be used.
+ *
+ * @global array $g_bug_custom_fields_show
+ */
+$g_bug_custom_fields_show = array(
+	'report'		=>	array(),
+	'view'			=>	array(),
+);
+
+/**
+ * Two dimensional array to control which custom fields are required, based on the bug status. The arrays are
+ * defined according to the description of g_bug_fields_required, except that custom field names need to be used.
+ *
+ * @global array $g_bug_custom_fields_required
+ */
+$g_bug_custom_fields_required = array(
+	'report'		=>	array(),
+	'view'			=>	array(),
+);
+
+/**
+ * Array that defines the regular expressions to be used when checking the content of required fields according to
+ * $g_bug_fields_required and $g_bug_custom_fields_required.
+ *
+ * @global array $g_bug_fields_required_regex
+ */
+$g_bug_fields_required_regex = array(
+	'summary'			=> '/.+/',
+	'description'		=> '/.+/',
+	'category_id'		=> '/[^0].*/',
+	'handler_id'		=> '/[^0].*/',
+	'priority'			=> '/[^0].*/',
+	'severity'			=> '/[^0].*/',
+	'resolution'		=> '/[^0].*/',
+	'fixed_in_version'	=> '/.+/',
+	'due_date'			=> '/[^0].*/',
+	'time_tracking'		=> '/[0-9]+:[0-9]+/',
+	'notes'				=> '/.+/',
+	'os'				=> '/.+/',
+	'platform'			=> '/.+/',
+	'build'				=> '/.+/',
+	'version'			=> '/.+/',
+	'tags'				=> '/.+/',
+	'target_version'	=> '/.+/',
+	'view_state'		=> '/[^0].*/',
+);
 
 
 ##########################
@@ -2667,6 +2881,13 @@ $g_display_bug_padding = 7;
  */
 $g_display_bugnote_padding = 7;
 
+/**
+ * Prefix the bug category with the project id
+ *
+ * @global integer $g_category_show_project
+ */
+$g_category_show_project = 0;
+
 #############################
 # MantisBT Cookie Variables #
 #############################
@@ -3010,6 +3231,54 @@ $g_custom_field_link_threshold = MANAGER;
  * @global integer $g_custom_field_edit_after_create
  */
 $g_custom_field_edit_after_create = ON;
+
+
+#############
+# Main Menu #
+#############
+
+/**
+ * Show the 'my-view' button in the main menu
+ *
+ * @global integer	$g_main_menu_show_my_view
+ */
+$g_main_menu_show_my_view = 1;
+
+/**
+ * Show the 'view issues' button in the main menu
+ *
+ * @global integer	$g_main_menu_show_bugs
+ */
+$g_main_menu_show_bugs = 1;
+
+/**
+ * Show the 'summary' button in the main menu
+ *
+ * @global integer	$g_main_menu_show_summary
+ */
+$g_main_menu_show_summary = 1;
+
+/**
+ * Show the 'report bug' button in the main menu
+ *
+ * @global integer	$g_main_menu_show_report_bug
+ */
+$g_main_menu_show_report_bug = 1;
+
+/**
+ * Show the 'changelog' button in the main menu
+ *
+ * @global integer	$g_main_menu_show_changelog
+ */
+$g_main_menu_show_changelog = 1;
+
+/**
+ * Show the 'roadmap' button in the main menu
+ *
+ * @global integer	$g_main_menu_show_roadmap
+ */
+$g_main_menu_show_roadmap = 1;
+
 
 ################
 # Custom Menus #
