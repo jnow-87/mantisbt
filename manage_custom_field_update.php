@@ -56,7 +56,6 @@ $t_values['name']				= gpc_get_string( 'name' );
 $t_values['type']				= gpc_get_int( 'type' );
 $t_values['possible_values']	= gpc_get_string( 'possible_values' );
 $t_values['default_value']		= gpc_get_string( 'default_value' );
-$t_values['valid_regexp']		= gpc_get_string( 'valid_regexp' );
 $t_values['access_level_r']		= gpc_get_int( 'access_level_r' );
 $t_values['access_level_rw']	= gpc_get_int( 'access_level_rw' );
 $t_values['length_min']			= gpc_get_int( 'length_min' );
