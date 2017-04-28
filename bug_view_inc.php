@@ -169,16 +169,16 @@ $t_links = event_signal( 'EVENT_MENU_ISSUE', $f_bug_id );
 # Start of Template
 #
 
-echo '<div class="col-md-6 col-xs-12">';
+echo '<div class="col-md-6-left col-xs-12">';
 echo '<div class="widget-box widget-color-blue2">';
-echo '<div class="widget-header widget-header-small">';
-echo '<h4 class="widget-title lighter">';
-echo '<i class="ace-icon fa fa-bars"></i>';
-echo $t_form_title;
-echo '</h4>';
-echo '</div>';
+	echo '<div class="widget-header widget-header-small">';
+		echo '<h4 class="widget-title lighter">';
+		echo '<i class="ace-icon fa fa-bars"></i>';
+		echo $t_form_title;
+		echo '</h4>';
+	echo '</div>';
 
-echo '<div class="widget-body">';
+	echo '<div class="widget-body">';
 
 ####
 ## action buttons
@@ -514,15 +514,6 @@ echo '</div></div></div></div></div>';
 ####
 ## bug notes and "Add Note" box
 ####
-if( 'ASC' == current_user_get_pref( 'bugnote_order' ) ) {
-	define( 'BUGNOTE_VIEW_INC_ALLOW', true );
-	include( $t_mantis_dir . 'bugnote_view_inc.php' );
-
-	if( !$t_force_readonly ) {
-		define( 'BUGNOTE_ADD_INC_ALLOW', true );
-		include( $t_mantis_dir . 'bugnote_add_inc.php' );
-	}
-} else {
 	if( !$t_force_readonly ) {
 		define( 'BUGNOTE_ADD_INC_ALLOW', true );
 		include( $t_mantis_dir . 'bugnote_add_inc.php' );
@@ -530,7 +521,7 @@ if( 'ASC' == current_user_get_pref( 'bugnote_order' ) ) {
 
 	define( 'BUGNOTE_VIEW_INC_ALLOW', true );
 	include( $t_mantis_dir . 'bugnote_view_inc.php' );
-}
+
 
 
 ####

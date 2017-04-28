@@ -89,7 +89,7 @@ $t_filter_project_id = filter_get_field( $f_filter_id, 'project_id' );
 
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 	<div class="space-10"></div>
 
 	<form method="post" name="filters" id="filters_form_open" action="<?php echo $t_action; ?>">

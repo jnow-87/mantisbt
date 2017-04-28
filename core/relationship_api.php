@@ -881,7 +881,7 @@ function relationship_view_box( $p_bug_id ) {
 	$t_relationship_graph = ON == config_get( 'relationship_graph_enable' );
 	$t_show_top_div = $t_can_update || $t_relationship_graph;
 	?>
-	<div class="col-md-6 col-xs-12">
+	<div class="col-md-6-right col-xs-12">
 
 	<?php
 	$t_collapse_block = is_collapsed( 'relationships' );

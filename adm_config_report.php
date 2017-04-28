@@ -304,7 +304,7 @@ $t_query = 'SELECT config_id, user_id, project_id, type, value, access_reqd
 $t_result = db_query( $t_query, $t_param );
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <!-- FILTER FORM -->

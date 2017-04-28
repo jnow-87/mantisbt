@@ -94,7 +94,7 @@ layout_page_header( 'MantisBT Administration - Check Installation' );
 layout_admin_page_begin();
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">

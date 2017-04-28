@@ -40,7 +40,7 @@ $t_series_name = lang_get( 'bugs' );
 $t_metrics = create_bug_enum_summary( lang_get( 'resolution_enum_string' ), 'resolution' );
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">
@@ -51,11 +51,11 @@ $t_metrics = create_bug_enum_summary( lang_get( 'resolution_enum_string' ), 'res
 	</h4>
 </div>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 	<?php graph_bar( $t_metrics, lang_get( 'by_resolution' ), $t_series_name ); ?>
 </div>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 	<?php graph_pie( $t_metrics, plugin_lang_get( 'by_resolution_pct' ) ); ?>
 </div>
 </div>

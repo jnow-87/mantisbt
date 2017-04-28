@@ -50,7 +50,7 @@ print_manage_menu( 'manage_import_issues_page.php' );
 
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 <pre>
 

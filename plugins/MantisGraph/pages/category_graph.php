@@ -40,7 +40,7 @@ $t_series_name = lang_get( 'bugs' );
 $t_metrics = create_category_summary();
 ?>
     
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">

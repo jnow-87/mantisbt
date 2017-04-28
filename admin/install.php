@@ -100,7 +100,7 @@ layout_page_header_end();
 
 layout_admin_page_begin();
 ?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 	<div class="space-10"></div>
 
 	<div class="page-header">
@@ -146,7 +146,7 @@ switch( $t_install_state ) {
 # database installation steps
 if( 0 == $t_install_state || 2 == $t_install_state ) {
 	?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">
@@ -519,7 +519,7 @@ if( 1 == $t_install_state ) {
 
 <input name="install" type="hidden" value="2">
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">
@@ -732,7 +732,7 @@ if( !$g_database_upgrade ) {
 # all checks have passed, install the database
 if( 3 == $t_install_state ) {
 	?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 <div class="widget-box widget-color-blue2">
 <div class="widget-header widget-header-small">
@@ -1045,7 +1045,7 @@ if( 5 == $t_install_state ) {
 	$t_config_exists = file_exists( $t_config_filename );
 	?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 <div class="widget-box widget-color-blue2">
 <div class="widget-header widget-header-small">
@@ -1180,7 +1180,7 @@ if( 6 == $t_install_state ) {
 
 # post install checks
 ?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 <div class="widget-box widget-color-blue2">
 <div class="widget-header widget-header-small">
@@ -1286,7 +1286,7 @@ if( 6 == $t_install_state ) {
 if( 7 == $t_install_state ) {
 	# cleanup and launch upgrade
 	?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 <div class="widget-box widget-color-blue2">
 <div class="widget-header widget-header-small">
@@ -1324,7 +1324,7 @@ if( 7 == $t_install_state ) {
 
 if( $g_failed && $t_install_state != 1 ) {
 	?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 <div class="widget-box widget-color-blue2">
 <div class="widget-header widget-header-small">

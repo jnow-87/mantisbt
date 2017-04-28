@@ -50,7 +50,7 @@ layout_page_header();
 
 layout_page_begin( 'main_page.php' );
 ?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <?php
 if( $f_news_id !== null ) {
 	$t_project_id = news_get_field( $f_news_id, 'project_id' );

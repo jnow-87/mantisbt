@@ -57,7 +57,7 @@ $t_types = array(
 				2 => plugin_lang_get( 'category_link' ),
 		   );
 ?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
     <div class="space-10"></div>
     <form id="graph_form" method="post" action="<?php echo plugin_page( 'issues_trend_page.php' ); ?>" class="form-inline">
         <div class="widget-box widget-color-blue2">

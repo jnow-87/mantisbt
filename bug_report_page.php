@@ -222,7 +222,7 @@ layout_page_begin( __FILE__ );
 
 $t_form_encoding = '';
 ?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <form id="report_bug_form"
 	method="post" <?php echo $t_form_encoding; ?>
 	action="bug_report.php?posted=1"

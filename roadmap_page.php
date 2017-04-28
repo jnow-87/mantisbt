@@ -232,7 +232,7 @@ layout_page_header( lang_get( 'roadmap' ) );
 
 layout_page_begin( __FILE__ );
 
-echo '<div class="col-md-6 col-xs-12">';
+echo '<div class="col-md-6-left col-xs-12">';
 
 $t_project_index = 0;
 

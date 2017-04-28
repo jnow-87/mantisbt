@@ -82,7 +82,7 @@ if( $t_account_page ) {
 }
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">

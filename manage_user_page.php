@@ -157,7 +157,7 @@ for( $i = 0; $i <= 9; $i++ ) {
 $t_prefix_array['UNUSED'] = lang_get( 'users_unused' );
 $t_prefix_array['NEW'] = lang_get( 'users_new' );
 
-echo '<div class="col-md-6 col-xs-12">';
+echo '<div class="col-md-6-left col-xs-12">';
 echo '<div class = "space-10"></div>';
 echo '<div class="center" >';
 echo '  <div class="btn-toolbar inline" >';

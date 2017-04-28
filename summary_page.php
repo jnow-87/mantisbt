@@ -128,7 +128,7 @@ print_summary_menu( 'summary_page.php' );
 print_summary_submenu();
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-12 col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">
@@ -144,7 +144,7 @@ print_summary_submenu();
 
 
 <!-- LEFT COLUMN -->
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 
 	<?php if( 1 < count( $t_project_ids ) ) { ?>
 	<!-- BY PROJECT -->
@@ -249,10 +249,55 @@ print_summary_submenu();
 		<?php summary_print_by_developer() ?>
 	</table>
 </div>
+
+	<!-- REPORTER BY RESOLUTION -->
+	<div class="space-10"></div>
+	<div class="widget-box table-responsive">
+		<table class="table table-hover table-bordered table-condensed table-striped">
+		<thead>
+			<tr>
+				<th class="width-15"><?php echo lang_get( 'reporter_by_resolution' ) ?></th>
+				<?php
+					$t_resolutions = MantisEnum::getValues( config_get( 'resolution_enum_string' ) );
+
+					foreach ( $t_resolutions as $t_resolution ) {
+						echo '<th class="align-right">', get_enum_element( 'resolution', $t_resolution ), "</th>\n";
+					}
+
+					echo '<th class="align-right">', lang_get( 'percentage_errors' ), "</th>\n";
+				?>
+			</tr>
+		</thead>
+		<?php summary_print_reporter_resolution( config_get( 'resolution_enum_string' ) ) ?>
+	</table>
+	</div>
+
+	<!-- DEVELOPER BY RESOLUTION -->
+	<div class="space-10"></div>
+	<div class="widget-box table-responsive">
+		<table class="table table-hover table-bordered table-condensed table-striped">
+		<thead>
+			<tr>
+				<th class="width-15"><?php echo lang_get( 'developer_by_resolution' ) ?></th>
+				<?php
+					$t_resolutions = MantisEnum::getValues( config_get( 'resolution_enum_string' ) );
+
+					foreach ( $t_resolutions as $t_resolution ) {
+						echo '<th class="align-right">', get_enum_element( 'resolution', $t_resolution ), "</th>\n";
+					}
+
+					echo '<th class="align-right">', lang_get( 'percentage_fixed' ), "</th>\n";
+				?>
+			</tr>
+		</thead>
+		<?php summary_print_developer_resolution( config_get( 'resolution_enum_string' ) ) ?>
+	</table>
+	</div>
+
 </div>
 
 <!-- RIGHT COLUMN -->
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-right col-xs-12">
 
 	<!-- DEVELOPER STATS -->
 	<div class="space-10"></div>
@@ -358,54 +403,6 @@ print_summary_submenu();
 
 </div>
 
-<!-- BOTTOM -->
-<div class="col-md-6 col-xs-12">
-
-	<!-- REPORTER BY RESOLUTION -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th class="width-15"><?php echo lang_get( 'reporter_by_resolution' ) ?></th>
-				<?php
-					$t_resolutions = MantisEnum::getValues( config_get( 'resolution_enum_string' ) );
-
-					foreach ( $t_resolutions as $t_resolution ) {
-						echo '<th class="align-right">', get_enum_element( 'resolution', $t_resolution ), "</th>\n";
-					}
-
-					echo '<th class="align-right">', lang_get( 'percentage_errors' ), "</th>\n";
-				?>
-			</tr>
-		</thead>
-		<?php summary_print_reporter_resolution( config_get( 'resolution_enum_string' ) ) ?>
-	</table>
-	</div>
-
-	<!-- DEVELOPER BY RESOLUTION -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th class="width-15"><?php echo lang_get( 'developer_by_resolution' ) ?></th>
-				<?php
-					$t_resolutions = MantisEnum::getValues( config_get( 'resolution_enum_string' ) );
-
-					foreach ( $t_resolutions as $t_resolution ) {
-						echo '<th class="align-right">', get_enum_element( 'resolution', $t_resolution ), "</th>\n";
-					}
-
-					echo '<th class="align-right">', lang_get( 'percentage_fixed' ), "</th>\n";
-				?>
-			</tr>
-		</thead>
-		<?php summary_print_developer_resolution( config_get( 'resolution_enum_string' ) ) ?>
-	</table>
-	</div>
-
-</div>
 
 </div>
 </div>

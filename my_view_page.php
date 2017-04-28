@@ -90,7 +90,7 @@ reset( $t_boxes );
 
 $t_project_id = helper_get_current_project();
 $t_timeline_view_threshold_access = access_has_project_level( config_get( 'timeline_view_threshold' ) );
-$t_timeline_view_class = ( $t_timeline_view_threshold_access ) ? "col-md-7" : "col-md-6";
+$t_timeline_view_class = ( $t_timeline_view_threshold_access ) ? "col-md-7" : "col-md-6-left";
 ?>
 <div class="col-xs-12 <?php echo $t_timeline_view_class ?>">
 
@@ -131,7 +131,7 @@ while (list ($t_box_title, $t_box_display) = each ($t_boxes)) {
 		if( !$t_timeline_view_threshold_access ) {
 			if ($t_counter >= $t_number_of_boxes / 2 && !$t_two_columns_applied) {
 				echo '</div>';
-				echo '<div class="col-xs-12 col-md-6">';
+				echo '<div class="col-xs-12 col-md-6-left">';
 				$t_two_columns_applied = true;
 			} elseif ($t_counter >= $t_number_of_boxes && $t_two_columns_applied) {
 				echo '</div>';

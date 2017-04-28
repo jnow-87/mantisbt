@@ -52,7 +52,7 @@ layout_page_header( lang_get( 'api_tokens_link' ) );
 layout_page_begin();
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <h2><?php echo $t_disclose_message ?></h2>
 <div class="lead red"><?php echo $t_display_once_message ?></div>
 <div class="space-10"></div>

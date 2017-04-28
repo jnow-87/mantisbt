@@ -68,7 +68,7 @@ print_manage_menu( 'manage_custom_field_page.php' );
 
 $t_definition = custom_field_get_definition( $f_field_id );
 ?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <div id="manage-custom-field-update-div" class="form-container">
@@ -198,23 +198,11 @@ $t_definition = custom_field_get_definition( $f_field_id );
 </form>
 </div>
 
-<div class="col-md-6 col-xs-12">
-	<div class="space-10"></div>
-	<form method="post" action="manage_custom_field_delete.php" class="pull-right">
-		<fieldset>
-			<?php echo form_security_field( 'manage_custom_field_delete' ); ?>
-			<input type="hidden" name="field_id" value="<?php echo $f_field_id ?>" />
-			<input type="hidden" name="return" value="<?php echo string_attribute( $f_return ) ?>" />
-			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'delete_custom_field_button' ) ?>" />
-		</fieldset>
-	</form>
-</div>
-
 <?php /** @todo There is access checking in the ADD action page and at the top of this file.
            * We may need to add extra checks to exclude projects from the list that the user
 		   * can't link/unlink fields from/to. */
 ?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-right col-xs-12">
 	<div class="space-10"></div>
 
 	<div class="widget-box widget-color-blue2">
@@ -274,6 +262,20 @@ $t_definition = custom_field_get_definition( $f_field_id );
 		</div>
     </div>
     </div>
-</div><?php
+</div>
+
+<div class="col-md-6-right col-xs-12">
+	<form method="post" action="manage_custom_field_delete.php">
+		<fieldset>
+			<?php echo form_security_field( 'manage_custom_field_delete' ); ?>
+			<input type="hidden" name="field_id" value="<?php echo $f_field_id ?>" />
+			<input type="hidden" name="return" value="<?php echo string_attribute( $f_return ) ?>" />
+			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'delete_custom_field_button' ) ?>" />
+		</fieldset>
+	</form>
+</div>
+
+
+<?php
 
 layout_page_end();

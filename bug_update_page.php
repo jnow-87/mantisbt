@@ -148,7 +148,7 @@ layout_page_header( bug_format_summary( $f_bug_id, SUMMARY_CAPTION ) );
 layout_page_begin();
 
 ?>
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div id="bug-update" class="form-container">
 	<form id="update_bug_form" method="post" action="bug_update.php">
 		<?php echo form_security_field( 'bug_update' ); ?>

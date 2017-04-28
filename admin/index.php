@@ -49,7 +49,7 @@ function print_info_row( $p_description, $p_value ) {
 }
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 
 <div class="widget-box widget-color-blue2">

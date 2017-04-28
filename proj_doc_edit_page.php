@@ -80,7 +80,7 @@ print_doc_menu();
 
 ?>
 
-<div class="col-md-6 col-xs-12">
+<div class="col-md-6-left col-xs-12">
 <div class="space-10"></div>
 <div class="form-container">
 <form method="post" enctype="multipart/form-data" action="proj_doc_update.php">

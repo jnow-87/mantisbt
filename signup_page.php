@@ -61,7 +61,7 @@ layout_login_page_begin();
 $t_public_key = crypto_generate_uri_safe_nonce( 64 );
 ?>
 
-<div class="col-md-offset-3 col-md-6 col-sm-10 col-sm-offset-1">
+<div class="col-md-offset-3 col-md-6-left col-sm-10 col-sm-offset-1">
     <div class="login-container">
 	<div class="space-12 hidden-480"></div>
 	<a href="<?php echo config_get( 'logo_url' ) ?>">

@@ -355,7 +355,7 @@ if( ALL_PROJECTS == $g_project_id ) {
 	$t_project_title = sprintf( lang_get( 'config_project' ), string_display( project_get_name( $g_project_id ) ) );
 }
 
-echo '<div class="col-md-6 col-xs-12">' . "\n";
+echo '<div class="col-md-6-left col-xs-12">' . "\n";
 echo '<div class="well">' . "\n";
 echo '<p class="bold"><i class="fa fa-info-circle"></i> ' . $t_project_title . '</p>' . "\n";
 echo '<p>' . lang_get( 'colour_coding' ) . '<br />';

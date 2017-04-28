@@ -49,7 +49,7 @@ layout_page_header_end();
 
 layout_page_begin( 'api_tokens_page.php' );
 
-echo '<div class="col-md-6 col-xs-12">';
+echo '<div class="col-md-6-left col-xs-12">';
 echo '<div class="space-10"></div>';
 echo '<div class="lead">' . sprintf( lang_get( 'api_token_revoked' ), string_display_line( $f_token_name ) ) . '</div>';
 echo '<div class="space-10"></div>';
