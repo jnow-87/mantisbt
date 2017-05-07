@@ -2219,8 +2219,9 @@ $g_enable_product_build = OFF;
  *	- resolution		(                  , trans)
  *	- time_tracking		(                  , trans)
  *	- notes				(                  , trans)
+ *  - attachments		(        view             )    
  *
- * The following fields are always shownand for the respective views listed in brackets:
+ * The following fields are always shown and for the respective views listed in brackets:
  *	- summary			(report, view, edit)
  *	- description		(report, view, edit)
  *	- status			(      , view,     )
@@ -2238,7 +2239,7 @@ $g_enable_product_build = OFF;
  */
 $g_bug_fields_show = array(
 	'report'		=>	array('build', 'version', 'tags', 'platform', 'os', 'view_state', 'target_version'),
-	'view'			=>	array('build', 'version', 'tags', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version'),
+	'view'			=>	array('build', 'version', 'tags', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version', 'attachments'),
 );
 
 /**
