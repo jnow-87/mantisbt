@@ -492,6 +492,14 @@ echo '</div>';
 
 
 ####
+## bug notes and "Add Note" box
+####
+define( 'BUGNOTE_VIEW_INC_ALLOW', true );
+include( $t_mantis_dir . 'bugnote_view_inc.php' );
+
+
+
+####
 ## bug history
 ####
 define( 'HISTORY_INC_ALLOW', true );
