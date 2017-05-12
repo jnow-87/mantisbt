@@ -179,7 +179,9 @@
 		 * @return multi Array with formatted text and multiline parameter
 		 */
 		public function formatted( $p_event, $p_string, $p_multiline = TRUE ) {
-		
+			// remove <br>-tags that follow a ']' reducing the number of blank lines
+			$p_string = preg_replace( '/\]<br[^>]*?>/', ']', $p_string );
+	
 			if ( ON == plugin_config_get( 'process_text' ) )
 				$p_string = $this->string_process_bbcode( $p_string );
 			else
