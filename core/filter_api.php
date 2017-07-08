@@ -2408,7 +2408,7 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 				</a>
 			</div>
 			<?php if( count( $t_stored_queries_arr ) > 0 ) { ?>
-				<div id="filter-bar-queries" class="widget-toolbar hidden-xs" style="display: <?php echo $t_collapse_block ? 'block' : 'none' ?>">
+				<div id="filter-bar-queries" class="widget-toolbar hidden-xs" style="display: block">
 					<div class="widget-menu margin-left-8 margin-right-8">
 						<select id="filter-bar-query-id" class="input-xs">
 							<option value="-1"></option>
@@ -2425,17 +2425,6 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 					</div>
 				</div>
 			<?php } ?>
-			<div id="filter-bar-search" class="widget-toolbar no-border" style="display: <?php echo $t_collapse_block ? 'block' : 'none' ?>">
-				<div class="widget-menu margin-left-8 margin-right-8">
-					<input id="filter-bar-search-txt" type="text" size="16" class="input-xs"
-						   placeholder="<?php echo lang_get( 'search' ) ?>"
-						   value="<?php echo string_attribute( $t_filter[FILTER_PROPERTY_SEARCH] ); ?>" />
-					<button id="filter-bar-search-btn" type="submit" name="filter" class="btn btn-primary btn-white btn-round btn-xs"
-							title="<?php echo lang_get( 'filter_button' ) ?>">
-						<i class="ace-icon fa fa-search"></i>
-					</button>
-				</div>
-			</div>
 		</div>
 
 		<div class="widget-body">
