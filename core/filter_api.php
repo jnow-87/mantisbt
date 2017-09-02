@@ -2442,7 +2442,7 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 	}
 
 	echo '<div class="widget-toolbox padding-8 clearfix">';
-	echo '<div class="btn-toolbar pull-left">';
+	echo '<div class="btn-toolbar pull-right">';
 
 	# expanded
 	echo '<div class="form-inline">';
@@ -2454,7 +2454,7 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 	<?php
 
 	echo '</form></div>';
-	echo '<div class="btn-toolbar pull-right">';
+	echo '<div class="btn-toolbar pull-left">';
 	echo '<div class="btn-group">';
 	?>
 
