@@ -53,8 +53,19 @@ require_api( 'utility_api.php' );
 ?>
 <?php
 
-$t_today = date( config_get( 'short_date_format' ) );
-$t_date_submitted = isset( $t_bug ) ? date( config_get( 'short_date_format' ), $t_bug->date_submitted ) : $t_today;
+
+$t_date_submitted = $_POST[FILTER_PROPERTY_START_DATE_SUBMITTED]; 
+
+if($t_date_submitted == ''){
+	$t_date_submitted = date(config_get( 'short_date_format' ));
+}
+
+$t_today = $_POST[FILTER_PROPERTY_END_DATE_SUBMITTED];
+
+if($t_today == ''){
+	$t_today = date(config_get( 'short_date_format' ));
+}
+
 
 $f_get_bugnote_stats_button = gpc_get_string( 'get_bugnote_stats_button', '' );
 

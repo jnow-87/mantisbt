@@ -55,8 +55,18 @@ if( OFF == config_get( 'time_tracking_enabled' ) ) {
 
 <?php
 
-$t_bugnote_stats_from = date( config_get( 'short_date_format' ), $t_bug->date_submitted );
-$t_bugnote_stats_to = date( config_get( 'short_date_format' ) );
+$t_bugnote_stats_from = $_POST[FILTER_PROPERTY_START_DATE_SUBMITTED]; 
+
+if($t_bugnote_stats_from == ''){
+	$t_bugnote_stats_from = date(config_get( 'short_date_format' ));
+}
+
+$t_bugnote_stats_to = $_POST[FILTER_PROPERTY_END_DATE_SUBMITTED]; 
+
+if($t_bugnote_stats_to == ''){
+	$t_bugnote_stats_to = date(config_get( 'short_date_format' ));
+}
+
 
 $f_get_bugnote_stats_button = gpc_get_string( 'get_bugnote_stats_button', '' );
 

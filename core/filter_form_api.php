@@ -1249,12 +1249,12 @@ function print_filter_do_filter_by_date( $p_hide_checkbox = false, array $p_filt
 			<td class="nowrap">
 				<?php
 				echo '<input type="text" name="' . FILTER_PROPERTY_START_DATE_SUBMITTED . '" ' .
-					' class="datetimepicker input-xs" ' . $t_menu_readonly .
-					' data-picker-locale="' . lang_get_current_datetime_locale() . '"' .
-					' data-picker-format="' . convert_date_format_to_momentjs( config_get( 'normal_date_format' ) ) . '"' .
-					' size="16" maxlength="20" value="' . $p_filter[FILTER_PROPERTY_START_DATE_SUBMITTED] . '" />';
-				echo '<i class="fa fa-calendar fa-xlg datetimepicker"></i>';
+					' class="input-xs" ' . $t_menu_readonly .
+					' size="10" maxlength="20" value="' . $p_filter[FILTER_PROPERTY_START_DATE_SUBMITTED] . '" />';
 				?>
+			</td>
+			<td>
+			<?php echo '(yyyy-mm-dd)' ?>
 			</td>
 		</tr>
 		<!-- End date -->
@@ -1265,12 +1265,12 @@ function print_filter_do_filter_by_date( $p_hide_checkbox = false, array $p_filt
 			<td>
 				<?php
 				echo '<input type="text" name="' . FILTER_PROPERTY_END_DATE_SUBMITTED . '" ' .
-					' class="datetimepicker input-xs" ' . $t_menu_readonly .
-					' data-picker-locale="' . lang_get_current_datetime_locale() . '"' .
-					' data-picker-format="' . convert_date_format_to_momentjs( config_get( 'normal_date_format' ) ) . '"' .
-					' size="16" maxlength="20" value="' . $p_filter[FILTER_PROPERTY_END_DATE_SUBMITTED] . '" />';
-				echo '<i class="fa fa-calendar fa-xlg datetimepicker"></i>';
+					' class="input-xs" ' . $t_menu_readonly .
+					' size="10" maxlength="20" value="' . $p_filter[FILTER_PROPERTY_END_DATE_SUBMITTED] . '" />';
 				?>
+			</td>
+			<td>
+			<?php echo '(yyyy-mm-dd)' ?>
 			</td>
 		</tr>
 		</table>
