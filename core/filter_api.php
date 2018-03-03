@@ -2222,6 +2222,18 @@ function filter_get_bug_rows_query_clauses( array $p_filter, $p_project_id = nul
 				' OR ' . db_helper_like( '{bug_text}.description' ) .
 				' OR ' . db_helper_like( '{bugnote_text}.note' );
 
+			# NOTE: these 'dummy' calls are required for proper handling of
+			#		the parameter stack. in earlier versions these parts of
+			#		query have been used to check steps_to_reproduce and
+			#		additional_information which have been removed from the
+			#		bug_text table
+			#
+			#		if these lines are removed filters using a query text
+			#		will crash
+			$t_textsearch_where_clause .= 
+				' OR ' . db_helper_like( '{bug_text}.description' ) .
+				' OR ' . db_helper_like( '{bug_text}.description' );
+
 			$t_where_params[] = $c_search;
 			$t_where_params[] = $c_search;
 			$t_where_params[] = $c_search;
