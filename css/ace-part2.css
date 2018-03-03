@@ -116,7 +116,7 @@ ul.attachment-list > li {
     color: #438EB9;
 }
 .attached-file:hover .attached-name {
-    color: #2283C5;
+    color: #939393;
 }
 .attached-file .attached-name {
     display: inline-block;

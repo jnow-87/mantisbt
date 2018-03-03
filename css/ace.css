@@ -89,7 +89,7 @@ body {
     margin: 0 8px;
     font-size: 24px;
     font-weight: lighter;
-    color: #2679B5;
+    color: #1d520a;
 }
 .page-header h1 small {
     margin: 0 6px;
@@ -326,7 +326,7 @@ pre.prettyprint {
     border-width: 1px;
     border-color: #d4dfe3;
     border-radius: 0 !important;
-    color: #2283C5;
+    color: #939393;
     background-color: #FAFAFA;
     margin: 0 -1px 0 0;
     position: relative;
@@ -347,15 +347,15 @@ pre.prettyprint {
 .pager > li.disabled > a,
 .pagination > li.disabled > a:hover,
 .pager > li.disabled > a:hover {
-    background-color: #F9F9F9;
+    background-color: #edf3f4;
     border-color: #D9D9D9;
     z-index: auto;
 }
 .pagination > li.active > a,
 .pagination > li.active > a:hover,
 .pagination > li.active > a:focus {
-    background-color: #6FAED9;
-    border-color: #6FAED9;
+    background-color: #1d520a;
+    border-color: #1d520a;
     color: #FFF;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     z-index: 2;
@@ -8211,7 +8211,7 @@ fieldset[disabled] .btn-white.btn-grey.active {
 .dropdown-navbar .nav-tabs {
     border-width: 0;
     box-shadow: none;
-    background-color: #F9F9F9 !important;
+    background-color: #edf3f4 !important;
     top: auto;
     width: 100%;
 }
@@ -8224,7 +8224,7 @@ fieldset[disabled] .btn-white.btn-grey.active {
     margin: 0 0 0 1px !important;
     text-align: center;
     box-shadow: none !important;
-    background-color: #F9F9F9 !important;
+    background-color: #edf3f4 !important;
     border-width: 0 !important;
     border-bottom: 2px solid #BECAD1 !important;
 }
@@ -8520,7 +8520,7 @@ input[readonly]:focus {
     -webkit-box-shadow: none;
     box-shadow: none;
     border-color: #AAA;
-    background-color: #F9F9F9;
+    background-color: #edf3f4;
 }
 .help-inline {
     font-size: 13px !important;
@@ -9906,7 +9906,7 @@ textarea.input-transparent:focus,
 .nav-tabs > li > a:focus {
     border-radius: 0 !important;
     border-color: #C5D0DC;
-    background-color: #F9F9F9;
+    background-color: #edf3f4;
     color: #999;
     margin-right: -1px;
     line-height: 18px;
@@ -10179,7 +10179,7 @@ textarea.input-transparent:focus,
 .accordion-style1.panel-group .panel-heading .accordion-toggle.collapsed {
     color: #478FCA;
     font-weight: normal;
-    background-color: #F9F9F9;
+    background-color: #edf3f4;
 }
 .accordion-style1.panel-group .panel-heading .accordion-toggle:hover {
     color: #6EA6CC;
@@ -12834,7 +12834,7 @@ li.item-default {
 }
 .profile-user-info-striped .profile-info-name {
     color: #336199;
-    background-color: #EDF3F4;
+    background-color: #edf3f4;
     border-top: 1px solid #F7FBFF;
 }
 .profile-user-info-striped .profile-info-value {
@@ -13377,7 +13377,7 @@ li.item-default {
 .message-navbar .dropdown-toggle:focus,
 .message-content .dropdown-toggle:focus {
     text-decoration: none;
-    color: #2283C5;
+    color: #939393;
 }
 .message-bar {
     display: inline-block;
@@ -13420,7 +13420,7 @@ li.item-default {
 }
 .message-footer .pagination > li > a:hover {
     border-color: #91bad6;
-    color: #2283C5;
+    color: #939393;
     text-decoration: none;
     background-color: #FFF;
 }
@@ -13525,7 +13525,7 @@ ul.attachment-list > li {
     color: #438EB9;
 }
 .attached-file:hover .attached-name {
-    color: #2283C5;
+    color: #939393;
 }
 .attached-file .attached-name {
     display: inline-block;

@@ -3321,7 +3321,7 @@ body.rtl {
     float: right;
 }
 .rtl.no-skin .sidebar.menu-min .nav-list > li.active > a > .menu-text {
-    border-left-color: #A4C6DD;
+    border-left-color: #ffffff;
 }
 .rtl .nav-list,
 .rtl .dropdown-menu,
@@ -3362,7 +3362,7 @@ body.rtl {
 }
 .rtl.no-skin .sidebar.menu-min .nav-list > li.active > .submenu,
 .rtl.skin-3 .sidebar.menu-min .nav-list > li.active > a > .menu-text {
-    border-left-color: #A4C6DD;
+    border-left-color: #ffffff;
 }
 .rtl .sidebar + .main-content .breadcrumbs-fixed {
     left: 0;
@@ -3415,7 +3415,7 @@ body.rtl {
         border-color: #CCC !important;
     }
     .rtl.skin-3 .sidebar.h-sidebar .nav-list > li.active > .submenu {
-        border-color: #A4C6DD !important;
+        border-color: #ffffff !important;
     }
 }
 .rtl .sidebar.menu-min .nav-list > li > .submenu:after {
