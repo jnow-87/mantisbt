@@ -889,13 +889,6 @@ $MANTIS_ERROR[ERROR_USER_NAME_INVALID] = 'Dä Metmaacher-Name es nit jöltesch. 
 $MANTIS_ERROR[ERROR_USER_REAL_NAME_INVALID] = 'Dä „reschtejje Name“ es onjöltesch udder Kappes.';
 $MANTIS_ERROR[ERROR_USER_DOES_NOT_HAVE_REQ_ACCESS] = 'Dä Metmaacher hät nit et nüüdeje Zohjangsrääsch.';
 $MANTIS_ERROR[ERROR_USER_REAL_MATCH_USER] = 'Dä „reschtejje Nahme“ es dersellve, wi enem andere Metmaacher singe Metmaacher_Nahme för et Enlogge. Söhk Der ene andere uß.';
-$MANTIS_ERROR[ERROR_SPONSORSHIP_NOT_ENABLED] = 'De Öngershtözung för Schponsore es nit ennjeschalldt.';
-$MANTIS_ERROR[ERROR_SPONSORSHIP_NOT_FOUND] = 'Schponsorschaff %1$d nit jefonge.';
-$MANTIS_ERROR[ERROR_SPONSORSHIP_AMOUNT_TOO_LOW] = 'Schponsorschaff (%1$s) es onger dämm kleinste müjjelesche Bedraach (%2$s).';
-$MANTIS_ERROR[ERROR_SPONSORSHIP_HANDLER_ACCESS_LEVEL_TOO_LOW] = 'Wä et maache mööt es ävver nit berääschtesh, öm jeshponserte Aanjelääjeheite ze beärbeide.';
-$MANTIS_ERROR[ERROR_SPONSORSHIP_ASSIGNER_ACCESS_LEVEL_TOO_LOW] = 'Zohjang nit zohjelohße, weil mer, öm jeshponserte Aanjelääjeheite zohzewiese, e hüüter Zohjangsrääsch bruch.
-';
-$MANTIS_ERROR[ERROR_SPONSORSHIP_SPONSOR_NO_EMAIL] = 'Dä Schponser hät kein Addräß för de
 <i lang="en" xml:lang="en" dir="ltr" title="„de eläktrohnesche Poß“">e-mail</i> aanjejovve. Beß esu johd un donn Ding Profihl aanpaße.';
 $MANTIS_ERROR[ERROR_CONFIG_OPT_INVALID] = 'För di Enshtellung „%1$s“ es dä onjöltijje Wäät „%2$s“ ußjesöhk.';
 $MANTIS_ERROR[ERROR_BUG_READ_ONLY_ACTION_DENIED] = 'Di Aanjelääjeheit „%1$d“ es bloß för ze Lässe, dröm jeiht dat nit ze maache.';
