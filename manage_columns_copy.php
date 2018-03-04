@@ -99,13 +99,9 @@ $t_print_issues_page_columns = columns_remove_invalid( $t_print_issues_page_colu
 $t_csv_columns = config_get( 'csv_columns', $t_default, $t_user_id, $t_src_project_id );
 $t_csv_columns = columns_remove_invalid( $t_csv_columns, $t_all_columns );
 
-$t_excel_columns = config_get( 'excel_columns', $t_default, $t_user_id, $t_src_project_id );
-$t_excel_columns = columns_remove_invalid( $t_excel_columns, $t_all_columns );
-
 config_set( 'view_issues_page_columns', $t_view_issues_page_columns, $t_user_id, $t_dst_project_id );
 config_set( 'print_issues_page_columns', $t_print_issues_page_columns, $t_user_id, $t_dst_project_id );
 config_set( 'csv_columns', $t_csv_columns, $t_user_id, $t_dst_project_id );
-config_set( 'excel_columns', $t_excel_columns, $t_user_id, $t_dst_project_id );
 
 form_security_purge( 'manage_columns_copy' );
 

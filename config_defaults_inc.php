@@ -1008,19 +1008,6 @@ $g_csv_columns = array(
 );
 
 /**
- * The default columns to be included in the Excel export. This can be
- * overridden using Manage -> Manage Configuration -> Manage Columns. Also each
- * user can configure their own columns using My Account -> Manage Columns
- * @global array $g_excel_columns
- */
-$g_excel_columns = array(
-	'id', 'project_id', 'reporter_id', 'handler_id', 'priority', 'severity',
-	'version', 'category_id',
-	'date_submitted', 'os', 'os_build', 'platform', 'view_state',
-	'last_updated', 'summary', 'status', 'resolution', 'fixed_in_version'
-);
-
-/**
  * show projects when in All Projects mode
  * @global integer $g_show_bug_project_links
  */
@@ -3390,10 +3377,6 @@ $g_file_type_icons = array(
 	'wma'	=> 'fa-file-audio-o',
 	'wmv'	=> 'fa-file-movie-o',
 	'wri'	=> 'fa-file-word-o',
-	'xlk'	=> 'fa-file-excel-o',
-	'xls'	=> 'fa-file-excel-o',
-	'xlsx'	=> 'fa-file-excel-o',
-	'xlt'	=> 'fa-file-excel-o',
 	'xml'	=> 'fa-file-code-o',
 	'zip'	=> 'fa-file-archive-o',
 	'?'	=> 'fa-file-o' );
@@ -4212,7 +4195,6 @@ $g_public_config_names = array(
 	'enable_product_build',
 	'enable_profiles',
 	'enable_project_documentation',
-	'excel_columns',
 	'fallback_language',
 	'favicon_image',
 	'file_download_content_type_overrides',

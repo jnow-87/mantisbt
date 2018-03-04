@@ -45,7 +45,6 @@ $t_user_id = auth_get_current_user_id();
 config_delete_for_user( 'view_issues_page_columns', $t_user_id );
 config_delete_for_user( 'print_issues_page_columns', $t_user_id );
 config_delete_for_user( 'csv_columns', $t_user_id );
-config_delete_for_user( 'excel_columns', $t_user_id );
 
 form_security_purge( 'manage_config_columns_reset' );
 

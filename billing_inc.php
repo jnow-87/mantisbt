@@ -154,7 +154,6 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 
 		$t_exports = array(
 			'csv_export' => 'billing_export_to_csv.php',
-			'excel_export' => 'billing_export_to_excel.php',
 		);
 
 		foreach( $t_exports as $t_export_label => $t_export_page ) {

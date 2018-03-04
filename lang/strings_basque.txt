@@ -75,7 +75,6 @@ $s_operation_successful = 'Ekintza arrakastatsua.';
 $s_date_order = 'Dataren ordena';
 $s_print_all_bug_page_link = 'Txostenak Inprimatu';
 $s_csv_export = 'Esportatu CSVra';
-$s_excel_export = 'Esportatu Excel-era';
 $s_login_anonymously = 'Saioa hasi Anonimoki';
 $s_anonymous = 'Anonimoa';
 $s_jump_to_bugnotes = 'Oharretara joan';

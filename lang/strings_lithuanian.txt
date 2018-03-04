@@ -75,7 +75,6 @@ $s_operation_successful = 'Operacija sėkminga.';
 $s_date_order = 'Pagal datą';
 $s_print_all_bug_page_link = 'Spausdinti ataskaitas';
 $s_csv_export = 'CSV eksportas';
-$s_excel_export = 'Excel eksportas';
 $s_login_anonymously = 'Prisijungti anonimiškai';
 $s_anonymous = 'Anonimas';
 $s_jump_to_bugnotes = 'Rodyti komentarus';

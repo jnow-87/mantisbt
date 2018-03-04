@@ -66,7 +66,6 @@ $s_all_projects = 'Alle prosjekt';
 $s_move_bugs = 'Flytt saker';
 $s_operation_successful = 'Operasjonen lukkast.';
 $s_csv_export = 'CSV-eksport';
-$s_excel_export = 'Eksporter til Excel';
 $s_login_anonymously = 'Logg inn anonymt';
 $s_anonymous = 'Anonym';
 $s_jump_to_bugnotes = 'Gå til merknader';

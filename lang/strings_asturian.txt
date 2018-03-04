@@ -72,7 +72,6 @@ $s_operation_failed = 'La operación nun se completó correutamente.';
 $s_date_order = 'Ordenar por data';
 $s_print_all_bug_page_link = 'Imprimir informes';
 $s_csv_export = 'Esportar a CSV';
-$s_excel_export = 'Esportar a Excel';
 $s_login_anonymously = 'Aniciar sesión de mou anónimu';
 $s_anonymous = 'Anónimu';
 $s_jump_to_bugnotes = 'Saltar a les Notes';

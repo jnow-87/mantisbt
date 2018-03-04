@@ -301,8 +301,6 @@ function custom_function_default_get_columns_to_view( $p_columns_target = COLUMN
 
 	if( $p_columns_target == COLUMNS_TARGET_CSV_PAGE ) {
 		$t_columns = config_get( 'csv_columns', '', $p_user_id, $t_project_id );
-	} else if( $p_columns_target == COLUMNS_TARGET_EXCEL_PAGE ) {
-		$t_columns = config_get( 'excel_columns', '', $p_user_id, $t_project_id );
 	} else if( $p_columns_target == COLUMNS_TARGET_VIEW_PAGE ) {
 		$t_columns = config_get( 'view_issues_page_columns', '', $p_user_id, $t_project_id );
 	} else {

@@ -66,7 +66,6 @@ $s_operation_successful = 'Darbība veiksmīga.';
 $s_date_order = 'Datumu kārtība';
 $s_print_all_bug_page_link = 'Atskaites izdruka';
 $s_csv_export = 'Eksports uz CSV';
-$s_excel_export = 'Eksports uz Excel';
 $s_login_anonymously = 'Anonīmais lietotājs';
 $s_anonymous = 'Anonīms';
 $s_jump_to_bugnotes = 'Pāriet uz piezīmēm';

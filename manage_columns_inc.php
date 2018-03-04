@@ -74,9 +74,6 @@ $t_view_issues = implode( ', ', $t_columns );
 $t_columns = helper_get_columns_to_view( COLUMNS_TARGET_PRINT_PAGE, false, $t_user_id );
 $t_print_issues = implode( ', ', $t_columns );
 
-$t_columns = helper_get_columns_to_view( COLUMNS_TARGET_EXCEL_PAGE, false, $t_user_id );
-$t_excel = implode( ', ', $t_columns );
-
 if( $t_account_page ) {
 	print_account_menu( 'account_manage_columns_page.php' );
 }
@@ -134,14 +131,6 @@ if( $t_account_page ) {
 				</td>
 				<td>
 					<textarea class="form-control" id="csv-columns" <?php echo helper_get_tab_index() ?> name="csv_columns" cols="80" rows="5"><?php echo $t_csv ?></textarea>
-				</td>
-			</tr>
-			<tr>
-				<td class="category">
-					<?php echo lang_get( 'excel_columns_title' )?>
-				</td>
-				<td>
-					<textarea class="form-control" id="excel-columns" <?php echo helper_get_tab_index() ?> name="excel_columns" cols="80" rows="5"><?php echo $t_excel ?></textarea>
 				</td>
 			</tr>
 		</fieldset>

@@ -500,7 +500,6 @@ $s_all_columns_title = 'ሁሉም ያሉ  አምዶች';
 $s_csv_columns_title = 'ሲቪኤስ  አምድ';
 $s_view_issues_columns_title = 'የማየት  ጉዳይ  አምድ';
 $s_print_issues_columns_title = 'የህትመት ጉዳይ  አምድ';
-$s_excel_columns_title = 'የኤክዜል አምድ';
 $s_copy_columns_from = 'አምዱን ከ  ቅዳ';
 $s_copy_columns_to = 'አምዱን ወደ ቅዳ';
 $s_due_date = 'የመጨረሻ ቀን';

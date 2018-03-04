@@ -91,10 +91,8 @@ $s_print_all_bug_page_link = '[[File:MantisBT-filter.png|150px|right]]
 Link on bug report. See screenshot.';
 $s_csv_export = '[[File:MantisBT-filter.png|150px|right]]
 Link on bug report. See screenshot.';
-$s_excel_export = '[[File:MantisBT-filter.png|150px|right]]
 Link on bug report. See screenshot.
 
-“Excel” is the name of a program; do not translate it unless Microsoft has translated the program’s name into your language (e.g., 엑셀 in Korean).';
 $s_anonymous = '{{Identical|Anonymous}}';
 $s_assigned_projects = '{{Identical|Assigned project}}';
 $s_assigned_projects_label = '{{Identical|Assigned project}}';

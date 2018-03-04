@@ -101,7 +101,6 @@ $s_operation_failed = 'Operation did not complete successfully.';
 $s_date_order = 'Date Order';
 $s_print_all_bug_page_link = 'Print Reports';
 $s_csv_export = 'CSV Export';
-$s_excel_export = 'Excel Export';
 $s_login_anonymously = 'Login Anonymously';
 $s_anonymous = 'Anonymous';
 $s_jump_to_bugnotes = 'Jump to Notes';
@@ -230,7 +229,6 @@ $s_hide_button = 'Display selected only';
 $s_printing_preferences_title = 'Choose fields to print';
 $s_printing_options_link = 'Printing Options';
 
-# word and excel export
 $s_bugnote_title = 'Note handler';
 $s_bugnote_date = 'Date of note';
 $s_bugnote_description = 'Note description';
@@ -1544,7 +1542,6 @@ $s_all_columns_title = 'All Available Columns';
 $s_csv_columns_title = 'CSV Columns';
 $s_view_issues_columns_title = 'View Issues Columns';
 $s_print_issues_columns_title = 'Print Issues Columns';
-$s_excel_columns_title = 'Excel Columns';
 $s_update_columns_as_global_default = 'Update Columns as Global Default for All Projects';
 $s_update_columns_for_current_project = 'Update Columns For Current Project';
 $s_update_columns_as_my_default = 'Update Columns as Default for All Projects';

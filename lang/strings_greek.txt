@@ -72,7 +72,6 @@ $s_operation_successful = 'Διαδικασία Επιτυχής.';
 $s_date_order = 'Χρονολογική Σειρά';
 $s_print_all_bug_page_link = 'Εκτύπωση Αναφορών';
 $s_csv_export = 'Εξαγωγή CSV';
-$s_excel_export = 'Εξαγωγή Αρχείου Excel';
 $s_login_anonymously = 'Ανώνυμη Είσοδος';
 $s_anonymous = 'Ανώνυμος';
 $s_jump_to_bugnotes = 'Σημειώσεις';
