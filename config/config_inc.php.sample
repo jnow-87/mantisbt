@@ -1,4 +1,459 @@
 <?php
+####
+## database and host
+####
+$g_hostname = 'localhost';
+$g_db_type = 'mysqli';
+$g_database_name = 'mantisdb';
+$g_db_username = 'mantis';
+$g_db_password = 'mantis';
+
+$g_default_timezone = 'Europe/Berlin';
+
+$g_crypto_master_salt = '8JuWHsPvESoT3S7jy3AdY6qcIA+GpNLJx+MuHUOXKu0=';
+
+$g_reauthentication = OFF;
+$g_allow_anonymous_login = OFF;
+
+
+####
+## debug
+####
+
+$g_display_errors = array(
+	E_USER_ERROR        => DISPLAY_ERROR_HALT,
+	E_RECOVERABLE_ERROR => DISPLAY_ERROR_HALT,
+	E_USER_DEPRECATED => DISPLAY_ERROR_INLINE,
+	E_DEPRECATED => DISPLAY_ERROR_INLINE,
+	E_ALL => DISPLAY_ERROR_HALT,
+);
+
+
+####
+## features
+####
+
+$g_allow_signup = OFF;
+$g_send_reset_password = OFF;
+
+$g_subprojects_enabled = ON;
+$g_enable_email_notification = OFF;
+$g_time_tracking_enabled = ON;
+$g_time_tracking_without_note = ON;
+$g_enable_product_build = ON;
+$g_news_enabled = OFF;
+$g_enable_project_documentation = OFF;
+$g_wiki_enable = OFF;
+$g_relationship_graph_enable = OFF;
+$g_allow_freetext_in_profile_fields = ON;
+
+
+####
+## user
+####
+
+$g_default_home_page = 'view_all_bug_page.php';
+$g_logout_redirect_page = 'login_page.php';
+$g_default_redirect_delay = 0;
+$g_default_bugnote_order = 'DESC';
+$g_bugnote_order = 'DESC';
+$g_history_order = 'DESC';
+
+$g_default_language = 'english';
+$g_fallback_language = 'english';
+$g_language_choices_arr = array(
+	'auto',
+	'english',
+	'german',
+);
+
+
+####
+## enum definitions
+####
+
+$g_project_status_enum_string = '100:concept,110:development,120:testing,130:stable';
+$g_resolution_enum_string = '150:open,110:fixed,120:implemented,130:duplicate,140:rejected';
+$g_severity_enum_string = '0:,110:feature,120:minor,130:major,140:crash,150:block';
+$g_priority_enum_string = '0:,110:none,120:low,130:medium,140:high,150:critical';
+$g_access_levels_enum_string = '110:viewer,120:reporter,130:developer,140:reviewer,150:administrator';
+
+$g_access_nobody = ACC_NOBODY;
+$g_access_anybody = ACC_ANYBODY;
+
+$g_default_project_view_status = VS_PUBLIC;
+$g_default_bug_view_status = VS_PUBLIC;
+$g_default_bugnote_view_status = VS_PUBLIC;
+
+
+####
+## access thresholds
+####
+
+$g_set_status_threshold = array(
+	STATUS_OPEN => ACC_REPORTER,
+	STATUS_ASSIGNED => ACC_DEVELOPER,
+	STATUS_INDEVELOPMENT => ACC_DEVELOPER,
+	STATUS_INREVIEW => ACC_DEVELOPER,
+	STATUS_CLOSED => ACC_REVIEWER,
+);
+
+$g_reopen_bug_assignee = ACC_ANYBODY;
+
+$g_notify_new_user_created_threshold_min = ACC_ADMIN;
+$g_show_avatar_threshold = ACC_DEVELOPER;
+$g_private_news_threshold = ACC_ANYBODY;
+$g_default_new_account_access_level = ACC_REPORTER;
+$g_view_summary_threshold = ACC_DEVELOPER;
+$g_view_attachments_threshold = ACC_VIEWER;
+$g_download_attachments_threshold = ACC_VIEWER;
+$g_delete_attachments_threshold = ACC_DEVELOPER;
+$g_report_bug_threshold = ACC_REPORTER;
+$g_update_bug_threshold = ACC_DEVELOPER;
+$g_view_bug_threshold = ACC_VIEWER;
+$g_monitor_bug_threshold = ACC_REPORTER;
+$g_monitor_add_others_bug_threshold = ACC_DEVELOPER;
+$g_monitor_delete_others_bug_threshold = ACC_DEVELOPER;
+$g_private_bug_threshold = ACC_DEVELOPER;
+$g_handle_bug_threshold = ACC_DEVELOPER;
+$g_private_bugnote_threshold = ACC_DEVELOPER;
+$g_view_handler_threshold = ACC_VIEWER;
+$g_view_history_threshold = ACC_VIEWER;
+$g_bug_reminder_threshold = ACC_DEVELOPER;
+$g_bug_revision_drop_threshold = ACC_DEVELOPER;
+$g_upload_project_file_threshold = ACC_ADMIN;
+$g_upload_bug_file_threshold = ACC_REPORTER;
+$g_add_bugnote_threshold = ACC_REPORTER;
+$g_update_bugnote_threshold = ACC_DEVELOPER;
+$g_view_proj_doc_threshold = ACC_VIEWER;
+$g_manage_site_threshold = ACC_ADMIN;
+$g_admin_site_threshold = ACC_ADMIN;
+$g_manage_project_threshold = ACC_ADMIN;
+$g_manage_news_threshold = ACC_ADMIN;
+$g_delete_project_threshold = ACC_ADMIN;
+$g_create_project_threshold = ACC_ADMIN;
+$g_private_project_threshold = ACC_ADMIN;
+$g_project_user_threshold = ACC_ADMIN;
+$g_manage_user_threshold = ACC_ADMIN;
+$g_impersonate_user_threshold = ACC_ADMIN;
+$g_delete_bug_threshold = ACC_DEVELOPER;
+$g_move_bug_threshold = ACC_DEVELOPER;
+$g_set_view_status_threshold = ACC_REPORTER;
+$g_change_view_status_threshold = ACC_DEVELOPER;
+$g_show_monitor_list_threshold = ACC_DEVELOPER;
+$g_stored_query_use_threshold = ACC_REPORTER;
+$g_stored_query_create_threshold = ACC_DEVELOPER;
+$g_stored_query_create_shared_threshold = ACC_DEVELOPER;
+$g_update_readonly_bug_threshold = ACC_DEVELOPER;
+$g_view_changelog_threshold = ACC_VIEWER;
+$g_timeline_view_threshold = ACC_VIEWER;
+$g_roadmap_view_threshold = ACC_VIEWER;
+$g_roadmap_update_threshold = ACC_DEVELOPER;
+$g_update_bug_status_threshold = ACC_DEVELOPER;
+$g_reopen_bug_threshold = ACC_DEVELOPER;
+$g_report_issues_for_unreleased_versions_threshold = ACC_DEVELOPER;
+$g_development_team_threshold = ACC_DEVELOPER;
+$g_manage_configuration_threshold = ACC_ADMIN;
+$g_view_configuration_threshold = ACC_ADMIN;
+$g_set_configuration_threshold = ACC_ADMIN;
+$g_create_permalink_threshold = ACC_DEVELOPER;
+$g_manage_custom_fields_threshold = ACC_ADMIN;
+$g_custom_field_link_threshold = ACC_ADMIN;
+$g_tag_view_threshold = ACC_VIEWER;
+$g_tag_attach_threshold = ACC_REPORTER;
+$g_tag_detach_threshold = ACC_DEVELOPER;
+$g_tag_detach_own_threshold = ACC_REPORTER;
+$g_tag_create_threshold = ACC_REPORTER;
+$g_tag_edit_threshold = ACC_DEVELOPER;
+$g_tag_edit_own_threshold = ACC_REPORTER;
+$g_time_tracking_view_threshold = ACC_DEVELOPER;
+$g_time_tracking_edit_threshold = ACC_DEVELOPER;
+$g_time_tracking_reporting_threshold = ACC_DEVELOPER;
+$g_add_profile_threshold = ACC_ADMIN;
+$g_manage_global_profile_threshold = ACC_ADMIN;
+$g_manage_plugin_threshold = ACC_ADMIN;
+$g_show_log_threshold = ACC_ADMIN;
+$g_webservice_readonly_access_level_threshold = ACC_VIEWER;
+$g_webservice_readwrite_access_level_threshold = ACC_REPORTER;
+$g_webservice_admin_access_level_threshold = ACC_ADMIN;
+$g_webservice_specify_reporter_on_add_access_level_threshold = ACC_DEVELOPER;
+$g_show_user_email_threshold = ACC_ADMIN;
+$g_show_user_realname_threshold = ACC_NOBODY;
+$g_show_version_dates_threshold = ACC_DEVELOPER;
+$g_due_date_update_threshold = ACC_DEVELOPER;
+$g_due_date_view_threshold = ACC_ANYBODY;
+
+
+####
+## workflow and fields
+####
+
+## state enum
+$g_status_enum_string = '110:open,120:assigned,130:in_development,140:in_review,150:closed';
+
+## state colors
+$g_status_colors = array(
+	'open'				=> '#dd1200',
+	'assigned'			=> '#e05b00',
+	'in_development'	=> '#ebd826',
+	'in_review'			=> '#70d46a',
+	'closed'			=> '#1d520a',
+);
+
+## behaviour
+$g_reassign_on_feedback = OFF;
+$g_auto_set_status_to_assigned	= OFF;
+
+## states with sepcial meaning
+$g_bug_submit_status = STATUS_OPEN;
+$g_bug_assigned_status = STATUS_ASSIGNED;
+$g_bug_reopen_status = STATUS_OPEN;
+$g_bug_feedback_status = STATUS_INREVIEW;
+
+$g_bug_readonly_status_threshold = STATUS_CLOSED;
+$g_bug_resolved_status_threshold = STATUS_INREVIEW;
+
+$g_bug_reopen_resolution = RES_OPEN;
+$g_bug_duplicate_resolution = RES_DUPLICATE;
+$g_bug_resolution_fixed_threshold = RES_FIXED;
+$g_bug_resolution_not_fixed_threshold = RES_UNDEFINED;
+$g_bug_closed_status_threshold = STATUS_CLOSED;
+
+$g_default_bug_resolution = RES_OPEN;
+$g_default_bug_severity = SEV_UNDEFINED;
+$g_default_bug_priority = PRIO_UNDEFINED;
+$g_default_category_for_moves = 2;
+
+## state transistions
+$g_status_enum_workflow = array();
+$g_status_enum_workflow[STATUS_OPEN] = '120:assigned';
+$g_status_enum_workflow[STATUS_ASSIGNED] = '130:in_development,110:open';
+$g_status_enum_workflow[STATUS_INDEVELOPMENT] = '140:in_review,110:open';
+$g_status_enum_workflow[STATUS_INREVIEW] = '150:closed,130:in_development,110:open';
+$g_status_enum_workflow[STATUS_CLOSED] = '110:open';
+
+## fields to show
+$g_bug_fields_show = array(
+	'report'		=>	array('build', 'version', 'tags', 'platform', 'os', 'view_state', 'target_version'),
+	'view'			=>	array('build', 'version', 'tags', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version', 'attachments'),
+
+	# edit
+	'110_to_110'	=>	array('build', 'version', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version'),
+	'120_to_120'	=>	array('build', 'version', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version'),
+	'130_to_130'	=>	array('build', 'version', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version'),
+	'140_to_140'	=>	array('build', 'version', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version'),
+	'150_to_150'	=>	array('build', 'version', 'platform', 'os', 'view_state', 'target_version', 'fixed_in_version'),
+	
+	# open
+	'110_to_120'	=>	array('handler_id', 'due_date', 'target_version', 'notes'),
+
+	# assigned
+	'120_to_130'	=>	array('notes'),
+	'120_to_110'	=>	array('notes'),
+
+	# in development
+	'130_to_140'	=>	array('resolution', 'time_tracking', 'notes'),
+	'130_to_110'	=>	array('notes'),
+
+	# in review
+	'140_to_150'	=>	array('fixed_in_version', 'time_tracking', 'notes'),
+	'140_to_130'	=>	array('notes'),
+	'140_to_110'	=>	array('notes'),
+
+	# closed
+	'150_to_110'	=>	array('notes'),
+);
+
+## required fields
+$g_bug_fields_required = array(
+	'report'		=>	array('summary', 'description', 'category_id'),
+
+	# edit
+	'110_to_110'	=>	array('summary', 'description', 'category_id'),
+	'120_to_120'	=>	array('summary', 'description', 'category_id', 'handler_id'),
+	'130_to_130'	=>	array('summary', 'description', 'category_id', 'handler_id', 'resolution'),
+	'140_to_140'	=>	array('summary', 'description', 'category_id', 'handler_id', 'resolution'),
+	'150_to_150'	=>	array('summary', 'description', 'category_id', 'handler_id', 'resolution'),
+
+	# open
+	'110_to_120'	=>	array('handler_id'),
+
+	# assigned
+	'120_to_130'	=>	array(),
+	'120_to_110'	=>	array('notes'),
+
+	# in development
+	'130_to_140'	=>	array('resolution', 'time_tracking'),
+	'130_to_110'	=>	array('notes'),
+
+	# in review
+	'140_to_150'	=>	array('time_tracking'),
+	'140_to_130'	=>	array('notes'),
+	'140_to_110'	=>	array('notes'),
+
+	# closed
+	'150_to_110'	=>	array('notes'),
+);
+
+## custom fields to show
+$g_bug_custom_fields_show = array(
+	'report'		=>	array(),
+	'view'			=>	array('Commits'),
+
+	# edit
+	'110_to_110'	=>	array('Commits'),
+	'120_to_120'	=>	array('Commits'),
+	'130_to_130'	=>	array('Commits'),
+	'140_to_140'	=>	array('Commits'),
+	'150_to_150'	=>	array('Commits'),
+
+	# open
+	'110_to_120'	=>	array(),
+
+	# assigned
+	'120_to_130'	=>	array(),
+	'120_to_110'	=>	array(),
+
+	# in development
+	'130_to_140'	=>	array('Commits'),
+	'130_to_110'	=>	array(),
+
+	# in review
+	'140_to_150'	=>	array(),
+	'140_to_130'	=>	array(),
+	'140_to_110'	=>	array(),
+
+	# closed
+	'150_to_110'	=>	array(),
+);
+
+## required custom fields
+$g_bug_custom_fields_required = array(
+	'report'		=>	array(),
+	'view'			=>	array(),
+
+	# edit
+	'110_to_110'	=>	array(),
+	'120_to_120'	=>	array(),
+	'130_to_130'	=>	array(),
+	'140_to_140'	=>	array('Commits'),
+	'150_to_150'	=>	array('Commits'),
+
+	# open
+	'110_to_120'	=>	array(),
+
+	# assigned
+	'120_to_130'	=>	array(),
+	'120_to_110'	=>	array(),
+
+	# in development
+	'130_to_140'	=>	array('Commits'),
+	'130_to_110'	=>	array(),
+
+	# in review
+	'140_to_150'	=>	array(),
+	'140_to_130'	=>	array(),
+	'140_to_110'	=>	array(),
+
+	# closed
+	'150_to_110'	=>	array(),
+);
+
+## required field regex
+$g_bug_fields_required_regex = array(
+	'summary'			=> '/.+/',
+	'description'		=> '/.+/',
+	'category_id'		=> '/[^0].*/',
+	'handler_id'		=> '/[^0].*/',
+	'priority'			=> '/[^0].*/',
+	'severity'			=> '/[^0].*/',
+	'resolution'		=> '/[^0].*/',
+	'fixed_in_version'	=> '/.+/',
+	'due_date'			=> '/[^0].*/',
+	'time_tracking'		=> '/[0-9]+:[0-9]+/',
+	'notes'				=> '/.+/',
+	'os'				=> '/.+/',
+	'platform'			=> '/.+/',
+	'build'				=> '/.+/',
+	'version'			=> '/.+/',
+	'tags'				=> '/.+/',
+	'target_version'	=> '/.+/',
+	'view_state'		=> '/[^0].*/',
+	'Commits'			=> '/.+/',
+);
+
+
+
+####
+## view config
+####
+
+## general
+$g_display_bug_padding = 0;
+$g_display_project_padding = 0;
+$g_display_bugnote_padding = 0;
+$g_category_show_project = 0;
+
+$g_filter_position = FILTER_POSITION_TOP;
+$g_filter_by_custom_fields = ON;
+$g_view_filters = ADVANCED_DEFAULT;
+$g_use_dynamic_filters = ON;
+
+$g_show_project_menu_bar = OFF;
+$g_show_assigned_names = OFF;
+
+## main menu config
+$g_main_menu_show_my_view = 1;
+$g_main_menu_show_bugs = 1;
+$g_main_menu_show_summary = 1;
+$g_main_menu_show_report_bug = 0;
+$g_main_menu_show_changelog = 1;
+$g_main_menu_show_roadmap = 1;
+
+## my view
+$g_my_view_boxes = array (
+	'assigned'      => '1',
+	'unassigned'    => '2',
+	'reported'      => '0',
+	'resolved'      => '0',
+	'recent_mod'    => '0',
+	'monitored'     => '0',
+	'feedback'      => '0',
+	'verify'        => '0',
+	'my_comments'   => '0'
+);
+
+## issue summary view
+$g_view_issues_page_columns = array (
+	'selection', 'id', 'summary', 'category_id', 'status', 'target_version'
+#	, 'custom_commits'
+);
+
+## issue details view
+# action buttons
+$g_action_button_position = POSITION_BOTH;
+
+$g_view_issue_button_monitor = 0;
+$g_view_issue_button_clone = 1;
+$g_view_issue_button_reopen = 0;
+$g_view_issue_button_close = 0;
+$g_view_issue_button_move = 1;
+$g_view_issue_button_delete = 1;
+
+$g_view_issue_button_notes = 0;
+$g_view_issue_button_sendmail = 0;
+$g_view_issue_button_history = 0;
+$g_view_issue_button_next = 0;
+
+
+
+
+
+
+
+
+
+
 # MantisBT - A PHP based bugtracking system
 
 # MantisBT is free software: you can redistribute it and/or modify
