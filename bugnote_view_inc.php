@@ -261,6 +261,23 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 				}
 				echo '</div>';
 			}
+
+			# show worklog button if the user is allowed to edit this bugnote
+			if( $t_activity['can_edit'] ) {
+			?>
+				<form id="bugnote_worklog" method="post" action="bugnote_worklog_update.php">
+					<input type="hidden" name="bugnote_id" value="<?php echo $t_activity['id'] ?>"/>
+					<input type="text" name="time_tracking" class="input-xs pull-left" size="5" placeholder="hh:mm" />
+					<input type="hidden" name="action" value="add"/>
+
+					<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'log_work' ) ?>" />
+				</form>
+
+			<?php
+			}
+
+			# show worklog link
+			echo '<p class="no-margin"><span class="small bugnote-revisions-link"><a href="bugnote_worklog_page.php?bugnote_id=' . $t_activity['id'] . '">' . lang_get( 'view_worklog' ) . '</a></span></p>';
 		?>
 		</div>
 		</div>
@@ -349,7 +366,7 @@ if( $t_activity['type'] == ENTRY_TYPE_NOTE ) {
 <?php
 
 if( $t_total_time > 0 && $t_show_time_tracking ) {
-	echo '<div class="time-tracking-total pull-right"><i class="ace-icon fa fa-clock-o bigger-110 red"></i> ', sprintf( lang_get( 'total_time_for_issue' ), '<span class="time-tracked">' . db_minutes_to_hhmm( $t_total_time ) . '</span>' ), '</div>';
+	echo '<div class="time-tracking-total pull-right"><i class="ace-icon fa fa-clock-o bigger-110 red"></i> ', sprintf( lang_get( 'total_time_for_issue') . '= %1$s' , '<span class="time-tracked">' . db_minutes_to_hhmm( $t_total_time ) . '</span>' ), '</div>';
 }
 ?>
 </div>

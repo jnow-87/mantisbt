@@ -716,6 +716,15 @@ function string_get_bug_view_url( $p_bug_id ) {
 }
 
 /**
+ * return the name and GET parameters of a worklog VIEW page for the given bugnote
+ * @param integer $p_bugnote_id A bugnote identifier.
+ * @return string
+ */
+function string_get_bugnote_worklog_url( $p_bugnote_id ){
+	return 'bugnote_worklog_page.php?bugnote_id=' . $p_bugnote_id;
+}
+
+/**
  * return the name and GET parameters of a bug VIEW page for the given bug
  * @param integer $p_bug_id     A bug identifier.
  * @param integer $p_bugnote_id A bugnote identifier.

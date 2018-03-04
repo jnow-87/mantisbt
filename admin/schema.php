@@ -859,6 +859,16 @@ $g_upgrade[209] = array( 'AlterColumnSQL', array( db_get_table( 'api_token' ), "
 	date_created			I		UNSIGNED NOTNULL DEFAULT '1',
 	date_used				I		UNSIGNED NOTNULL DEFAULT '1'"
 	) );
+$g_upgrade[210] = array('CreateTableSQL', array( db_get_table( 'worklog' ), "
+	id						I		UNSIGNED NOTNULL PRIMARY AUTOINCREMENT,
+	bugnote_id				I		UNSIGNED NOTNULL,
+	user_id					I		NOTNULL DEFAULT '0',
+	time					I		UNSIGNED NOTNULL,
+	date					I		UNSIGNED NOTNULL DEFAULT '0'",
+	$t_table_options
+	) );
+
+
 
 # Release marker: 1.3.0
 

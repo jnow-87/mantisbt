@@ -93,6 +93,8 @@ $s_actiongroup_bugs = 'Selected Issues';
 $s_actiongroup_error_issue_is_readonly = 'Issue is readonly.';
 
 # new strings:
+$s_by = 'by';
+$s_for = 'for';
 $s_all_projects = 'All Projects';
 $s_move_bugs = 'Move Issues';
 $s_operation_successful = 'Operation successful.';
@@ -168,6 +170,9 @@ $s_bug_deleted = 'Issue Deleted';
 
 $s_make_private = 'Make Private';
 $s_make_public = 'Make Public';
+
+$s_worklog = 'Logged Work';
+$s_log_work = 'Log Work';
 
 $s_create_new_project_link = 'Create New Project';
 
@@ -590,8 +595,9 @@ $s_profile = 'Profile';
 $s_updating_bug_simple_title = 'Updating Issue Information';
 
 # bug_view*
-$s_view_revisions = 'View Revisions';
+$s_view_revisions = 'View revisions for';
 $s_view_num_revisions = 'View %1$d revisions';
+$s_view_worklog = 'View work log';
 $s_revision = 'Revision';
 $s_revision_by = '%1$s by %2$s';
 $s_revision_drop = 'Drop';
@@ -600,7 +606,7 @@ $s_bugnote_revision_dropped_history = 'Note Revision Dropped';
 $s_all_revisions = 'All Revisions';
 $s_back_to_issue = 'Back to Issue';
 $s_confirm_revision_drop = 'Are you sure you want to drop this issue revision?';
-$s_activities_title = 'Activities';
+$s_activities_title = 'Activitie(s)';
 
 # bug_vote_add.php
 $s_vote_added_msg = 'Vote has been added...';
@@ -1526,7 +1532,7 @@ $s_time_tracking_cost_per_hour = 'Cost / Hour';
 $s_time_tracking_cost_per_hour_label = 'Cost / Hour:';
 $s_time_tracking_cost = 'Cost';
 $s_time_tracking_cost_label = 'Cost:';
-$s_total_time_for_issue = 'Total time for issue = %1$s';
+$s_total_time_for_issue = 'Total time for issue';
 
 $s_access_denied = 'Access Denied.';
 
@@ -1605,6 +1611,7 @@ $s_timeline_more = 'More events...';
  */
 $s_missing_error_string = 'Missing Error String: %1$s';
 
+$MANTIS_ERROR[ERROR_INVALID_MISSING_INPUT] = 'Invalid or missing input \'%s\'';
 $MANTIS_ERROR[ERROR_GENERIC] = 'An error occurred during this action. You may wish to report this error to your local administrator.';
 $MANTIS_ERROR[ERROR_SQL] = 'SQL error detected.';
 $MANTIS_ERROR[ERROR_REPORT] = 'There was an error in your report.';
@@ -1614,7 +1621,7 @@ $MANTIS_ERROR[ERROR_NO_DIRECTORY] = 'The directory does not exist. Please check 
 $MANTIS_ERROR[ERROR_DUPLICATE_PROJECT] = 'A project with that name already exists.';
 $MANTIS_ERROR[ERROR_EMPTY_FIELD] = 'A necessary field "%1$s" was empty. Please recheck your inputs.';
 $MANTIS_ERROR[ERROR_PROTECTED_ACCOUNT] = 'This account is protected. You are not allowed to access this until the account protection is lifted.';
-$MANTIS_ERROR[ERROR_ACCESS_DENIED] = 'Access Denied.';
+$MANTIS_ERROR[ERROR_ACCESS_DENIED] = 'Access denied for current user.';
 $MANTIS_ERROR[ERROR_UPLOAD_FAILURE] = 'File upload failed. File is not readable by MantisBT. Please check the project settings.';
 $MANTIS_ERROR[ERROR_FILE_TOO_BIG] = 'File upload failed. This is likely because the filesize was larger than is currently allowed by this PHP installation.';
 $MANTIS_ERROR[ERROR_GPC_VAR_NOT_FOUND] = 'A required parameter to this page (%1$s) was not found.';
