@@ -66,7 +66,7 @@ if( $f_bug_id ) {
 	$t_bug_data = bug_get( $t_bug_id, true );
 	$t_bug_revisions = array_reverse( bug_revision_list( $t_bug_id ), true );
 
-	$t_title = lang_get( 'issue_id' ) . $t_bug_id;
+	$t_title = lang_get( 'issue_id' ) . ': ' . $t_bug_id;
 
 } else if( $f_bugnote_id ) {
 	$t_bug_id = bugnote_get_field( $f_bugnote_id, 'bug_id' );
@@ -74,7 +74,7 @@ if( $f_bug_id ) {
 
 	$t_bug_revisions = bug_revision_list( $t_bug_id, REV_ANY, $f_bugnote_id );
 
-	$t_title = lang_get( 'bugnote' ) . ' ' . $f_bugnote_id;
+	$t_title = lang_get( 'bugnote' ) . ': ' . $f_bugnote_id;
 
 } else if( $f_rev_id ) {
 	$t_bug_revisions = bug_revision_like( $f_rev_id );
@@ -86,7 +86,7 @@ if( $f_bug_id ) {
 	$t_bug_id = $t_bug_revisions[$f_rev_id]['bug_id'];
 	$t_bug_data = bug_get( $t_bug_id, true );
 
-	$t_title = lang_get( 'issue_id' ) . $t_bug_id;
+	$t_title = lang_get( 'issue_id' ) . ': ' . $t_bug_id;
 
 } else {
 	trigger_error( ERROR_GENERIC, ERROR );
@@ -132,8 +132,8 @@ function show_revision( array $p_revision ) {
 
 <tr>
 <th class="category"><?php echo lang_get( 'revision' ) ?></th>
-<td colspan="2"><?php echo $t_by_string ?></td>
-<td class="center" width="5%">
+<td class="category" colspan="2"><?php echo $t_by_string ?></td>
+<td class="category" width="5%">
 <?php if( $s_can_drop ) {
 	$t_drop_token = form_security_param( 'bug_revision_drop' );
 	print_small_button( 'bug_revision_drop.php?id=' . $p_revision['id'] . $t_drop_token, lang_get( 'revision_drop' ) );
@@ -159,7 +159,7 @@ layout_page_begin();
 <div class="widget-header widget-header-small">
 <h4 class="widget-title lighter">
 	<i class="ace-icon fa fa-history"></i>
-	<?php echo lang_get( 'view_revisions' ), ': ', $t_title ?>
+	<?php echo lang_get( 'view_revisions' ), ' ', $t_title ?>
 </h4>
 </div>
 
@@ -178,7 +178,7 @@ print_small_button( 'view.php?id=' . $t_bug_id, lang_get( 'back_to_issue' ) );
 </div>
 <div class="widget-main no-padding">
 <div class="table-responsive">
-<table class="table table-bordered table-condensed table-striped">
+<table class="table table-bordered table-condensed">
 <tr>
 <th class="category" width="15%"><?php echo lang_get( 'summary' ) ?></th>
 <td colspan="3"><?php echo bug_format_summary( $t_bug_id, SUMMARY_FIELD ) ?></td>
