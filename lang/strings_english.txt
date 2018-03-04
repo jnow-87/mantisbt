@@ -1518,18 +1518,15 @@ $s_tag_create = 'Create Tag';
 $s_show_all_tags = 'All';
 
 # Time Tracking
-$s_time_tracking_billing_link = 'Time Tracking';
-$s_time_tracking = 'Time tracking';
+$s_time_tracking_billing_link = 'Work Log';
+$s_time_tracking = 'Work Log';
 $s_time_tracking_time_spent = 'Time spent:';
-$s_time_tracking_get_info_button = 'Get Time Tracking Information';
+$s_time_tracking_get_info_button = 'Get Work Log';
 $s_time_tracking_cost_per_hour = 'Cost / Hour';
 $s_time_tracking_cost_per_hour_label = 'Cost / Hour:';
 $s_time_tracking_cost = 'Cost';
 $s_time_tracking_cost_label = 'Cost:';
 $s_total_time_for_issue = 'Total time for issue = %1$s';
-$s_time_tracking_stopwatch_start = 'Start';
-$s_time_tracking_stopwatch_stop = 'Stop';
-$s_time_tracking_stopwatch_reset = 'Reset';
 
 $s_access_denied = 'Access Denied.';
 
@@ -1741,7 +1738,7 @@ $MANTIS_ERROR[ERROR_FIELD_TOO_LONG] = 'Field "%1$s" must be shorter or equal to 
 $MANTIS_ERROR[ERROR_API_TOKEN_NAME_NOT_UNIQUE] = 'API token name "%s" is already being used. Please go back and select another one.';
 
 # dropzone.js - placeholders format is defined by the library
-$s_dropzone_default_message = 'Drop files here to upload (or click)';
+$s_dropzone_default_message = 'File upload';
 $s_dropzone_fallback_message = 'Your browser does not support drag\'n\'drop file uploads.';
 $s_dropzone_fallback_text = '';
 $s_dropzone_file_too_big = 'File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.';

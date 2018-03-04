@@ -3715,12 +3715,6 @@ $g_time_tracking_enabled = OFF;
 $g_time_tracking_with_billing = OFF;
 
 /**
- * Stop watch to build time tracking field
- * @global integer $g_time_tracking_stopwatch
- */
-$g_time_tracking_stopwatch = OFF;
-
-/**
  * access level required to view time tracking information
  * @global integer $g_time_tracking_view_threshold
  */
@@ -4357,7 +4351,6 @@ $g_public_config_names = array(
 	'time_tracking_edit_threshold',
 	'time_tracking_enabled',
 	'time_tracking_reporting_threshold',
-	'time_tracking_stopwatch',
 	'time_tracking_view_threshold',
 	'time_tracking_with_billing',
 	'time_tracking_without_note',

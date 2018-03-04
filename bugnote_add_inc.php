@@ -95,40 +95,39 @@ require_api( 'lang_api.php' );
 		<tbody>
 
 		<tr id="bugnote-attach-files" style="<?php echo $t_attach_style ?>">
-			<th class="category" width="8%">
-				<?php echo lang_get( 'bugnote' ) ?>	
-			</th>
-			<td width="50%">
-				<textarea name="bugnote_text" id="bugnote_text" class="form-control" rows="5"></textarea>
+<?php
+		if( $t_allow_file_upload ) {
+			$t_file_upload_max_num = max( 1, config_get( 'file_upload_max_num' ) );
+			$t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
+
+			$t_default_bugnote_view_status = config_get( 'default_bugnote_view_status' );
+			$t_attach_style = ( $t_default_bugnote_view_status != VS_PUBLIC ) ? 'display: none;' : '';
+?>
+			<td>
+				<input type="hidden" name="max_file_size" value="<?php echo $t_max_file_size ?>" />
+				<div class="dropzone center">
+					<i class="upload-icon ace-icon fa fa-cloud-upload blue fa-3x"></i><br>
+					<span class="bigger-100 grey">
+						<?php echo lang_get( 'dropzone_default_message' ) ?>
+						<br/>
+						<?php print_max_filesize( $t_max_file_size ); ?>
+					</span>
+					<div id="dropzone-previews-box" class="dz dropzone-previews dz-max-files-reached"></div>
+				</div>
+				<div class="fallback">
+					<input id="ufile[]" name="ufile[]" type="file" size="50" />
+				</div>
 			</td>
 
 <?php
-	if( $t_allow_file_upload ) {
-		$t_file_upload_max_num = max( 1, config_get( 'file_upload_max_num' ) );
-		$t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_number( 'post_max_size' ), config_get( 'max_file_size' ) );
-
-		$t_default_bugnote_view_status = config_get( 'default_bugnote_view_status' );
-		$t_attach_style = ( $t_default_bugnote_view_status != VS_PUBLIC ) ? 'display: none;' : '';
+		}
 ?>
-				<td >
-					<input type="hidden" name="max_file_size" value="<?php echo $t_max_file_size ?>" />
-					<div class="dropzone center">
-						<i class="upload-icon ace-icon fa fa-cloud-upload blue fa-3x"></i><br>
-						<span class="bigger-100 grey">
-							<?php echo lang_get( 'dropzone_default_message' ) ?>
-							<br/>
-							<?php print_max_filesize( $t_max_file_size ); ?>
-						</span>
-						<div id="dropzone-previews-box" class="dz dropzone-previews dz-max-files-reached"></div>
-					</div>
-					<div class="fallback">
-						<input id="ufile[]" name="ufile[]" type="file" size="50" />
-					</div>
-				</td>
-			</tr>
-<?php
-	}
+			<td width="50%">
+				<textarea name="bugnote_text" id="bugnote_text" class="form-control" rows="7"></textarea>
+			</td>
+		</tr>
 
+<?php
 	event_signal( 'EVENT_BUGNOTE_ADD_FORM', array( $f_bug_id ) );
 ?>
 
@@ -148,20 +147,12 @@ require_api( 'lang_api.php' );
 
 
 <?php
-			if( config_get( 'time_tracking_enabled' ) ) {
-				if( access_has_bug_level( config_get( 'time_tracking_edit_threshold' ), $f_bug_id ) ) {
+			if( config_get( 'time_tracking_enabled' ) && access_has_bug_level( config_get( 'time_tracking_edit_threshold' ), $f_bug_id ) ) {
 ?>
-					<span class="label label-default"> <?php echo lang_get( 'time_tracking' ), ':' ?> </span>
-					<?php if( config_get( 'time_tracking_stopwatch' ) ) { ?>
-					<input type="text" name="time_tracking" class="stopwatch_time input-xs" size="8" placeholder="hh:mm:ss" />
-					<input type="button" name="time_tracking_toggle" class="stopwatch_toggle btn btn-sm btn-white btn-round" value="<?php echo lang_get( 'time_tracking_stopwatch_start' ) ?>" />
-					<input type="button" name="time_tracking_reset" class="stopwatch_reset btn btn-sm btn-white btn-round" value="<?php echo lang_get( 'time_tracking_stopwatch_reset' ) ?>" />
-					<?php } else { ?>
-					<input type="text" name="time_tracking" class="input-xs" size="5" placeholder="hh:mm" />
-					<?php } ?>
-					<span class="lbl"> &nbsp </span>
+				<span class="label label-default"> <?php echo lang_get( 'time_tracking' ), ':' ?> </span>
+				<input type="text" name="time_tracking" class="input-xs" size="5" placeholder="hh:mm" />
+				<span class="lbl"> &nbsp </span>
 <?php
-				}
 			}
 ?>
 

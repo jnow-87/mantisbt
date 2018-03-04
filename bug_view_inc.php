@@ -514,14 +514,13 @@ echo '</div></div></div></div></div>';
 ####
 ## bug notes and "Add Note" box
 ####
-	if( !$t_force_readonly ) {
-		define( 'BUGNOTE_ADD_INC_ALLOW', true );
-		include( $t_mantis_dir . 'bugnote_add_inc.php' );
-	}
+if( !$t_force_readonly ) {
+	define( 'BUGNOTE_ADD_INC_ALLOW', true );
+	include( $t_mantis_dir . 'bugnote_add_inc.php' );
+}
 
-	define( 'BUGNOTE_VIEW_INC_ALLOW', true );
-	include( $t_mantis_dir . 'bugnote_view_inc.php' );
-
+define( 'BUGNOTE_VIEW_INC_ALLOW', true );
+include( $t_mantis_dir . 'bugnote_view_inc.php' );
 
 
 ####

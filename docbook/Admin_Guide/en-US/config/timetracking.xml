@@ -35,15 +35,6 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>$g_time_tracking_stopwatch</term>
-			<listitem>
-				<para>
-					Instead of a text field turning this option on places a stopwatch on the page with <guibutton>Start/Stop</guibutton> and <guibutton>Reset</guibutton> buttons next to it. A bit gimmicky, but who cares.
-				</para>
-			</listitem>
-		</varlistentry>
-
-		<varlistentry>
 			<term>$g_time_tracking_view_threshold</term>
 			<listitem>
 				<para>

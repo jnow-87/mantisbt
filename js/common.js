@@ -209,23 +209,6 @@ $(document).ready( function() {
 			}
 		}
 	};
-	$('input[type=button].stopwatch_toggle').click(function() {
-		if (stopwatch.elapsedTime == 0) {
-			stopwatch.stop();
-			stopwatch.start();
-			$('input[type=button].stopwatch_toggle').val(translations['time_tracking_stopwatch_stop']);
-		} else if (typeof stopwatch.timerID == 'number') {
-			stopwatch.stop();
-			$('input[type=button].stopwatch_toggle').val(translations['time_tracking_stopwatch_start']);
-		} else {
-			stopwatch.start();
-			$('input[type=button].stopwatch_toggle').val(translations['time_tracking_stopwatch_stop']);
-		}
-	});
-	$('input[type=button].stopwatch_reset').click(function() {
-		stopwatch.reset();
-		$('input[type=button].stopwatch_toggle').val(translations['time_tracking_stopwatch_start']);
-	});
 
 	$('input[type=text].datetimepicker').each(function(index, element) {
         enableDateTimePicker(this);
