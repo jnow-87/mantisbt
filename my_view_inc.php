@@ -257,7 +257,7 @@ if( $t_box_title == 'recent_mod' ) {
 	$t_box_title_label .= ' (' . $t_recent_days . ' ' . lang_get( 'days' ) . ')';
 }
 
-$t_collapse_block = is_collapsed( $t_box_title );
+$t_collapse_block = is_collapsed( $t_box_title, false );
 $t_block_css = $t_collapse_block ? 'collapsed' : '';
 $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 

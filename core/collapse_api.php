@@ -164,11 +164,11 @@ function collapse_end( $p_name, $p_section = '' ) {
  * @param string $p_block Collapse block.
  * @return boolean
  */
-function is_collapsed( $p_block ) {
+function is_collapsed( $p_block, $p_default = true ) {
 	global $g_collapse_cache_token;
 
 	if( !isset( $g_collapse_cache_token[$p_block] ) ) {
-		return false;
+		return $p_default;
 	}
 
 	return( true == $g_collapse_cache_token[$p_block] );

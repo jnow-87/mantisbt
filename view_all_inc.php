@@ -187,14 +187,14 @@ write_bug_rows( $t_rows );
 		}
 ?>
 		</div>
-		<div class="btn-group pull-right">
-			<?php
-				$f_filter = gpc_get_int('filter', 0);
-				print_page_links('view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter);
-			?>
-		</div>
-
 		<div class="btn-toolbar">
+			<div class="btn-group"><?php
+				# -- Page number links --
+				$f_filter	= gpc_get_int( 'filter', 0);
+				print_page_links( 'view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter );
+				?>
+			</div>
+
 			<div class="btn-group pull-right">
 			<?php
 				# -- Print and Export links --
@@ -218,12 +218,6 @@ write_bug_rows( $t_rows );
 					}
 				}
 			?>
-			</div>
-			<div class="btn-group pull-right"><?php
-				# -- Page number links --
-				$f_filter	= gpc_get_int( 'filter', 0);
-				print_page_links( 'view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter );
-				?>
 			</div>
 		</div>
 

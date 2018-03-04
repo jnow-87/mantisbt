@@ -175,200 +175,218 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 <div class="col-md-6-left col-xs-12">
 
 <!-- time per user -->
-<div class="widget-box widget-color-blue2 table-responsive">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get($t_name_field) ?>
-		</h4>
+<?php
+if($t_bugnote_stats['users']){
+?>
+	<div class="widget-box widget-color-blue2 table-responsive">
+		<div class="widget-header widget-header-small">
+			<h4 class="widget-title lighter">
+				<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get($t_name_field) ?>
+			</h4>
+		</div>
+
+		<table class="table table-bordered table-condensed table-striped">
+		<tr>
+			<td class="small-caption bold">
+				<?php echo lang_get( $t_name_field ) ?>
+			</td>
+			<td class="small-caption bold">
+				<?php echo lang_get( 'time_tracking' ) ?>
+			</td>
+	<?php	if( $t_cost_col ) { ?>
+			<td class="small-caption bold pull-right">
+				<?php echo lang_get( 'time_tracking_cost' ) ?>
+			</td>
+	<?php	} ?>
+		</tr>
+
+	<?php
+		foreach ( $t_bugnote_stats['users'] as $t_username => $t_user_info ) {
+	?>
+		<tr>
+			<td class="small-caption">
+				<?php echo $t_username; ?>
+			</td>
+			<td class="small-caption">
+				<?php echo db_minutes_to_hhmm( $t_user_info['minutes'] ); ?>
+			</td>
+	<?php		if( $t_cost_col ) { ?>
+			<td class="small-caption right">
+				<?php echo string_attribute( number_format( $t_user_info['cost'], 2 ) ); ?>
+			</td>
+	<?php		} ?>
+		</tr>
+	<?php	} ?>
+		<tr class="row-category2">
+			<td class="small-caption bold">
+				<?php echo lang_get( 'total_time' ); ?>
+			</td>
+			<td class="small-caption bold">
+				<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
+			</td>
+	<?php	if( $t_cost_col ) { ?>
+			<td class="small-caption bold right">
+				<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
+			</td>
+	<?php	} ?>
+		</tr>
+		</table>
+
+	<?php
+		} # end if
+	?>
 	</div>
-
-	<table class="table table-bordered table-condensed table-striped">
-	<tr>
-		<td class="small-caption bold">
-			<?php echo lang_get( $t_name_field ) ?>
-		</td>
-		<td class="small-caption bold">
-			<?php echo lang_get( 'time_tracking' ) ?>
-		</td>
-<?php	if( $t_cost_col ) { ?>
-		<td class="small-caption bold pull-right">
-			<?php echo lang_get( 'time_tracking_cost' ) ?>
-		</td>
-<?php	} ?>
-	</tr>
-
 <?php
-	foreach ( $t_bugnote_stats['users'] as $t_username => $t_user_info ) {
+}
 ?>
-	<tr>
-		<td class="small-caption">
-			<?php echo $t_username; ?>
-		</td>
-		<td class="small-caption">
-			<?php echo db_minutes_to_hhmm( $t_user_info['minutes'] ); ?>
-		</td>
-<?php		if( $t_cost_col ) { ?>
-		<td class="small-caption right">
-			<?php echo string_attribute( number_format( $t_user_info['cost'], 2 ) ); ?>
-		</td>
-<?php		} ?>
-	</tr>
-<?php	} ?>
-	<tr class="row-category2">
-		<td class="small-caption bold">
-			<?php echo lang_get( 'total_time' ); ?>
-		</td>
-		<td class="small-caption bold">
-			<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
-		</td>
-<?php	if( $t_cost_col ) { ?>
-		<td class="small-caption bold right">
-			<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
-		</td>
-<?php	} ?>
-	</tr>
-	</table>
-
-<?php
-	} # end if
-?>
-</div>
 
 <!-- time per issue -->
-<div class="widget-box widget-color-blue2 table-responsive">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get('bug') ?>
-		</h4>
-	</div>
-
-	<table class="table table-bordered table-condensed table-striped">
-	<tr>
-		<td class="small-caption bold">
-			<?php echo lang_get( 'summary' ) ?>
-		</td>
-		<td class="small-caption bold">
-			<?php echo lang_get( 'time_tracking' ) ?>
-		</td>
-<?php	if( $t_cost_col ) { ?>
-		<td class="small-caption pull-right bold">
-			<?php echo lang_get( 'time_tracking_cost' ) ?>
-		</td>
-<?php	} ?>
-
-	</tr>
 <?php
-		foreach ( $t_bugnote_stats['issues'] as $t_issue_id => $t_issue ) {
-			$t_project_info = ( !isset( $f_bug_id ) && $f_project_id == ALL_PROJECTS ) ? '[' . project_get_name( $t_issue['project_id'] ) . ']' . lang_get( 'word_separator' ) : '';
-			$t_link = sprintf( lang_get( 'label' ), string_get_bug_view_link( $t_issue_id ) ) . lang_get( 'word_separator' ) . $t_project_info . string_display( $t_issue['summary'] );
+if($t_bugnote_stats['issues']){
 ?>
+	<div class="widget-box widget-color-blue2 table-responsive">
+		<div class="widget-header widget-header-small">
+			<h4 class="widget-title lighter">
+				<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get('bug') ?>
+			</h4>
+		</div>
 
-			<?php
-			$t_bug_time_total = 0;
-			$t_bug_cost_total = 0;
+		<table class="table table-bordered table-condensed table-striped">
+		<tr>
+			<td class="small-caption bold">
+				<?php echo lang_get( 'summary' ) ?>
+			</td>
+			<td class="small-caption bold">
+				<?php echo lang_get( 'time_tracking' ) ?>
+			</td>
+	<?php	if( $t_cost_col ) { ?>
+			<td class="small-caption pull-right bold">
+				<?php echo lang_get( 'time_tracking_cost' ) ?>
+			</td>
+	<?php	} ?>
 
-			foreach( $t_issue['users'] as $t_username => $t_user_info ) {
-				$t_bug_time_total += $t_user_info['minutes'];
+		</tr>
+	<?php
+			foreach ( $t_bugnote_stats['issues'] as $t_issue_id => $t_issue ) {
+				$t_project_info = ( !isset( $f_bug_id ) && $f_project_id == ALL_PROJECTS ) ? '[' . project_get_name( $t_issue['project_id'] ) . ']' . lang_get( 'word_separator' ) : '';
+				$t_link = sprintf( lang_get( 'label' ), string_get_bug_view_link( $t_issue_id ) ) . lang_get( 'word_separator' ) . $t_project_info . string_display( $t_issue['summary'] );
+	?>
 
-				if($t_cost_col){
-					$t_bug_cost_total += $t_uesr_info['cost'];
+				<?php
+				$t_bug_time_total = 0;
+				$t_bug_cost_total = 0;
+
+				foreach( $t_issue['users'] as $t_username => $t_user_info ) {
+					$t_bug_time_total += $t_user_info['minutes'];
+
+					if($t_cost_col){
+						$t_bug_cost_total += $t_uesr_info['cost'];
+					}
 				}
-			}
-			?>
-			<tr class="row-category-history">
-				<td class="small-caption"> <?php echo $t_link ?></td>
-				<td class="small-caption"> <?php echo db_minutes_to_hhmm($t_bug_time_total) ?></td>
+				?>
+				<tr class="row-category-history">
+					<td class="small-caption"> <?php echo $t_link ?></td>
+					<td class="small-caption"> <?php echo db_minutes_to_hhmm($t_bug_time_total) ?></td>
 
-				<?php if($t_cost_col) { ?>
-					<td class="small-caption right"> <?php echo number_format($t_bug_cost_total, 2) ?></td>
-				<?php }?>
-			</tr>
+					<?php if($t_cost_col) { ?>
+						<td class="small-caption right"> <?php echo number_format($t_bug_cost_total, 2) ?></td>
+					<?php }?>
+				</tr>
+	<?php
+			} # end for issues loop ?>
+
+		<tr>
+			<td class="small-caption bold">
+				<?php echo lang_get( 'total_time' ); ?>
+			</td>
+			<td class="small-caption bold">
+				<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
+			</td>
+
+	<?php	if( $t_cost_col ) { ?>
+			<td class="small-caption bold right">
+				<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
+			</td>
+	<?php 	} ?>
+		</tr>
+		</table>
+	</div>
+	</div>
 <?php
-		} # end for issues loop ?>
-
-	<tr>
-		<td class="small-caption bold">
-			<?php echo lang_get( 'total_time' ); ?>
-		</td>
-		<td class="small-caption bold">
-			<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
-		</td>
-
-<?php	if( $t_cost_col ) { ?>
-		<td class="small-caption bold right">
-			<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
-		</td>
-<?php 	} ?>
-	</tr>
-	</table>
-</div>
-</div>
+}
+?>
 
 <!-- time per issue and user -->
-<div class="col-md-6-right col-xs-12">
-<div class="widget-box widget-color-blue2 table-responsive">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get('bug') . '/' . lang_get($t_name_field) ?>
-		</h4>
-	</div>
-
-	<table class="table table-bordered table-condensed table-striped">
-	<tr>
-		<td class="small-caption bold">
-			<?php echo lang_get('summary') . '/' . lang_get( $t_name_field ) ?>
-		</td>
-		<td class="small-caption bold">
-			<?php echo lang_get( 'time_tracking' ) ?>
-		</td>
-<?php	if( $t_cost_col ) { ?>
-		<td class="small-caption bold pull-right">
-			<?php echo lang_get( 'time_tracking_cost' ) ?>
-		</td>
-<?php	} ?>
-
-	</tr>
 <?php
-		foreach ( $t_bugnote_stats['issues'] as $t_issue_id => $t_issue ) {
-			$t_project_info = ( !isset( $f_bug_id ) && $f_project_id == ALL_PROJECTS ) ? '[' . project_get_name( $t_issue['project_id'] ) . ']' . lang_get( 'word_separator' ) : '';
-			$t_link = sprintf( lang_get( 'label' ), string_get_bug_view_link( $t_issue_id ) ) . lang_get( 'word_separator' ) . $t_project_info . string_display( $t_issue['summary'] );
-			echo '<tr class="row-category-history"><td colspan="4">' . $t_link . '</td></tr>';
-
-			foreach( $t_issue['users'] as $t_username => $t_user_info ) {
+if($t_bugnote_stats['issues']){
 ?>
-	<tr>
-		<td class="small-caption">
-			<?php echo $t_username ?>
-		</td>
-		<td class="small-caption">
-			<?php echo db_minutes_to_hhmm( $t_user_info['minutes'] ) ?>
-		</td>
-<?php		if( $t_cost_col ) { ?>
-		<td class="small-caption right">
-			<?php echo string_attribute( number_format( $t_user_info['cost'], 2 ) ); ?>
-		</td>
-<?php		} ?>
-	</tr>
+	<div class="col-md-6-right col-xs-12">
+	<div class="widget-box widget-color-blue2 table-responsive">
+		<div class="widget-header widget-header-small">
+			<h4 class="widget-title lighter">
+				<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get('bug') . '/' . lang_get($t_name_field) ?>
+			</h4>
+		</div>
 
+		<table class="table table-bordered table-condensed table-striped">
+		<tr>
+			<td class="small-caption bold">
+				<?php echo lang_get('summary') . '/' . lang_get( $t_name_field ) ?>
+			</td>
+			<td class="small-caption bold">
+				<?php echo lang_get( 'time_tracking' ) ?>
+			</td>
+	<?php	if( $t_cost_col ) { ?>
+			<td class="small-caption bold pull-right">
+				<?php echo lang_get( 'time_tracking_cost' ) ?>
+			</td>
+	<?php	} ?>
+
+		</tr>
+	<?php
+			foreach ( $t_bugnote_stats['issues'] as $t_issue_id => $t_issue ) {
+				$t_project_info = ( !isset( $f_bug_id ) && $f_project_id == ALL_PROJECTS ) ? '[' . project_get_name( $t_issue['project_id'] ) . ']' . lang_get( 'word_separator' ) : '';
+				$t_link = sprintf( lang_get( 'label' ), string_get_bug_view_link( $t_issue_id ) ) . lang_get( 'word_separator' ) . $t_project_info . string_display( $t_issue['summary'] );
+				echo '<tr class="row-category-history"><td colspan="4">' . $t_link . '</td></tr>';
+
+				foreach( $t_issue['users'] as $t_username => $t_user_info ) {
+	?>
+		<tr>
+			<td class="small-caption">
+				<?php echo $t_username ?>
+			</td>
+			<td class="small-caption">
+				<?php echo db_minutes_to_hhmm( $t_user_info['minutes'] ) ?>
+			</td>
+	<?php		if( $t_cost_col ) { ?>
+			<td class="small-caption right">
+				<?php echo string_attribute( number_format( $t_user_info['cost'], 2 ) ); ?>
+			</td>
+	<?php		} ?>
+		</tr>
+
+	<?php
+				} # end of users within issues loop
+			} # end for issues loop ?>
+
+		<tr>
+			<td class="small-caption bold">
+				<?php echo lang_get( 'total_time' ); ?>
+			</td>
+			<td class="small-caption bold">
+				<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
+			</td>
+	<?php	if( $t_cost_col ) { ?>
+			<td class="small-caption bold right">
+				<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
+			</td>
+	<?php 	} ?>
+		</tr>
+		</table>
+	</div>
+	</div>
 <?php
-			} # end of users within issues loop
-		} # end for issues loop ?>
-
-	<tr>
-		<td class="small-caption bold">
-			<?php echo lang_get( 'total_time' ); ?>
-		</td>
-		<td class="small-caption bold">
-			<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
-		</td>
-<?php	if( $t_cost_col ) { ?>
-		<td class="small-caption bold right">
-			<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
-		</td>
-<?php 	} ?>
-	</tr>
-	</table>
-</div>
-</div>
+}
+?>
 
 <?php

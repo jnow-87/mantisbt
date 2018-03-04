@@ -556,16 +556,6 @@ if( $t_show_history ) {
 }
 
 
-####
-## time tracking statistics
-####
-if( config_get( 'time_tracking_enabled' ) &&
-	access_has_bug_level( config_get( 'time_tracking_view_threshold' ), $f_bug_id ) ) {
-	define( 'BUGNOTE_STATS_INC_ALLOW', true );
-	include( $t_mantis_dir . 'bugnote_stats_inc.php' );
-}
-
-
 
 layout_page_end();
 
