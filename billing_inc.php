@@ -33,6 +33,7 @@
  * @uses lang_api.php
  * @uses string_api.php
  * @uses utility_api.php
+ * @uses print_api.php
  */
 
 if( !defined( 'BILLING_INC_ALLOW' ) ) {
@@ -49,22 +50,21 @@ require_api( 'helper_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'string_api.php' );
 require_api( 'utility_api.php' );
+require_api( 'print_api.php' );
 
 ?>
 <?php
 
 
-$t_date_submitted = $_POST[FILTER_PROPERTY_START_DATE_SUBMITTED]; 
+$f_date_from = gpc_get_string(FILTER_PROPERTY_START_DATE_SUBMITTED, '');
+$f_date_to = gpc_get_string(FILTER_PROPERTY_END_DATE_SUBMITTED, '');
 
-if($t_date_submitted == ''){
-	$t_date_submitted = date(config_get( 'short_date_format' ));
-}
+if($f_date_from == '')
+	$f_date_from = date(config_get( 'short_date_format' ));
 
-$t_today = $_POST[FILTER_PROPERTY_END_DATE_SUBMITTED];
 
-if($t_today == ''){
-	$t_today = date(config_get( 'short_date_format' ));
-}
+if($f_date_to == '')
+	$f_date_to = date(config_get( 'short_date_format' ));
 
 
 $f_get_bugnote_stats_button = gpc_get_string( 'get_bugnote_stats_button', '' );
@@ -100,61 +100,34 @@ if( !is_blank( $f_get_bugnote_stats_button ) )
 
 		<div class="widget-body">
 			<form method="post" action="">
-			<div class="widget-main">
+			<div class="widget-toolbox">
 				<input type="hidden" name="id" value="<?php echo isset( $f_bug_id ) ? $f_bug_id : 0 ?>" />
 				<?php
 					$t_filter = array();
 					$t_filter[FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED] = 'on';
-					$t_filter[FILTER_PROPERTY_START_DATE_SUBMITTED] = $t_date_submitted;
-					$t_filter[FILTER_PROPERTY_END_DATE_SUBMITTED] = $t_today;
+					$t_filter[FILTER_PROPERTY_START_DATE_SUBMITTED] = $f_date_from;
+					$t_filter[FILTER_PROPERTY_END_DATE_SUBMITTED] = $f_date_to;
 					filter_init( $t_filter );
-					print_filter_do_filter_by_date( true );
+					print_filter_do_filter_by_date();
 				?>
 
-			<div class="widget-toolbox padding-8 clearfix">
-				<input name="get_bugnote_stats_button" class="btn btn-primary btn-sm btn-white btn-round"
+				<input name="get_bugnote_stats_button" class="btn btn-primary btn-xs btn-white btn-round pull-right "
 					   value="<?php echo lang_get( 'time_tracking_get_info_button' ) ?>" type="submit">
+
+				<?php
+				if( !is_blank( $f_get_bugnote_stats_button) && $t_bugnote_stats['users'] ){
+					$t_arg = array('from' => $f_date_from, 'to' => $f_date_to, 'project_id' => $f_project_id);
+
+					print_link_button('billing_export_to_csv.php', lang_get('csv_export'), 'pull-right', $t_arg);
+				}
+				?>
+
+				<div class="space-4"></div>
+
 			</div>
 			</form>
 		</div>
 	</div>
-
-<?php
-	if( !is_blank( $f_get_bugnote_stats_button ) ) {
-		# Retrieve time tracking information
-		$t_from = $t_date_submitted;
-		$t_to = $t_today;
-		$t_bugnote_stats = billing_get_summaries( $f_project_id, $t_from, $t_to, $f_bugnote_cost );
-
-		# Sort the array by bug_id, user/real name
-		if( ON == config_get( 'show_realname' ) ) {
-			$t_name_field = 'realname';
-		} else {
-			$t_name_field = 'username';
-		}
-
-		if( is_blank( $f_bugnote_cost ) || ( (double)$f_bugnote_cost == 0 ) ) {
-			$t_cost_col = false;
-		}
-
-		echo '<br />';
-
-		$t_exports = array(
-			'csv_export' => 'billing_export_to_csv.php',
-		);
-
-		foreach( $t_exports as $t_export_label => $t_export_page ) {
-			echo '<a class="btn btn-primary btn-sm btn-white btn-round" ';
-			echo 'href="' . $t_export_page . '?';
-			echo 'from=' . $t_from . '&amp;to=' . $t_to;
-			echo '&amp;cost=' . $f_bugnote_cost;
-			echo '&amp;project_id=' . $f_project_id;
-			echo '">' . lang_get( $t_export_label ) . '</a> ';
-		}
-
-		echo '<br />';
-
-?>
 <div class="space-10"></div>
 </div>
 
@@ -167,14 +140,14 @@ if($t_bugnote_stats['users']){
 	<div class="widget-box widget-color-blue2 table-responsive">
 		<div class="widget-header widget-header-small">
 			<h4 class="widget-title lighter">
-				<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get($t_name_field) ?>
+				<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get('username') ?>
 			</h4>
 		</div>
 
 		<table class="table table-bordered table-condensed table-striped">
 		<tr>
 			<td class="small-caption bold">
-				<?php echo lang_get( $t_name_field ) ?>
+				<?php echo lang_get('username') ?>
 			</td>
 			<td class="small-caption bold">
 				<?php echo lang_get( 'time_tracking' ) ?>
@@ -273,14 +246,14 @@ if($t_bugnote_stats['issues']){
 	<div class="widget-box widget-color-blue2 table-responsive">
 		<div class="widget-header widget-header-small">
 			<h4 class="widget-title lighter">
-				<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get('bug') . '/' . lang_get($t_name_field) ?>
+				<?php echo lang_get( 'time_tracking' ) . ' per ' . lang_get('bug') . '/' . lang_get('username') ?>
 			</h4>
 		</div>
 
 		<table class="table table-bordered table-condensed table-striped">
 		<tr>
 			<td class="small-caption bold">
-				<?php echo lang_get('summary') . '/' . lang_get( $t_name_field ) ?>
+				<?php echo lang_get('summary') . '/' . lang_get('username') ?>
 			</td>
 			<td class="small-caption bold">
 				<?php echo lang_get( 'time_tracking' ) ?>

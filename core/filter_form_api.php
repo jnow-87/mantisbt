@@ -1211,70 +1211,25 @@ function print_filter_values_do_filter_by_date( array $p_filter ) {
  * @param array $p_filter Filter array
  * @return void
  */
-function print_filter_do_filter_by_date( $p_hide_checkbox = false, array $p_filter = null ) {
+function print_filter_do_filter_by_date() {
 	global $g_filter;
-	if( null === $p_filter ) {
-		$p_filter = $g_filter;
-	}
-?>
-		<table cellspacing="0" cellpadding="0">
-<?php
-    $t_menu_readonly =  '';
-	if( !$p_hide_checkbox ) {
-?>
-		<tr>
-			<td colspan="2">
-				<input type="hidden" name="<?php echo FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED ?>" value="<?php echo OFF ?>" />
-				<label>
-					<input class="input-xs ace js_switch_date_inputs_trigger" type="checkbox" id="use_date_filters" class="input-xs"
-						name="<?php echo FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED ?>"
-						<?php check_checked( gpc_string_to_bool( $p_filter[FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED] ), true ) ?> />
-                    <span class="lbl small"> <?php echo lang_get( 'use_date_filters' )?></span>
-				</label>
-			</td>
-		</tr>
-<?php
-
-		if( ON != $p_filter[FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED] ) {
-			$t_menu_readonly = ' readonly="readonly" ';
-		}
-	}
 ?>
 
-		<!-- Start date -->
-		<tr>
-			<td>
-			<?php echo lang_get( 'start_date_label' )?>
-			</td>
-			<td class="nowrap">
-				<?php
-				echo '<input type="text" name="' . FILTER_PROPERTY_START_DATE_SUBMITTED . '" ' .
-					' class="input-xs" ' . $t_menu_readonly .
-					' size="10" maxlength="20" value="' . $p_filter[FILTER_PROPERTY_START_DATE_SUBMITTED] . '" />';
-				?>
-			</td>
-			<td>
-			<?php echo '(yyyy-mm-dd)' ?>
-			</td>
-		</tr>
-		<!-- End date -->
-		<tr>
-			<td>
-			<?php echo lang_get( 'end_date_label' )?>
-			</td>
-			<td>
-				<?php
-				echo '<input type="text" name="' . FILTER_PROPERTY_END_DATE_SUBMITTED . '" ' .
-					' class="input-xs" ' . $t_menu_readonly .
-					' size="10" maxlength="20" value="' . $p_filter[FILTER_PROPERTY_END_DATE_SUBMITTED] . '" />';
-				?>
-			</td>
-			<td>
-			<?php echo '(yyyy-mm-dd)' ?>
-			</td>
-		</tr>
-		</table>
-		<?php
+	<!-- Start date -->
+		<?php echo lang_get( 'start_date_label' )?>
+			<input type="text" class="input-xs" size="20" maxlength="30"
+				name="<?php echo FILTER_PROPERTY_START_DATE_SUBMITTED ?>"
+				value="<?php echo $g_filter[FILTER_PROPERTY_START_DATE_SUBMITTED] ?>"
+				placeholder='(yyyy-mm-dd)'
+			/>
+	<!-- End date -->
+		<?php echo lang_get( 'end_date_label' )?>
+			<input type="text" class="input-xs" size="20" maxlength="30"
+				name="<?php echo FILTER_PROPERTY_END_DATE_SUBMITTED ?>"
+				value="<?php echo $g_filter[FILTER_PROPERTY_END_DATE_SUBMITTED] ?>"
+				placeholder='(yyyy-mm-dd)'
+			/>
+	<?php
 }
 
 /**
