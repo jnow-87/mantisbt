@@ -160,7 +160,7 @@ layout_page_begin();
 
 						<!-- delete column -->
 						<td width="5%">
-							<?php print_small_button('bugnote_worklog_update.php?bugnote_id=' . $f_bugnote_id . '&action=delete&worklog_id=' . $t_worklog_id, lang_get('delete_link'));	?>
+							<?php print_link_button('bugnote_worklog_update.php?bugnote_id=' . $f_bugnote_id . '&action=delete&worklog_id=' . $t_worklog_id, lang_get('delete_link'));	?>
 						</td>
 					</tr>
 				<?php

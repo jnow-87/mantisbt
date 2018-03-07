@@ -155,7 +155,7 @@ print_doc_menu();
 	<?php echo form_security_field( 'proj_doc_delete' ) ?>
 	<input type="hidden" name="file_id" value="<?php echo $t_file_id ?>" />
 	<input type="hidden" name="title" value="<?php echo $v_title ?>" />
-	<input type="submit" class="btn btn-sm btn-primary btn-white btn-round" value="<?php echo lang_get( 'file_delete_button' ) ?>" />
+	<input type="submit" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get( 'file_delete_button' ) ?>" />
 	</form>
 </div>
 

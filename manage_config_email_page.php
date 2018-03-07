@@ -381,7 +381,7 @@ if( config_get( 'enable_email_notification' ) == ON ) {
 		echo '<input name="revert" type="hidden" value="notify_flags,default_notify_flags" />' . "\n";
 		echo '<input name="project" type="hidden" value="' . $t_project . '" />' . "\n";
 		echo '<input name="return" type="hidden" value="' . string_attribute( form_action_self() ) . '" />' . "\n";
-		echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="';
+		echo '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="';
 		if( ALL_PROJECTS == $t_project ) {
 			echo lang_get( 'revert_to_system' );
 		} else {

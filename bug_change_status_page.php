@@ -464,7 +464,7 @@ foreach( $t_related_custom_field_ids as $t_id ) {
 </div>
 <div class="widget-toolbox padding-8 clearfix">
 	<span class="required pull-right"> * <?php echo lang_get( 'required' ) ?></span>
-	<input type="submit" class="btn btn-primary btn-white btn-round btn-sm" value="<?php echo lang_get( $t_status_label . '_bug_button' ) ?>" />
+	<input type="submit" class="btn btn-primary btn-white btn-round btn-xs" value="<?php echo lang_get( $t_status_label . '_bug_button' ) ?>" />
 </div>
 </div>
 </div>

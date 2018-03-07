@@ -154,7 +154,7 @@ print_manage_menu( 'manage_proj_ver_edit_page.php' );
 		<fieldset>
 			<?php echo form_security_field( 'manage_proj_ver_delete' ) ?>
 			<input type="hidden" name="version_id" value="<?php echo string_attribute( $t_version->id ) ?>" />
-			<input type="submit" class="btn btn-sm btn-primary btn-white btn-round" value="<?php echo lang_get( 'delete_version_button' ) ?>" />
+			<input type="submit" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get( 'delete_version_button' ) ?>" />
 		</fieldset>
 	</form>
 </div>

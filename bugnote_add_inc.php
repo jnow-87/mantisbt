@@ -157,7 +157,7 @@ require_api( 'lang_api.php' );
 ?>
 
 
-			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'add_bugnote_button' ) ?>" />
+			<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'add_bugnote_button' ) ?>" />
 		</td>
 		</tr>
 		</tfoot>

@@ -907,8 +907,8 @@ function relationship_view_box( $p_bug_id ) {
 			if( $t_relationship_graph ) {
 		?>
 		<div class="btn-group pull-right noprint">
-		<span class="small"><?php print_small_button( 'bug_relationship_graph.php?bug_id=' . $p_bug_id . '&graph=relation', lang_get( 'relation_graph' ) )?></span>
-		<span class="small"><?php print_small_button( 'bug_relationship_graph.php?bug_id=' . $p_bug_id . '&graph=dependency', lang_get( 'dependency_graph' ) )?></span>
+		<span class="small"><?php print_link_button( 'bug_relationship_graph.php?bug_id=' . $p_bug_id . '&graph=relation', lang_get( 'relation_graph' ) )?></span>
+		<span class="small"><?php print_link_button( 'bug_relationship_graph.php?bug_id=' . $p_bug_id . '&graph=dependency', lang_get( 'dependency_graph' ) )?></span>
 		</div>
 		<?php
 			} # $t_relationship_graph
@@ -921,7 +921,7 @@ function relationship_view_box( $p_bug_id ) {
 		<label class="inline"><?php echo lang_get( 'this_bug' ) ?>&#160;&#160;</label>
 		<?php relationship_list_box( config_get( 'default_bug_relationship' ) )?>
 		<input type="text" class="input-sm" name="dest_bug_id" value="" />
-		<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" name="add_relationship" value="<?php echo lang_get( 'add_new_relationship_button' )?>" />
+		<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" name="add_relationship" value="<?php echo lang_get( 'add_new_relationship_button' )?>" />
 		</form>
 			<?php
 			} # can update

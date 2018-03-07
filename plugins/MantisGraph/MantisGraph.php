@@ -110,7 +110,7 @@ class MantisGraphPlugin extends MantisPlugin  {
 	 */
 	function graph_filter_menu() {
 		if( access_has_project_level( config_get( 'view_summary_threshold' ) ) ) {
-			return array( '<a class="btn btn-sm btn-primary btn-white btn-round" href="' .
+			return array( '<a class="btn btn-xs btn-primary btn-white btn-round" href="' .
 				plugin_page( 'issues_trend_page.php' ) . '">' . plugin_lang_get( 'issue_trends_link' ) . '</a>', );
 		} else {
 			return '';
@@ -138,15 +138,15 @@ class MantisGraphPlugin extends MantisPlugin  {
 	 */
 	function summary_submenu() {
 		return array(
-            '<a class="btn btn-sm btn-primary btn-white" href="' . helper_mantis_url( 'summary_page.php' ) . '"> <i class="fa fa-table"></i> ' . plugin_lang_get( 'synthesis_link' ) . '</a>',
-			'<a class="btn btn-sm btn-primary btn-white" href="' . plugin_page( 'developer_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . lang_get( 'by_developer' ) . '</a>',
-			'<a class="btn btn-sm btn-primary btn-white" href="' . plugin_page( 'reporter_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . lang_get( 'by_reporter' ) . '</a>',
-			'<a class="btn btn-sm btn-primary btn-white" href="' . plugin_page( 'status_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'status_link' ) . '</a>',
-			'<a class="btn btn-sm btn-primary btn-white" href="' . plugin_page( 'resolution_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'resolution_link' ) . '</a>',
-			'<a class="btn btn-sm btn-primary btn-white" href="' . plugin_page( 'priority_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'priority_link' ) . '</a>',
-			'<a class="btn btn-sm btn-primary btn-white" href="' . plugin_page( 'severity_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'severity_link' ) . '</a>',
-			'<a class="btn btn-sm btn-primary btn-white" href="' . plugin_page( 'category_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'category_link' ) . '</a>',
-			'<a class="btn btn-sm btn-primary btn-white" href="' . plugin_page( 'issues_trend_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'issue_trends_link' ) . '</a>',
+            '<a class="btn btn-xs btn-primary btn-white" href="' . helper_mantis_url( 'summary_page.php' ) . '"> <i class="fa fa-table"></i> ' . plugin_lang_get( 'synthesis_link' ) . '</a>',
+			'<a class="btn btn-xs btn-primary btn-white" href="' . plugin_page( 'developer_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . lang_get( 'by_developer' ) . '</a>',
+			'<a class="btn btn-xs btn-primary btn-white" href="' . plugin_page( 'reporter_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . lang_get( 'by_reporter' ) . '</a>',
+			'<a class="btn btn-xs btn-primary btn-white" href="' . plugin_page( 'status_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'status_link' ) . '</a>',
+			'<a class="btn btn-xs btn-primary btn-white" href="' . plugin_page( 'resolution_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'resolution_link' ) . '</a>',
+			'<a class="btn btn-xs btn-primary btn-white" href="' . plugin_page( 'priority_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'priority_link' ) . '</a>',
+			'<a class="btn btn-xs btn-primary btn-white" href="' . plugin_page( 'severity_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'severity_link' ) . '</a>',
+			'<a class="btn btn-xs btn-primary btn-white" href="' . plugin_page( 'category_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'category_link' ) . '</a>',
+			'<a class="btn btn-xs btn-primary btn-white" href="' . plugin_page( 'issues_trend_graph.php' ) . '"> <i class="fa fa-bar-chart"></i> ' . plugin_lang_get( 'issue_trends_link' ) . '</a>',
 		);
 	}
 }

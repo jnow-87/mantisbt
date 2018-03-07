@@ -353,7 +353,7 @@ if( $t_reset || $t_unlock || $t_delete || $t_impersonate ) {
         </tr>
         <tr>
             <td colspan="2">
-                <input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'add_user_button' ) ?>" />
+                <input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'add_user_button' ) ?>" />
             </td>
         </tr>
         </fieldset>

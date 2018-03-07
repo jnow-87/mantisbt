@@ -163,7 +163,7 @@ layout_page_begin();
 			</h4>
 			<div class="widget-toolbar no-border">
 				<div class="widget-menu">
-					<?php print_small_button( string_get_bug_view_url( $t_bug_id ), lang_get( 'back_to_bug_link' ) ); ?>
+					<?php print_link_button( string_get_bug_view_url( $t_bug_id ), lang_get( 'back_to_bug_link' ) ); ?>
 				</div>
 			</div>
 		</div>
@@ -179,7 +179,7 @@ if( $t_top_buttons_enabled ) {
 ?>
 	<div class="widget-toolbox padding-8 clearfix">
 		<input <?php helper_get_tab_index(); ?>
-			type="submit" class="btn btn-primary btn-white btn-sm btn-round"
+			type="submit" class="btn btn-primary btn-white btn-xs btn-round"
 			value="<?php echo lang_get( 'update_information_button' ); ?>" />
 	</div>
 <?php
@@ -479,7 +479,7 @@ if( $t_bottom_buttons_enabled ) {
 	<div class="widget-toolbox padding-8 clearfix">
 		<span class="required pull-right"> * <?php echo lang_get( 'required' ) ?></span>
 		<input <?php helper_get_tab_index(); ?>
-			type="submit" class="btn btn-primary btn-white btn-sm  btn-round"
+			type="submit" class="btn btn-primary btn-white btn-xs  btn-round"
 			value="<?php echo lang_get( 'update_information_button' ); ?>" />
 	</div>
 <?php

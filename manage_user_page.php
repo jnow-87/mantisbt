@@ -258,11 +258,11 @@ $t_user_count = count( $t_users );
 <div class="widget-toolbox padding-8 clearfix">
 	<div id="manage-user-div" class="form-container">
 		<div class="pull-left">
-			<?php print_form_button( 'manage_user_create_page.php', lang_get( 'create_new_account_link' ), null, null, 'btn btn-primary btn-white btn-round' ) ?>
+			<?php print_form_button( 'manage_user_create_page.php', lang_get( 'create_new_account_link' ), null, null) ?>
 		</div>
 		<?php if( $f_filter === 'UNUSED' ) { ?>
 		<div class="pull-left">
-			<?php print_form_button('manage_user_prune.php', lang_get('prune_accounts'), null, null, 'btn btn-primary btn-white btn-round') ?>
+			<?php print_form_button('manage_user_prune.php', lang_get('prune_accounts'), null, null) ?>
 		</div>
 		<?php } ?>
 	<div class="pull-right">
@@ -281,7 +281,7 @@ $t_user_count = count( $t_users );
 			<input type="checkbox" class="ace" name="showdisabled" value="<?php echo ON ?>" <?php check_checked( (int)$c_show_disabled, ON ); ?> />
 			<span class="lbl"> <?php echo lang_get( 'show_disabled' ) ?></span>
 			</label>
-			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'filter_button' ) ?>" />
+			<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'filter_button' ) ?>" />
 		</fieldset>
 	</form>
 		</div>
@@ -364,7 +364,7 @@ $t_user_count = count( $t_users );
 			<?php # CSRF protection not required here - form does not result in modifications ?>>
 			<label class="inline" for="username"><?php echo lang_get( 'search' ) ?></label>
 			<input id="username" type="text" name="username" class="input-sm" value="" />
-			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'manage_user' ) ?>" />
+			<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'manage_user' ) ?>" />
 		</form>
 	</div>
 	<div class="btn-toolbar pull-right">

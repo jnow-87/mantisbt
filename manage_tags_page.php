@@ -138,7 +138,7 @@ print_manage_menu( 'manage_tags_page.php' );
 	<div class="widget-body">
 		<?php if ($t_can_edit) { ?>
 			<div class="widget-toolbox padding-8 clearfix">
-				<?php print_small_button( '#tagcreate', lang_get('tag_create') ) ?>
+				<?php print_link_button( '#tagcreate', lang_get('tag_create') ) ?>
 			</div>
 		<?php } ?>
 	<div class="widget-main no-padding">
@@ -227,7 +227,7 @@ print_manage_menu( 'manage_tags_page.php' );
 		</div>
 			<div class="widget-toolbox padding-8 clearfix">
 				<span class="required pull-right"> * <?php echo lang_get( 'required' ); ?></span>
-				<input type="submit" name="config_set" class="btn btn-primary btn-sm btn-white btn-round"
+				<input type="submit" name="config_set" class="btn btn-primary btn-xs btn-white btn-round"
 					   value="<?php echo lang_get('tag_create') ?>"/>
 			</div>
 		</div>

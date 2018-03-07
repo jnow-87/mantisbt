@@ -177,7 +177,7 @@ print_manage_menu( 'manage_proj_page.php' );
 		<?php
 		# Check the user's global access level before allowing project creation
 		if( access_has_global_level ( config_get( 'create_project_threshold' ) ) ) {
-			print_form_button( 'manage_proj_create_page.php', lang_get( 'create_new_project_link' ), null, null, 'btn btn-primary btn-white btn-round' );
+			print_form_button( 'manage_proj_create_page.php', lang_get( 'create_new_project_link' ), null, null );
 		} ?>
 	</div>
 	</div>
@@ -255,8 +255,8 @@ print_manage_menu( 'manage_proj_page.php' );
 			<?php echo form_security_field( 'manage_proj_cat_add' ) ?>
 			<input type="hidden" name="project_id" value="<?php echo ALL_PROJECTS ?>" />
 			<input type="text" name="name" class="input-sm" size="32" maxlength="128" />
-			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'add_category_button' ) ?>" />
-			<input type="submit" name="add_and_edit_category" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'add_and_edit_category_button' ) ?>" />
+			<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'add_category_button' ) ?>" />
+			<input type="submit" name="add_and_edit_category" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'add_and_edit_category_button' ) ?>" />
 		</div>
 	</form>
 <?php } ?>

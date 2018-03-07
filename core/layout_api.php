@@ -588,13 +588,13 @@ function layout_navbar_button_bar() {
 
   	if( $t_can_report_bug ) {
 		$t_bug_url = string_get_bug_report_url();
-	  	echo '<a class="btn btn-primary btn-sm" href="' . $t_bug_url . '">';
+	  	echo '<a class="btn btn-primary btn-xs" href="' . $t_bug_url . '">';
 		echo '<i class="fa fa-edit"></i> ' . lang_get( 'report_bug_link' );
 		echo '</a>';
   	}
 
 	if( $t_can_invite_user ) {
-		echo '<a class="btn btn-primary btn-sm" href="manage_user_create_page.php">';
+		echo '<a class="btn btn-primary btn-xs" href="manage_user_create_page.php">';
 		echo '<i class="fa fa-user-plus"></i> ' . lang_get( 'invite_users' );
 		echo '</a>';
 	}
@@ -1245,7 +1245,7 @@ function layout_footer_end() {
  * @return null
  */
 function layout_scroll_up_button() {
-	echo '<a class="btn-scroll-up btn btn-sm btn-inverse display" id="btn-scroll-up" href="#">' . "\n";
+	echo '<a class="btn-scroll-up btn btn-xs btn-inverse display" id="btn-scroll-up" href="#">' . "\n";
 	echo '<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>' . "\n";
 	echo '</a>' . "\n";
 }

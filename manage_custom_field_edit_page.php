@@ -270,7 +270,7 @@ $t_definition = custom_field_get_definition( $f_field_id );
 			<?php echo form_security_field( 'manage_custom_field_delete' ); ?>
 			<input type="hidden" name="field_id" value="<?php echo $f_field_id ?>" />
 			<input type="hidden" name="return" value="<?php echo string_attribute( $f_return ) ?>" />
-			<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'delete_custom_field_button' ) ?>" />
+			<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'delete_custom_field_button' ) ?>" />
 		</fieldset>
 	</form>
 </div>

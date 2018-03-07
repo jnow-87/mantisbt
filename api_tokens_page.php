@@ -138,7 +138,7 @@ if ( count( $t_tokens ) > 0 ) {
 						<fieldset>
 							<input id="token_id" type="hidden" name="token_id" value="<?php echo $u_id ; ?>" />
 							<input id="token_name" type="hidden" name="token_name" value="<?php echo string_attribute( $u_name ); ?>" />
-							<input type="submit" class="btn btn-sm btn-primary btn-white btn-round" value="<?php echo lang_get( 'api_token_revoke_button' ) ?>" />
+							<input type="submit" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get( 'api_token_revoke_button' ) ?>" />
 						</fieldset>
 					</form>
 				</td>

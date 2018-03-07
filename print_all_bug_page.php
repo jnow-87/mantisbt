@@ -230,7 +230,7 @@ $f_export = implode( ',', $f_bug_arr );
 <tr>
     <td colspan="<?php echo $t_num_of_columns ?>">
         <input type="hidden" name="show_flag" value="1" />
-        <input type="submit" class="btn btn-sm btn-primary btn-white btn-round" value="<?php echo lang_get( 'hide_button' ) ?>" />
+        <input type="submit" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get( 'hide_button' ) ?>" />
     </td>
 </tr>
 </table>

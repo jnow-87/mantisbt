@@ -707,7 +707,7 @@ function print_manage_config_menu( $p_page = '' ) {
 
 	foreach ( $t_pages as $t_page ) {
 		$t_active =  $t_page['url'] == $p_page ? 'active' : '';
-		echo '<a class="btn btn-sm btn-white btn-primary ' . $t_active . '" href="'. helper_mantis_url( $t_page['url'] ) .'">' . "\n";
+		echo '<a class="btn btn-xs btn-white btn-primary ' . $t_active . '" href="'. helper_mantis_url( $t_page['url'] ) .'">' . "\n";
 		echo lang_get_defaulted( $t_page['label'] );
 		echo '</a>' . "\n";
 	}
@@ -937,7 +937,7 @@ function html_button( $p_action, $p_button_text, array $p_fields = array(), $p_m
 		echo "\t\t" . '<input type="hidden" name="' . $t_key . '" value="' . $t_val . '" />' . "\n";
 	}
 
-	echo "\t\t" . '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $p_button_text . '" />' . "\n";
+	echo "\t\t" . '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="' . $p_button_text . '" />' . "\n";
 	echo "\t" . '</fieldset>';
 	echo '</form>' . "\n";
 }
@@ -1003,7 +1003,7 @@ function html_button_bug_change_status( BugData $p_bug ) {
 		echo '</select>';
 
 		$t_button_text = lang_get( 'bug_status_to_button' );
-		echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $t_button_text . '" />';
+		echo '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="' . $t_button_text . '" />';
 
 
 		$t_bug_id = string_attribute( $p_bug->id );
@@ -1096,7 +1096,7 @@ function html_button_bug_assign_to( BugData $p_bug ) {
 	echo '</select>';
 
 	$t_button_text = lang_get( 'bug_assign_to_button' );
-	echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="' . $t_button_text . '" />';
+	echo '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="' . $t_button_text . '" />';
 
 
 	$t_bug_id = string_attribute( $p_bug->id );

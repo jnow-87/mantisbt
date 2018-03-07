@@ -136,7 +136,7 @@ switch( $t_install_state ) {
 }
 ?>
 		<div class="btn-group pull-right">
-			<a class="btn btn-sm btn-primary btn-white btn-round" href="index.php">Back to Administration</a>
+			<a class="btn btn-xs btn-primary btn-white btn-round" href="index.php">Back to Administration</a>
 		</div>
 	</h1>
 	</div>

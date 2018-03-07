@@ -2461,7 +2461,7 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 	echo '<input type="text" id="filter-search-txt" class="input-xs" size="16" name="', FILTER_PROPERTY_SEARCH, '"
 		placeholder="' . lang_get( 'search' ) . '" value="', string_attribute( $t_filter[FILTER_PROPERTY_SEARCH] ), '" />';
 	?>
-	<input type="submit" class="btn btn-primary btn-sm btn-white btn-round no-float" name="filter" value="<?php echo lang_get( 'filter_button' )?>" />
+	<input type="submit" class="btn btn-primary btn-xs btn-white btn-round no-float" name="filter" value="<?php echo lang_get( 'filter_button' )?>" />
 	</div>
 	<?php
 
@@ -2494,7 +2494,7 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 		<?php # CSRF protection not required here - form does not result in modifications ?>
 		<input type="hidden" name="type" value="3" />
 		<input type="hidden" name="source_query_id" value="-1" />
-		<input type="submit" name="reset_query_button" class="btn btn-primary btn-white btn-sm btn-round" value="<?php echo lang_get( 'reset_query' )?>" />
+		<input type="submit" name="reset_query_button" class="btn btn-primary btn-white btn-xs btn-round" value="<?php echo lang_get( 'reset_query' )?>" />
 		<span class="lbl"> &nbsp </span>
 	</form>
 
@@ -2502,7 +2502,7 @@ function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_e
 	if( access_has_project_level( config_get( 'stored_query_create_threshold' ) ) ) { ?>
 		<form class="form-inline pull-left" method="post" name="save_query" action="query_store_page.php">
 			<?php # CSRF protection not required here - form does not result in modifications ?>
-			<input type="submit" name="save_query_button" class="btn btn-primary btn-white btn-sm btn-round"
+			<input type="submit" name="save_query_button" class="btn btn-primary btn-white btn-xs btn-round"
 				value="<?php echo lang_get( 'save_query' )?>" />
 		</form>
 	<?php

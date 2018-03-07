@@ -189,17 +189,17 @@ if(config_get('view_issue_button_notes') | config_get('view_issue_button_sendmai
 
 	# Jump to Bugnotes
 	if(config_get('view_issue_button_notes')){
-		print_small_button( '#bugnotes', lang_get( 'jump_to_bugnotes' ) );
+		print_link_button( '#bugnotes', lang_get( 'jump_to_bugnotes' ) );
 	}
 
 	# Send Bug Reminder
 	if(config_get('view_issue_button_sendmail')){
 		if( $t_show_reminder_link ) {
-			print_small_button( $t_bug_reminder_link, lang_get( 'bug_reminder' ) );
+			print_link_button( $t_bug_reminder_link, lang_get( 'bug_reminder' ) );
 		}
 
 		if( !is_blank( $t_wiki_link ) ) {
-			print_small_button( $t_wiki_link, lang_get( 'wiki' ) );
+			print_link_button( $t_wiki_link, lang_get( 'wiki' ) );
 		}
 
 		foreach ( $t_links as $t_plugin => $t_hooks ) {
@@ -209,7 +209,7 @@ if(config_get('view_issue_button_notes') | config_get('view_issue_button_sendmai
 						if( is_numeric( $t_label ) ) {
 							print_bracket_link_prepared( $t_href );
 						} else {
-							print_small_button( $t_href, $t_label );
+							print_link_button( $t_href, $t_label );
 						}
 					}
 				} elseif( !empty( $t_hook ) ) {
@@ -223,7 +223,7 @@ if(config_get('view_issue_button_notes') | config_get('view_issue_button_sendmai
 	if(config_get('view_issue_button_history')){
 		if( !is_blank( $t_history_link ) ) {
 			# History
-			print_small_button( $t_history_link, lang_get( 'bug_history' ) );
+			print_link_button( $t_history_link, lang_get( 'bug_history' ) );
 		}
 	}
 
@@ -238,11 +238,11 @@ if(config_get('view_issue_button_notes') | config_get('view_issue_button_sendmai
 			$t_index = array_search( $f_bug_id, $t_bugslist );
 			if( false !== $t_index ) {
 				if( isset( $t_bugslist[$t_index-1] ) ) {
-					print_small_button( 'view.php?id='.$t_bugslist[$t_index-1], '&lt;&lt;' );
+					print_link_button( 'view.php?id='.$t_bugslist[$t_index-1], '&lt;&lt;' );
 				}
 
 				if( isset( $t_bugslist[$t_index+1] ) ) {
-					print_small_button( 'view.php?id='.$t_bugslist[$t_index+1], '&gt;&gt;' );
+					print_link_button( 'view.php?id='.$t_bugslist[$t_index+1], '&gt;&gt;' );
 				}
 			}
 		}

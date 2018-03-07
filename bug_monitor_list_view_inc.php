@@ -113,7 +113,7 @@ if( access_has_bug_level( config_get( 'show_monitor_list_threshold' ), $f_bug_id
 				<span class="label label-default"> <?php echo lang_get( 'username' ), ':' ?> </span>
 				<input type="text" class="input-xs" id="bug_monitor_list_username" name="username" />
 				<span class="lbl"> &nbsp </span>
-				<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'add_user_to_monitor' ) ?>" />
+				<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'add_user_to_monitor' ) ?>" />
 			</form>
 	<?php } ?>
 	</td>

@@ -213,7 +213,7 @@ foreach ( $t_plugins_installed as $t_basename => $t_plugin ) {
 		</table>
 		</div>
 		<div class="widget-toolbox padding-8 clearfix">
-			<input type="submit" class="btn btn-sm btn-primary btn-white btn-round" value="<?php echo lang_get('plugin_update') ?>"/>
+			<input type="submit" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get('plugin_update') ?>"/>
 		</div>
 	</div>
 </div>
@@ -311,7 +311,7 @@ if( 0 < count( $t_plugins_available ) ) {
 		echo '<td class="center">',$t_depends,'</td>';
 		echo '<td class="center">';
 		if( $t_ready ) {
-			print_small_button(
+			print_link_button(
 				'manage_plugin_install.php?name=' . $t_basename . form_security_param( 'manage_plugin_install' ),
 				lang_get( 'plugin_install' ) );
 		}

@@ -160,7 +160,7 @@ $t_filter = filter_ensure_valid_filter( $t_filter );
 						</div>
 						<div class="btn-toolbar pull-right">
 							<div class="form-inline">
-								<input type="submit" class="btn btn-primary btn-sm btn-white btn-round no-float" name="filter" value="<?php echo lang_get( 'use_query' )?>" />
+								<input type="submit" class="btn btn-primary btn-xs btn-white btn-round no-float" name="filter" value="<?php echo lang_get( 'use_query' )?>" />
 							</div>
 						</div>
 					</div>

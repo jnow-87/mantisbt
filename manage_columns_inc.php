@@ -142,9 +142,9 @@ if( $t_account_page ) {
 			<?php
 			if( $t_account_page ) {
 				if( $t_project_id == ALL_PROJECTS ) { ?>
-					<input <?php echo helper_get_tab_index() ?> type="submit" <?php echo helper_get_tab_index() ?> class="btn btn-primary btn-sm btn-white btn-round" name="update_columns_as_my_default" value="<?php echo lang_get( 'update_columns_as_my_default' ) ?>" /><?php
+					<input <?php echo helper_get_tab_index() ?> type="submit" <?php echo helper_get_tab_index() ?> class="btn btn-primary btn-xs btn-white btn-round" name="update_columns_as_my_default" value="<?php echo lang_get( 'update_columns_as_my_default' ) ?>" /><?php
 				} else { ?>
-					<input <?php echo helper_get_tab_index() ?> type="submit" <?php echo helper_get_tab_index() ?> class="btn btn-primary btn-sm btn-white btn-round" name="update_columns_for_current_project" value="<?php echo lang_get( 'update_columns_for_current_project' ) ?>" /><?php
+					<input <?php echo helper_get_tab_index() ?> type="submit" <?php echo helper_get_tab_index() ?> class="btn btn-primary btn-xs btn-white btn-round" name="update_columns_for_current_project" value="<?php echo lang_get( 'update_columns_for_current_project' ) ?>" /><?php
 
 				}
 			}
@@ -154,9 +154,9 @@ if( $t_account_page ) {
 			if( $t_manage_page ) { ?>
 				<?php
 				if( $t_project_id != ALL_PROJECTS ) { ?>
-					<input <?php echo helper_get_tab_index() ?> type="submit" class="btn btn-primary btn-sm btn-white btn-round" name="update_columns_as_global_default" value="<?php echo lang_get( 'update_columns_for_current_project' ) ?>" /><?php
+					<input <?php echo helper_get_tab_index() ?> type="submit" class="btn btn-primary btn-xs btn-white btn-round" name="update_columns_as_global_default" value="<?php echo lang_get( 'update_columns_for_current_project' ) ?>" /><?php
 				} else if( current_user_is_administrator() ) { ?>
-					<input <?php echo helper_get_tab_index() ?> type="submit" class="btn btn-primary btn-sm btn-white btn-round" name="update_columns_as_global_default" value="<?php echo lang_get( 'update_columns_as_global_default' ) ?>" /><?php
+					<input <?php echo helper_get_tab_index() ?> type="submit" class="btn btn-primary btn-xs btn-white btn-round" name="update_columns_as_global_default" value="<?php echo lang_get( 'update_columns_as_global_default' ) ?>" /><?php
 				} ?>
 				<?php
 			} ?>
@@ -181,9 +181,9 @@ if( $t_account_page ) {
 
 			<?php # Skip "Copy From" if the current project is ALL PROJECTS, the current page is management page, and the user is not administrator
 			if( !$t_manage_page || ( $t_project_id != ALL_PROJECTS ) || current_user_is_administrator() ) { ?>
-			<input type="submit" name="copy_from" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'copy_columns_from' ) ?>" /><?php
+			<input type="submit" name="copy_from" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'copy_columns_from' ) ?>" /><?php
 			} ?>
-			<input type="submit" name="copy_to" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'copy_columns_to' ) ?>" />
+			<input type="submit" name="copy_to" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'copy_columns_to' ) ?>" />
 		</fieldset>
 	</form>
 </div>

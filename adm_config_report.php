@@ -370,13 +370,13 @@ $t_result = db_query( $t_query, $t_param );
 <div class="widget-toolbox padding-8 clearfix">
 	<div class="btn-toolbar">
 		<div class="btn-group">
-			<input name="apply_filter_button" type="submit" class="btn btn-sm btn-primary btn-white btn-round"
+			<input name="apply_filter_button" type="submit" class="btn btn-xs btn-primary btn-white btn-round"
 				value="<?php echo lang_get( 'filter_button' )?>" />
 
-			<input name="default_filter_button" type="submit" class="btn btn-sm btn-primary btn-white btn-round"
+			<input name="default_filter_button" type="submit" class="btn btn-xs btn-primary btn-white btn-round"
 				value="<?php echo lang_get( 'default_filter' )?>" />
 
-			<input name="reset_filter_button" type="submit" class="btn btn-sm btn-primary btn-white btn-round"
+			<input name="reset_filter_button" type="submit" class="btn btn-xs btn-primary btn-white btn-round"
 				value="<?php echo lang_get( 'reset_query' )?>" />
 		</div>
 	</div>

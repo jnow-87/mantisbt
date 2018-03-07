@@ -107,7 +107,7 @@ if( isset( $t_url_params['all'] ) ) {
 		echo '<div class="btn-toolbar">';
 		$t_url_params['all'] = 1;
 		$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-		echo '<a class="btn btn-primary btn-sm btn-white btn-round" href="' . $t_href . '">' . lang_get( 'timeline_more' ) . '</a>';
+		echo '<a class="btn btn-primary btn-xs btn-white btn-round" href="' . $t_href . '">' . lang_get( 'timeline_more' ) . '</a>';
 		echo '</div>';
 		echo '</div>';
 	} else {

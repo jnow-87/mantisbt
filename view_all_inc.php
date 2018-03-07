@@ -198,8 +198,8 @@ write_bug_rows( $t_rows );
 			<div class="btn-group pull-right">
 			<?php
 				# -- Print and Export links --
-				print_small_button( 'print_all_bug_page.php', lang_get( 'print_all_bug_page_link' ) );
-				print_small_button( 'csv_export.php', lang_get( 'csv_export' ) );
+				print_link_button( 'print_all_bug_page.php', lang_get( 'print_all_bug_page_link' ) );
+				print_link_button( 'csv_export.php', lang_get( 'csv_export' ) );
 
 				$t_event_menu_options = $t_links = event_signal('EVENT_MENU_FILTER');
 

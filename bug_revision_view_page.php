@@ -136,7 +136,7 @@ function show_revision( array $p_revision ) {
 <td class="category" width="5%">
 <?php if( $s_can_drop ) {
 	$t_drop_token = form_security_param( 'bug_revision_drop' );
-	print_small_button( 'bug_revision_drop.php?id=' . $p_revision['id'] . $t_drop_token, lang_get( 'revision_drop' ) );
+	print_link_button( 'bug_revision_drop.php?id=' . $p_revision['id'] . $t_drop_token, lang_get( 'revision_drop' ) );
 } ?>
 </tr>
 
@@ -169,9 +169,9 @@ layout_page_begin();
 		<div class="btn-group pull-right">
 <?php
 if( !$f_bug_id && !$f_bugnote_id ) {
-	print_small_button( '?bug_id=' . $t_bug_id, lang_get( 'all_revisions' ) );
+	print_link_button( '?bug_id=' . $t_bug_id, lang_get( 'all_revisions' ) );
 }
-print_small_button( 'view.php?id=' . $t_bug_id, lang_get( 'back_to_issue' ) );
+print_link_button( 'view.php?id=' . $t_bug_id, lang_get( 'back_to_issue' ) );
 ?>
 	</div>
 </div>

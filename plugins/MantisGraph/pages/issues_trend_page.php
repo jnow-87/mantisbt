@@ -78,7 +78,7 @@ $t_types = array(
                     </td>
                     <td class="center">
                     <div class="form-group">
-						<input type="submit" class="btn btn-sm btn-primary btn-white btn-round" name="show" value="<?php echo lang_get( 'proceed' ); ?>"/>
+						<input type="submit" class="btn btn-xs btn-primary btn-white btn-round" name="show" value="<?php echo lang_get( 'proceed' ); ?>"/>
 					</div>
                     </td>
 				</tr>

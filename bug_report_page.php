@@ -548,7 +548,7 @@ $t_form_encoding = '';
 </div>
 <div class="widget-toolbox padding-8 clearfix">
 	<span class="required pull-right"> * <?php echo lang_get( 'required' ) ?></span>
-	<input <?php echo helper_get_tab_index() ?> type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get( 'submit_report_button' ) ?>" />
+	<input <?php echo helper_get_tab_index() ?> type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'submit_report_button' ) ?>" />
 </div>
 </div>
 </div>

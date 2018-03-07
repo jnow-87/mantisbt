@@ -429,7 +429,7 @@ if( $t_show_submit && ( 0 < count( $g_overrides ) ) ) {
 	echo '<input name="revert" type="hidden" value="' . implode( ',', $g_overrides ) . '"></input>';
 	echo '<input name="project" type="hidden" value="' . $g_project_id . '"></input>';
 	echo '<input name="return" type="hidden" value="' . string_attribute( form_action_self() ) .'"></input>';
-	echo '<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="';
+	echo '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="';
 	if( ALL_PROJECTS == $g_project_id ) {
 		echo lang_get( 'revert_to_system' );
 	} else {

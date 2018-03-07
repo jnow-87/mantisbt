@@ -1191,7 +1191,7 @@ function print_custom_field_projects_list( $p_field_id ) {
 		$t_project_name = project_get_field( $t_project_id, 'name' );
 		$t_sequence = custom_field_get_sequence( $p_field_id, $t_project_id );
 		echo '<strong>', string_display_line( $t_project_name ), '</strong>: ';
-		print_extra_small_button( 'manage_proj_custom_field_remove.php?field_id=' . $c_field_id . '&project_id=' . $t_project_id . '&return=custom_field' . $t_security_token, lang_get( 'remove_link' ) );
+		print_link_button( 'manage_proj_custom_field_remove.php?field_id=' . $c_field_id . '&project_id=' . $t_project_id . '&return=custom_field' . $t_security_token, lang_get( 'remove_link' ) );
 		echo '<br />- ';
 
 		$t_linked_field_ids = custom_field_get_linked_ids( $t_project_id );
@@ -1392,7 +1392,7 @@ function print_manage_project_sort_link( $p_page, $p_string, $p_field, $p_dir, $
  * @see form_security_token()
  * @return void
  */
-function print_form_button( $p_action_page, $p_label, $p_args_to_post = null, $p_security_token = null, $p_class = '' ) {
+function print_form_button( $p_action_page, $p_label, $p_args_to_post = null, $p_security_token = null ) {
 	$t_form_name = explode( '.php', $p_action_page, 2 );
 	# TODO: ensure all uses of print_button supply arguments via $p_args_to_post (POST)
 	# instead of via $p_action_page (GET). Then only add the CSRF form token if
@@ -1402,11 +1402,8 @@ function print_form_button( $p_action_page, $p_label, $p_args_to_post = null, $p
 	if( $p_security_token !== OFF ) {
 		echo form_security_field( $t_form_name[0], $p_security_token );
 	}
-	if( $p_class !== '') {
-		echo '<input type="submit" class="' . $p_class . '" value="', $p_label, '" />';
-	} else {
-		echo '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="', $p_label, '" />';
-	}
+
+	echo '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="', $p_label, '" />';
 
 	if( $p_args_to_post !== null ) {
 		foreach( $p_args_to_post as $t_var => $t_value ) {
@@ -1477,36 +1474,27 @@ function print_link( $p_link, $p_url_text, $p_new_window = false, $p_class = '' 
  * print a HTML link with a button look
  * @param string  $p_link       The page URL.
  * @param string  $p_url_text   The displayed text for the link.
- * @param boolean $p_new_window Whether to open in a new window.
  * @param string  $p_class      The CSS class of the link.
+ * @param array   $p_arg		array of <key> <value> pairs
  * @return void
  */
-function print_link_button( $p_link, $p_url_text, $p_class = '', $p_new_window = false ) {
+function print_link_button( $p_link, $p_url_text, $p_class = '', $p_arg = array()) {
 	if( is_blank( $p_link ) ) {
 		echo $p_url_text;
 	} else {
 		$t_link = htmlspecialchars( $p_link );
-		if( $p_new_window === true ) {
-			echo "<a class=\"btn btn-primary btn-xs btn-white btn-round $p_class\" href=\"$t_link\" target=\"_blank\">$p_url_text</a>";
-		} else {
-			echo "<a class=\"btn btn-primary btn-xs btn-white btn-round $p_class\" href=\"$t_link\">$p_url_text</a>";
-		}
+
+		echo "<a class=\"btn btn-primary btn-xs btn-white btn-round $p_class\" ";
+		echo "href=\"$t_link";
+
+		if($p_arg)
+			echo '?';
+
+		foreach ($p_arg as $t_arg_name => $t_arg_value)
+			echo $t_arg_name . '=' . $t_arg_value . '&';
+		
+		echo "\">$p_url_text</a>";
 	}
-}
-
-/**
- * shortcut for printing a HTML link with a small button look
- * @param string  $p_link       The page URL.
- * @param string  $p_url_text   The displayed text for the link.
- * @param boolean $p_new_window Whether to open in a new window.
- * @return void
- */
-function print_extra_small_button( $p_link, $p_url_text, $p_new_window = false ) {
-	print_link_button( $p_link, $p_url_text, 'btn-xs', $p_new_window );
-}
-
-function print_small_button( $p_link, $p_url_text, $p_new_window = false ) {
-	print_link_button( $p_link, $p_url_text, 'btn-sm', $p_new_window );
 }
 
 /**
