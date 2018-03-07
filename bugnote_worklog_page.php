@@ -61,6 +61,8 @@ $t_normal_date_format = config_get('normal_date_format');
 
 # form inputs
 $f_bugnote_id = gpc_get_int('bugnote_id', 0);
+$f_date_from = gpc_get_string(FILTER_PROPERTY_START_DATE_SUBMITTED, '');
+$f_date_to = gpc_get_string(FILTER_PROPERTY_END_DATE_SUBMITTED, '');
 
 
 ####
@@ -98,7 +100,16 @@ if($t_user_id == auth_get_current_user_id()) {
 ## main form
 ####
 
-$t_work_log = bugnote_worklog_get($f_bugnote_id);
+$c_from = 0;
+$c_to = 0;
+
+if($f_date_from != '')
+	$c_from = strtotime( $f_date_from );
+
+if($f_date_to != '')
+	$c_to = strtotime( $f_date_to ) + SECONDS_PER_DAY - 1;
+
+$t_work_log = bugnote_worklog_get($f_bugnote_id, $c_from, $c_to);
 
 layout_page_header(bug_format_summary($t_bug_id, SUMMARY_CAPTION));
 layout_page_begin();
@@ -117,12 +128,28 @@ layout_page_begin();
 
 	<!-- body -->
 	<div class="widget-body">
-		<!-- back to issue button -->
+		<!-- toolbar -->
 		<div class="widget-toolbox">
 			<div class="btn-toolbar">
-				<div class="btn-group pull-right">
-					<?php print_small_button('view.php?id=' . $t_bug_id, lang_get('back_to_issue')); ?>
-				</div>
+				<form method="post" action="">
+					<input type="hidden" name="id" value="<?php echo isset( $f_bug_id ) ? $f_bug_id : 0 ?>" />
+					<?php
+						$t_filter = array();
+						$t_filter[FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED] = 'on';
+						$t_filter[FILTER_PROPERTY_START_DATE_SUBMITTED] = $f_date_from;
+						$t_filter[FILTER_PROPERTY_END_DATE_SUBMITTED] = $f_date_to;
+						filter_init( $t_filter );
+						print_filter_do_filter_by_date();
+					?>
+
+					<!-- back to issue button -->
+					<?php print_link_button('view.php?id=' . $t_bug_id, lang_get('back_to_issue'), 'pull-right'); ?>
+
+					<!-- get work log button -->
+					<input name="get_bugnote_stats_button" class="btn btn-primary btn-xs btn-white btn-round pull-right "
+						   value="<?php echo lang_get( 'time_tracking_get_info_button' ) ?>" type="submit">
+				</form>
+
 			</div>
 		</div>
 
@@ -135,12 +162,12 @@ layout_page_begin();
 					$t_total = 0;
 
 				foreach ($t_work_log as $t_entry){
-					$t_worklog_id = $t_entry['id'];
-					$t_date = date($t_normal_date_format, $t_entry['date']);
-					$t_user = prepare_user_name($t_entry['user_id']);
-					$t_time = db_minutes_to_hhmm($t_entry['time']);
+					$t_worklog_id = $t_entry->id;
+					$t_date = date($t_normal_date_format, $t_entry->date);
+					$t_user = prepare_user_name($t_entry->user_id);
+					$t_time = db_minutes_to_hhmm($t_entry->time);
 
-					$t_total += $t_entry['time'];
+					$t_total += $t_entry->time;
 				?>
 					<tr>
 						<!-- info column -->

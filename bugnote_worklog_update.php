@@ -115,12 +115,12 @@ case 'add':
 	break;
 
 case 'delete':
-	bugnote_worklog_delete($f_worklog_id);
+	bugnote_worklog_delete($f_bugnote_id, $f_worklog_id);
 	$t_redirect_url = string_get_bugnote_worklog_url($f_bugnote_id);
 	break;
 
 case 'update':
-	bugnote_worklog_update($f_worklog_id, $f_time_tracking);
+	bugnote_worklog_update($f_bugnote_id, $f_worklog_id, $f_time_tracking);
 	$t_redirect_url = string_get_bugnote_worklog_url($f_bugnote_id);
 	break;
 

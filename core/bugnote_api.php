@@ -40,6 +40,7 @@
  * @uses mention_api.php
  * @uses user_api.php
  * @uses utility_api.php
+ * @uses worklog_api.php
  */
 
 require_api( 'access_api.php' );
@@ -59,6 +60,7 @@ require_api( 'lang_api.php' );
 require_api( 'mention_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
+require_api( 'worklog_api.php' );
 
 # Cache of bugnotes arrays related to a bug, indexed by bug_id.
 # Each item is an array of BugnoteData objects
@@ -286,7 +288,7 @@ function bugnote_add( $p_bug_id, $p_bugnote_text, $p_time_tracking = '0:00', $p_
 	$t_params = array(
 		$c_bug_id, $p_user_id, $t_bugnote_text_id, $t_view_state,
 		$c_date_submitted, $c_last_modified, $c_type, $p_attr,
-		$c_time_tracking );
+		0 );
 	db_query( $t_query, $t_params );
 
 	# get bugnote id
@@ -296,6 +298,9 @@ function bugnote_add( $p_bug_id, $p_bugnote_text, $p_time_tracking = '0:00', $p_
 	if( !$p_skip_bug_update ) {
 		bug_update_date( $p_bug_id );
 	}
+
+	# create worklog entry
+	bugnote_worklog_add($t_bugnote_id, $p_time_tracking);
 
 	# log new bug
 	if( true == $p_log_history ) {
@@ -558,6 +563,8 @@ function bugnote_row_to_object( array $p_row ) {
 	$t_bugnote->note_type = (int)$p_row['note_type'];
 	$t_bugnote->note_attr = $p_row['note_attr'];
 	$t_bugnote->time_tracking = (int)$p_row['time_tracking'];
+
+	$t_bugnote->time_tracking = bugnote_worklog_get_time($t_bugnote->id);
 
 	# Handle old bugnotes before setting type to time tracking
 	if ( $t_bugnote->time_tracking != 0 ) {

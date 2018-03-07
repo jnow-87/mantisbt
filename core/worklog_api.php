@@ -48,17 +48,22 @@ require_api('helper_api.php');
 
 
 # TODO
-#	interface with billing
-#		existing buttons for time tracking need to interface with worklog
-#		check time tracking in bug view
-#		check time tracking overview
-#	
+#	remove billing api
 #	update existing bugs, moving from time_tracking to worklog
 #	remove old time tracking
 #	improve layout of worklog in bug view
 #	check for potential caching
 #	move control panel to top of page
 #	overhaul layout, moving some information to the side, keeping most import in the center
+#	fix 'private' bugnote in add bugnote and transition screens
+
+class worklog_data{
+	public $id;
+	public $bugnote_id;
+	public $time;
+	public $date;
+	public $user_id;
+}
 
 
 /**
@@ -111,7 +116,7 @@ function check_worklog_user($p_worklog_id){
  * @param	integer	$p_bugnote_id		id of the associated bugnote
  * @param	string	$p_time_tracking	timetracking string, format hh:mm
  *
- * @return	result of the database operation
+ * @return	nothing, since database query errors are handled by db_query
  */
 function bugnote_worklog_add($p_bugnote_id, $p_time_tracking){
 	check_bugnote_id($p_bugnote_id);
@@ -121,79 +126,143 @@ function bugnote_worklog_add($p_bugnote_id, $p_time_tracking){
 
 	db_param_push();
 	$t_query = 'INSERT INTO {worklog} SET bugnote_id=' . db_param() . ', time = ' . db_param() . ', date = ' . db_param() . ', user_id = ' . db_param();
-	return db_query($t_query, array($p_bugnote_id, $t_time_mm, db_now(), auth_get_current_user_id()));
+	db_query($t_query, array($p_bugnote_id, $t_time_mm, db_now(), auth_get_current_user_id()));
+
+	bugnote_date_update($p_bugnote_id);
 }
 
 /**
  * remove a worklog entry to the databse
  *
+ * @param	integer	$p_bugnote_id		id of the associated bugnote
  * @param	integer	$p_worklog_id		worklog id to be removed
  *
- * @return	result of the database operation
+ * @return	nothing, since database query errors are handled by db_query
  */
-function bugnote_worklog_delete($p_worklog_id){
+function bugnote_worklog_delete($p_bugnote_id, $p_worklog_id){
+	check_bugnote_id($p_bugnote_id);
 	check_worklog_id($p_worklog_id);
 	check_worklog_user($p_worklog_id);
 
 	db_param_push();
 	$t_query = 'DELETE FROM {worklog} WHERE id=' . db_param();
-	return db_query($t_query, array($p_worklog_id));
+	db_query($t_query, array($p_worklog_id));
+
+	bugnote_date_update($p_bugnote_id);
 }
 
 /**
  * update/overwrite the time tracking value of a worklog entry already
  * present in the databse
  *
+ * @param	integer	$p_bugnote_id		id of the associated bugnote
  * @param	integer	$p_worklog_id		id of the target worklog entry
  * @param	string	$p_time_tracking	timetracking string, format hh:mm
  *
  * @return	result of the database operation
  */
-function bugnote_worklog_update($p_worklog_id, $p_time_tracking) {
+function bugnote_worklog_update($p_bugnote_id, $p_worklog_id, $p_time_tracking) {
 	check_worklog_id($p_worklog_id);
 	check_worklog_user($p_worklog_id);
+	check_bugnote_id($p_bugnote_id);
 	check_time_tracking($p_time_tracking);
-
 
 	$t_time_mm = helper_duration_to_minutes($p_time_tracking);
 
 	db_param_push();
 	$t_query = 'UPDATE {worklog} SET time = ' . db_param() . ', date = ' . db_param() . ' WHERE id=' . db_param();
-	return db_query($t_query, array($t_time_mm, db_now(), $p_worklog_id));
+	db_query($t_query, array($t_time_mm, db_now(), $p_worklog_id));
+
+	bugnote_date_update($p_bugnote_id);
 }
 
 /**
- * read a worklog entry from the databse
+ * acquire all worklog entries for a given bugnote
  *
  * @param	integer	$p_bugnote_id		id of the associated bugnote
  *
- * @return	array containing the worklog data
- *			format
- *				r['id'] = worklog_id
- *				r['bugnote_id'] = associated bugnote id
- *				r['time'] = time tracking data (number of minutes)
- *				r['date'] = date of last update (timestamp as used by date())
- *				r['user_id'] = mantis user id of reporting user
+ * @return	array of worklog_data items
  */
-function bugnote_worklog_get($p_bugnote_id) {
+function bugnote_worklog_get($p_bugnote_id, $p_from = 0, $p_to = 0) {
 	check_bugnote_id($p_bugnote_id);
 
+	$t_worklog = array();
+	$t_params = array($p_bugnote_id);
+	$t_from = '';
+	$t_to = '';
 
-	$t_data = array();
-
-	db_param_push();
-	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param();
-	$t_result = db_query($t_query, array($p_bugnote_id));
-
-	while($t_row = db_fetch_array($t_result)){
-		$t_data[] = array(
-			'id' => $t_row['id'],
-			'bugnote_id' => $t_row['bugnote_id'],
-			'time' => $t_row['time'],
-			'date' => $t_row['date'],
-			'user_id' => $t_row['user_id']
-		);
+	if($p_from != 0){
+		$t_from = ' AND date >= ' . db_param();
+		$t_params[] = $p_from;
 	}
 
-	return $t_data;
+	if($p_to != 0){
+		$t_to = ' AND date <= ' . db_param();
+		$t_params[] = $p_to;
+	}
+
+
+	db_param_push();
+	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param() . $t_from . ' ' . $t_to;
+	$t_result = db_query($t_query, $t_params);
+
+	if($t_result == false)
+		return array();
+
+	while($t_row = db_fetch_array($t_result)){
+		$t_entry = new worklog_data;
+
+		$t_entry->id = $t_row['id'];
+		$t_entry->bugnote_id = $t_row['bugnote_id'];
+		$t_entry->time = $t_row['time'];
+		$t_entry->date = $t_row['date'];
+		$t_entry->user_id = $t_row['user_id'];
+
+		$t_worklog[] = $t_entry;
+	}
+
+	return $t_worklog;
+}
+
+/**
+ * get total time spent for a given bugnote in a given time period
+ *
+ * @param	integer	$p_bugnote_id		id of the associated bugnote
+ * @param	integer	$p_from				unix timestamp for start date, ignored if 0
+ * @param	integer $p_to				unix timestamp for end date, ignored if 0
+ *
+ * @return	number of minutes spent
+ */
+function bugnote_worklog_get_time($p_bugnote_id, $p_from = 0, $p_to = 0) {
+	check_bugnote_id($p_bugnote_id);
+
+	$t_params = array($p_bugnote_id);
+	$t_from = '';
+	$t_to = '';
+
+	if($p_from != 0){
+		$t_from = ' AND date >= ' . db_param();
+		$t_params[] = $p_from;
+	}
+
+	if($p_to != 0){
+		$t_to = ' AND date <= ' . db_param();
+		$t_params[] = $p_to;
+	}
+
+
+	db_param_push();
+	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param() . $t_from . $t_to;
+	$t_result = db_query($t_query, $t_params);
+
+	if($t_result == false)
+		return 0;
+
+	$t_time = 0;
+
+	while($t_row = db_fetch_array($t_result)){
+		$t_time += $t_row['time'];
+	}
+
+	return $t_time;
 }

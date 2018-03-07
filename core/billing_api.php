@@ -78,14 +78,14 @@ function billing_get_for_project( $p_project_id, $p_from, $p_to ) {
 	}
 
 	if( !is_blank( $c_from ) ) {
-		$t_from_where = ' AND bn.date_submitted >= ' . db_param();
+		$t_from_where = ' AND bn.last_modified >= ' . db_param();
 		$t_params[] = $c_from;
 	} else {
 		$t_from_where = '';
 	}
 
 	if( !is_blank( $c_to ) ) {
-		$t_to_where = ' AND bn.date_submitted <= ' . db_param();
+		$t_to_where = ' AND bn.last_modified <= ' . db_param();
 		$t_params[] = $c_to;
 	} else {
 		$t_to_where = '';
@@ -93,10 +93,10 @@ function billing_get_for_project( $p_project_id, $p_from, $p_to ) {
 
 	$t_results = array();
 
-	$t_query = 'SELECT bn.id id, bn.time_tracking minutes, bn.date_submitted as date_submitted, bnt.note note,
+	$t_query = 'SELECT bn.id id, bn.date_submitted as date_submitted, bnt.note note,
 			u.realname realname, b.project_id project_id, c.name bug_category, b.summary bug_summary, bn.bug_id bug_id, bn.reporter_id reporter_id
 			FROM {user} u, {bugnote} bn, {bug} b, {bugnote_text} bnt, {category} c
-			WHERE u.id = bn.reporter_id AND bn.time_tracking != 0 AND bn.bug_id = b.id AND bnt.id = bn.bugnote_text_id AND c.id=b.category_id
+			WHERE u.id = bn.reporter_id AND bn.bug_id = b.id AND bnt.id = bn.bugnote_text_id AND c.id=b.category_id
 			' . $t_project_where . $t_from_where . $t_to_where . '
 			ORDER BY bn.id';
 	$t_result = db_query( $t_query, $t_params );
@@ -107,6 +107,8 @@ function billing_get_for_project( $p_project_id, $p_from, $p_to ) {
 		if ( !access_has_bugnote_level( $t_access_level_required, $t_row['id'] ) ) {
 			continue;
 		}
+
+		$t_row['minutes'] = bugnote_worklog_get_time($t_row['id'], $c_from, $c_to);
 
 		$t_results[] = $t_row;
 	}
