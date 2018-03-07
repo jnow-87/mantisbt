@@ -69,20 +69,16 @@ if($t_today == ''){
 
 $f_get_bugnote_stats_button = gpc_get_string( 'get_bugnote_stats_button', '' );
 
-# Retrieve the cost as a string and convert to floating point
-$f_bugnote_cost = floatval( gpc_get_string( 'bugnote_cost', '' ) );
-
 $f_project_id = helper_get_current_project();
-
-if( ON == config_get( 'time_tracking_with_billing' ) ) {
-	$t_cost_col = true;
-} else {
-	$t_cost_col = false;
-}
 
 $t_collapse_block = is_collapsed( 'time_tracking_stats' );
 $t_block_css = $t_collapse_block ? 'collapsed' : '';
 $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
+
+
+# Retrieve time tracking information
+if( !is_blank( $f_get_bugnote_stats_button ) )
+	$t_bugnote_stats = billing_get_summaries( $f_project_id, $f_date_from, $f_date_to );
 
 # Time tracking date range input form
 # CSRF protection not required here - form does not result in modifications
@@ -115,15 +111,6 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 					print_filter_do_filter_by_date( true );
 				?>
 
-		<?php
-			if( $t_cost_col ) {
-		?>
-				<?php echo lang_get( 'time_tracking_cost_per_hour_label' ) ?>
-				<input type="text" name="bugnote_cost" class="input-sm" value="<?php echo $f_bugnote_cost ?>" />
-		<?php
-			}
-		?>
-			</div>
 			<div class="widget-toolbox padding-8 clearfix">
 				<input name="get_bugnote_stats_button" class="btn btn-primary btn-sm btn-white btn-round"
 					   value="<?php echo lang_get( 'time_tracking_get_info_button' ) ?>" type="submit">
@@ -192,11 +179,6 @@ if($t_bugnote_stats['users']){
 			<td class="small-caption bold">
 				<?php echo lang_get( 'time_tracking' ) ?>
 			</td>
-	<?php	if( $t_cost_col ) { ?>
-			<td class="small-caption bold pull-right">
-				<?php echo lang_get( 'time_tracking_cost' ) ?>
-			</td>
-	<?php	} ?>
 		</tr>
 
 	<?php
@@ -209,11 +191,6 @@ if($t_bugnote_stats['users']){
 			<td class="small-caption">
 				<?php echo db_minutes_to_hhmm( $t_user_info['minutes'] ); ?>
 			</td>
-	<?php		if( $t_cost_col ) { ?>
-			<td class="small-caption right">
-				<?php echo string_attribute( number_format( $t_user_info['cost'], 2 ) ); ?>
-			</td>
-	<?php		} ?>
 		</tr>
 	<?php	} ?>
 		<tr class="row-category2">
@@ -223,16 +200,10 @@ if($t_bugnote_stats['users']){
 			<td class="small-caption bold">
 				<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
 			</td>
-	<?php	if( $t_cost_col ) { ?>
-			<td class="small-caption bold right">
-				<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
-			</td>
-	<?php	} ?>
 		</tr>
 		</table>
 
 	<?php
-		} # end if
 	?>
 	</div>
 <?php
@@ -258,12 +229,6 @@ if($t_bugnote_stats['issues']){
 			<td class="small-caption bold">
 				<?php echo lang_get( 'time_tracking' ) ?>
 			</td>
-	<?php	if( $t_cost_col ) { ?>
-			<td class="small-caption pull-right bold">
-				<?php echo lang_get( 'time_tracking_cost' ) ?>
-			</td>
-	<?php	} ?>
-
 		</tr>
 	<?php
 			foreach ( $t_bugnote_stats['issues'] as $t_issue_id => $t_issue ) {
@@ -273,23 +238,14 @@ if($t_bugnote_stats['issues']){
 
 				<?php
 				$t_bug_time_total = 0;
-				$t_bug_cost_total = 0;
 
 				foreach( $t_issue['users'] as $t_username => $t_user_info ) {
 					$t_bug_time_total += $t_user_info['minutes'];
-
-					if($t_cost_col){
-						$t_bug_cost_total += $t_uesr_info['cost'];
-					}
 				}
 				?>
 				<tr class="row-category-history">
 					<td class="small-caption"> <?php echo $t_link ?></td>
 					<td class="small-caption"> <?php echo db_minutes_to_hhmm($t_bug_time_total) ?></td>
-
-					<?php if($t_cost_col) { ?>
-						<td class="small-caption right"> <?php echo number_format($t_bug_cost_total, 2) ?></td>
-					<?php }?>
 				</tr>
 	<?php
 			} # end for issues loop ?>
@@ -301,12 +257,6 @@ if($t_bugnote_stats['issues']){
 			<td class="small-caption bold">
 				<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
 			</td>
-
-	<?php	if( $t_cost_col ) { ?>
-			<td class="small-caption bold right">
-				<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
-			</td>
-	<?php 	} ?>
 		</tr>
 		</table>
 	</div>
@@ -335,12 +285,6 @@ if($t_bugnote_stats['issues']){
 			<td class="small-caption bold">
 				<?php echo lang_get( 'time_tracking' ) ?>
 			</td>
-	<?php	if( $t_cost_col ) { ?>
-			<td class="small-caption bold pull-right">
-				<?php echo lang_get( 'time_tracking_cost' ) ?>
-			</td>
-	<?php	} ?>
-
 		</tr>
 	<?php
 			foreach ( $t_bugnote_stats['issues'] as $t_issue_id => $t_issue ) {
@@ -357,11 +301,6 @@ if($t_bugnote_stats['issues']){
 			<td class="small-caption">
 				<?php echo db_minutes_to_hhmm( $t_user_info['minutes'] ) ?>
 			</td>
-	<?php		if( $t_cost_col ) { ?>
-			<td class="small-caption right">
-				<?php echo string_attribute( number_format( $t_user_info['cost'], 2 ) ); ?>
-			</td>
-	<?php		} ?>
 		</tr>
 
 	<?php
@@ -375,11 +314,6 @@ if($t_bugnote_stats['issues']){
 			<td class="small-caption bold">
 				<?php echo db_minutes_to_hhmm( $t_bugnote_stats['total']['minutes'] ); ?>
 			</td>
-	<?php	if( $t_cost_col ) { ?>
-			<td class="small-caption bold right">
-				<?php echo string_attribute( number_format( $t_bugnote_stats['total']['cost'], 2 ) ); ?>
-			</td>
-	<?php 	} ?>
 		</tr>
 		</table>
 	</div>

@@ -52,11 +52,10 @@ function billing_ensure_reporting_access( $p_project_id = null, $p_user_id = nul
  * @param integer $p_project_id    A project identifier or ALL_PROJECTS.
  * @param string  $p_from          Starting date (yyyy-mm-dd) inclusive, if blank, then ignored.
  * @param string  $p_to            Ending date (yyyy-mm-dd) inclusive, if blank, then ignored.
- * @param integer $p_cost_per_hour Cost per hour.
  * @return array array of bugnotes
  * @access public
  */
-function billing_get_for_project( $p_project_id, $p_from, $p_to, $p_cost_per_hour ) {
+function billing_get_for_project( $p_project_id, $p_from, $p_to ) {
 	$t_params = array();
 	$c_to = strtotime( $p_to ) + SECONDS_PER_DAY - 1;
 	$c_from = strtotime( $p_from );
@@ -102,8 +101,6 @@ function billing_get_for_project( $p_project_id, $p_from, $p_to, $p_cost_per_hou
 			ORDER BY bn.id';
 	$t_result = db_query( $t_query, $t_params );
 
-	$t_cost_per_min = $p_cost_per_hour / 60.0;
-
 	$t_access_level_required = config_get( 'time_tracking_view_threshold');
 
 	while( $t_row = db_fetch_array( $t_result ) ) {
@@ -111,8 +108,6 @@ function billing_get_for_project( $p_project_id, $p_from, $p_to, $p_cost_per_hou
 			continue;
 		}
 
-		$t_total_cost = $t_cost_per_min * $t_row['minutes'];
-		$t_row['cost'] = $t_total_cost;
 		$t_results[] = $t_row;
 	}
 
@@ -126,12 +121,11 @@ function billing_get_for_project( $p_project_id, $p_from, $p_to, $p_cost_per_hou
  * @param integer $p_project_id    A project identifier or ALL_PROJECTS.
  * @param string  $p_from          Starting date (yyyy-mm-dd) inclusive, if blank, then ignored.
  * @param string  $p_to            Ending date (yyyy-mm-dd) inclusive, if blank, then ignored.
- * @param integer $p_cost_per_hour Cost per hour.
  * @return array The contains billing data grouped by issues, users, and total information.
  * @access public
  */
-function billing_get_summaries( $p_project_id, $p_from, $p_to, $p_cost_per_hour ) {
-	$t_billing_notes = billing_get_for_project( $p_project_id, $p_from, $p_to, $p_cost_per_hour );
+function billing_get_summaries( $p_project_id, $p_from, $p_to ) {
+	$t_billing_notes = billing_get_for_project( $p_project_id, $p_from, $p_to );
 
 	$t_issues = array();
 	$t_users = array();
@@ -145,7 +139,6 @@ function billing_get_summaries( $p_project_id, $p_from, $p_to, $p_cost_per_hour 
 		if( !isset( $t_users[$t_username] ) ) {
 			$t_users[$t_username] = array();
 			$t_users[$t_username]['minutes'] = 0;
-			$t_users[$t_username]['cost'] = 0;
 		}
 
 		# Update user total minutes
@@ -159,14 +152,12 @@ function billing_get_summaries( $p_project_id, $p_from, $p_to, $p_cost_per_hour 
 			$t_issues[$v_bug_id]['summary'] = $v_bug_summary;
 			$t_issues[$v_bug_id]['users'] = array();
 			$t_issues[$v_bug_id]['minutes'] = 0;
-			$t_issues[$v_bug_id]['cost'] = 0;
 		}
 
 		# Create user within issue if they don't exist yet
 		if( !isset( $t_issues[$v_bug_id]['users'][$t_username] ) ) {
 			$t_issues[$v_bug_id]['users'][$t_username] = array();
 			$t_issues[$v_bug_id]['users'][$t_username]['minutes'] = 0;
-			$t_issues[$v_bug_id]['users'][$t_username]['cost'] = 0;
 		}
 
 		# Update total minutes for user within the issue
@@ -178,32 +169,14 @@ function billing_get_summaries( $p_project_id, $p_from, $p_to, $p_cost_per_hour 
 
 	$t_total = array(
 		'minutes' => 0,
-		'cost' => 0,
 	);
 
-	# Calculate costs and update total cost/minutes across all issues
+	# Calculate total minutes across all issues
 	foreach( $t_issues as $t_issue_id => $t_issue_info ) {
-		# Calculate cost for issue
-		$t_cost = $t_issue_info['minutes'] * $p_cost_per_hour / 60;
-		$t_issues[$t_issue_id]['cost'] = $t_cost;
 		$t_issues[$t_issue_id]['duration'] = db_minutes_to_hhmm( $t_issue_info['minutes'] );
-
-		# Add issue cost and minutes to totals
-		$t_total['cost'] += $t_cost;
 		$t_total['minutes'] += $t_issue_info['minutes'];
 
-		# Calculate cost per user per issue
-		foreach( $t_issue_info['users'] as $t_username => $t_user_info ) {
-			$t_issues[$t_issue_id]['users'][$t_username]['cost'] =
-				$t_user_info['minutes'] * $p_cost_per_hour / 60;
-		}
-
 		ksort( $t_issues[$t_issue_id]['users'] );
-	}
-
-	# Calculate total cost per user across all issues
-	foreach( $t_users as $t_username => $t_info ) {
-		$t_users[$t_username]['cost'] = $t_info['minutes'] * $p_cost_per_hour / 60;
 	}
 
 	ksort( $t_users );
@@ -245,7 +218,6 @@ function billing_rows_to_array( $p_bugnotes ) {
 		$t_row['project_name'] = project_get_name( $t_note['project_id'] );
 		$t_row['bug_summary'] = $t_note['bug_summary'];
 		$t_row['bug_category'] = $t_note['bug_category'];
-		$t_row['cost'] = $t_note['cost'];
 
 		$t_billing_rows[] = $t_row;
 	}

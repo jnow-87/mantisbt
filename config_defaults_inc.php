@@ -3709,12 +3709,6 @@ $g_tag_edit_own_threshold = REPORTER;
 $g_time_tracking_enabled = OFF;
 
 /**
- * A billing sums
- * @global integer $g_time_tracking_with_billing
- */
-$g_time_tracking_with_billing = OFF;
-
-/**
  * access level required to view time tracking information
  * @global integer $g_time_tracking_view_threshold
  */
@@ -4352,7 +4346,6 @@ $g_public_config_names = array(
 	'time_tracking_enabled',
 	'time_tracking_reporting_threshold',
 	'time_tracking_view_threshold',
-	'time_tracking_with_billing',
 	'time_tracking_without_note',
 	'timeline_view_threshold',
 	'top_include_page',

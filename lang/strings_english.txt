@@ -1528,10 +1528,6 @@ $s_time_tracking_billing_link = 'Work Log';
 $s_time_tracking = 'Work Log';
 $s_time_tracking_time_spent = 'Time spent:';
 $s_time_tracking_get_info_button = 'Get Work Log';
-$s_time_tracking_cost_per_hour = 'Cost / Hour';
-$s_time_tracking_cost_per_hour_label = 'Cost / Hour:';
-$s_time_tracking_cost = 'Cost';
-$s_time_tracking_cost_label = 'Cost:';
 $s_total_time_for_issue = 'Total time for issue';
 
 $s_access_denied = 'Access Denied.';

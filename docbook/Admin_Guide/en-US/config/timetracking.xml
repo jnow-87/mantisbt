@@ -26,15 +26,6 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>$g_time_tracking_with_billing</term>
-			<listitem>
-				<para>
-					Adds calculation links to workout how much time has been spent between a particular time frame. Currently it will allow you to enter a cost/hour and will work out some billing information. This will become more extensive in the future. Currently it is more of a proof of concept.
-				</para>
-			</listitem>
-		</varlistentry>
-
-		<varlistentry>
 			<term>$g_time_tracking_view_threshold</term>
 			<listitem>
 				<para>
