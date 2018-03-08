@@ -34,10 +34,10 @@
  */
 
 require_once('core.php');
-require_api( 'access_api.php' );
+require_api('access_api.php');
 require_api('authentication_api.php');
-require_api( 'bug_api.php' );
-require_api( 'bugnote_api.php' );
+require_api('bug_api.php');
+require_api('bugnote_api.php');
 require_api('config_api.php');
 require_api('constant_inc.php');
 require_api('error_api.php');
@@ -46,8 +46,8 @@ require_api('helper_api.php');
 
 
 # TODO
+#	worklog summary should not use $t_date_to for bugnote selection, only for worklog selection
 #	update existing bugs, moving from time_tracking to worklog
-#	fix 'private' bugnote in add bugnote and transition screens
 #
 #	overhaul layout
 #		improve layout of worklog in bug view
@@ -56,6 +56,7 @@ require_api('helper_api.php');
 #		remove boxes, replacing them with a more open layout
 #		streamline toolbars
 #		add spaces between buttons
+#		which css files are used
 #
 #	check for potential caching
 
