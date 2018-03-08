@@ -300,7 +300,7 @@ function bugnote_add( $p_bug_id, $p_bugnote_text, $p_time_tracking = '0:00', $p_
 	}
 
 	# create worklog entry
-	bugnote_worklog_add($t_bugnote_id, $p_time_tracking);
+	worklog_add($t_bugnote_id, $p_time_tracking);
 
 	# log new bug
 	if( true == $p_log_history ) {
@@ -564,7 +564,7 @@ function bugnote_row_to_object( array $p_row ) {
 	$t_bugnote->note_attr = $p_row['note_attr'];
 	$t_bugnote->time_tracking = (int)$p_row['time_tracking'];
 
-	$t_bugnote->time_tracking = bugnote_worklog_get_time($t_bugnote->id);
+	$t_bugnote->time_tracking = worklog_get_time($t_bugnote->id);
 
 	# Handle old bugnotes before setting type to time tracking
 	if ( $t_bugnote->time_tracking != 0 ) {

@@ -15,14 +15,14 @@
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This include file prints out the bug bugnote_stats
- * $f_bug_id must already be defined
+ * Display Mantis Billing Page
  *
  * @package MantisBT
  * @copyright Copyright 2000 - 2002  Kenzaburo Ito - kenito@300baud.org
  * @copyright Copyright 2002  MantisBT Team - mantisbt-dev@lists.sourceforge.net
  * @link http://www.mantisbt.org
  *
+ * @uses core.php
  * @uses bugnote_api.php
  * @uses collapse_api.php
  * @uses config_api.php
@@ -34,12 +34,12 @@
  * @uses string_api.php
  * @uses utility_api.php
  * @uses print_api.php
+ * @uses access_api.php
+ * @uses worklog_api.php
+ * @uses html_api.php
  */
 
-if( !defined( 'BILLING_INC_ALLOW' ) ) {
-	return;
-}
-
+require_once( 'core.php' );
 require_api( 'bugnote_api.php' );
 require_api( 'collapse_api.php' );
 require_api( 'config_api.php' );
@@ -51,9 +51,15 @@ require_api( 'lang_api.php' );
 require_api( 'string_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'print_api.php' );
+require_api( 'access_api.php' );
+require_api( 'worklog_api.php' );
+require_api( 'html_api.php' );
 
-?>
-<?php
+worklog_ensure_reporting_access();
+
+layout_page_header( lang_get( 'worklog_link' ) );
+
+layout_page_begin();
 
 
 $f_date_from = gpc_get_string(FILTER_PROPERTY_START_DATE_SUBMITTED, '');
@@ -78,7 +84,7 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 
 # Retrieve time tracking information
 if( !is_blank( $f_get_bugnote_stats_button ) )
-	$t_bugnote_stats = billing_get_summaries( $f_project_id, $f_date_from, $f_date_to );
+	$t_bugnote_stats = worklog_get_summaries( $f_project_id, $f_date_from, $f_date_to );
 
 # Time tracking date range input form
 # CSRF protection not required here - form does not result in modifications
@@ -118,7 +124,7 @@ if( !is_blank( $f_get_bugnote_stats_button ) )
 				if( !is_blank( $f_get_bugnote_stats_button) && $t_bugnote_stats['users'] ){
 					$t_arg = array('from' => $f_date_from, 'to' => $f_date_to, 'project_id' => $f_project_id);
 
-					print_link_button('billing_export_to_csv.php', lang_get('csv_export'), 'pull-right', $t_arg);
+					print_link_button('worklog_export_csv.php', lang_get('csv_export'), 'pull-right', $t_arg);
 				}
 				?>
 
@@ -233,10 +239,12 @@ if($t_bugnote_stats['issues']){
 		</tr>
 		</table>
 	</div>
-	</div>
 <?php
 }
 ?>
+
+</div>
+
 
 <!-- time per issue and user -->
 <?php
@@ -296,3 +304,4 @@ if($t_bugnote_stats['issues']){
 ?>
 
 <?php
+layout_page_end();

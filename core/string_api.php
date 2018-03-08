@@ -720,8 +720,8 @@ function string_get_bug_view_url( $p_bug_id ) {
  * @param integer $p_bugnote_id A bugnote identifier.
  * @return string
  */
-function string_get_bugnote_worklog_url( $p_bugnote_id ){
-	return 'bugnote_worklog_page.php?bugnote_id=' . $p_bugnote_id;
+function string_get_worklog_issue_url( $p_bugnote_id ){
+	return 'worklog_issue_page.php?bugnote_id=' . $p_bugnote_id;
 }
 
 /**

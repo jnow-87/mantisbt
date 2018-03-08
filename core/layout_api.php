@@ -770,7 +770,7 @@ function layout_print_sidebar( $p_active_sidebar_page = null ) {
 
 		# Time Tracking / Billing
 		if( config_get( 'time_tracking_enabled' ) && access_has_global_level( config_get( 'time_tracking_reporting_threshold' ) ) ) {
-			layout_sidebar_menu( 'billing_page.php', 'time_tracking_billing_link', 'fa-clock-o', $p_active_sidebar_page );
+			layout_sidebar_menu( 'worklog_summary_page.php', 'worklog_link', 'fa-clock-o', $p_active_sidebar_page );
 		}
 
 		# Roadmap Page

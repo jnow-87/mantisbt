@@ -109,7 +109,7 @@ if($f_date_from != '')
 if($f_date_to != '')
 	$c_to = strtotime( $f_date_to ) + SECONDS_PER_DAY - 1;
 
-$t_work_log = bugnote_worklog_get($f_bugnote_id, $c_from, $c_to);
+$t_work_log = worklog_get($f_bugnote_id, $c_from, $c_to);
 
 layout_page_header(bug_format_summary($t_bug_id, SUMMARY_CAPTION));
 layout_page_begin();
@@ -175,7 +175,7 @@ layout_page_begin();
 
 						<!-- update column -->
 						<td width="10%">
-							<form id="bugnote_worklog" method="post" action="bugnote_worklog_update.php">
+							<form id="worklog" method="post" action="worklog_update.php">
 								<input type="hidden" name="bugnote_id" value="<?php echo $f_bugnote_id ?>"/>
 								<input type="hidden" name="worklog_id" value="<?php echo $t_worklog_id ?>"/>
 								<input type="text" name="time_tracking" class="input-xs pull-left" size="5" value="<?php echo $t_time ?>" />
@@ -187,7 +187,7 @@ layout_page_begin();
 
 						<!-- delete column -->
 						<td width="5%">
-							<?php print_link_button('bugnote_worklog_update.php?bugnote_id=' . $f_bugnote_id . '&action=delete&worklog_id=' . $t_worklog_id, lang_get('delete_link'));	?>
+							<?php print_link_button('worklog_update.php?bugnote_id=' . $f_bugnote_id . '&action=delete&worklog_id=' . $t_worklog_id, lang_get('delete_link'));	?>
 						</td>
 					</tr>
 				<?php

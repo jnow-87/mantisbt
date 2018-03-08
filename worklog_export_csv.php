@@ -15,7 +15,7 @@
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Export billing information to csv
+ * Export worklog information to csv
  *
  * @package MantisBT
  * @copyright Copyright 2000 - 2002  Kenzaburo Ito - kenito@300baud.org
@@ -23,13 +23,13 @@
  * @link http://www.mantisbt.org
  *
  * @uses core.php
- * @uses billing_api.php
+ * @uses worklog_api.php
  * @uses bug_api.php
  * @uses csv_api.php
  */
 
 require_once( 'core.php' );
-require_api( 'billing_api.php' );
+require_api( 'worklog_api.php' );
 require_api( 'bug_api.php' );
 require_api( 'csv_api.php' );
 
@@ -44,9 +44,9 @@ $f_to = gpc_get_string( 'to' );
 $t_new_line = csv_get_newline();
 $t_separator = csv_get_separator();
 
-billing_ensure_reporting_access( $f_project_id );
+worklog_ensure_reporting_access( $f_project_id );
 
-$t_billing_rows = billing_get_for_project( $f_project_id, $f_from, $f_to );
+$t_worklog_rows = worklog_get_for_project( $f_project_id, $f_from, $f_to );
 $t_show_realname = config_get( 'show_realname' ) == ON;
 
 csv_start( csv_get_default_filename() );
@@ -69,23 +69,23 @@ echo csv_escape_string( lang_get( 'time_tracking_time_spent' ) ) . $t_separator;
 echo csv_escape_string( 'note' );
 echo $t_new_line;
 
-foreach( $t_billing_rows as $t_billing ) {
-	echo csv_escape_string( bug_format_id( $t_billing['bug_id'] ) ) . $t_separator;
-	echo csv_escape_string( $t_billing['project_name'] ) . $t_separator;
-	echo csv_escape_string( $t_billing['bug_category'] ) . $t_separator;
-	echo csv_escape_string( $t_billing['bug_summary'] ) . $t_separator;
+foreach( $t_worklog_rows as $t_worklog ) {
+	echo csv_escape_string( bug_format_id( $t_worklog['bug_id'] ) ) . $t_separator;
+	echo csv_escape_string( $t_worklog['project_name'] ) . $t_separator;
+	echo csv_escape_string( $t_worklog['bug_category'] ) . $t_separator;
+	echo csv_escape_string( $t_worklog['bug_summary'] ) . $t_separator;
 
 	if( $t_show_realname ) {
-		echo csv_escape_string( $t_billing['reporter_realname'] ) . $t_separator;
+		echo csv_escape_string( $t_worklog['reporter_realname'] ) . $t_separator;
 	} else {
-		echo csv_escape_string( $t_billing['reporter_username'] ) . $t_separator;
+		echo csv_escape_string( $t_worklog['reporter_username'] ) . $t_separator;
 	}
 
-	echo csv_escape_string( date( $t_date_format, $t_billing['date_submitted'] ) ) . $t_separator;
-	echo csv_escape_string( $t_billing['minutes'] ) . $t_separator;
-	echo csv_escape_string( $t_billing['duration'] ) . $t_separator;
+	echo csv_escape_string( date( $t_date_format, $t_worklog['date_submitted'] ) ) . $t_separator;
+	echo csv_escape_string( $t_worklog['minutes'] ) . $t_separator;
+	echo csv_escape_string( $t_worklog['duration'] ) . $t_separator;
 
-	echo csv_escape_string( $t_billing['note'] );
+	echo csv_escape_string( $t_worklog['note'] );
 	echo $t_new_line;
 }
 

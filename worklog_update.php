@@ -102,7 +102,7 @@ if($t_user_id == auth_get_current_user_id()) {
 # redirect information
 $t_redirect_url = '';
 $t_redirect_buttons = array(
-	array(string_get_bugnote_worklog_url($f_bugnote_id), lang_get('view_worklog') . ' ' . $f_bugnote_id),
+	array(string_get_worklog_issue_url($f_bugnote_id), lang_get('view_worklog') . ' ' . $f_bugnote_id),
 	array(string_get_bug_view_url($t_bug_id), lang_get('view_issue') . ' ' . $t_bug_id ),
 );
 
@@ -110,18 +110,18 @@ $t_redirect_buttons = array(
 # perform action
 switch($f_action){
 case 'add':
-	bugnote_worklog_add($f_bugnote_id, $f_time_tracking);
+	worklog_add($f_bugnote_id, $f_time_tracking);
 	$t_redirect_url = string_get_bug_view_url($t_bug_id);
 	break;
 
 case 'delete':
-	bugnote_worklog_delete($f_bugnote_id, $f_worklog_id);
-	$t_redirect_url = string_get_bugnote_worklog_url($f_bugnote_id);
+	worklog_delete($f_bugnote_id, $f_worklog_id);
+	$t_redirect_url = string_get_worklog_issue_url($f_bugnote_id);
 	break;
 
 case 'update':
-	bugnote_worklog_update($f_bugnote_id, $f_worklog_id, $f_time_tracking);
-	$t_redirect_url = string_get_bugnote_worklog_url($f_bugnote_id);
+	worklog_update($f_bugnote_id, $f_worklog_id, $f_time_tracking);
+	$t_redirect_url = string_get_worklog_issue_url($f_bugnote_id);
 	break;
 
 default:
