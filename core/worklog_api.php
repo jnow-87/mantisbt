@@ -46,7 +46,6 @@ require_api('helper_api.php');
 
 
 # TODO
-#	worklog summary should not use $t_date_to for bugnote selection, only for worklog selection
 #	update existing bugs, moving from time_tracking to worklog
 #
 #	overhaul layout
@@ -290,7 +289,16 @@ function worklog_ensure_reporting_access( $p_project_id = null, $p_user_id = nul
  * @param integer $p_project_id    A project identifier or ALL_PROJECTS.
  * @param string  $p_from          Starting date (yyyy-mm-dd) inclusive, if blank, then ignored.
  * @param string  $p_to            Ending date (yyyy-mm-dd) inclusive, if blank, then ignored.
- * @return array array of bugnotes
+ *
+ * @return array containing arrays for
+ *			'users':	an array containing an array for each relevant user id with the following entries
+ *						'bugs':		array with an entry for each relevant bug id, listing the minutes spent
+ *									by the respective user for this bug
+ *						'projects'	array with an entry for each relevant project id, listing the minutes
+ *									spent by the respective user for this project
+ *
+ *			'projects':	an array containing all project ids relevant for the given time period
+ '			'bugs':		an array containing all bug ids relevant for the given time period
  * @access public
  */
 function worklog_get_for_project( $p_project_id, $p_from, $p_to ) {
@@ -308,7 +316,7 @@ function worklog_get_for_project( $p_project_id, $p_from, $p_to ) {
 	if( ALL_PROJECTS != $p_project_id ) {
 		access_ensure_project_level( config_get( 'view_bug_threshold' ), $p_project_id );
 
-		$t_project_where = ' AND b.project_id = ' . db_param() . ' AND bn.bug_id = b.id ';
+		$t_project_where = ' AND b.project_id = ' . db_param();
 		$t_params[] = $p_project_id;
 	} else {
 		$t_project_ids = user_get_all_accessible_projects();
@@ -331,136 +339,49 @@ function worklog_get_for_project( $p_project_id, $p_from, $p_to ) {
 
 	$t_results = array();
 
-	$t_query = 'SELECT bn.id id, bn.date_submitted as date_submitted, bnt.note note,
-			u.realname realname, b.project_id project_id, c.name bug_category, b.summary bug_summary, bn.bug_id bug_id, bn.reporter_id reporter_id
-			FROM {user} u, {bugnote} bn, {bug} b, {bugnote_text} bnt, {category} c
-			WHERE u.id = bn.reporter_id AND bn.bug_id = b.id AND bnt.id = bn.bugnote_text_id AND c.id=b.category_id
-			' . $t_project_where . $t_from_where . $t_to_where . '
-			ORDER BY bn.id';
+	$t_query = 'SELECT b.id bug_id, b.project_id project_id, wl.user_id user_id, wl.time time '
+			 . 'FROM {bug} b, {bugnote} bn, {worklog} wl '
+			 . 'WHERE b.id = bn.bug_id and bn.id = wl.bugnote_id '
+			 . $t_project_where . $t_from_where . $t_to_where
+			 . ' ORDER BY bn.id';
+
 	$t_result = db_query( $t_query, $t_params );
 
 	$t_access_level_required = config_get( 'time_tracking_view_threshold');
 
+	$t_users = array();
+	$t_projects = array();
+	$t_bugs = array();
+
 	while( $t_row = db_fetch_array( $t_result ) ) {
-		if ( !access_has_bugnote_level( $t_access_level_required, $t_row['id'] ) ) {
+		if ( !access_has_bugnote_level( $t_access_level_required, $t_row['bug_id'] ) ) {
 			continue;
 		}
 
-		$t_row['minutes'] = worklog_get_time($t_row['id'], $c_from, $c_to);
+		$t_bug_id = $t_row['bug_id'];
+		$t_project_id = $t_row['project_id'];
+		$t_minutes = $t_row['time'];
+		$t_user_id = $t_row['user_id'];
 
-		$t_results[] = $t_row;
+		if(!isset($t_users[$t_user_id]))
+			$t_users[$t_user_id] = array('id' => $t_user_id, 'projects' => array(), 'bugs' => array());
+
+		if(!isset($t_users[$t_user_id]['projects'][$t_project_id]))
+			$t_users[$t_user_id]['projects'][$t_project_id] = 0;
+
+		$t_users[$t_user_id]['projects'][$t_project_id] += $t_minutes;
+
+		if(!isset($t_users[$t_user_id]['bugs'][$t_bug_id]))
+			$t_users[$t_user_id]['bugs'][$t_bug_id] = 0;
+
+		$t_users[$t_user_id]['bugs'][$t_bug_id] += $t_minutes;
+
+		if(!in_array($t_project_id, $t_projects))
+			$t_projects[] = $t_project_id;
+
+		if(!in_array($t_bug_id, $t_bugs))
+			$t_bugs[] = $t_bug_id;
 	}
 
-	$t_rows = worklog_rows_to_array( $t_results );
-	return $t_rows;
-}
-
-/**
- * Gets the worklog summary for the specified project and the date range.
- *
- * @param integer $p_project_id    A project identifier or ALL_PROJECTS.
- * @param string  $p_from          Starting date (yyyy-mm-dd) inclusive, if blank, then ignored.
- * @param string  $p_to            Ending date (yyyy-mm-dd) inclusive, if blank, then ignored.
- * @return array The contains worklog data grouped by issues, users, and total information.
- * @access public
- */
-function worklog_get_summaries( $p_project_id, $p_from, $p_to ) {
-	$t_notes = worklog_get_for_project( $p_project_id, $p_from, $p_to );
-
-	$t_issues = array();
-	$t_users = array();
-
-	foreach ( $t_notes as $t_note ) {
-		extract( $t_note, EXTR_PREFIX_ALL, 'v' );
-
-		$t_username = user_get_name( $v_reporter_id );
-
-		# Create users in collection of users if not already exists
-		if( !isset( $t_users[$t_username] ) ) {
-			$t_users[$t_username] = array();
-			$t_users[$t_username]['minutes'] = 0;
-		}
-
-		# Update user total minutes
-		$t_users[$t_username]['minutes'] += $v_minutes;
-
-		# Create issue if it doesn't exist yet.
-		if( !isset( $t_issues[$v_bug_id] ) ) {
-			$t_issues[$v_bug_id]['issue_id'] = $v_bug_id;
-			$t_issues[$v_bug_id]['project_id'] = $v_project_id;
-			$t_issues[$v_bug_id]['project_name'] = $v_project_name;
-			$t_issues[$v_bug_id]['summary'] = $v_bug_summary;
-			$t_issues[$v_bug_id]['users'] = array();
-			$t_issues[$v_bug_id]['minutes'] = 0;
-		}
-
-		# Create user within issue if they don't exist yet
-		if( !isset( $t_issues[$v_bug_id]['users'][$t_username] ) ) {
-			$t_issues[$v_bug_id]['users'][$t_username] = array();
-			$t_issues[$v_bug_id]['users'][$t_username]['minutes'] = 0;
-		}
-
-		# Update total minutes for user within the issue
-		$t_issues[$v_bug_id]['users'][$t_username]['minutes'] += $v_minutes;
-
-		# Update total minutes for issue
-		$t_issues[$v_bug_id]['minutes'] += $v_minutes;
-	}
-
-	$t_total = array(
-		'minutes' => 0,
-	);
-
-	# Calculate total minutes across all issues
-	foreach( $t_issues as $t_issue_id => $t_issue_info ) {
-		$t_issues[$t_issue_id]['duration'] = db_minutes_to_hhmm( $t_issue_info['minutes'] );
-		$t_total['minutes'] += $t_issue_info['minutes'];
-
-		ksort( $t_issues[$t_issue_id]['users'] );
-	}
-
-	ksort( $t_users );
-	ksort( $t_issues );
-
-	return array(
-		'issues' => $t_issues,
-		'users' => $t_users,
-		'total' => $t_total );
-}
-
-/**
- * Converts an array of bugnotes
- *
- * @param array $p_bugnotes  Array of bugnotes
- * @return array             output rows
- * @access private
- */
-function worklog_rows_to_array( $p_bugnotes ) {
-	$t_rows = array();
-
-	foreach( $p_bugnotes as $t_note ) {
-		$t_row = array();
-		$t_row['id'] = $t_note['id'];
-		$t_row['minutes'] = $t_note['minutes'];
-		$t_row['duration'] = db_minutes_to_hhmm( $t_note['minutes'] );
-		$t_row['note'] = $t_note['note'];
-		$t_row['reporter_id'] = $t_note['reporter_id'];
-		$t_row['reporter_username'] = user_get_name( $t_note['reporter_id'] );
-		$t_row['reporter_realname'] = user_get_realname( $t_note['reporter_id'] );
-		$t_row['date_submitted'] = $t_note['date_submitted'];
-
-		if ( is_blank( $t_row['reporter_realname'] ) ) {
-			$t_row['reporter_realname'] = $t_row['reporter_username'];
-		}
-
-		$t_row['bug_id'] = $t_note['bug_id'];
-		$t_row['project_id'] = $t_note['project_id'];
-		$t_row['project_name'] = project_get_name( $t_note['project_id'] );
-		$t_row['bug_summary'] = $t_note['bug_summary'];
-		$t_row['bug_category'] = $t_note['bug_category'];
-
-		$t_rows[] = $t_row;
-	}
-
-	return $t_rows;
+	return array( 'users' => $t_users, 'projects' => $t_projects, 'bugs' => $t_bugs);
 }

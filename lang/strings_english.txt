@@ -93,6 +93,7 @@ $s_actiongroup_bugs = 'Selected Issues';
 $s_actiongroup_error_issue_is_readonly = 'Issue is readonly.';
 
 # new strings:
+$s_project = 'Project';
 $s_by = 'by';
 $s_for = 'for';
 $s_all_projects = 'All Projects';
@@ -1374,8 +1375,8 @@ $s_roadmap_empty_manager = 'No Roadmap information available.  Issues are includ
 # Http auth
 $s_http_auth_realm = 'MantisBT Login';
 
-$s_bug = 'issue';
-$s_bugs = 'issues';
+$s_bug = 'Issue';
+$s_bugs = 'Issues';
 $s_add_new_relationship = 'New relationship';
 $s_add_new_relationship_button = 'Add';
 $s_this_bug = 'Current issue';

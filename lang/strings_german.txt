@@ -84,6 +84,7 @@ $s_actiongroup_menu_add_note = 'Notiz hinzufügen';
 $s_actiongroup_menu_attach_tags = 'Tag zuordnen';
 $s_actiongroup_bugs = 'Ausgewählte Einträge';
 $s_actiongroup_error_issue_is_readonly = 'Eintrag ist schreibgeschützt.';
+$s_project = 'Projekt';
 $s_by = 'von';
 $s_for = 'für';
 $s_all_projects = 'Alle Projekte';
