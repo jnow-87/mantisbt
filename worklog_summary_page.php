@@ -55,6 +55,18 @@ require_api('html_api.php');
 
 
 /**
+ *	echo a link to the project management page for the given id
+ *
+ *	@param	integer		$p_project_id	project id to format
+ *
+ *	@return	none
+ */
+function format_project_link($p_project_id){
+	echo '<a href="manage_proj_edit_page.php?project_id=' . $p_project_id . '">' . project_get_name($p_project_id) . '</a>';
+}
+
+
+/**
  *	print a table per user and the specified row data
  *
  *	@param	array	$p_users			array containing an entry per user, with each user entry
@@ -65,10 +77,21 @@ require_api('html_api.php');
  *										in $p_users[][$p_row_label]
  *	@param	string	$p_row_name_func	name of function used to format the name of each row index
  *										within $p_rows
+ *	@param	string	$p_row_link_func	name of function used to create a link to the target row item
  *
  *	@return	none
  */
-function print_worklog_table($p_users, $p_row_label, $p_rows, $p_row_name_func){
+function print_worklog_table($p_users, $p_row_label, $p_rows, $p_row_name_func, $p_row_link_func){
+	$t_row_names = array();
+
+
+	# create array with row name and id
+	foreach ($p_rows as $t_row)
+		$t_row_names[$p_row_name_func($t_row)] = $t_row;
+
+	# sort array
+	ksort($t_row_names);
+
 ?>
 	<table class="table table-bordered table-condensed table-striped">
 		<!-- table head -->
@@ -91,10 +114,10 @@ function print_worklog_table($p_users, $p_row_label, $p_rows, $p_row_name_func){
 		<?php
 		$t_col_total = array();
 
-		foreach ($p_rows as $t_row) { ?>
+		foreach ($t_row_names as $t_row_id) { ?>
 		<tr>
 			<th class="small-caption category">
-				<?php echo $p_row_name_func($t_row); ?>
+				<?php echo $p_row_link_func($t_row_id); ?>
 			</th>
 
 			<?php
@@ -104,12 +127,12 @@ function print_worklog_table($p_users, $p_row_label, $p_rows, $p_row_name_func){
 				if(!isset($t_col_total[$t_user['id']]))
 					$t_col_total[$t_user['id']] = 0;
 
-				$t_col_total[$t_user['id']] += $t_user[$p_row_label][$t_row];
-				$t_row_total += $t_user[$p_row_label][$t_row];
+				$t_col_total[$t_user['id']] += $t_user[$p_row_label][$t_row_id];
+				$t_row_total += $t_user[$p_row_label][$t_row_id];
 			?>
 				<td class="small-caption">
 					<?php
-						$t_minutes = $t_user[$p_row_label][$t_row];
+						$t_minutes = $t_user[$p_row_label][$t_row_id];
 						echo $t_minutes == 0 ? '-' : db_minutes_to_hhmm($t_minutes);
 					?>
 				</td>
@@ -236,7 +259,7 @@ if($t_stats['users']){
 			</h4>
 		</div>
 
-		<?php print_worklog_table($t_stats['users'], 'projects', $t_stats['projects'], 'project_get_name'); ?>
+		<?php print_worklog_table($t_stats['users'], 'projects', $t_stats['projects'], 'project_get_name', 'format_project_link'); ?>
 	</div>
 
 	<!-- time per issue and user -->
@@ -247,7 +270,7 @@ if($t_stats['users']){
 			</h4>
 		</div>
 
-		<?php print_worklog_table($t_stats['users'], 'bugs', $t_stats['bugs'], 'string_get_bug_view_link'); ?>
+		<?php print_worklog_table($t_stats['users'], 'bugs', $t_stats['bugs'], 'bug_format_id', 'string_get_bug_view_link'); ?>
 	</div>
 <?php
 }
