@@ -52,6 +52,7 @@ require_api('print_api.php');
 require_api('access_api.php');
 require_api('worklog_api.php');
 require_api('html_api.php');
+require_api('project_api.php');
 
 
 /**

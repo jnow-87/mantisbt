@@ -44,8 +44,6 @@ require_api('helper_api.php');
 
 
 # TODO
-#	log work should be hidden if time tracking is disabled
-#
 #	overhaul layout
 #		improve layout of worklog in bug view
 #		move control panel to the top

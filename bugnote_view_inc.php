@@ -263,7 +263,7 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 			}
 
 			# show worklog button if the user is allowed to edit this bugnote
-			if( $t_activity['can_edit'] ) {
+			if( config_get( 'time_tracking_enabled' ) && $t_activity['can_edit'] ) {
 			?>
 				<form id="worklog" method="post" action="worklog_update.php">
 					<input type="hidden" name="bugnote_id" value="<?php echo $t_activity['id'] ?>"/>
@@ -277,7 +277,8 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 			}
 
 			# show worklog link
-			echo '<p class="no-margin"><span class="small bugnote-revisions-link"><a href="worklog_issue_page.php?bugnote_id=' . $t_activity['id'] . '">' . lang_get( 'view_worklog' ) . '</a></span></p>';
+			if(config_get( 'time_tracking_enabled' ))
+				echo '<p class="no-margin"><span class="small bugnote-revisions-link"><a href="worklog_issue_page.php?bugnote_id=' . $t_activity['id'] . '">' . lang_get( 'view_worklog' ) . '</a></span></p>';
 		?>
 		</div>
 		</div>
