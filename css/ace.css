@@ -1258,12 +1258,12 @@ pre.prettyprint {
     background-color: #762c59;
 }
 .ace-nav > li.green > a {
-    background-color: #2E8965;
+    background-color: #1d520a;
 }
 .ace-nav > li.green > a:hover,
 .ace-nav > li.green > a:focus,
 .ace-nav > li.open.green > a {
-    background-color: #2c7659;
+    background-color: #1d520a;
 }
 .ace-nav > li.light-blue > a {
     background-color: #62A8D1;
@@ -4364,7 +4364,7 @@ body.mob-safari .sidebar.sidebar-fixed {
 }
 .breadcrumb > li > a {
     display: inline-block;
-    color: #4C8FBD;
+    color: #1d520a;
 }
 .breadcrumb > li + li:before {
     font-family: FontAwesome;
@@ -5140,12 +5140,12 @@ fieldset[disabled] .btn-primary.active {
 .open > .btn-info.dropdown-toggle:focus,
 .open > .btn-info.dropdown-toggle.focus,
 .open > .btn-info.dropdown-toggle:active {
-    background-color: #4F99C6 !important;
+    background-color: #cae8bf !important;
     border-color: #6FB3E0;
 }
 .btn-info.no-border:hover,
 .btn-info.no-border:active {
-    border-color: #4F99C6;
+    border-color: #cae8bf;
 }
 .btn-info.no-hover:hover,
 .btn-info.no-hover:active {
@@ -7776,7 +7776,7 @@ fieldset[disabled] .btn-white.btn-grey.active {
 .dropdown-menu > li > a:active,
 .dropdown-menu > li.active > a,
 .dropdown-menu > li.active:hover > a {
-    background: #4F99C6;
+    background: #cae8bf;
     color: #FFFFFF;
 }
 .dropdown-default > li:hover > a,
@@ -8083,7 +8083,7 @@ fieldset[disabled] .btn-white.btn-grey.active {
     border-top-width: 0;
 }
 .dropdown-navbar > li.dropdown-footer > a {
-    color: #4F99C6 !important;
+    color: #cae8bf !important;
     text-align: center;
     font-size: 13px;
 }
@@ -8390,7 +8390,7 @@ input[type="color"]:focus {
     -webkit-box-shadow: none;
     box-shadow: none;
     color: #696969;
-    border-color: #F59942;
+    border-color: #1d520a;
     background-color: #FFF;
     outline: none;
 }
@@ -8424,7 +8424,7 @@ select {
 .form-control:focus,
 select:focus {
     color: #696969;
-    border-color: #F59942;
+    border-color: #1d520a;
     background-color: #FFF;
     outline: none;
 }
@@ -8693,7 +8693,7 @@ input[type=radio].ace + .lbl:hover::before {
 }
 input[type=checkbox].ace:focus + .lbl::before,
 input[type=radio].ace:focus + .lbl::before {
-    border-color: #F59942;
+    border-color: #1d520a;
 }
 input[type=checkbox].ace:active + .lbl::before,
 input[type=radio].ace:active + .lbl::before,
@@ -9116,7 +9116,7 @@ input.ace + .lbl.padding-0::before {
 .ace-file-input .ace-file-container:hover {
     -webkit-box-shadow: none;
     box-shadow: none;
-    border-color: #F59942;
+    border-color: #1d520a;
 }
 .ace-file-input .ace-file-container:before {
     display: inline-block;
@@ -9914,7 +9914,7 @@ textarea.input-transparent:focus,
 }
 .nav-tabs > li > a:hover {
     background-color: #FFF;
-    color: #4C8FBD;
+    color: #1d520a;
     border-color: #C5D0DC;
 }
 .nav-tabs > li > a:active,
@@ -9929,7 +9929,7 @@ textarea.input-transparent:focus,
 .nav-tabs > li.active > a:focus {
     color: #576373;
     border-color: #C5D0DC;
-    border-top: 2px solid #4C8FBD;
+    border-top: 2px solid #1d520a;
     border-bottom-color: transparent;
     background-color: #FFF;
     z-index: 1;
@@ -9955,7 +9955,7 @@ textarea.input-transparent:focus,
 .tabs-below > .nav-tabs > li.active > a:focus {
     border-color: #C5D0DC;
     border-top-width: 1px;
-    border-bottom: 2px solid #4C8FBD;
+    border-bottom: 2px solid #1d520a;
     border-top-color: transparent;
     margin-top: 0;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
@@ -9984,7 +9984,7 @@ textarea.input-transparent:focus,
 .tabs-left > .nav-tabs > li.active > a:hover {
     border-color: #C5D0DC;
     border-top-width: 1px;
-    border-left: 2px solid #4C8FBD;
+    border-left: 2px solid #1d520a;
     border-right-color: transparent;
     margin: 0 -1px 0 -1px;
     -webkit-box-shadow: -2px 0 3px 0 rgba(0,0,0,0.15) !important;
@@ -10010,7 +10010,7 @@ textarea.input-transparent:focus,
 .tabs-right > .nav-tabs > li.active > a:hover {
     border-color: #C5D0DC;
     border-top-width: 1px;
-    border-right: 2px solid #4C8FBD;
+    border-right: 2px solid #1d520a;
     border-left-color: transparent;
     margin: 0 -2px 0 -1px;
     -webkit-box-shadow: 2px 0 3px 0 rgba(0,0,0,0.15);
@@ -10035,8 +10035,8 @@ textarea.input-transparent:focus,
     text-align: center;
 }
 .nav-tabs > li.open .dropdown-toggle {
-    background-color: #4F99C6;
-    border-color: #4F99C6;
+    background-color: #cae8bf;
+    border-color: #cae8bf;
     color: #FFF;
 }
 .nav-tabs > li.open .dropdown-toggle > .ace-icon {
@@ -10049,8 +10049,8 @@ textarea.input-transparent:focus,
 .nav-pills .open .dropdown-toggle,
 .nav > li.dropdown.open.active > a:hover,
 .nav > li.dropdown.open.active > a:focus {
-    background-color: #4F99C6;
-    border-color: #4F99C6;
+    background-color: #cae8bf;
+    border-color: #cae8bf;
     color: #FFFFFF;
 }
 .nav-pills .open .dropdown-toggle > .ace-icon,
@@ -10167,7 +10167,7 @@ textarea.input-transparent:focus,
     padding: 0;
 }
 .accordion-style1.panel-group .panel-heading .accordion-toggle {
-    color: #4C8FBD;
+    color: #1d520a;
     background-color: #EEF4F9;
     position: relative;
     font-weight: bold;
@@ -10696,11 +10696,11 @@ tr.detail-row > td {
     border-color: #82AF6F;
 }
 .widget-color-green2 {
-    border-color: #2E8965;
+    border-color: #1d520a;
 }
 .widget-color-green2 > .widget-header {
-    background: #2E8965;
-    border-color: #2E8965;
+    background: #1d520a;
+    border-color: #1d520a;
 }
 .widget-color-green3 {
     border-color: #4EBC30;
@@ -10975,7 +10975,7 @@ tr.detail-row > td {
     border-left: 1px solid transparent;
 }
 .transparent > .widget-header > .widget-toolbar > .nav-tabs > li.active > a {
-    border-top-color: #4C8FBD;
+    border-top-color: #1d520a;
     border-right: 1px solid #C5D0DC;
     border-left: 1px solid #C5D0DC;
     background-color: #FFF;
@@ -12748,7 +12748,7 @@ li.item-green2 {
     border-left-color: #0490A6;
 }
 li.item-blue {
-    border-left-color: #4F99C6;
+    border-left-color: #cae8bf;
 }
 li.item-blue2 {
     border-left-color: #3983C2;
@@ -13280,7 +13280,7 @@ li.item-default {
     position: relative;
 }
 .message-item.message-unread .attachment {
-    color: #4F99C6;
+    color: #cae8bf;
 }
 .message-content .time {
     font-weight: normal;
@@ -13657,7 +13657,7 @@ ul.attachment-list > li {
     top: 1px;
     bottom: 1px;
     left: -1px;
-    border-left: 3px solid #4F99C6;
+    border-left: 3px solid #cae8bf;
 }
 .inbox-folders .btn.active:after {
     display: none;
