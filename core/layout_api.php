@@ -407,8 +407,6 @@ function layout_login_page_end() {
  * @return null
  */
 function layout_navbar() {
-	$t_logo_url = config_get('logo_url');
-
 	echo '<div id="navbar" class="navbar navbar-default navbar-collapse navbar-fixed-top noprint">';
 	echo '<div id="navbar-container" class="navbar-container">';
 
@@ -419,12 +417,14 @@ function layout_navbar() {
 	echo '<span class="icon-bar"></span>';
 	echo '</button>';
 
+	echo '<div class="pull-left">';
+	echo '<a href="' . config_get('logo_url') . '">' .
+		 '<img src="' . helper_mantis_url( 'images/mantis_logo_title.png' ) . '"height="30"/>' .
+		 '</a>';
+	echo '</div>';
+
+
 	echo '<div class="navbar-header">';
-	echo '<a href="' . $t_logo_url . '" class="navbar-brand">';
-	echo '<span class="smaller-75"> ';
-	echo string_display_line( config_get('window_title') );
-	echo ' </span>';
-	echo '</a>';
 
 	$t_toggle_class = (OFF == config_get('show_avatar') ? 'navbar-toggle' : 'navbar-toggle-img');
 	echo '<button type="button" class="navbar-toggle ' . $t_toggle_class . ' collapsed pull-right hidden-sm hidden-md hidden-lg" data-toggle="collapse" data-target=".navbar-buttons,.navbar-menu">';
@@ -482,16 +482,12 @@ function layout_navbar_user_menu( $p_show_avatar = true ) {
 
 	echo '<li class="grey">';
 	echo '<a data-toggle="dropdown" href="#" class="dropdown-toggle">';
-	if( $p_show_avatar ) {
+	if( $p_show_avatar )
 		layout_navbar_user_avatar();
-		echo '<span class="user-info">';
-		echo $t_username;
-		echo '</span>';
-		echo '<i class="ace-icon fa fa-angle-down"></i>';
-	} else {
-		echo '&#160;' . $t_username . '&#160;' . "\n";
-		echo '<i class="ace-icon fa fa-angle-down bigger-110"></i>';
-	}
+
+	echo '&#160;' . $t_username . '&#160;' . "\n";
+	echo '<i class="ace-icon fa fa-angle-down bigger-110"></i>';
+	
 	echo '</a>';
 	echo '<ul class="user-menu dropdown-menu dropdown-menu-right dropdown-yellow dropdown-caret dropdown-close">';
 
