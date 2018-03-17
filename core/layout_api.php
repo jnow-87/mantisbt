@@ -271,11 +271,14 @@ function layout_head_css() {
 		html_css_link( 'bootstrap-datetimepicker-' . DATETIME_PICKER_VERSION . '.min.css' );
 	}
 
-	# page specific plugin styles
-
 	# theme styles
 	html_css_link( 'ace.min.css' );
 	html_css_link( 'ace-mantis.css' );
+
+	# mantis specific, including
+	# 	changes to bootstrap, ace
+	#	additional elements
+	html_css_link( 'mantis.css' );
 
 	# handle IE separately
 	echo '<!--[if lte IE 9]>';

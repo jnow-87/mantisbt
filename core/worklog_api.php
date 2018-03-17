@@ -43,18 +43,6 @@ require_api('database_api.php');
 require_api('helper_api.php');
 
 
-# TODO
-#	overhaul layout
-#		improve layout of worklog in bug view
-#		move control panel to the top
-#		make use of tabs
-#		remove boxes, replacing them with a more open layout
-#		streamline toolbars
-#		add spaces between buttons
-#		which css files are used
-#
-#	check for potential caching
-
 class worklog_data{
 	public $id;
 	public $bugnote_id;
