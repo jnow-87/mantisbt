@@ -185,7 +185,7 @@ function print_formbutton($p_text, $p_label, $p_class = 'btn-xs btn-round'){
 function print_text_input_toggle($p_label, $p_value, $p_class){
 ?>
 	<!-- readonly input field, visible by default -->
-	<div id="<?php echo $p_label ?>_ro" onclick="toggle_visibility('<?php echo $p_label ?>')" style="display:block">
+	<div id="<?php echo $p_label ?>" class="input-toggle" style="display:block">
 		<input type="text" class="<?php echo $p_class ?>" value="<?php echo $p_value ?>" style="background:transparent !important;border-color:transparent;" readonly/>
 	</div>
 
@@ -195,20 +195,9 @@ function print_text_input_toggle($p_label, $p_value, $p_class){
 	</div>
 <?php
 }
-
 ?>
-<script>
-function toggle_visibility(id){
-	var rw = document.getElementById(id + "_rw");
 
-	document.getElementById(id + "_ro").style.display = "none";
-	rw.style.display = "block";
-}
-</script>
 <?php
-
-
-
 $t_tabs = array(
 	'tab0' => 'content0',
 	'tab1' => 'content1',

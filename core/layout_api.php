@@ -346,6 +346,8 @@ function layout_body_javascript() {
 
 	# ace theme scripts
 	html_javascript_link( 'ace.min.js' );
+
+	html_javascript_link('mantis.js');
 }
 
 
