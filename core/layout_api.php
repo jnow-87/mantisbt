@@ -43,6 +43,7 @@
 
 require_api( 'access_api.php' );
 require_api( 'utility_api.php' );
+require_api('elements_api.php');
 
 
 /**
@@ -137,11 +138,11 @@ function layout_page_header_end( $p_page_id = null) {
 }
 
 /**
- * Print page common elements including navbar, sidebar, info bar
- * @param string $p_active_sidebar_page sidebar page where the current page lives under
+ * Print page common elements including navbar, info bar
+ * @param string $p_active_page the current page that is rendered
  * @return void
  */
-function layout_page_begin( $p_active_sidebar_page = null ) {
+function layout_page_begin( $p_active_page = null ) {
 	layout_navbar();
 
 	if( !db_is_connected() ) {
@@ -150,11 +151,9 @@ function layout_page_begin( $p_active_sidebar_page = null ) {
 
 	layout_main_container_begin();
 
-	layout_print_sidebar( $p_active_sidebar_page );
-
 	layout_main_content_begin();
 
-	layout_breadcrumbs();
+	layout_breadcrumbs($p_active_page);
 
 	layout_page_content_begin();
 
@@ -410,561 +409,72 @@ function layout_login_page_end() {
  */
 function layout_navbar() {
 	echo '<div id="navbar" class="navbar navbar-default navbar-collapse navbar-fixed-top noprint">';
-	echo '<div id="navbar-container" class="navbar-container">';
 
-	echo '<button id="menu-toggler" type="button" class="navbar-toggle menu-toggler pull-left hidden-lg" data-target="#sidebar">';
-	echo '<span class="sr-only">Toggle sidebar</span>';
-	echo '<span class="icon-bar"></span>';
-	echo '<span class="icon-bar"></span>';
-	echo '<span class="icon-bar"></span>';
-	echo '</button>';
-
+	/* mantis logo */
 	echo '<div class="pull-left">';
 	echo '<a href="' . config_get('logo_url') . '">' .
-		 '<img src="' . helper_mantis_url( 'images/mantis_logo_title.png' ) . '"height="30"/>' .
+		 '<img src="' . helper_mantis_url( 'images/mantis_logo_title.png' ) . '"height="30" style="margin-right:20px"/>' .
 		 '</a>';
 	echo '</div>';
 
+	/* menus */
+	// issues
+	$t_menu = array(
+		array('label' => 'Report Issue', 'data' => array('link' => 'bug_report_page.php', 'icon' => 'fa-edit')),
+		array('label' => 'My View', 'data' => array('link' => 'my_view_page.php', 'icon' => 'fa-dashboard')),
+		array('label' => 'View Issues', 'data' => array('link' => 'view_all_bug_page.php', 'icon' => 'fa-tasks'))
+	);
 
-	echo '<div class="navbar-header">';
+	dropdown_menu('Issues', $t_menu, 'grey', 'fa-bug');
 
-	$t_toggle_class = (OFF == config_get('show_avatar') ? 'navbar-toggle' : 'navbar-toggle-img');
-	echo '<button type="button" class="navbar-toggle ' . $t_toggle_class . ' collapsed pull-right hidden-sm hidden-md hidden-lg" data-toggle="collapse" data-target=".navbar-buttons,.navbar-menu">';
-	echo '<span class="sr-only">Toggle user menu</span>';
-	if (auth_is_user_authenticated()) {
-		layout_navbar_user_avatar();
-	}
-	echo '</button>';
+	// projects
+	$t_project_search_hdr =
+		'<div id="projects-list">' . 
+		'<input class="search form-control" placeholder="search" />' . 
+		'<ul class="list dropdown-green no-margin">';
 
-	echo '</div>';
+	$t_project_search_ftr = '</ul></div>';
 
-	echo '<div class="navbar-buttons navbar-header navbar-collapse collapse">';
-	echo '<ul class="nav ace-nav">';
-	if (auth_is_user_authenticated()) {
-		# shortcuts button bar
-		layout_navbar_button_bar();
-		# projects dropdown menu
-		layout_navbar_projects_menu();
-		# user buttons such as messages, notifications and user menu
-		layout_navbar_user_menu();
-	}
-	echo '</ul>';
-	echo '</div>';
+	$t_menu = array();
+	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_hdr);
 
-	echo '</div>';
-	echo '</div>';
-}
-
-/**
- * Print navbar menu item
- * @param string $p_url destination url of the menu item
- * @param string $p_title menu item title
- * @param string $p_icon icon to use for this menu
- * @return null
- */
-function layout_navbar_menu_item( $p_url, $p_title, $p_icon ) {
-	echo '<li>';
-	echo '<a href="' . $p_url . '">';
-	echo '<i class="ace-icon fa ' . $p_icon . '"> </i> ' . $p_title;
-	echo '</a>';
-	echo '</li>';
-}
-
-/**
- * Print navbar user menu at the top right of the page
- * @param bool $p_show_avatar decide whether to show logged in user avatar
- * @return null
- */
-function layout_navbar_user_menu( $p_show_avatar = true ) {
-	if( !auth_is_user_authenticated() ) {
-		return;
-	}
-
-	$t_username = current_user_get_field( 'username' );
-
-	echo '<li class="grey">';
-	echo '<a data-toggle="dropdown" href="#" class="dropdown-toggle">';
-	if( $p_show_avatar )
-		layout_navbar_user_avatar();
-
-	echo '&#160;' . $t_username . '&#160;' . "\n";
-	echo '<i class="ace-icon fa fa-angle-down bigger-110"></i>';
-	
-	echo '</a>';
-	echo '<ul class="user-menu dropdown-menu dropdown-menu-right dropdown-yellow dropdown-caret dropdown-close">';
-
-	# My Account
-	if( !current_user_is_protected() ) {
-		layout_navbar_menu_item( helper_mantis_url( 'account_page.php' ), lang_get( 'account_link' ), 'fa-user' );
-	}
-
-	# RSS Feed
-	if( OFF != config_get( 'rss_enabled' ) ) {
-		layout_navbar_menu_item( htmlspecialchars( rss_get_issues_feed_url() ), lang_get( 'rss' ), 'fa-rss-square orange' );
-	}
-
-	echo '<li class="divider"></li>';
-
-	# Logout
-	layout_navbar_menu_item( helper_mantis_url( 'logout_page.php' ), lang_get( 'logout_link' ), 'fa-sign-out' );
-	echo '</ul>';
-	echo '</li>';
-}
-
-
-/**
- * Print navbar projects menu at the top right of the page
- * @return null
- */
-function layout_navbar_projects_menu() {
-	if( !auth_is_user_authenticated() ) {
-		return;
-	}
-
-	# Project Selector (hidden if only one project visible to user)
-	$t_show_project_selector = true;
-	$t_project_ids = current_user_get_accessible_projects();
-	if( count( $t_project_ids ) == 1 ) {
-		$t_project_id = (int) $t_project_ids[0];
-		if( count( current_user_get_accessible_subprojects( $t_project_id ) ) == 0 ) {
-			$t_show_project_selector = false;
-		}
-	}
-
-	if( $t_show_project_selector ) {
-		echo '<li class="grey">' . "\n";
-		echo '<a data-toggle="dropdown" href="#" class="dropdown-toggle">' . "\n";
-
-		$t_current_project_id = helper_get_current_project();
-		if( ALL_PROJECTS == $t_current_project_id) {
-			echo '&#160;' . string_attribute( lang_get( 'all_projects' ) ) . '&#160;' . "\n";
-		} else {
-			echo '&#160;' . string_attribute( project_get_field( $t_current_project_id, 'name' ) ) . '&#160;' . "\n";
-		}
-
-		echo ' <i class="ace-icon fa fa-angle-down bigger-110"></i>' . "\n";
-		echo '</a>' . "\n";
-
-		echo '<ul class="dropdown-menu dropdown-menu-right dropdown-yellow dropdown-caret dropdown-close scrollable-menu">' . "\n";
-		layout_navbar_projects_list( join( ';', helper_get_current_project_trace() ), true, null, true );
-		echo '</ul>' . "\n";
-		echo '</li>' . "\n";
-	} else {
-		# User has only one project, set it as both current and default
-		if( ALL_PROJECTS == helper_get_current_project() ) {
-			helper_set_current_project( $t_project_id );
-
-			if( !current_user_is_protected() ) {
-				current_user_set_default_project( $t_project_id );
-			}
-
-			# Force reload of current page, except if we got here after
-			# creating the first project
-			$t_redirect_url = str_replace( config_get( 'short_path' ), '', $_SERVER['REQUEST_URI'] );
-			if( 'manage_proj_create.php' != $t_redirect_url ) {
-				html_meta_redirect( $t_redirect_url, 0, false );
-			}
-		}
-	}
-}
-
-/**
- * Print navbar bottons
- * @return null
- */
-function layout_navbar_button_bar() {
-	if( !auth_is_user_authenticated() ) {
-		return;
-	}
-
-	$t_can_report_bug = access_has_any_project_level( 'report_bug_threshold' );
-	$t_can_invite_user = current_user_is_administrator();
-
-	if( !$t_can_report_bug && !$t_can_invite_user ) {
-		return;
-	}
-
-	echo '<li class="hidden-sm hidden-xs">';
-  	echo '<div class="btn-group btn-corner padding-right-8 padding-left-8">';
-
-  	if( $t_can_report_bug ) {
-		$t_bug_url = string_get_bug_report_url();
-	  	echo '<a class="btn btn-primary btn-xs" href="' . $t_bug_url . '">';
-		echo '<i class="fa fa-edit"></i> ' . lang_get( 'report_bug_link' );
-		echo '</a>';
-  	}
-
-	if( $t_can_invite_user ) {
-		echo '<a class="btn btn-primary btn-xs" href="manage_user_create_page.php">';
-		echo '<i class="fa fa-user-plus"></i> ' . lang_get( 'invite_users' );
-		echo '</a>';
-	}
-
-	echo '</div>';
-  	echo '</li>';
-}
-
-/**
- * Print projects that the current user has access to.
- *
- * @param int $p_project_id 	The current project id or null to use cookie.
- * @param bool $p_include_all_projects  true: include "All Projects", otherwise false.
- * @param int|null $p_filter_project_id  The id of a project to exclude or null.
- * @param string|bool $p_trace  The current project trace, identifies the sub-project via a path from top to bottom.
- * @param bool $p_can_report_only If true, disables projects in which user can't report issues; defaults to false (all projects enabled)
- */
-function layout_navbar_projects_list( $p_project_id = null, $p_include_all_projects = true, $p_filter_project_id = null, $p_trace = false, $p_can_report_only = false ) {
-	$t_user_id = auth_get_current_user_id();
-	$t_project_ids = user_get_accessible_projects( $t_user_id );
-	$t_can_report = true;
+	$t_project_ids = user_get_accessible_projects(auth_get_current_user_id());
 	project_cache_array_rows( $t_project_ids );
 
-	if( $p_include_all_projects && $p_filter_project_id !== ALL_PROJECTS ) {
-		echo ALL_PROJECTS == $p_project_id ? '<li class="active">' : '<li>';
-		echo '<a href="' . helper_mantis_url( 'set_project.php' ) . '?project_id=' . ALL_PROJECTS . '"';
-		if( $p_project_id !== null ) {
-			check_selected( $p_project_id, ALL_PROJECTS, false );
-		}
-		echo '> ' . lang_get( 'all_projects' ) . ' </a></li>' . " \n";
-		echo '<li class="divider"></li>' . "\n";
-	}
-
-	echo '<li>';
-	echo '<div id="projects-list">';
-	echo '<div class="projects-searchbox">';
-	echo '<input class="search form-control input-md" placeholder="' . lang_get( 'search' ) . '" />';
-	echo '</div>';
-	echo '<ul class="list dropdown-yellow no-margin">';
-
 	foreach( $t_project_ids as $t_id ) {
-		if( $p_can_report_only ) {
-			$t_report_bug_threshold = config_get( 'report_bug_threshold', null, $t_user_id, $t_id );
-			$t_can_report = access_has_project_level( $t_report_bug_threshold, $t_id, $t_user_id );
-		}
+		$t_link = helper_mantis_url( 'set_project.php' ) . '?project_id=' . $t_id;
+		$t_name = string_attribute( project_get_field( $t_id, 'name' ) );
 
-		echo 0 == strcmp( $t_id, $p_project_id ) ? '<li class="active">' : '<li>';
-		echo '<a href="' . helper_mantis_url( 'set_project.php' ) . '?project_id=' . $t_id . '"';
-		check_selected( $p_project_id, $t_id, false );
-		check_disabled( $t_id == $p_filter_project_id || !$t_can_report );
-		echo ' class="project-link"> ' . string_attribute( project_get_field( $t_id, 'name' ) ) . ' </a></li>' . "\n";
-		layout_navbar_subproject_option_list( $t_id, $p_project_id, $p_filter_project_id, $p_trace, $p_can_report_only );
+		$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
 	}
 
-	echo '</ul>';
-	echo '</div>';
-	echo '</li>';
-}
+	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_ftr);
+	$t_menu[] = array('label' => 'divider', 'data' => '');
+	$t_menu[] = array('label' => 'Any Project', 'data' => array('link' => helper_mantis_url( 'set_project.php' ) . '?project_id=' . ALL_PROJECTS, 'icon' => ''));
 
-/**
- * List projects that the current user has access to
- *
- * @param integer $p_parent_id         A parent project identifier.
- * @param integer $p_project_id        A project identifier.
- * @param integer $p_filter_project_id A filter project identifier.
- * @param boolean $p_trace             Whether to trace parent projects.
- * @param boolean $p_can_report_only   If true, disables projects in which user can't report issues; defaults to false (all projects enabled).
- * @param array   $p_parents           Array of parent projects.
- * @return void
- */
-function layout_navbar_subproject_option_list( $p_parent_id, $p_project_id = null, $p_filter_project_id = null, $p_trace = false, $p_can_report_only = false, array $p_parents = array() ) {
-	array_push( $p_parents, $p_parent_id );
-	$t_user_id = auth_get_current_user_id();
-	$t_project_ids = user_get_accessible_subprojects( $t_user_id, $p_parent_id );
-	$t_can_report = true;
+	dropdown_menu('Projects', $t_menu, 'grey', 'fa-book');
 
-	foreach( $t_project_ids as $t_id ) {
-		if( $p_can_report_only ) {
-			$t_report_bug_threshold = config_get( 'report_bug_threshold', null, $t_user_id, $t_id );
-			$t_can_report = access_has_project_level( $t_report_bug_threshold, $t_id, $t_user_id );
-		}
+	// reports
+	$t_menu = array(
+		array('label' => 'Work Log', 'data' => array('link' => 'worklog_summary_page.php', 'icon' => 'fa-clock-o')),
+		array('label' => 'Roadmap', 'data' => array('link' => 'roadmap_page.php', 'icon' => 'fa-road')),
+		array('label' => 'Change Log', 'data' => array('link' => 'changelog_page.php', 'icon' => 'fa-retweet')),
+		array('label' => 'divider', 'data' => ''),
+		array('label' => 'Summary', 'data' => array('link' => 'summary_page.php', 'icon' => 'fa-bar-chart-o'))
+	);
 
-		if( $p_trace ) {
-			$t_full_id = join( $p_parents, ";" ) . ';' . $t_id;
-		} else {
-			$t_full_id = $t_id;
-		}
+	dropdown_menu('Reports', $t_menu, 'grey', 'fa-heartbeat');
 
-		echo 0 == strcmp( $p_project_id, $t_full_id ) ? '<li class="active">' : '<li>';
-		echo '<a href="' . helper_mantis_url( 'set_project.php' ) . '?project_id=' . $t_full_id . '"';
-		check_selected( $p_project_id, $t_full_id, false );
-		check_disabled( $t_id == $p_filter_project_id || !$t_can_report );
-		echo ' class="project-link"> ' . str_repeat( '&#160;', count( $p_parents ) * 4 );
-		echo string_attribute( project_get_field( $t_id, 'name' ) ) . '</a></li>' . "\n";
+	// settings
+	$t_menu = array(
+		array('label' => 'My Account', 'data' => array('link' => 'account_page.php', 'icon' => 'fa-user')),
+		array('label' => 'Manage', 'data' => array('link' => 'manage_overview_page.php', 'icon' => 'fa-gears')),
+		array('label' => 'divider', 'data' => ''),
+		array('label' => 'Logout', 'data' => array('link' => 'logout_page.php', 'icon' => 'fa-sign-out')),
+	);
 
-		layout_navbar_subproject_option_list( $t_id, $p_project_id, $p_filter_project_id, $p_trace, $p_can_report_only, $p_parents );
-	}
-}
+	dropdown_menu('Settings', $t_menu, 'grey', 'fa-sliders');
 
-
-/**
- * Print user avatar in the navbar
- * @param string $p_img_class css class to use with the img tag
- * @return null
- */
-function layout_navbar_user_avatar( $p_img_class = 'nav' ) {
-	$t_default_avatar = '<i class="ace-icon fa fa-user fa-2x white"></i> ';
-
-	if( OFF === config_get( 'show_avatar' ) ) {
-		echo $t_default_avatar;
-		return;
-	}
-
-	$p_user_id = auth_get_current_user_id();
-	if( !user_exists( $p_user_id ) ) {
-		echo $t_default_avatar;
-		return;
-	}
-
-	if( access_has_project_level( config_get( 'show_avatar_threshold' ), null, $p_user_id ) ) {
-		$t_avatar = Avatar::get( $p_user_id, 40 );
-		if( false !== $t_avatar ) {
-			echo prepare_raw_avatar( $t_avatar, $p_img_class, 40 );
-			return;
-		}
-	}
-
-	echo $t_default_avatar;
-}
-
-/**
- * Print sidebar
- * @param string $p_active_sidebar_page page where the displayed page lives under
- * @return void
- */
-function layout_print_sidebar( $p_active_sidebar_page = null ) {
-	if( auth_is_user_authenticated() ) {
-		$t_protected = current_user_get_field( 'protected' );
-		$t_current_project = helper_get_current_project();
-
-		# Starting sidebar markup
-		layout_sidebar_begin();
-
-		# Plugin / Event added options
-		$t_event_menu_options = event_signal( 'EVENT_MENU_MAIN_FRONT' );
-		layout_plugin_menu_options_for_sidebar( $t_event_menu_options, $p_active_sidebar_page );
-
-		# Main Page
-		if( config_get( 'news_enabled' ) == ON ) {
-			layout_sidebar_menu( 'main_page.php', 'main_link', 'fa-bullhorn', $p_active_sidebar_page  );
-		}
-
-		# My View
-		if(config_get("main_menu_show_my_view")){
-			layout_sidebar_menu( 'my_view_page.php', 'my_view_link', 'fa-dashboard', $p_active_sidebar_page );
-		}
-
-		# View Bugs
-		if(config_get("main_menu_show_bugs")){
-			layout_sidebar_menu( 'view_all_bug_page.php', 'view_bugs_link', 'fa-list-alt', $p_active_sidebar_page );
-		}
-
-		# Report Bugs
-		if( config_get("main_menu_show_report_bug") && access_has_any_project_level( 'report_bug_threshold' ) ) {
-			$t_bug_url = string_get_bug_report_url();
-			layout_sidebar_menu( $t_bug_url, 'report_bug_link', 'fa-edit', $p_active_sidebar_page );
-		}
-
-		# Changelog Page
-		if( config_get("main_menu_show_changelog") && access_has_project_level( config_get( 'view_changelog_threshold' ) ) ) {
-			layout_sidebar_menu( 'changelog_page.php', 'changelog_link', 'fa-retweet', $p_active_sidebar_page );
-		}
-
-		# Time Tracking / Billing
-		if( config_get( 'time_tracking_enabled' ) && access_has_global_level( config_get( 'time_tracking_reporting_threshold' ) ) ) {
-			layout_sidebar_menu( 'worklog_summary_page.php', 'worklog_link', 'fa-clock-o', $p_active_sidebar_page );
-		}
-
-		# Roadmap Page
-		if( config_get("main_menu_show_roadmap") && access_has_project_level( config_get( 'roadmap_view_threshold' ) ) ) {
-			layout_sidebar_menu( 'roadmap_page.php', 'roadmap_link', 'fa-road', $p_active_sidebar_page );
-		}
-
-		# Summary Page
-		if( config_get("main_menu_show_summary") && access_has_project_level( config_get( 'view_summary_threshold' ) ) ) {
-			layout_sidebar_menu( 'summary_page.php', 'summary_link', 'fa-bar-chart-o', $p_active_sidebar_page );
-		}
-
-		# Project Documentation Page
-		if( ON == config_get( 'enable_project_documentation' ) ) {
-			layout_sidebar_menu( 'proj_doc_page.php', 'docs_link', 'fa-book', $p_active_sidebar_page );
-		}
-
-		# Project Wiki
-		if( ON == config_get_global( 'wiki_enable' )  ) {
-			layout_sidebar_menu( 'wiki.php?type=project&amp;id=' . $t_current_project, 'wiki', 'fa-book', $p_active_sidebar_page );
-		}
-
-		# Manage Users (admins) or Manage Project (managers) or Manage Custom Fields
-		if( access_has_global_level( config_get( 'manage_site_threshold' ) ) ) {
-			layout_sidebar_menu( 'manage_overview_page.php', 'manage_link', 'fa-gears', $p_active_sidebar_page );
-		} else {
-			$t_show_access = min( config_get( 'manage_user_threshold' ), config_get( 'manage_project_threshold' ), config_get( 'manage_custom_fields_threshold' ) );
-			if( access_has_global_level( $t_show_access ) || access_has_any_project( $t_show_access ) ) {
-				$t_current_project = helper_get_current_project();
-				if( access_has_global_level( config_get( 'manage_user_threshold' ) ) ) {
-					$t_link = 'manage_user_page.php';
-				} else {
-					if( access_has_project_level( config_get( 'manage_project_threshold' ), $t_current_project ) && ( $t_current_project <> ALL_PROJECTS ) ) {
-						$t_link = 'manage_proj_edit_page.php?project_id=' . $t_current_project;
-					} else {
-						$t_link = 'manage_proj_page.php';
-					}
-				}
-				layout_sidebar_menu( $t_link , 'manage_link', 'fa-gears' );
-			}
-		}
-
-		# Plugin / Event added options
-		$t_event_menu_options = event_signal( 'EVENT_MENU_MAIN' );
-		layout_plugin_menu_options_for_sidebar( $t_event_menu_options, $p_active_sidebar_page );
-
-		# Config based custom options
-		layout_config_menu_options_for_sidebar( $p_active_sidebar_page );
-
-		# Ending sidebar markup
-		layout_sidebar_end();
-	}
-}
-
-/**
- * Process plugin menu options for sidebar
- * @param array $p_plugin_event_response The response from the plugin event signal.
- * @param string $p_active_sidebar_page The active page on the sidebar.
- * @return void
- */
-function layout_plugin_menu_options_for_sidebar( $p_plugin_event_response, $p_active_sidebar_page ) {
-	$t_menu_options = array();
-
-	foreach( $p_plugin_event_response as $t_plugin => $t_plugin_menu_options ) {
-		foreach( $t_plugin_menu_options as $t_callback => $t_callback_menu_options ) {
-			if( is_array( $t_callback_menu_options ) ) {
-				$t_menu_options = array_merge( $t_menu_options, $t_callback_menu_options );
-			} else {
-				if( !is_null( $t_callback_menu_options ) ) {
-					$t_menu_options[] = $t_callback_menu_options;
-				}
-			}
-		}
-	}
-
-	layout_options_for_sidebar( $t_menu_options, $p_active_sidebar_page );
-}
-
-/**
- * Process main menu options from config.
- * @param string $p_active_sidebar_page The active page on the sidebar.
- * @return void
- */
-function layout_config_menu_options_for_sidebar( $p_active_sidebar_page ) {
-	$t_menu_options = array();
-	$t_custom_options = config_get( 'main_menu_custom_options' );
-
-	foreach( $t_custom_options as $t_custom_option ) {
-		if( isset( $t_custom_option['url'] ) ) {
-			$t_menu_option = $t_custom_option;
-		} else {
-			# Support < 2.0.0 custom menu options config format
-			$t_menu_option = array();
-			$t_menu_option['title'] = $t_custom_option[0];
-			$t_menu_option['access_level'] = $t_custom_option[1];
-			$t_menu_option['url'] = $t_custom_option[2];
-		}
-
-		$t_menu_options[] = $t_menu_option;
-	}
-
-	layout_options_for_sidebar( $t_menu_options, $p_active_sidebar_page );
-}
-
-/**
- * Process main menu options
- * @param array $p_menu_options Array of menu options to output.
- * @param string $p_active_sidebar_page The active page on the sidebar.
- * @return void
- */
-function layout_options_for_sidebar( $p_menu_options, $p_active_sidebar_page ) {
-	foreach( $p_menu_options as $t_menu_option ) {
-		$t_icon = isset( $t_menu_option['icon'] ) ? $t_menu_option['icon'] : 'fa-plug';
-		if( !isset( $t_menu_option['url'] ) || !isset( $t_menu_option['title'] ) ) {
-			continue;
-		}
-
-		if( isset( $t_menu_option['access_level'] ) ) {
-			if( !access_has_project_level( $t_menu_option['access_level'] ) ) {
-				continue;
-			}
-		}
-
-		layout_sidebar_menu( $t_menu_option['url'], $t_menu_option['title'], $t_icon, $p_active_sidebar_page );
-	}
-}
-
-/**
- * Print sidebar opening elements
- * @return null
- */
-function layout_sidebar_begin() {
-	$t_collapse_block = is_collapsed( 'sidebar' );
-	$t_block_css = $t_collapse_block ? 'menu-min' : '';
-
-	echo '<div id="sidebar" class="sidebar sidebar-fixed responsive compact ' . $t_block_css . '">';
-
-	echo '<ul class="nav nav-list">';
-}
-
-
-/**
- * Print sidebar menu item
- * @param string $p_page page name
- * @param string $p_title menu title in english
- * @param string $p_icon icon to use for this menu
- * @param string $p_active_sidebar_page page name to set as active
- * @return null
- */
-function layout_sidebar_menu( $p_page, $p_title, $p_icon, $p_active_sidebar_page = null ) {
-	if( $p_page == $p_active_sidebar_page ||
-		$p_page == basename( $_SERVER['SCRIPT_NAME'] ) ) {
-		echo '<li class="active">' . "\n";
-	} else {
-		echo '<li>' . "\n";
-	}
-
-	# Handle relative / absolute urls
-	if ( stripos( $p_page, 'https:' ) === 0 || stripos( $p_page, 'http:' ) === 0 ) {
-		$t_url = $p_page;
-	} else {
-		$t_url = helper_mantis_url( $p_page );
-	}
-
-	echo '<a href="' . $t_url . '">' . "\n";
-	echo '<i class="menu-icon fa ' . $p_icon . '"></i> ' . "\n";
-	echo '<span class="menu-text"> ' . lang_get_defaulted( $p_title ) . ' </span>' . "\n";
-	echo '</a>' . "\n";
-	echo '<b class="arrow"></b>' . "\n";
-	echo '</li>' . "\n";
-}
-
-
-/**
- * Print sidebar closing elements
- * @return null
- */
-function layout_sidebar_end() {
-	echo '</ul>';
-
-	$t_collapse_block = is_collapsed( 'sidebar' );
-
-	echo '<div id="sidebar" class="sidebar-toggle sidebar-collapse">';
-	if( layout_is_rtl() ) {
-		$t_block_icon = $t_collapse_block ? 'fa-angle-double-left' : 'fa-angle-double-right';
-		echo '<i data-icon2="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-right"
-		class="ace-icon fa ' . $t_block_icon . '"></i>';
-	} else {
-		$t_block_icon = $t_collapse_block ? 'fa-angle-double-right' : 'fa-angle-double-left';
-		echo '<i data-icon2="ace-icon fa fa-angle-double-right" data-icon1="ace-icon fa fa-angle-double-left"
-		class="ace-icon fa ' . $t_block_icon . '"></i>';
-	}
-	echo '</div>';
 	echo '</div>';
 }
 
@@ -1021,11 +531,15 @@ function layout_page_content_end() {
  * Render breadcrumbs bar.
  * @return null
  */
-function layout_breadcrumbs() {
+function layout_breadcrumbs($p_active_page) {
 	echo '<div id="breadcrumbs" class="breadcrumbs noprint">' , "\n";
 
-	# Login information
 	echo '<ul class="breadcrumb">' , "\n";
+
+	# current page
+	echo $p_active_page;
+
+	# Login information
 	if( current_user_is_anonymous() ) {
 		$t_return_page = $_SERVER['SCRIPT_NAME'];
 		if( isset( $_SERVER['QUERY_STRING'] ) ) {
@@ -1061,6 +575,12 @@ function layout_breadcrumbs() {
 		echo '  <span class="label hidden-xs label-default ' . $t_label . '">' . $t_access_level . '</span></li>' . "\n";
 	}
 	echo '</ul>' , "\n";
+
+	# info on current project
+	$t_current_project_id = helper_get_current_project();
+
+	echo 'Current Project: ';
+	echo string_attribute(($t_current_project_id == ALL_PROJECTS ? lang_get( 'all_projects' ) : project_get_field( $t_current_project_id, 'name' )));
 
 	# Recently visited
 	if( last_visited_enabled() ) {

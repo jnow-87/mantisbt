@@ -62,9 +62,17 @@
     padding: 0;
 }
 
-/* dropdown intermediate header */
+/* dropdown intermediate header and colors */
 .dropdown-header {
 	color: #1d520a;
 	padding: 5px;
 	font-weight: bold;
+}
+.dropdown-green > li:hover > a,
+.dropdown-green > li > a:focus,
+.dropdown-green > li > a:active,
+.dropdown-green > li.active > a,
+.dropdown-green > li.active:hover > a {
+    background: #cae8bf;
+    color: #444444;
 }
