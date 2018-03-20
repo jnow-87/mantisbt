@@ -644,7 +644,7 @@ function string_get_bug_page( $p_action ) {
  * @param boolean $p_fqdn        Whether to return an absolute or relative link.
  * @return string
  */
-function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = false ) {
+function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = false, $p_style = '' ) {
 	if( bug_exists( $p_bug_id ) ) {
 		$t_link = '<a href="';
 		if( $p_fqdn ) {
@@ -664,6 +664,10 @@ function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = f
 				$t_link .= ' class="resolved"';
 			}
 		}
+
+		if($p_style != '')
+			$t_link .= ' style="' . $p_style . '"';
+
 		$t_link .= '>' . bug_format_id( $p_bug_id ) . '</a>';
 	} else {
 		$t_link = bug_format_id( $p_bug_id );

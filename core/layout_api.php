@@ -139,10 +139,10 @@ function layout_page_header_end( $p_page_id = null) {
 
 /**
  * Print page common elements including navbar, info bar
- * @param string $p_active_page the current page that is rendered
+ * @param string $p_page_title the current page that is rendered
  * @return void
  */
-function layout_page_begin( $p_active_page = null ) {
+function layout_page_begin( $p_page_title = null ) {
 	layout_navbar();
 
 	if( !db_is_connected() ) {
@@ -152,8 +152,6 @@ function layout_page_begin( $p_active_page = null ) {
 	layout_main_container_begin();
 
 	layout_main_content_begin();
-
-	layout_breadcrumbs($p_active_page);
 
 	layout_page_content_begin();
 
@@ -475,6 +473,45 @@ function layout_navbar() {
 
 	dropdown_menu('Settings', $t_menu, 'grey', 'fa-sliders');
 
+	/* issue search */
+	echo '<div class="input-xs">';
+	echo '<form method="post" action="' . helper_mantis_url( 'jump_to_bug.php' ) . '">';
+	echo '<input type="text" name="bug_id" class="input-xs" size="7" placeholder="Issue ID">';
+	echo '</form>';
+	echo '</div>';
+
+	echo '<div class="pull-right" style="padding-top:7px;padding-right:10px;">';
+
+	/* recently visited */
+	if( last_visited_enabled() ) {
+		$t_issues = '';
+		$t_comma = '';
+		$t_ids = last_visited_get_array();
+
+		if( count( $t_ids ) > 0 ) {
+			foreach( $t_ids as $t_id ) {
+				$t_issues .= $t_comma . ' ' . string_get_bug_view_link( $t_id, true, false, 'color:white;font-size:x-small' );
+
+				if($t_comma == '')
+					$t_comma = ',';
+			}
+		}
+
+		label('Recently visited:'); echo '<span class="white" style="padding-right:5px"> ' . $t_issues . '</span>';
+	}
+
+	/* user info */
+	$t_user = string_html_specialchars(current_user_get_field( 'username' ));
+
+	label('User:'); echo '<span class="white" style="padding-right:5px"> ' . $t_user . '</span>';
+
+	/* project info */
+	$t_current_project_id = helper_get_current_project();
+	$t_project = string_attribute(($t_current_project_id == ALL_PROJECTS ? lang_get( 'all_projects' ) : project_get_field( $t_current_project_id, 'name' )));
+
+	label('Project:'); echo '<span class="white"> ' . $t_project . '</span>';
+
+	echo '</div>';
 	echo '</div>';
 }
 
@@ -524,99 +561,6 @@ function layout_page_content_begin() {
  */
 function layout_page_content_end() {
 	echo '</div>' , "\n";
-}
-
-
-/**
- * Render breadcrumbs bar.
- * @return null
- */
-function layout_breadcrumbs($p_active_page) {
-	echo '<div id="breadcrumbs" class="breadcrumbs noprint">' , "\n";
-
-	echo '<ul class="breadcrumb">' , "\n";
-
-	# current page
-	echo $p_active_page;
-
-	# Login information
-	if( current_user_is_anonymous() ) {
-		$t_return_page = $_SERVER['SCRIPT_NAME'];
-		if( isset( $_SERVER['QUERY_STRING'] ) ) {
-			$t_return_page .= '?' . $_SERVER['QUERY_STRING'];
-		}
-
-		$t_return_page = string_url( $t_return_page );
-
-		echo ' <li><i class="fa fa-user home-icon active"></i> ' . lang_get( 'anonymous' ) . ' </li>' . "\n";
-
-		echo '<div class="btn-group btn-corner">' . "\n";
-		echo '	<a href="' . helper_mantis_url( 'login_page.php?return=' . $t_return_page ) .
-			'" class="btn btn-primary btn-xs">' . lang_get( 'login_link' ) . '</a>' . "\n";
-		if( config_get_global( 'allow_signup' ) == ON ) {
-			echo '	<a href="' . helper_mantis_url( 'signup_page.php' ) . '" class="btn btn-primary btn-xs">' .
-				lang_get( 'signup_link' ) . '</a>' . "\n";
-		}
-		echo '</div>' . "\n";
-
-	} else {
-		$t_protected = current_user_get_field( 'protected' );
-		$t_access_level = get_enum_element( 'access_levels', current_user_get_access_level() );
-		$t_display_username = string_html_specialchars( current_user_get_field( 'username' ) );
-		$t_realname = current_user_get_field( 'realname' );
-		$t_display_realname = is_blank( $t_realname ) ? '' : ' ( ' . string_html_specialchars( $t_realname ) . ' ) ';
-
-		echo '  <li><i class="fa fa-user home-icon active"></i>';
-		$t_page = ( OFF == $t_protected ) ? 'account_page.php' : 'my_view_page.php';
-		echo '  <a href="' . helper_mantis_url( $t_page ) . '">' .
-			$t_display_username . $t_display_realname . '</a>' . "\n";
-
-		$t_label = layout_is_rtl() ? 'arrowed-right' : 'arrowed';
-		echo '  <span class="label hidden-xs label-default ' . $t_label . '">' . $t_access_level . '</span></li>' . "\n";
-	}
-	echo '</ul>' , "\n";
-
-	# info on current project
-	$t_current_project_id = helper_get_current_project();
-
-	echo 'Current Project: ';
-	echo string_attribute(($t_current_project_id == ALL_PROJECTS ? lang_get( 'all_projects' ) : project_get_field( $t_current_project_id, 'name' )));
-
-	# Recently visited
-	if( last_visited_enabled() ) {
-		$t_ids = last_visited_get_array();
-
-		if( count( $t_ids ) > 0 ) {
-			echo '<div class="nav-recent hidden-xs">' . lang_get( 'recently_visited' ) . ': ';
-			$t_first = true;
-
-			foreach( $t_ids as $t_id ) {
-				if( !$t_first ) {
-					echo ', ';
-				} else {
-					$t_first = false;
-				}
-
-				echo string_get_bug_view_link( $t_id );
-			}
-			echo '</div>';
-		}
-	}
-
-	# Bug Jump form
-	# CSRF protection not required here - form does not result in modifications
-	echo '<div id="nav-search" class="nav-search">';
-	echo '<form class="form-search" method="post" action="' . helper_mantis_url( 'jump_to_bug.php' ) . '">';
-	echo '<span class="input-icon">';
-	echo '<input type="text" name="bug_id" autocomplete="off" class="nav-search-input" placeholder="' . lang_get( 'issue_id' ) . '">';
-	echo '<i class="ace-icon fa fa-search nav-search-icon"></i>';
-	echo '</span>';
-	echo '</form>';
-	echo '</div>';
-	echo PHP_EOL;
-
-	echo '</div>';
-	echo PHP_EOL;
 }
 
 /**
