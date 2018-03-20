@@ -6,6 +6,8 @@ require_api('elements_api.php');
 
 
 # TODO
+#	add sortable table elements
+#	how should action bars be layed out (in table head does not work if the table shall be sorted)
 #	document elements_api
 #
 #	pages

@@ -112,18 +112,3 @@ function timeline_events( $p_start_time, $p_end_time, $p_max_events, $p_filter =
 
 	return $t_timeline_events;
 }
-
-/**
- * Print for display an array of events
- * @param array $p_events   Array of events to display
- * @return void
- */
-function timeline_print_events( array $p_events ) {
-	if( empty( $p_events ) ) {
-		echo '<h6 class="padding-4">' . lang_get( 'timeline_no_activity' ) . '</h6>';
-	} else {
-		foreach( $p_events as $t_event ) {
-			echo $t_event->html();
-		}
-	}
-}

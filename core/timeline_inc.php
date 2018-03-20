@@ -27,6 +27,23 @@ define( 'MAX_EVENTS', 50 );
 #						If undefined, it's initialized as null.
 #
 
+
+/**
+ * Print for display an array of events
+ * @param array $p_events   Array of events to display
+ * @return void
+ */
+function timeline_print_events( array $p_events ) {
+	if(empty( $p_events )){
+		echo '<tr><td>No activity within time range</td></tr>';
+		return;
+	}
+
+	foreach( $p_events as $t_event ) {
+		echo '<tr><td>' . $t_event->html() . '</td></tr>';
+	}
+}
+
 if( !isset( $g_timeline_filter ) ) {
 	$g_timeline_filter = null;
 }
@@ -51,69 +68,54 @@ $t_url_params = $_GET;
 if( isset( $t_url_params['all'] ) ) {
 	unset( $t_url_params['all'] );
 }
+
+$t_short_date_format = config_get( 'short_date_format' );
+$t_url_params['days'] = $f_days + 7;
+$t_next_days = ( $f_days - 7 ) > 0 ? $f_days - 7 : 0;
 ?>
 
-<div id="timeline" class="widget-box widget-color-blue2 <?php echo $t_block_css ?>">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<i class="ace-icon fa fa-clock-o"></i>
-			<?php echo lang_get( 'timeline_title' ) ?>
-		</h4>
-		<div class="widget-toolbar">
-			<a data-action="collapse" href="#">
-				<i class="1 ace-icon fa <?php echo $t_block_icon ?> bigger-125"></i>
-			</a>
-		</div>
-	</div>
+<!-- timeline table -->
+<table class="table table-bordered table-condensed table-striped table-hover">
+	<thead>	
+		<tr><td>
+			<div class="pull-right">
+			<?php
+				label(date( $t_short_date_format, $t_start_time ), 'label-grey');
+				echo ' - ';
+				label(date( $t_short_date_format, $t_end_time ), 'label-grey');
+				hspace('10px');
 
-	<div class="widget-body">
-		<div class="widget-toolbox">
-			<div class="btn-toolbar">
-<?php
-				$t_short_date_format = config_get( 'short_date_format' );
-				echo '&#160;&#160;';
-				echo '<span class="label label-grey"> ' . date( $t_short_date_format, $t_start_time ) . ' </span>';
-				echo  ' .. ';
-				echo '<span class="label label-grey"> ' . date( $t_short_date_format, $t_end_time ) . ' </span>';
-				echo '&#160;&#160;';
-
-				echo '<div class="btn-group">';
-				$t_url_params['days'] = $f_days + 7;
 				$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-				echo ' <a class="btn btn-primary btn-xs btn-white btn-round" href="' . $t_href . '">' . lang_get( 'prev' ) . '</a>';
 
-				$t_next_days = ( $f_days - 7 ) > 0 ? $f_days - 7 : 0;
+				button_link('Prev', $t_href);
+				hspace('3px');
 
 				if( $t_next_days != $f_days ) {
 					$t_url_params['days'] = $t_next_days;
 					$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-					echo ' <a class="btn btn-primary btn-xs btn-white btn-round" href="' . $t_href . '">' . lang_get( 'next' ) . '</a>';
+					button_link('Next', $t_href);
 				}
-				echo '</div>';
-?>
+
+				if(!$f_all && count( $t_events ) > MAX_EVENTS){
+					hspace('3px');
+
+					$t_url_params['all'] = 1;
+					$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
+					button_link('More events', $t_href);
+				}
+				?>
+				</div>
 			</div>
-		</div>
 
-		<div class="widget-main no-padding">
-			<div class="profile-feed">
-			</div>
-		</div>
+		</td></tr>
+	</thead>
 
-<?php
-	if( !$f_all && count( $t_events ) > MAX_EVENTS ) {
-		$t_events = array_slice( $t_events, 0, MAX_EVENTS );
+	<tbody>
+		<?php
+		if(!$f_all && count( $t_events ) > MAX_EVENTS)
+			$t_events = array_slice( $t_events, 0, MAX_EVENTS );
+
 		timeline_print_events( $t_events );
-		echo '<div class="widget-toolbox">';
-		echo '<div class="btn-toolbar">';
-		$t_url_params['all'] = 1;
-		$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-		echo '<a class="btn btn-primary btn-xs btn-white btn-round" href="' . $t_href . '">' . lang_get( 'timeline_more' ) . '</a>';
-		echo '</div>';
-		echo '</div>';
-	} else {
-		timeline_print_events( $t_events );
-	}
-?>
-
-	</div>
-</div>
+		?>
+	</tbody>
+</table>

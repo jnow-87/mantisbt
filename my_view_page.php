@@ -33,7 +33,6 @@
  * @uses gpc_api.php
  * @uses helper_api.php
  * @uses html_api.php
- * @uses lang_api.php
  * @uses print_api.php
  * @uses user_api.php
  */
@@ -49,10 +48,18 @@ require_api( 'current_user_api.php' );
 require_api( 'gpc_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'user_api.php' );
 require_api( 'layout_api.php' );
+require_api( 'elements_api.php' );
+require_api( 'bug_api.php' );
+require_api( 'file_api.php' );
+require_api( 'filter_api.php' );
+require_api( 'filter_constants_inc.php' );
+require_api( 'icon_api.php' );
+require_api( 'project_api.php' );
+require_api( 'string_api.php' );
+
 require_css( 'status_config.php' );
 
 auth_ensure_user_authenticated();
@@ -67,7 +74,7 @@ compress_enable();
 # don't index my view page
 html_robots_noindex();
 
-layout_page_header_begin( lang_get( 'my_view_link' ) );
+layout_page_header_begin();
 
 if( current_user_get_pref( 'refresh_delay' ) > 0 ) {
 	html_meta_redirect( 'my_view_page.php?refresh=true', current_user_get_pref( 'refresh_delay' ) * 60 );
@@ -83,6 +90,19 @@ $t_per_page = config_get( 'my_view_bug_count' );
 $t_bug_count = null;
 $t_page_count = null;
 
+$t_secion_titles = array(
+	'unassigned' => 'Unassigned',
+	'recent_mod' => 'Recently Modified',
+	'reported' => 'Reported by Me',
+	'assigned' => 'Assigned to Me (Unresolved)',
+	'resolved' => 'Resolved',
+	'monitored' => 'Monitored by Me',
+	'feedback' => 'Awaiting Feedback from Me',
+	'verify' => 'Awaiting Confirmation of Resolution from Me',
+	'my_comments' => 'Issues I Have Commented On',
+);
+
+
 $t_boxes = config_get( 'my_view_boxes' );
 asort( $t_boxes );
 reset( $t_boxes );
@@ -90,75 +110,224 @@ reset( $t_boxes );
 
 $t_project_id = helper_get_current_project();
 $t_timeline_view_threshold_access = access_has_project_level( config_get( 'timeline_view_threshold' ) );
-$t_timeline_view_class = ( $t_timeline_view_threshold_access ) ? "col-md-7" : "col-md-6-left";
-?>
-<div class="col-xs-12 <?php echo $t_timeline_view_class ?>">
 
-<?php
-$t_number_of_boxes = count ( $t_boxes );
-$t_boxes_position = config_get( 'my_view_boxes_fixed_position' );
-$t_counter = 0;
-$t_two_columns_applied = false;
 
-define( 'MY_VIEW_INC_ALLOW', true );
+$t_filter = current_user_get_bug_filter();
+if( $t_filter === false ) {
+	$t_filter = filter_get_default();
+}
+$t_sort = $t_filter['sort'];
+$t_dir = $t_filter['dir'];
 
-while (list ($t_box_title, $t_box_display) = each ($t_boxes)) {
+$t_update_bug_threshold = config_get( 'update_bug_threshold' );
+$t_bug_resolved_status_threshold = config_get( 'bug_resolved_status_threshold' );
+$t_hide_status_default = config_get( 'hide_status_default' );
+$t_default_show_changed = config_get( 'default_show_changed' );
+
+$c_filter['assigned'] = filter_create_assigned_to_unresolved( helper_get_current_project(), $t_current_user_id );
+$t_url_link_parameters['assigned'] = FILTER_PROPERTY_HANDLER_ID . '=' . $t_current_user_id . '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . $t_bug_resolved_status_threshold;
+
+# @TODO cproensa: make this value configurable
+$t_recent_days = 30;
+$c_filter['recent_mod'] = filter_create_recently_modified( $t_recent_days );
+$t_url_link_parameters['recent_mod'] = FILTER_PROPERTY_HIDE_STATUS . '=none'
+		. '&' . FILTER_PROPERTY_FILTER_BY_LAST_UPDATED_DATE . '=' . $c_filter['recent_mod'][FILTER_PROPERTY_FILTER_BY_LAST_UPDATED_DATE]
+		. '&' . FILTER_PROPERTY_LAST_UPDATED_END_DATE . '=' . $c_filter['recent_mod'][FILTER_PROPERTY_LAST_UPDATED_END_DATE]
+		. '&' . FILTER_PROPERTY_LAST_UPDATED_START_DATE . '=' . $c_filter['recent_mod'][FILTER_PROPERTY_LAST_UPDATED_START_DATE];
+
+$c_filter['reported'] = filter_create_reported_by( helper_get_current_project(), $t_current_user_id );
+$t_url_link_parameters['reported'] = FILTER_PROPERTY_REPORTER_ID . '=' . $t_current_user_id . '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . $t_hide_status_default;
+
+$c_filter['resolved'] = array(
+	FILTER_PROPERTY_CATEGORY_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_SEVERITY => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_STATUS => array('0' => $t_bug_resolved_status_threshold),
+	FILTER_PROPERTY_HIGHLIGHT_CHANGED => $t_default_show_changed,
+	FILTER_PROPERTY_REPORTER_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_HANDLER_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_RESOLUTION => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_BUILD => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_VERSION => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_HIDE_STATUS => array('0' => $t_hide_status_default),
+	FILTER_PROPERTY_MONITOR_USER_ID => array('0' => META_FILTER_ANY),
+);
+$t_url_link_parameters['resolved'] = FILTER_PROPERTY_STATUS . '=' . $t_bug_resolved_status_threshold . '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . $t_hide_status_default;
+
+
+$c_filter['unassigned'] = filter_create_assigned_to_unresolved( helper_get_current_project(), 0 );
+$t_url_link_parameters['unassigned'] = FILTER_PROPERTY_HANDLER_ID . '=[none]' . '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . $t_hide_status_default;
+
+# TODO: check. handler value looks wrong
+
+$c_filter['monitored'] = filter_create_monitored_by( helper_get_current_project(), $t_current_user_id );
+$t_url_link_parameters['monitored'] = FILTER_PROPERTY_MONITOR_USER_ID . '=' . $t_current_user_id . '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . $t_hide_status_default;
+
+$c_filter['feedback'] = array(
+	FILTER_PROPERTY_CATEGORY_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_SEVERITY => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_STATUS => array('0' => config_get( 'bug_feedback_status' )),
+	FILTER_PROPERTY_HIGHLIGHT_CHANGED => $t_default_show_changed,
+	FILTER_PROPERTY_REPORTER_ID => array('0' => $t_current_user_id),
+	FILTER_PROPERTY_HANDLER_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_RESOLUTION => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_BUILD => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_VERSION => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_HIDE_STATUS => array('0' => $t_hide_status_default),
+	FILTER_PROPERTY_MONITOR_USER_ID => array('0' => META_FILTER_ANY),
+);
+$t_url_link_parameters['feedback'] = FILTER_PROPERTY_REPORTER_ID . '=' . $t_current_user_id . '&' . FILTER_PROPERTY_STATUS . '=' . config_get( 'bug_feedback_status' ) . '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . $t_hide_status_default;
+
+$c_filter['verify'] = array(
+	FILTER_PROPERTY_CATEGORY_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_SEVERITY => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_STATUS => array('0' => $t_bug_resolved_status_threshold),
+	FILTER_PROPERTY_HIGHLIGHT_CHANGED => $t_default_show_changed,
+	FILTER_PROPERTY_REPORTER_ID => array('0' => $t_current_user_id),
+	FILTER_PROPERTY_HANDLER_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_RESOLUTION => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_BUILD => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_VERSION => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_HIDE_STATUS => array('0' => $t_hide_status_default),
+	FILTER_PROPERTY_MONITOR_USER_ID => array('0' => META_FILTER_ANY),
+);
+$t_url_link_parameters['verify'] = FILTER_PROPERTY_REPORTER_ID . '=' . $t_current_user_id . '&' . FILTER_PROPERTY_STATUS . '=' . $t_bug_resolved_status_threshold;
+
+$c_filter['my_comments'] = array(
+	FILTER_PROPERTY_CATEGORY_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_SEVERITY => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_STATUS => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_HIGHLIGHT_CHANGED => $t_default_show_changed,
+	FILTER_PROPERTY_REPORTER_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_HANDLER_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_RESOLUTION => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_BUILD => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_VERSION => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_HIDE_STATUS => array('0' => $t_hide_status_default),
+	FILTER_PROPERTY_MONITOR_USER_ID => array('0' => META_FILTER_ANY),
+	FILTER_PROPERTY_NOTE_USER_ID=> array('0' => META_FILTER_MYSELF),
+);
+
+$t_url_link_parameters['my_comments'] = FILTER_PROPERTY_NOTE_USER_ID. '=' . META_FILTER_MYSELF . '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . $t_hide_status_default;
+
+
+
+/**
+ *	actual content
+ */
+page_title('My View');
+
+echo '<div class="col-md-6-left">';
+
+/* filter */
+foreach($t_boxes as $t_box_title => $t_box_display) {
+	if(!(
 		# don't display bugs that are set as 0
-	if ($t_box_display == 0) {
-		$t_number_of_boxes = $t_number_of_boxes - 1;
-	}
+		($t_box_display == 0)
 		# don't display "Assigned to Me" bugs to users that bugs can't be assigned to
-	else if(
-		$t_box_title == 'assigned'
-		&&  ( current_user_is_anonymous()
-			|| !access_has_project_level( config_get( 'handle_bug_threshold' ), $t_project_id, $t_current_user_id )
-		)
-	) {
-		$t_number_of_boxes = $t_number_of_boxes - 1;
-	}
+	 || ($t_box_title == 'assigned' &&  ( current_user_is_anonymous() || !access_has_project_level( config_get( 'handle_bug_threshold' ), $t_project_id, $t_current_user_id )))
 		# don't display "Monitored by Me" bugs to users that can't monitor bugs
-	else if( $t_box_title == 'monitored' && ( current_user_is_anonymous() OR !access_has_project_level( config_get( 'monitor_bug_threshold' ), $t_project_id, $t_current_user_id ) ) ) {
-		$t_number_of_boxes = $t_number_of_boxes - 1;
-	}
+	 || ($t_box_title == 'monitored' && ( current_user_is_anonymous() OR !access_has_project_level( config_get( 'monitor_bug_threshold' ), $t_project_id, $t_current_user_id )))
 		# don't display "Reported by Me" bugs to users that can't report bugs
-	else if( in_array( $t_box_title, array( 'reported', 'feedback', 'verify' ) ) &&
-		( current_user_is_anonymous() OR !access_has_project_level( config_get( 'report_bug_threshold' ), $t_project_id, $t_current_user_id ) ) ) {
-		$t_number_of_boxes = $t_number_of_boxes - 1;
+	 || (in_array( $t_box_title, array( 'reported', 'feedback', 'verify' ) ) &&	( current_user_is_anonymous() OR !access_has_project_level( config_get( 'report_bug_threshold' ), $t_project_id, $t_current_user_id )))
+	)){
+		$t_rows = filter_get_bug_rows( $f_page_number, $t_per_page, $t_page_count, $t_bug_count, $c_filter[$t_box_title] );
+		bug_cache_columns_data( $t_rows , array( 'attachment_count' ) );
+
+		$t_filter = array_merge( $c_filter[$t_box_title], $t_filter );
+
+		# Improve performance by caching category data in one pass
+		if( helper_get_current_project() == 0 ) {
+			$t_categories = array();
+			foreach( $t_rows as $t_row ) {
+				$t_categories[] = $t_row->category_id;
 			}
 
-			# display the box
-	else {
-		if( !$t_timeline_view_threshold_access ) {
-			if ($t_counter >= $t_number_of_boxes / 2 && !$t_two_columns_applied) {
-				echo '</div>';
-				echo '<div class="col-xs-12 col-md-6-left">';
-				$t_two_columns_applied = true;
-			} elseif ($t_counter >= $t_number_of_boxes && $t_two_columns_applied) {
-				echo '</div>';
-			} else {
-				include( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'my_view_inc.php' );
-				echo '<div class="space-10"></div>';
-			}
-			$t_counter++;
-		} else {
-			include( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'my_view_inc.php' );
-			echo '<div class="space-10"></div>';
+			category_cache_array_rows( array_unique( $t_categories ) );
 		}
+
+
+		section_start($t_secion_titles[$t_box_title]);
+
+		// filter title
+		$t_box_url = html_entity_decode( config_get( 'bug_count_hyperlink_prefix' ) ).'&' . $t_url_link_parameters[$t_box_title];
+
+		// view info
+		if( count( $t_rows ) > 0 ) {
+			$v_start = $t_filter[FILTER_PROPERTY_ISSUES_PER_PAGE] * ( $f_page_number - 1 ) + 1;
+			$v_end = $v_start + count( $t_rows ) - 1;
+		} else {
+			$v_start = 0;
+			$v_end = 0;
+		}
+		?>
+
+		<!-- filter content -->
+		<table class="table table-bordered table-condensed table-striped table-hover" data-toggle="table">
+			<thead style="cursor:pointer">
+				<tr>
+					<th data-sortable="true" width="15%">Issue ID<i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
+					<th data-sortable="true" width="60%">Summary<i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
+					<th data-sortable="true" width="10%">Category<i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
+					<th data-sortable="true" width="100%">Status<i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
+				</tr>
+			</thead>
+
+			<tfoot>
+				<tr>
+				<td colspan="6">
+					<div class="pull-right">
+					<?php button_link('View issues: ' . $v_start . ' - ' . $v_end . '/' . $t_bug_count, $t_box_url); ?>
+					</div>
+				</td>
+				</tr>
+			</tfoot>
+
+			<tbody>
+				<?php
+				# -- Loop over bug rows and create $v_* variables --
+				$t_count = count( $t_rows );
+
+				for( $i = 0;$i < $t_count; $i++ ) {
+					$t_bug = $t_rows[$i];
+				?>
+
+					<tr>
+						<td><?php print_bug_link( $t_bug->id, false ); ?></td>
+						<td><?php echo bug_format_summary( $t_bug->id, SUMMARY_CAPTION ); ?></td>
+						<td><?php echo string_display_line( category_full_name( $t_bug->category_id ) ); ?></td>
+						<td><?php
+							$t_status_label = html_get_status_css_class( $t_bug->status );
+							echo '<i class="fa fa-square fa-status-box ' . $t_status_label . '"></i> ';
+							echo string_display_line( get_enum_element( 'status', $t_bug->status ) ); ?></td>
+					</tr>
+				<?php
+				}
+				?>
+			</tbody>
+		</table>
+
+		<?php
+		unset( $t_rows );
+
+		section_end();
 	}
 }
-?>
-</div>
 
-<?php if( $t_timeline_view_threshold_access ) { ?>
-<div class="col-md-5 col-xs-12">
-	<?php
-		# Build a simple filter that gets all bugs for current project
-		$g_timeline_filter = array();
-		$g_timeline_filter[FILTER_PROPERTY_HIDE_STATUS] = array( META_FILTER_NONE );
-		$g_timeline_filter = filter_ensure_valid_filter( $g_timeline_filter );
-		include( $g_core_path . 'timeline_inc.php' );
-	?>
-	<div class="space-10"></div>
-</div>
-<?php }
+echo '</div>';
+
+/* timeline */
+if( $t_timeline_view_threshold_access ) {
+	echo '<div class="col-md-6-right">';
+	section_start('Timeline');
+
+	# Build a simple filter that gets all bugs for current project
+	$g_timeline_filter = array();
+	$g_timeline_filter[FILTER_PROPERTY_HIDE_STATUS] = array( META_FILTER_NONE );
+	$g_timeline_filter = filter_ensure_valid_filter( $g_timeline_filter );
+	include( $g_core_path . 'timeline_inc.php' );
+
+	section_end();
+	echo '</div>';
+}
+
 layout_page_end();

@@ -419,6 +419,7 @@ function layout_navbar() {
 	// issues
 	$t_menu = array(
 		array('label' => 'Report Issue', 'data' => array('link' => 'bug_report_page.php', 'icon' => 'fa-edit')),
+		array('label' => 'divider', 'data' => ''),
 		array('label' => 'My View', 'data' => array('link' => 'my_view_page.php', 'icon' => 'fa-dashboard')),
 		array('label' => 'View Issues', 'data' => array('link' => 'view_all_bug_page.php', 'icon' => 'fa-tasks'))
 	);
