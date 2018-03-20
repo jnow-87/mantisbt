@@ -155,4 +155,11 @@ function text_input_toggle($p_label, $p_value, $p_class){
 	</div>
 <?php
 }
+
+function label($p_name, $p_class = ''){
+?>
+	<span class="label label-default <?php echo $p_class ?>"><?php echo $p_name ?></span>
+<?php
+}
+
 ?>

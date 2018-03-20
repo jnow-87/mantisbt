@@ -8,14 +8,15 @@ require_api('elements_api.php');
 # TODO
 #	document elements_api
 #
+#	pages
+#
+#
 #	overhaul layout
 #		improve layout of worklog in bug view
-#		move control panel to the top
 #		make use of tabs
 #		remove boxes, replacing them with a more open layout
 #		streamline toolbars
 #		add spaces between buttons
-#		which css files are used
 function tab_page0(){
 ?>
 	<table class="table table-bordered table-condensed table-striped table-hover" data-toggle="table">
@@ -51,7 +52,7 @@ $t_menu0 = array(
 
 
 layout_page_header('elements demos');
-layout_page_begin();
+layout_page_begin('elements demos');
 
 
 ?>
@@ -80,7 +81,7 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 
 	<?php section_start('link button demo') ?>
 	<h4>form inputs</h4>
-	<?php echo 'link button input: ' . $f_link_button_input . '<br>' ?>
+	<?php label('link button input:'); echo $f_link_button_input . '<br>' ?>
 
 	<div>
 		<?php button_link('view issue 92', 'view.php', array('id' => '92'), ''); ?>
@@ -108,9 +109,9 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 
 	<?php section_start('form button demo') ?>
 	<h4>form inputs</h4>
-	<?php echo 'submit button state: ' . $f_submit_button_state . '<br>' ?>
-	<?php echo 'delete button state: ' . $f_delete_button_state . '<br>' ?>
-	<?php echo 'form button input: ' . $f_form_button_input . '<br>' ?>
+	<?php label('submit button state:'); echo $f_submit_button_state . '<br>' ?>
+	<?php label('delete button state:'); echo $f_delete_button_state . '<br>' ?>
+	<?php label('form button input:'); echo $f_form_button_input . '<br>' ?>
 
 	<form method="post" action="">
 		<input type="text" name="form_button_input" placeholder="type something"/>
@@ -128,9 +129,9 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 
 	<?php section_start('input text toggle demo') ?>
 	<h4>form inputs</h4>
-	<?php echo 'editable input0: ' . $f_editable_input0 . '<br>' ?>
-	<?php echo 'editable input1: ' . $f_editable_input1 . '<br>' ?>
-	<?php echo 'editable input2: ' . $f_editable_input2 ?>
+	<?php label('editable input0:', 'arrowed'); echo $f_editable_input0 . '<br>' ?>
+	<?php label('editable input1:', 'arrowed-right'); echo $f_editable_input1 . '<br>' ?>
+	<?php label('editable input2:', 'arrowed-in-right'); echo $f_editable_input2 ?>
 
 	<form method="post" action="">
 		<table class="table table-bordered table-condensed table-striped">
