@@ -17,6 +17,7 @@ require_api('elements_api.php');
 #		remove boxes, replacing them with a more open layout
 #		streamline toolbars
 #		add spaces between buttons
+#		remove lang_get()
 function tab_page0(){
 ?>
 	<table class="table table-bordered table-condensed table-striped table-hover" data-toggle="table">
@@ -29,8 +30,6 @@ function tab_page0(){
 		<tr><td> c00 </td><td> c01 </td><td> c02 </td></tr>
 		<tr><td> c10 </td><td> c11 </td><td> c12 </td></tr>
 	</table>
-</table>
-
 <?php
 }
 
@@ -54,6 +53,7 @@ $t_menu0 = array(
 layout_page_header('elements demos');
 layout_page_begin('elements demos');
 
+page_title("Layout elements demo");
 
 ?>
 <div class="col-md-10">
@@ -110,7 +110,7 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	<?php section_start('form button demo') ?>
 	<h4>form inputs</h4>
 	<?php label('submit button state:'); echo $f_submit_button_state . '<br>' ?>
-	<?php label('delete button state:'); echo $f_delete_button_state . '<br>' ?>
+	<?php label('delete button state:', 'label-grey'); echo $f_delete_button_state . '<br>' ?>
 	<?php label('form button input:'); echo $f_form_button_input . '<br>' ?>
 
 	<form method="post" action="">

@@ -113,6 +113,14 @@ function section_end(){
 	echo '</div>';
 }
 
+function hspace($p_space){
+	echo '<span style="padding-right:' . $p_space . '"></span>';
+}
+
+function page_title($p_title){
+	echo '<hr class="hr-page-title" data-content="' . $p_title . '"></hr>';
+}
+
 
 /**
  * print a HTML link with a button look
