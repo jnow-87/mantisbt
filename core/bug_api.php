@@ -1554,6 +1554,18 @@ function bug_format_summary( $p_bug_id, $p_context ) {
 }
 
 /**
+ * return the bug link to VIEW a bug given an ID
+ *  account for the user preference and site override
+ * @param integer $p_bug_id      A bug identifier.
+ * @param boolean $p_detail_info Detail info to display with the link.
+ * @return string	link
+ */
+function bug_format_link( $p_bug_id, $p_detail_info = true ) {
+	return string_get_bug_view_link( $p_bug_id, $p_detail_info );
+}
+
+
+/**
  * return the timestamp for the most recent time at which a bugnote
  *  associated with the bug was modified
  * @param integer $p_bug_id Integer representing bug identifier.

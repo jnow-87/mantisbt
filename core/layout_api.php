@@ -271,6 +271,7 @@ function layout_head_css() {
 	# theme styles
 	html_css_link( 'ace.min.css' );
 	html_css_link( 'ace-mantis.css' );
+	html_css_link( 'dataTables.bootstrap.min.css');
 
 	# mantis specific, including
 	# 	changes to bootstrap, ace
@@ -345,6 +346,8 @@ function layout_body_javascript() {
 	html_javascript_link( 'ace.min.js' );
 
 	html_javascript_link('mantis.js');
+	html_javascript_link('dataTables.bootstrap.min.js');
+	html_javascript_link('jquery.dataTables.min.js');
 }
 
 

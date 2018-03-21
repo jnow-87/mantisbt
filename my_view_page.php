@@ -262,51 +262,41 @@ foreach($t_boxes as $t_box_title => $t_box_display) {
 		?>
 
 		<!-- filter content -->
-		<table class="table table-bordered table-condensed table-striped table-hover" data-toggle="table">
-			<thead style="cursor:pointer">
-				<tr>
-					<th data-sortable="true" width="15%">Issue ID<i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
-					<th data-sortable="true" width="60%">Summary<i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
-					<th data-sortable="true" width="10%">Category<i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
-					<th data-sortable="true" width="100%">Status<i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
-				</tr>
-			</thead>
-
-			<tfoot>
-				<tr>
-				<td colspan="6">
-					<div class="pull-right">
-					<?php button_link('View issues: ' . $v_start . ' - ' . $v_end . '/' . $t_bug_count, $t_box_url); ?>
-					</div>
-				</td>
-				</tr>
-			</tfoot>
-
-			<tbody>
-				<?php
-				# -- Loop over bug rows and create $v_* variables --
-				$t_count = count( $t_rows );
-
-				for( $i = 0;$i < $t_count; $i++ ) {
-					$t_bug = $t_rows[$i];
-				?>
-
-					<tr>
-						<td><?php print_bug_link( $t_bug->id, false ); ?></td>
-						<td><?php echo bug_format_summary( $t_bug->id, SUMMARY_CAPTION ); ?></td>
-						<td><?php echo string_display_line( category_full_name( $t_bug->category_id ) ); ?></td>
-						<td><?php
-							$t_status_label = html_get_status_css_class( $t_bug->status );
-							echo '<i class="fa fa-square fa-status-box ' . $t_status_label . '"></i> ';
-							echo string_display_line( get_enum_element( 'status', $t_bug->status ) ); ?></td>
-					</tr>
-				<?php
-				}
-				?>
-			</tbody>
-		</table>
-
 		<?php
+		table_header(array('Issue ID', 'Summary', 'Category', 'Status'), 'table-striped table-hover table-sortable');
+			$t_footer =	'<div class="pull-right">';
+			
+			ob_start();
+
+			button_link('View issues: ' . $v_start . ' - ' . $v_end . '/' . $t_bug_count, $t_box_url);
+			$t_footer .= ob_get_contents();
+
+			ob_end_clean();
+			
+			$t_footer .= '</div>';
+
+			echo '<tfoot>';
+				table_row(array($t_footer), '', 'colspan="4"');
+			echo '</tfoot>';
+
+			echo '<tbody>';
+				foreach($t_rows as $t_bug){
+					table_row(array(
+						bug_format_link( $t_bug->id, false),
+						bug_format_summary( $t_bug->id, SUMMARY_CAPTION ),
+						string_display_line(category_full_name( $t_bug->category_id)),
+						'<i class="fa fa-square fa-status-box ' .
+							html_get_status_css_class( $t_bug->status ) .
+							'"></i> ' .
+							string_display_line(get_enum_element( 'status', $t_bug->status ))
+						),
+						'class="tr-url" data-url="view.php?id=' . $t_bug->id . '"'
+					);
+				}
+			echo '</tbody>';
+
+		table_footer();
+
 		unset( $t_rows );
 
 		section_end();

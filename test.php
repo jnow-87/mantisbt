@@ -6,7 +6,7 @@ require_api('elements_api.php');
 
 
 # TODO
-#	add sortable table elements
+#	select_input_toggle
 #	how should action bars be layed out (in table head does not work if the table shall be sorted)
 #	document elements_api
 #
@@ -21,18 +21,20 @@ require_api('elements_api.php');
 #		add spaces between buttons
 #		remove lang_get()
 function tab_page0(){
-?>
-	<table class="table table-bordered table-condensed table-striped table-hover" data-toggle="table">
-		<thead style="cursor:pointer">
-		<th data-sortable="true">col 0 <i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
-		<th data-sortable="true">col 1 <i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
-		<th data-sortable="true">col 2 <i class="ace-icon fa fa-sort" style="padding-left:5px"/></th>
-		</thead>
-
-		<tr><td> c00 </td><td> c01 </td><td> c02 </td></tr>
-		<tr><td> c10 </td><td> c11 </td><td> c12 </td></tr>
-	</table>
-<?php
+	table_header(array('col 0', 'col 1', 'col 2'), 'table-striped table-hover table-sortable');
+	table_row(array('bug-0', 'a01', 'b02'));
+	table_row(array('issue-0', 'b11', 'c12'));
+	table_row(array('bug-2', 'c01', 'd02'));
+	table_row(array('feature-2', 'd01', 'a02'));
+	table_row(array('bug-0', 'a01', 'b02'));
+	table_row(array('issue-0', 'b11', 'c12'));
+	table_row(array('bug-2', 'c01', 'd02'));
+	table_row(array('feature-2', 'd01', 'a02'));
+	table_row(array('bug-0', 'a01', 'b02'));
+	table_row(array('issue-0', 'b11', 'c12'));
+	table_row(array('bug-2', 'c01', 'd02'));
+	table_row(array('feature-2', 'd01', 'a02'));
+	table_footer();
 }
 
 function tab_page1(){
@@ -136,47 +138,41 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	<?php label('editable input2:', 'arrowed-in-right'); echo $f_editable_input2 ?>
 
 	<form method="post" action="">
-		<table class="table table-bordered table-condensed table-striped">
-			<thead>
-			<th>clickable input0</th>
-			<th>clickable input1</th>
-			<th>clickable input2</th>
-			</thead>
-
-			<tr>
+	<?php table_header(array('clickable input0', 'clickable input1', 'clickable input2'), 'table-striped') ?>
+		<tr>
 			<td><?php text_input_toggle('editable_input0', $f_editable_input0, 'input-xs'); ?></td>
 			<td><?php text_input_toggle('editable_input1', $f_editable_input1, 'input-xs'); ?></td>
 			<td><?php text_input_toggle('editable_input2', $f_editable_input2, 'input-xs'); ?></td>
-			</tr>
-		</table>
+		</tr>
 
-		<?php button_submit('submit', ''); ?>
+	<?php table_footer() ?>
+	<?php button_submit('submit', '') ?>
 	</form>
 	<?php section_end() ?>
 </div>
 
 <div class="col-md-2">
-	<?php section_start('collapsed section', true) ?>
-	<table class="table table-bordered table-condensed table-striped">
-		<thead>
-		<th colspan=3>table right</th>
-		</thead>
+	<?php
+		section_start('collapsed section', true);
 
-		<tr><td> c00 </td><td> c01 </td><td> c02 </td></tr>
-		<tr><td> c10 </td><td> c11 </td><td> c12 </td></tr>
-	</table>
-	<?php section_end() ?>
+		table_header(array('table right'), 'table-striped', '', 'colspan=3');
+		table_row(array('c00', 'c01', 'c02'));
+		table_row(array('c10', 'c11', 'c12'));
+		table_footer();
 
-	<?php section_start('right column') ?>
-	<table class="table table-bordered table-condensed table-striped">
-		<thead>
-		<th colspan=3>table right</th>
-		</thead>
+		section_end();
+	?>
 
-		<tr><td> c00 </td><td> c01 </td><td> c02 </td></tr>
-		<tr><td> c10 </td><td> c11 </td><td> c12 </td></tr>
-	</table>
-	<?php section_end() ?>
+	<?php
+		section_start('right column');
+
+		table_header(array('table right'), 'table-striped', '', 'colspan=3');
+		table_row(array('c00', 'c01', 'c02'), 'class="tr-url" data-url="dummy-url"');
+		table_row(array('c10', 'c11', 'c12'), 'class="tr-url" data-url="dummy-url"');
+		table_footer();
+
+		section_end();
+	?>
 </div>
 
 <?php

@@ -151,23 +151,44 @@ function button_submit($p_text, $p_label, $p_class = 'btn-xs btn-round'){
 }
 
 function text_input_toggle($p_label, $p_value, $p_class){
-?>
-	<!-- readonly input field, visible by default -->
-	<div id="<?php echo $p_label ?>" class="input-toggle" style="display:block">
-		<input type="text" class="<?php echo $p_class ?>" value="<?php echo $p_value ?>" style="background:transparent !important;border-color:transparent;" readonly/>
-	</div>
+	/*readonly input field, visible by default */
+	echo '<div id="' . $p_label . '" class="input-toggle" style="display:block">';
+	echo '<input type="text" class="' . $p_class . '" value="' . $p_value . '" style="background:transparent !important;border-color:transparent;" readonly/>';
+	echo '</div>';
 
-	<!-- editable input field, visible once the readonly input field has been clicked -->
-	<div id="<?php echo $p_label ?>_rw" style="display:none">
-		<input type="text" class="<?php echo $p_class ?>" value="<?php echo $p_value ?>" name="<?php echo $p_label ?>" />
-	</div>
-<?php
+	/* editable input field, visible once the readonly input field has been clicked */
+	echo '<div id="' . $p_label . '_rw" style="display:none">';
+	echo '<input type="text" class="' . $p_class . '" value="' . $p_value . '" name="' . $p_label . '" />';
+	echo '</div>';
 }
 
 function label($p_name, $p_class = ''){
-?>
-	<span class="label label-default <?php echo $p_class ?>"><?php echo $p_name ?></span>
-<?php
+	echo '<span class="label label-default ' . $p_class . '">' . $p_name . '</span>';
+}
+
+function table_header($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = ''){
+	echo '<table class="table table-bordered table-condensed ' . $p_class . '">';
+	echo '<thead>';
+	echo '<tr ' . $p_tr_attr . '>';
+	
+	foreach($p_headrow as $t_td)
+		echo '<th ' . $p_th_attr . '>' . $t_td . '</th>';
+
+	echo '</tr>';
+	echo '</thead>';
+}
+
+function table_row($p_data, $p_tr_attr = '', $p_td_attr = ''){
+	echo '<tr ' . $p_tr_attr . '>';
+
+	foreach($p_data as $t_el)
+		echo '<td ' . $p_td_attr . '>' . $t_el . '</td>';
+
+	echo '</tr>';
+}
+
+function table_footer(){
+	echo '</table>';
 }
 
 ?>

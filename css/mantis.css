@@ -28,7 +28,7 @@
   content: '[-] ' attr(data-content);
   position: relative;
   display: inline-block;
-  padding: 0 10px;
+  padding: 0 10px 0 0;
   line-height: 1.5em;
   color: #818078;
   background-color: #ffffff;
@@ -37,7 +37,7 @@
   content: '[+] ' attr(data-content);
   position: relative;
   display: inline-block;
-  padding: 0 0;
+  padding: 0 10px 0 0;
   line-height: 1.5em;
   color: #818078;
   background-color: #ffffff;
@@ -114,4 +114,9 @@
   line-height: 1.5em;
   color: #1d520a;
   background-color: #ffffff;
+}
+
+/* table row with url */
+.tr-url{
+	cursor: pointer;
 }

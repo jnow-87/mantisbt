@@ -306,10 +306,6 @@ function html_head_javascript() {
 		# Dropzone
 		html_javascript_cdn_link( 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/' . DROPZONE_VERSION . '/min/dropzone.min.js', DROPZONE_HASH );
 	} else {
-		# sortable tables
-		html_javascript_link('jquery-3.1.1.min.js');
-		html_javascript_link('bootstrap-table-1.12.1.min.js');
-		
 		# JQuery
 		html_javascript_link( 'jquery-' . JQUERY_VERSION . '.min.js' );
 
