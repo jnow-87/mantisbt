@@ -6,20 +6,14 @@ require_api('elements_api.php');
 
 
 # TODO
+#	proper action bar for buttons and inputs
+#
 #	select_input_toggle
-#	how should action bars be layed out (in table head does not work if the table shall be sorted)
-#	document elements_api
+#	extend navbar issue search to actually perform a textual search, analog to filters
+#	remove lang_get()
 #
 #	pages
 #
-#
-#	overhaul layout
-#		improve layout of worklog in bug view
-#		make use of tabs
-#		remove boxes, replacing them with a more open layout
-#		streamline toolbars
-#		add spaces between buttons
-#		remove lang_get()
 function tab_page0(){
 	table_header(array('col 0', 'col 1', 'col 2'), 'table-striped table-hover table-sortable');
 	table_row(array('bug-0', 'a01', 'b02'));

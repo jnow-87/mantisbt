@@ -1,4 +1,116 @@
 <?php
+
+/**
+ *	print a horizontal space
+ *
+ *	@param	string	$p_space	the amount of space, e.g. in form a pixel value ('5px')
+ *
+ *	@return	nothing
+ */
+function hspace($p_space){
+	echo '<span style="padding-right:' . $p_space . '"></span>';
+}
+
+/**
+ *	print a label
+ *
+ *	@param	string	$p_name		the label name
+ *	@param	string	$p_class	additional label class attributes
+ *
+ *	@return	nothing
+ */
+function label($p_name, $p_class = ''){
+	echo '<span class="label label-default ' . $p_class . '">' . $p_name . '</span>';
+}
+
+/**
+ *	print the page title
+ *
+ *	@param	string	$p_title	the page title
+ *
+ *	@return	nothing
+ */
+function page_title($p_title){
+	echo '<hr class="hr-page-title" data-content="' . $p_title . '"></hr>';
+}
+
+/**
+ *	print a collapsable section header
+ *
+ *	@param	string	$p_heading		the section name
+ *	@param	bool	$p_collapsed	flag indicating the inital collapse state of the heading
+ *
+ *	@return	nothing
+ */
+$g_section_label_cnt = 0;
+
+function section_start($p_heading, $p_collapsed = false){
+	global $g_section_label_cnt;
+
+	$g_section_label_cnt++;
+	$t_label = 'label_' . $g_section_label_cnt;
+
+	echo '<hr class="hr-text ' . ($p_collapsed ? 'collapsed' : '') . '" data-content="' . $p_heading . '" data-toggle="collapse" data-target="#' . $t_label . '_target">';
+	echo '<div id="' . $t_label . '_target" class="collapse ' . (!$p_collapsed ? 'in' : '') . '">';
+}
+
+/**
+ *	mark the end of section created with section_start()
+ *
+ *	@return	nothing
+ */
+function section_end(){
+	echo '</div>';
+}
+
+/**
+ *	print a html link with a button look
+ *
+ *	@param	string	$p_button_text	text displayed as the button
+ *	@param	string  $p_link			page URL.
+ *	@param	string  $p_class		additional class attributes
+ *	@param	array   $p_arg			array of <key> <value> pairs that are passed on
+ *									through the link
+ *
+ *	@return nothing
+ */
+function button_link($p_button_text, $p_link, $p_arg = array(), $p_class = 'btn-xs btn-round') {
+	# button start
+	echo '<a class="btn btn-primary btn-white ' . $p_class . '" href="' . htmlspecialchars( $p_link );
+
+	# arguments
+	if($p_arg)
+		echo '?';
+
+	foreach ($p_arg as $t_arg_name => $t_arg_value)
+		echo '&' . $t_arg_name . '=' . $t_arg_value;
+	
+	# button end
+	echo '">' . $p_button_text . '</a>';
+}
+
+/**
+ *	print a submit button
+ *
+ *	@param	string	$p_text		text displayed as the button
+ *	@param	string	$p_label	the label used as the button name
+ *	@param	string	$p_class	additional button class attributes
+ *
+ *	@return	nothing
+ */
+function button_submit($p_text, $p_label, $p_class = 'btn-xs btn-round'){
+	echo '<input name="' . $p_label . '" class="btn btn-primary btn-white ' . $p_class . '" value="' . $p_text .'" type="submit"/>';
+}
+
+/**
+ *	print a list of tabs and their respective content
+ *
+ *	@param	array	$p_tabs		array in the form of array('tab-name' => 'callback-name'), whereas
+ *								tab-name is tab name and
+ *								callback-name is the name of the function that renders the tab content
+ *
+ *	@return nothing
+ */
 function tabs($p_tabs){
 	# tab bar
 	echo '<ul class="nav nav-tabs">';
@@ -27,6 +139,42 @@ function tabs($p_tabs){
 	echo '</div>';
 }
 
+/**
+ *	print a dropdown menu
+ *
+ *	@param	string	$p_title	dropdown menu name
+ *	@param	array	$p_items	dropdown menu entries, containing the following elements
+ *									'label' => 'item-name'
+ *									'data' => label dependent type defined as follows
+ *										label == 'header'
+ *											data => string
+ *											this item is rendered a heading within the menu,
+ *											whereas data is the headeing name
+ *
+ *										label == 'divider'
+ *											data => ignored
+ *											this item is rendered as horizontal line within
+ *											the menu
+ *
+ *										label == 'bare'
+ *											data => string
+ *											data is echoed as is, this can be used to add any
+ *											kind of item to the menu
+ *
+ *										label == any other string
+ *											data => array
+ *											this item is rendered as menu entry which triggers
+ *											a link, hence data is required to contain at least
+ *											an entry 'link'.
+ *											data can also contain entries for 'class' and 'icon'
+ *											if present they influence the link class attributes
+ *											and the icon displayed in front of the item
+ *
+ *	@param	string	$p_color	dropdown menu color class
+ *	@param	string	$p_icon		an optional item shown in front of the menu name
+ *
+ *	@return	nothing
+ */
 function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = ''){
 	$t_padding_button = '0px';
 	$t_padding_icon_left = '0px';
@@ -97,59 +245,17 @@ function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = ''){
 	echo '</div>';
 }
 
-$g_section_label_cnt = 0;
-
-function section_start($p_heading, $p_collapsed = false){
-	global $g_section_label_cnt;
-
-	$g_section_label_cnt++;
-	$t_label = 'label_' . $g_section_label_cnt;
-
-	echo '<hr class="hr-text ' . ($p_collapsed ? 'collapsed' : '') . '" data-content="' . $p_heading . '" data-toggle="collapse" data-target="#' . $t_label . '_target">';
-	echo '<div id="' . $t_label . '_target" class="collapse ' . (!$p_collapsed ? 'in' : '') . '">';
-}
-
-function section_end(){
-	echo '</div>';
-}
-
-function hspace($p_space){
-	echo '<span style="padding-right:' . $p_space . '"></span>';
-}
-
-function page_title($p_title){
-	echo '<hr class="hr-page-title" data-content="' . $p_title . '"></hr>';
-}
-
-
 /**
- * print a HTML link with a button look
- * @param string  $p_link       The page URL.
- * @param string  $p_url_text   The displayed text for the link.
- * @param string  $p_class      The CSS class of the link.
- * @param array   $p_arg		array of <key> <value> pairs
- * @return void
+ *	Print a toggleable text input, that is, by default the content of the field is
+ *	shown but is not editable. Once clicked, the content is shown as text input and
+ *	is made editable
+ *
+ *	@param	$p_label	the label of the input field
+ *	@param	$p_value	the current value of the field
+ *	@param	$p_class	input field class attributes
+ *
+ *	@return nothing
  */
-function button_link( $p_button_text, $p_link, $p_arg = array(), $p_class = 'btn-xs btn-round') {
-	# button start
-	echo '<a class="btn btn-primary btn-white ' . $p_class . '" href="' . htmlspecialchars( $p_link );
-
-	# arguments
-	if($p_arg)
-		echo '?';
-
-	foreach ($p_arg as $t_arg_name => $t_arg_value)
-		echo '&' . $t_arg_name . '=' . $t_arg_value;
-	
-	# button end
-	echo '">' . $p_button_text . '</a>';
-}
-
-
-function button_submit($p_text, $p_label, $p_class = 'btn-xs btn-round'){
-	echo '<input name="' . $p_label . '" class="btn btn-primary btn-white ' . $p_class . '" value="' . $p_text .'" type="submit"/>';
-}
-
 function text_input_toggle($p_label, $p_value, $p_class){
 	/*readonly input field, visible by default */
 	echo '<div id="' . $p_label . '" class="input-toggle" style="display:block">';
@@ -162,10 +268,16 @@ function text_input_toggle($p_label, $p_value, $p_class){
 	echo '</div>';
 }
 
-function label($p_name, $p_class = ''){
-	echo '<span class="label label-default ' . $p_class . '">' . $p_name . '</span>';
-}
-
+/**
+ *	print a table header
+ *
+ *	@param	array	$p_headrow	simple array with one entry per column
+ *	@param	string	$p_class	additional table class attributes
+ *	@param	string	$p_tr_attr	tr attributes
+ *	@param	string	$p_th_attr	th attributes
+ *
+ *	@return nothing
+ */
 function table_header($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = ''){
 	echo '<table class="table table-bordered table-condensed ' . $p_class . '">';
 	echo '<thead>';
@@ -178,6 +290,15 @@ function table_header($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = '
 	echo '</thead>';
 }
 
+/**
+ *	print a table row
+ *
+ *	@param	array	$p_data		simple array with one entry per column
+ *	@param	string	$p_tr_attr	tr attributes
+ *	@param	string	$p_td_attr	td attributes
+ *
+ *	@return nothing
+ */
 function table_row($p_data, $p_tr_attr = '', $p_td_attr = ''){
 	echo '<tr ' . $p_tr_attr . '>';
 
@@ -187,6 +308,11 @@ function table_row($p_data, $p_tr_attr = '', $p_td_attr = ''){
 	echo '</tr>';
 }
 
+/**
+ *	print a table footer
+ *
+ *	@return nothing
+ */
 function table_footer(){
 	echo '</table>';
 }
