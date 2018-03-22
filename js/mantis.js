@@ -25,9 +25,7 @@ $('div.input-toggle').click(function(e) {
 /* configure DataTables and assign it all tables with class table-sortable */
 $(document).ready(function(){
 	$('table.table-sortable').DataTable({
-		"paging": false,
-		"info": false,
-		"filter": false,
+		'dom': '<"pull-left"il><"pull-right"f><"center"p><t><"pull-left"il><"pull-right"f><"center"p>'
 	});
 });
 

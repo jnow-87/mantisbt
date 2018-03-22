@@ -84,12 +84,6 @@ layout_page_header_end();
 
 layout_page_begin( __FILE__ );
 
-$f_page_number		= gpc_get_int( 'page_number', 1 );
-
-$t_per_page = config_get( 'my_view_bug_count' );
-$t_bug_count = null;
-$t_page_count = null;
-
 $t_secion_titles = array(
 	'unassigned' => 'Unassigned',
 	'recent_mod' => 'Recently Modified',
@@ -216,7 +210,7 @@ $t_url_link_parameters['my_comments'] = FILTER_PROPERTY_NOTE_USER_ID. '=' . META
  */
 page_title('My View');
 
-echo '<div class="col-md-6-left">';
+echo '<div class="col-md-7">';
 
 /* filter */
 foreach($t_boxes as $t_box_title => $t_box_display) {
@@ -230,6 +224,11 @@ foreach($t_boxes as $t_box_title => $t_box_display) {
 		# don't display "Reported by Me" bugs to users that can't report bugs
 	 || (in_array( $t_box_title, array( 'reported', 'feedback', 'verify' ) ) &&	( current_user_is_anonymous() OR !access_has_project_level( config_get( 'report_bug_threshold' ), $t_project_id, $t_current_user_id )))
 	)){
+		$t_per_page = -1;
+		$f_page_number = 1;
+		$t_page_count = null;
+		$t_bug_count = null;
+
 		$t_rows = filter_get_bug_rows( $f_page_number, $t_per_page, $t_page_count, $t_bug_count, $c_filter[$t_box_title] );
 		bug_cache_columns_data( $t_rows , array( 'attachment_count' ) );
 
@@ -263,37 +262,23 @@ foreach($t_boxes as $t_box_title => $t_box_display) {
 
 		<!-- filter content -->
 		<?php
-		table_header(array('Issue ID', 'Summary', 'Category', 'Status'), 'table-striped table-hover table-sortable');
-			$t_footer =	'<div class="pull-right">';
-			
-			ob_start();
+		table_header(array('Issue', 'Summary', 'Category', 'Status'), 'table-striped table-hover table-sortable');
 
-			button_link('View issues: ' . $v_start . ' - ' . $v_end . '/' . $t_bug_count, $t_box_url);
-			$t_footer .= ob_get_contents();
-
-			ob_end_clean();
-			
-			$t_footer .= '</div>';
-
-			echo '<tfoot>';
-				table_row(array($t_footer), '', 'colspan="4"');
-			echo '</tfoot>';
-
-			echo '<tbody>';
-				foreach($t_rows as $t_bug){
-					table_row(array(
-						bug_format_link( $t_bug->id, false),
-						bug_format_summary( $t_bug->id, SUMMARY_CAPTION ),
-						string_display_line(category_full_name( $t_bug->category_id)),
-						'<i class="fa fa-square fa-status-box ' .
-							html_get_status_css_class( $t_bug->status ) .
-							'"></i> ' .
-							string_display_line(get_enum_element( 'status', $t_bug->status ))
-						),
-						'class="tr-url" data-url="view.php?id=' . $t_bug->id . '"'
-					);
-				}
-			echo '</tbody>';
+		echo '<tbody>';
+			foreach($t_rows as $t_bug){
+				table_row(array(
+					bug_format_link( $t_bug->id, false),
+					bug_format_summary( $t_bug->id, SUMMARY_CAPTION ),
+					string_display_line(category_full_name( $t_bug->category_id)),
+					'<i class="fa fa-square fa-status-box ' .
+						html_get_status_css_class( $t_bug->status ) .
+						'"></i> ' .
+						string_display_line(get_enum_element( 'status', $t_bug->status ))
+					),
+					'class="tr-url" data-url="view.php?id=' . $t_bug->id . '"'
+				);
+			}
+		echo '</tbody>';
 
 		table_footer();
 
@@ -307,7 +292,7 @@ echo '</div>';
 
 /* timeline */
 if( $t_timeline_view_threshold_access ) {
-	echo '<div class="col-md-6-right">';
+	echo '<div class="col-md-5">';
 	section_start('Timeline');
 
 	# Build a simple filter that gets all bugs for current project

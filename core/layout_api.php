@@ -272,6 +272,7 @@ function layout_head_css() {
 	html_css_link( 'ace.min.css' );
 	html_css_link( 'ace-mantis.css' );
 	html_css_link( 'dataTables.bootstrap.min.css');
+	html_css_link( 'jquery.dataTables.min.css');
 
 	# mantis specific, including
 	# 	changes to bootstrap, ace
