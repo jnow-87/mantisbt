@@ -47,8 +47,8 @@ $g_section_label_cnt = 0;
 function section_begin($p_heading, $p_collapsed = false){
 	global $g_section_label_cnt;
 
+	$t_label = 'section_' . $g_section_label_cnt;
 	$g_section_label_cnt++;
-	$t_label = 'label_' . $g_section_label_cnt;
 
 	echo '<hr class="hr-text ' . ($p_collapsed ? 'collapsed' : '') . '" data-content="' . $p_heading . '" data-toggle="collapse" data-target="#' . $t_label . '_target">';
 	echo '<div id="' . $t_label . '_target" class="collapse ' . (!$p_collapsed ? 'in' : '') . '">';
@@ -133,14 +133,20 @@ function button_submit($p_text, $p_label, $p_class = 'btn-xs btn-round'){
  *
  *	@return nothing
  */
+$g_tab_label_cnt = 0;
+
 function tabs($p_tabs){
+	global $g_tab_label_cnt;
+
 	# tab bar
 	echo '<ul class="nav nav-tabs">';
 
 	$t_active = 'class="active"';
-
 	foreach($p_tabs as $t_name => $t_content){
-		echo '<li ' . $t_active . '><a data-toggle="tab" href="#' . $t_name . '">' . $t_name . '</a></li>';
+		$t_label = 'tab_' . $g_tab_label_cnt;
+		$g_tab_label_cnt++;
+
+		echo '<li ' . $t_active . '><a data-toggle="tab" href="#' . $t_label . '">' . $t_name . '</a></li>';
 		$t_active = '';
 	}
 
@@ -150,9 +156,13 @@ function tabs($p_tabs){
 	echo '<div class="tab-content">';
 
 	$t_active = 'in active';
+	$t_ntabs = count($p_tabs);
 
 	foreach($p_tabs as $t_name => $t_content){
-		echo '<div id="' . $t_name . '" class="tab-pane fade ' . $t_active . '">';
+		$t_label = 'tab_' . ($g_tab_label_cnt - $t_ntabs);
+		$t_ntabs--;
+
+		echo '<div id="' . $t_label . '" class="tab-pane fade ' . $t_active . '">';
 		$t_active = '';
 		echo $t_content();
 		echo '</div>';
