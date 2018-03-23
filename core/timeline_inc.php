@@ -16,6 +16,7 @@
 
 require_once( 'core.php' );
 require_api( 'timeline_api.php' );
+require_api( 'elements_api.php' );
 
 define( 'MAX_EVENTS', 50 );
 
@@ -75,47 +76,36 @@ $t_next_days = ( $f_days - 7 ) > 0 ? $f_days - 7 : 0;
 ?>
 
 <!-- timeline table -->
-<table class="table table-bordered table-condensed table-striped table-hover">
-	<thead>	
-		<tr><td>
-			<div class="pull-right">
-			<?php
-				label(date( $t_short_date_format, $t_start_time ), 'label-grey');
-				echo ' - ';
-				label(date( $t_short_date_format, $t_end_time ), 'label-grey');
-				hspace('10px');
+<?php
+	actionbar_begin();
+		echo '<div class="pull-right">';
+		label(date( $t_short_date_format, $t_start_time ), 'label-grey');
+		echo ' - ';
+		label(date( $t_short_date_format, $t_end_time ), 'label-grey');
+		hspace('10px');
 
-				$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
+		$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
 
-				button_link('Prev', $t_href);
-				hspace('3px');
+		button_link('Prev', $t_href);
+		hspace('1px');
 
-				if( $t_next_days != $f_days ) {
-					$t_url_params['days'] = $t_next_days;
-					$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-					button_link('Next', $t_href);
-				}
+		if( $t_next_days != $f_days ) {
+			$t_url_params['days'] = $t_next_days;
+			$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
+			button_link('Next', $t_href);
+		}
 
-				if(!$f_all && count( $t_events ) > MAX_EVENTS){
-					hspace('3px');
+		if(!$f_all && count( $t_events ) > MAX_EVENTS){
+			hspace('3px');
 
-					$t_url_params['all'] = 1;
-					$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-					button_link('More events', $t_href);
-				}
-				?>
-				</div>
-			</div>
+			$t_url_params['all'] = 1;
+			$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
+			button_link('More events', $t_href);
+		}
+		echo '</div>';
+	actionbar_end();
 
-		</td></tr>
-	</thead>
+if(!$f_all && count( $t_events ) > MAX_EVENTS)
+	$t_events = array_slice( $t_events, 0, MAX_EVENTS );
 
-	<tbody>
-		<?php
-		if(!$f_all && count( $t_events ) > MAX_EVENTS)
-			$t_events = array_slice( $t_events, 0, MAX_EVENTS );
-
-		timeline_print_events( $t_events );
-		?>
-	</tbody>
-</table>
+timeline_print_events( $t_events );
