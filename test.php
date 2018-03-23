@@ -8,6 +8,7 @@ require_api('elements_api.php');
 # TODO
 #	proper action bar for buttons and inputs
 #
+#	remove table from timeline
 #	select_input_toggle
 #	extend navbar issue search to actually perform a textual search, analog to filters
 #	remove lang_get()
@@ -55,8 +56,52 @@ page_title("Layout elements demo");
 
 ?>
 <div class="col-md-10">
+	<!-- action bar -->
+	<?php
+	section_begin('action bar');
+		actionbar_begin();
+
+		button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs');
+
+		echo '<div class="pull-right">';
+			echo '<div class="pull-left">';
+				echo 'foo';
+				hspace('5px');
+				echo '<input type="text" id="foo" class="input-xs pull-right">';
+			echo '</div>';
+
+			hspace('15px');
+
+			echo '<div class="pull-right">';
+				button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs');
+			echo '</div>';
+		echo '</div>';
+
+		actionbar_end();
+		actionbar_begin();
+
+		button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs');
+
+		echo '<div class="pull-right">';
+			echo '<div class="pull-left">';
+				echo 'foo';
+				hspace('5px');
+				echo '<input type="text" id="foo" class="input-xs pull-right">';
+			echo '</div>';
+
+			hspace('15px');
+
+			echo '<div class="pull-right">';
+				button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs');
+			echo '</div>';
+		echo '</div>';
+
+		actionbar_end();
+	section_end();
+	?>
+
 	<!-- dropdown menu -->
-	<?php section_start('dropdown demo') ?>
+	<?php section_begin('dropdown demo') ?>
 	<div>
 		<?php dropdown_menu('dropdown', $t_menu0, 'grey', 'fa-android'); ?>
 		<?php dropdown_menu('dropdown', $t_menu0, 'green', 'fa-user'); ?>
@@ -68,7 +113,7 @@ page_title("Layout elements demo");
 	<?php section_end() ?>
 
 	<!-- tabs -->
-	<?php section_start('tabs demo') ?>
+	<?php section_begin('tabs demo') ?>
 	<?php tabs(array('tab0' => 'tab_page0', 'tab1' => 'tab_page1', 'tab2' => 'tab_page1'));?>
 	<?php section_end() ?>
 
@@ -77,7 +122,7 @@ page_title("Layout elements demo");
 $f_link_button_input = gpc_get_string('link_button_input', '');
 ?>
 
-	<?php section_start('link button demo') ?>
+	<?php section_begin('link button demo') ?>
 	<h4>form inputs</h4>
 	<?php label('link button input:'); echo $f_link_button_input . '<br>' ?>
 
@@ -105,7 +150,7 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	$f_delete_button_state = gpc_get_bool('delete_button', false);
 	?>
 
-	<?php section_start('form button demo') ?>
+	<?php section_begin('form button demo') ?>
 	<h4>form inputs</h4>
 	<?php label('submit button state:'); echo $f_submit_button_state . '<br>' ?>
 	<?php label('delete button state:', 'label-grey'); echo $f_delete_button_state . '<br>' ?>
@@ -125,7 +170,7 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	$f_editable_input2 = gpc_get_string('editable_input2', 'click me');
 	?>
 
-	<?php section_start('input text toggle demo') ?>
+	<?php section_begin('input text toggle demo') ?>
 	<h4>form inputs</h4>
 	<?php label('editable input0:', 'arrowed'); echo $f_editable_input0 . '<br>' ?>
 	<?php label('editable input1:', 'arrowed-right'); echo $f_editable_input1 . '<br>' ?>
@@ -147,7 +192,7 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 
 <div class="col-md-2">
 	<?php
-		section_start('collapsed section', true);
+		section_begin('collapsed section', true);
 
 		table_header(array('table right'), 'table-striped', '', 'colspan=3');
 		table_row(array('c00', 'c01', 'c02'));
@@ -158,7 +203,7 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	?>
 
 	<?php
-		section_start('right column');
+		section_begin('right column');
 
 		table_header(array('table right'), 'table-striped', '', 'colspan=3');
 		table_row(array('c00', 'c01', 'c02'), 'class="tr-url" data-url="dummy-url"');

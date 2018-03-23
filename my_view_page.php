@@ -245,7 +245,7 @@ foreach($t_boxes as $t_box_title => $t_box_display) {
 		}
 
 
-		section_start($t_secion_titles[$t_box_title]);
+		section_begin($t_secion_titles[$t_box_title]);
 
 		// filter title
 		$t_box_url = html_entity_decode( config_get( 'bug_count_hyperlink_prefix' ) ).'&' . $t_url_link_parameters[$t_box_title];
@@ -293,7 +293,7 @@ echo '</div>';
 /* timeline */
 if( $t_timeline_view_threshold_access ) {
 	echo '<div class="col-md-5">';
-	section_start('Timeline');
+	section_begin('Timeline');
 
 	# Build a simple filter that gets all bugs for current project
 	$g_timeline_filter = array();

@@ -44,7 +44,7 @@ function page_title($p_title){
  */
 $g_section_label_cnt = 0;
 
-function section_start($p_heading, $p_collapsed = false){
+function section_begin($p_heading, $p_collapsed = false){
 	global $g_section_label_cnt;
 
 	$g_section_label_cnt++;
@@ -55,12 +55,34 @@ function section_start($p_heading, $p_collapsed = false){
 }
 
 /**
- *	mark the end of section created with section_start()
+ *	mark the end of section created with section_begin()
  *
  *	@return	nothing
  */
 function section_end(){
 	echo '</div>';
+}
+
+/**
+ *	print the actionbar header
+ *
+ *	@return	nothing
+ */
+function actionbar_begin(){
+	echo '<table class="table actionbar">';
+	echo '<thead>';
+	echo '<tr><td class="actionbar">';
+}
+
+/**
+ *	print the actionbar footer
+ *
+ *	@return	nothing
+ */
+function actionbar_end(){
+	echo '</td></tr>';
+	echo '</thead>';
+	echo '</table>';
 }
 
 /**
