@@ -8,7 +8,18 @@
  *	@return	nothing
  */
 function hspace($p_space){
-	echo '<span style="padding-right:' . $p_space . '"></span>';
+	echo '<span style="margin-right:' . $p_space . '"></span>';
+}
+
+/**
+ *	print a vertical space
+ *
+ *	@param	string	$p_space	the amount of space, e.g. in form a pixel value ('5px')
+ *
+ *	@return	nothing
+ */
+function vspace($p_space){
+	echo '<span style="margin-top:' . $p_space . '"></span>';
 }
 
 /**
@@ -51,7 +62,7 @@ function section_begin($p_heading, $p_collapsed = false){
 	$g_section_label_cnt++;
 
 	echo '<hr class="hr-text ' . ($p_collapsed ? 'collapsed' : '') . '" data-content="' . $p_heading . '" data-toggle="collapse" data-target="#' . $t_label . '_target">';
-	echo '<div id="' . $t_label . '_target" class="collapse ' . (!$p_collapsed ? 'in' : '') . '">';
+	echo '<div id="' . $t_label . '_target" class="section collapse ' . (!$p_collapsed ? 'in' : '') . '">';
 }
 
 /**
@@ -139,7 +150,7 @@ function tabs($p_tabs){
 	global $g_tab_label_cnt;
 
 	# tab bar
-	echo '<ul class="nav nav-tabs">';
+	echo '<ul class="nav nav-tabs" style="margin:0 12px 0 12px">';
 
 	$t_active = 'class="active"';
 	foreach($p_tabs as $t_name => $t_content){
@@ -153,7 +164,7 @@ function tabs($p_tabs){
 	echo '</ul>';
 
 	# tab content
-	echo '<div class="tab-content">';
+	echo '<div class="tab-content" style="margin:0 12px 0 12px">';
 
 	$t_active = 'in active';
 	$t_ntabs = count($p_tabs);
@@ -290,8 +301,8 @@ function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = ''){
  */
 function text_input_toggle($p_label, $p_value, $p_class){
 	/*readonly input field, visible by default */
-	echo '<div id="' . $p_label . '" class="input-toggle" style="display:block">';
-	echo '<input type="text" class="' . $p_class . '" value="' . $p_value . '" style="background:transparent !important;border-color:transparent;" readonly/>';
+	echo '<div id="' . $p_label . '" class="input-toggle" style="cursor:pointer;display:block">';
+	echo '<input type="text" class="' . $p_class . '" value="' . $p_value . '" style="cursor:pointer;background:transparent !important;border-color:transparent;" readonly/>';
 	echo '</div>';
 
 	/* editable input field, visible once the readonly input field has been clicked */
@@ -310,8 +321,8 @@ function text_input_toggle($p_label, $p_value, $p_class){
  *
  *	@return nothing
  */
-function table_header($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = ''){
-	echo '<table class="table table-bordered table-condensed ' . $p_class . '">';
+function table_begin($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = ''){
+	echo '<table class="table ' . $p_class . '">';
 	echo '<thead>';
 	echo '<tr ' . $p_tr_attr . '>';
 	
@@ -345,7 +356,7 @@ function table_row($p_data, $p_tr_attr = '', $p_td_attr = ''){
  *
  *	@return nothing
  */
-function table_footer(){
+function table_end(){
 	echo '</table>';
 }
 

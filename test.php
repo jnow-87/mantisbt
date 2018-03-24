@@ -8,15 +8,20 @@ require_api('elements_api.php');
 # TODO
 #	proper action bar for buttons and inputs
 #
+#	input-toggle: either toggle on hover or show cursor on hover
 #	remove table from timeline
 #	select_input_toggle
 #	extend navbar issue search to actually perform a textual search, analog to filters
 #	remove lang_get()
+#	save collapse state for site reloads
+#	add time estimate, time spent to bug view
 #
 #	pages
 #
 function tab_page0(){
-	table_header(array('col 0', 'col 1', 'col 2'), 'table-striped table-hover table-sortable');
+
+	echo '<div class="col-md-6-left">';
+	table_begin(array('col 0', 'col 1', 'col 2'), 'table-bordered table-condensed table-striped table-hover table-sortable');
 	table_row(array('bug-0', 'a01', 'b02'));
 	table_row(array('issue-0', 'b11', 'c12'));
 	table_row(array('bug-2', 'c01', 'd02'));
@@ -29,7 +34,25 @@ function tab_page0(){
 	table_row(array('issue-0', 'b11', 'c12'));
 	table_row(array('bug-2', 'c01', 'd02'));
 	table_row(array('feature-2', 'd01', 'a02'));
-	table_footer();
+	table_end();
+	echo '</div>';
+
+	echo '<div class="col-md-6-right">';
+	table_begin(array('col 0', 'col 1', 'col 2'), 'table-bordered table-condensed table-striped table-hover table-sortable');
+	table_row(array('bug-0', 'a01', 'b02'));
+	table_row(array('issue-0', 'b11', 'c12'));
+	table_row(array('bug-2', 'c01', 'd02'));
+	table_row(array('feature-2', 'd01', 'a02'));
+	table_row(array('bug-0', 'a01', 'b02'));
+	table_row(array('issue-0', 'b11', 'c12'));
+	table_row(array('bug-2', 'c01', 'd02'));
+	table_row(array('feature-2', 'd01', 'a02'));
+	table_row(array('bug-0', 'a01', 'b02'));
+	table_row(array('issue-0', 'b11', 'c12'));
+	table_row(array('bug-2', 'c01', 'd02'));
+	table_row(array('feature-2', 'd01', 'a02'));
+	table_end();
+	echo '</div>';
 }
 
 function tab_page1(){
@@ -114,7 +137,7 @@ page_title("Layout elements demo");
 
 	<!-- tabs -->
 	<?php section_begin('tabs demo') ?>
-	<?php tabs(array('tab0' => 'tab_page0', 'tab1' => 'tab_page1', 'tab2' => 'tab_page1'));?>
+	<?php tabs(array('tab 0' => 'tab_page0', 'tab 1' => 'tab_page1', 'tab2' => 'tab_page1'));?>
 	<?php section_end() ?>
 
 	<!-- link button demo -->
@@ -177,14 +200,14 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	<?php label('editable input2:', 'arrowed-in-right'); echo $f_editable_input2 ?>
 
 	<form method="post" action="">
-	<?php table_header(array('clickable input0', 'clickable input1', 'clickable input2'), 'table-striped') ?>
+	<?php table_begin(array('clickable input0', 'clickable input1', 'clickable input2'), 'table-bordered table-condensed table-striped') ?>
 		<tr>
 			<td><?php text_input_toggle('editable_input0', $f_editable_input0, 'input-xs'); ?></td>
 			<td><?php text_input_toggle('editable_input1', $f_editable_input1, 'input-xs'); ?></td>
 			<td><?php text_input_toggle('editable_input2', $f_editable_input2, 'input-xs'); ?></td>
 		</tr>
 
-	<?php table_footer() ?>
+	<?php table_end() ?>
 	<?php button_submit('submit', '') ?>
 	</form>
 	<?php section_end() ?>
@@ -194,10 +217,10 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	<?php
 		section_begin('collapsed section', true);
 
-		table_header(array('table right'), 'table-striped', '', 'colspan=3');
+		table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', 'colspan=3');
 		table_row(array('c00', 'c01', 'c02'));
 		table_row(array('c10', 'c11', 'c12'));
-		table_footer();
+		table_end();
 
 		section_end();
 	?>
@@ -205,10 +228,12 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	<?php
 		section_begin('right column');
 
-		table_header(array('table right'), 'table-striped', '', 'colspan=3');
+		echo '<div class="overflow-scroll" style="height:50px">';
+		table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', 'colspan=3');
 		table_row(array('c00', 'c01', 'c02'), 'class="tr-url" data-url="dummy-url"');
 		table_row(array('c10', 'c11', 'c12'), 'class="tr-url" data-url="dummy-url"');
-		table_footer();
+		table_end();
+		echo '</div>';
 
 		section_end();
 	?>

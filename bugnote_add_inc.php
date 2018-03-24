@@ -58,7 +58,6 @@ $t_default_bugnote_view_status = config_get( 'default_bugnote_view_status' );
 		( access_has_bug_level( config_get( 'add_bugnote_threshold' ), $f_bug_id ) ) ) { ?>
 <?php # Bugnote Add Form BEGIN ?>
 
-<div class="col-md-6-right col-xs-12 noprint">
 <a id="addbugnote"></a>
 
 <?php
@@ -168,6 +167,5 @@ $t_default_bugnote_view_status = config_get( 'default_bugnote_view_status' );
 </div>
 </div>
 </form>
-</div>
 <?php
 }

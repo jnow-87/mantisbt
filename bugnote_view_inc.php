@@ -95,7 +95,6 @@ $t_activities_count = count( $t_activities );
 ?>
 
 <?php # Bugnotes BEGIN ?>
-<div class="col-md-6-right col-xs-12">
 <a id="attachments"></a>
 <a id="bugnotes"></a>
 
@@ -370,5 +369,4 @@ if( $t_total_time > 0 && $t_show_time_tracking ) {
 	echo '<div class="time-tracking-total pull-right"><i class="ace-icon fa fa-clock-o bigger-110 red"></i> ', sprintf( lang_get( 'total_time_for_issue') . '= %1$s' , '<span class="time-tracked">' . db_minutes_to_hhmm( $t_total_time ) . '</span>' ), '</div>';
 }
 ?>
-</div>
 

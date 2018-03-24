@@ -52,7 +52,6 @@ if( access_has_bug_level( config_get( 'show_monitor_list_threshold' ), $f_bug_id
 	$t_users = bug_get_monitors( $f_bug_id );
 	$t_num_users = sizeof( $t_users );
 
-	echo '<div class="col-md-6-right col-xs-12">';
 	echo '<a id="monitors"></a>';
 
 	$t_collapse_block = is_collapsed( 'monitoring' );
@@ -120,7 +119,6 @@ if( access_has_bug_level( config_get( 'show_monitor_list_threshold' ), $f_bug_id
 	</tr>
 </tfoot>
 </table>
-</div>
 </div>
 </div>
 </div>

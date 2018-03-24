@@ -262,7 +262,7 @@ foreach($t_boxes as $t_box_title => $t_box_display) {
 
 		<!-- filter content -->
 		<?php
-		table_header(array('Issue', 'Summary', 'Category', 'Status'), 'table-striped table-hover table-sortable');
+		table_begin(array('Issue', 'Summary', 'Category', 'Status'), 'table-bordered table-condensed table-striped table-hover table-sortable');
 
 		echo '<tbody>';
 			foreach($t_rows as $t_bug){
@@ -280,7 +280,7 @@ foreach($t_boxes as $t_box_title => $t_box_display) {
 			}
 		echo '</tbody>';
 
-		table_footer();
+		table_end();
 
 		unset( $t_rows );
 

@@ -1,13 +1,24 @@
+/* section margin */
+.section {
+	margin: 0 6px 0 6px;
+}
+.subsection {
+	margin: 0 12px 0 12px;
+}
+.no-padding {
+	padding:0 0 0 0;
+}
+
 /* collapsable horizontal line with text */
 .hr-text {
   line-height: 1em;
   position: relative;
   outline: 0;
   border: 0;
-  color: black;
   text-align: left;
   height: 1.5em;
   font-weight: bold;
+  font-size:14px;
   opacity: 1;
   cursor: Pointer;
   margin-top: 25px;
@@ -72,7 +83,7 @@
 }
 
 .table.actionbar {
-	margin: 0 5px 0 5px;
+	margin: 0 0px 0 0px;
 }
 
 /* dropdown intermediate header and colors */
@@ -171,4 +182,16 @@ div.dataTables_wrapper div.dataTables_info {
 .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
 	color: white !important;
 	background: #1d520a;
+}
+.table.no-border td {
+  padding: 2px;
+  vertical-align: top;
+  border-top: 0px solid #ddd;
+}
+.table {
+	margin-bottom: 10px;
+}
+.bug-header{
+	font-weight:bold;
+	color:#818078;
 }
