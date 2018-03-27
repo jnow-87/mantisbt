@@ -5,7 +5,8 @@
  * 			the hiding state will be stored in local storage
  */
 function hr_hide_hdlr(){
-	set(this.id + '_hidden', 1);
+	var page_id = window.location.pathname;
+	set(page_id + this.id + '_hidden', 1);
 }
 
 /**
@@ -13,7 +14,8 @@ function hr_hide_hdlr(){
  * 			the hiding state will be stored in local storage
  */
 function hr_show_hdrl(){
-	set(this.id + '_hidden', 0);
+	var page_id = window.location.pathname;
+	set(page_id + this.id + '_hidden', 0);
 }
 
 
@@ -43,7 +45,8 @@ $(document).ready(function(){
 
 	for(var i=0; i<hrs.length; i++){
 		var tgt = $('#' + hrs[i].id + '_target');
-		var hidden = get(hrs[i].id + '_target_hidden');
+		var page_id = window.location.pathname;
+		var hidden = get(page_id + hrs[i].id + '_target_hidden');
 
 		if(hidden == 1)			tgt.collapse('hide');
 		else if(hidden == 0)	tgt.collapse('show');
