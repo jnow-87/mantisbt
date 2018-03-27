@@ -346,7 +346,9 @@ function layout_body_javascript() {
 	# ace theme scripts
 	html_javascript_link( 'ace.min.js' );
 
+	html_javascript_link('mantis-inc.js');
 	html_javascript_link('mantis-table.js');
+	html_javascript_link('mantis-hr.js');
 	html_javascript_link('mantis-input.js');
 	html_javascript_link('dataTables.bootstrap.min.js');
 	html_javascript_link('jquery.dataTables.min.js');

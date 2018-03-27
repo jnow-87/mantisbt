@@ -61,7 +61,7 @@ function section_begin($p_heading, $p_collapsed = false){
 	$t_label = 'section_' . $g_section_label_cnt;
 	$g_section_label_cnt++;
 
-	echo '<hr class="hr-text ' . ($p_collapsed ? 'collapsed' : '') . '" data-content="' . $p_heading . '" data-toggle="collapse" data-target="#' . $t_label . '_target">';
+	echo '<hr id="' . $t_label . '" class="hr-text ' . ($p_collapsed ? 'collapsed' : '') . '" data-content="' . $p_heading . '" data-toggle="collapse" data-target="#' . $t_label . '_target">';
 	echo '<div id="' . $t_label . '_target" class="section collapse ' . (!$p_collapsed ? 'in' : '') . '">';
 }
 
