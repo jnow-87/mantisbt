@@ -142,9 +142,9 @@ page_title("Layout elements demo");
 	<?php section_end() ?>
 
 	<!-- link button demo -->
-<?php
-$f_link_button_input = gpc_get_string('link_button_input', '');
-?>
+	<?php
+	$f_link_button_input = gpc_get_string('link_button_input', '');
+	?>
 
 	<?php section_begin('link button demo') ?>
 	<h4>form inputs</h4>
@@ -165,6 +165,7 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	<div>
 		<?php button_link('submit data to this page', '', array('link_button_input' => 'button submits data')); ?>
 	</div>
+
 	<?php section_end() ?>
 
 	<!-- form button demo -->
@@ -211,6 +212,61 @@ $f_link_button_input = gpc_get_string('link_button_input', '');
 	<?php table_end() ?>
 	<?php button_submit('submit', '') ?>
 	</form>
+	<?php section_end() ?>
+
+	<?php section_begin('hover demo') ?>
+
+	<span id="m0" class="input-toggle-master">
+	<a class="" href="#">hover here</a>
+	<a id="m0-commit" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
+	</span>
+
+	<span id="imaster" class="input-toggle-master">
+	<input type="text" id="imaster-input" class="input-xs input-toggle-input" value="test" readonly>
+	<a id="imaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
+	<a id="imaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
+	</span>
+
+	<span id="amaster" class="input-toggle-master">
+	<textarea id="amaster-input" rows="4" cols="30" class="input-xs input-toggle-input" value="test" readonly>test</textarea>
+	<a id="amaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
+	<a id="amaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
+	</span>
+
+	<span id="cmaster" class="input-toggle-master">
+	<input type="checkbox" id="cmaster-input" rows="4" cols="30" class="input-xs input-toggle-input" value="test0" readonly>test0
+	<a id="cmaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
+	<a id="cmaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
+	</span>
+
+	<span id="rmaster" class="input-toggle-master">
+	<input type="radio" name="foo" id="rmaster-input" class="input-xs input-toggle-input" readonly>test0
+	<input type="radio" name="foo" id="rmaster-input" class="input-xs input-toggle-input" readonly>test1
+	<input type="radio" name="foo" id="rmaster-input" class="input-xs input-toggle-input" readonly>test2
+	<a id="rmaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
+	<a id="rmaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
+	</span>
+
+	<span id="smaster" class="input-toggle-master">
+	<select id="smaster-input" class="input-xs input-toggle-input" readonly>
+		<option value="foo">foo</option>
+		<option value="bar">bar</option>
+		<option value="foobar">foobar</option>
+	</select>
+	<a id="smaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
+	<a id="smaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
+	</span>
+
+
+	<style>
+	.input-toggle-input[readonly]{
+		background: transparent !important;
+		border-color: transparent !important;
+	}
+	</style>
+
+
+
 	<?php section_end() ?>
 </div>
 
