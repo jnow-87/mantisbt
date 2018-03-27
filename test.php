@@ -19,7 +19,7 @@ require_api('elements_api.php');
 #	pages
 #
 function tab_page0(){
-
+	echo '<div class="row">';
 	echo '<div class="col-md-6-left">';
 	table_begin(array('col 0', 'col 1', 'col 2'), 'table-bordered table-condensed table-striped table-hover table-sortable');
 	table_row(array('bug-0', 'a01', 'b02'));
@@ -52,6 +52,7 @@ function tab_page0(){
 	table_row(array('bug-2', 'c01', 'd02'));
 	table_row(array('feature-2', 'd01', 'a02'));
 	table_end();
+	echo '</div>';
 	echo '</div>';
 }
 
