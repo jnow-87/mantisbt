@@ -1,0 +1,56 @@
+/* bootstrap, jquery datatables */
+div.dataTables_wrapper label {
+	font-size: 10px;
+}
+div.dataTables_wrapper select {
+	height: 20px;
+}
+div.dataTables_wrapper input {
+	height: 20px;
+	font-size: 10px;
+	padding: 0 4px 0 4px;
+}
+div.dataTables_wrapper div.dataTables_info {
+	font-size: 10px;
+	padding-top: 4px;
+	white-space: nowrap;
+}
+.dataTables_wrapper .dataTables_paginate {
+	font-size: 10px;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+	color: white !important;
+	background: #1d520a;
+	padding: 1px 4px 1px 4px;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 1px 4px 1px 4px;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+	background: #cae8bf;
+	color: #000000 !important;
+	border-color: #cae8bf;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+	color: white !important;
+	background: #1d520a;
+}
+.table.no-border td {
+  padding: 2px;
+  vertical-align: top;
+  border-top: 0px solid #ddd;
+}
+.table {
+	margin-bottom: 10px;
+}
+
+/* table row with url */
+.tr-url {
+	cursor: pointer;
+}
+
+/* table for bug header */
+.bug-header{
+	font-weight:bold;
+	color:#818078;
+}

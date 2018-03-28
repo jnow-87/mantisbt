@@ -277,7 +277,10 @@ function layout_head_css() {
 	# mantis specific, including
 	# 	changes to bootstrap, ace
 	#	additional elements
-	html_css_link( 'mantis.css' );
+	html_css_link( 'mantis-hr.css' );
+	html_css_link( 'mantis-elements.css' );
+	html_css_link( 'mantis-bootstrap.css' );
+	html_css_link( 'mantis-table.css' );
 
 	# handle IE separately
 	echo '<!--[if lte IE 9]>';

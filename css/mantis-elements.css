@@ -1,0 +1,48 @@
+/* remove borders of tab content */
+.tab-content {
+    border: 0px;
+    padding: 10px 0px 0px;
+    position: relative;
+}
+
+/* reduced height of navigation bar */
+.navbar {
+    min-height: 5px;
+}
+
+.ace-nav > li {
+    line-height: 35px;
+    height: 35px;
+    padding: 0;
+}
+
+/* action bar */
+.actionbar {
+	border-radius: 4px !important;
+	border-collapse: separate !important;
+	background: #b3b3b3;
+	color: #ffffff;
+	padding: 5px 10px 5px 10px !important;
+	margin: 0 0 0 0 !important;
+	font-size: 13px;
+}
+
+.table.actionbar {
+	margin: 0 0px 0 0px;
+}
+
+/* dropdown intermediate header and colors */
+.dropdown-header {
+	color: #1d520a;
+	padding: 5px;
+	font-weight: bold;
+}
+
+.dropdown-green > li:hover > a,
+.dropdown-green > li > a:focus,
+.dropdown-green > li > a:active,
+.dropdown-green > li.active > a,
+.dropdown-green > li.active:hover > a {
+    background: #cae8bf;
+    color: #444444;
+}
