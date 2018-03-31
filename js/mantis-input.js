@@ -1,5 +1,6 @@
 /* global variables */
 var input_hover_active = null;
+var input_hover_active_all = false;
 
 
 /* input-hover functions */
@@ -21,6 +22,7 @@ function input_hover_store(input){
 /**
  * \brief	show the input elements and buttons and hide the overlay
  * 			element of a hover master element
+ * 			buttons are only shown if input_hover_show_all is set to false
  * 			also make the input writeable and store its current
  * 			value to local storage if not already present
  *
@@ -44,6 +46,9 @@ function input_hover_show(master){
 	if(overlay != null)
 		overlay.style.display = 'none';
 
+	if(input_hover_active_all)
+		return 
+
 	/* show buttons */
 	var i = 0;
 
@@ -63,12 +68,13 @@ function input_hover_show(master){
 
 	if(btn != null)
 		btn.style.visibility = 'visible';
-
 }
 
 /**
  * \brief	hide the input elements and buttons and show the overlay
  * 			element of a hover master element
+ * 			these operations are only performed if input_hover_show_all
+ * 			is set to false
  * 			also make the input readonly
  *
  * \param	master	hover master element
@@ -77,6 +83,9 @@ function input_hover_hide(master){
 	var input = document.getElementById(master.id + '-input');
 	var overlay = document.getElementById(master.id + '-overlay');
 
+
+	if(input_hover_active_all)
+		return;
 
 	/* hide input */
 	if(input != null){
@@ -107,7 +116,58 @@ function input_hover_hide(master){
 
 	if(btn != null)
 		btn.style.visibility = 'hidden';
+}
 
+/**
+ * \brief	show the inputs of all input-hover elements, hiding their overlay
+ * 			show the reset-all and submit-all button, hiding the show-all button
+ */
+function input_hover_show_all(){
+	/* enable active_all mode */
+	input_hover_active_all = true;
+	input_hover_active = null;
+
+	/* show inputs, hiding overlays */
+	var masters = document.getElementsByClassName('input-hover-master');
+
+	for(var i=0; i<masters.length; i++){
+		input_hover_show(masters[i]);
+	}
+
+	/* toggle show-all, reset-all, submit-all buttons */
+	var show_all = document.getElementById('input-hover-show-all');
+	var reset_all = document.getElementById('input-hover-reset-all');
+	var submit_all = document.getElementById('input-hover-submit-all');
+	
+	show_all.style.display = 'none';
+	reset_all.style.display = 'inline-block';
+	submit_all.style.display = 'inline-block';
+}
+
+/**
+ * \brief	hide the inputs of all input-hover elements, showing their overlays
+ *			hide the reset-all and submit-all button, showing the show-all button
+ */
+function input_hover_hide_all(){
+	/* disable active_all mode */
+	input_hover_active_all = false;
+
+	/* hide inputs, showing their overlays */
+	var masters = document.getElementsByClassName('input-hover-master');
+
+	for(var i=0; i<masters.length; i++){
+		input_hover_reset(masters[i]);
+		input_hover_hide(masters[i]);
+	}
+
+	/* toggle show-all, reset-all, submit-all buttons */
+	var show_all = document.getElementById('input-hover-show-all');
+	var reset_all = document.getElementById('input-hover-reset-all');
+	var submit_all = document.getElementById('input-hover-submit-all');
+	
+	show_all.style.display = 'inline-block';
+	reset_all.style.display = 'none';
+	submit_all.style.display = 'none';
 }
 
 /**
@@ -189,6 +249,9 @@ function focusin_hdlr(e){
 		return false;
 	}
 
+	if(input_hover_active_all)
+		return;
+
 	/* update the active element and show it */
 	input_hover_active = this;
 	input_hover_show(this.parentNode);
@@ -233,6 +296,31 @@ function submit(e){
 		dataType: "text",
 		data : $(this).serialize(),
 		success: function(msg, status, data){
+			alert(msg);
+
+			/* update all value if all elements have been active */
+			if(input_hover_active_all){
+				var masters = document.getElementsByClassName('input-hover-master');
+
+				// for all input-hover elements
+				for(var i=0; i<masters.length; i++){
+					var input = document.getElementById(masters[i].id + '-input');
+					var overlay = document.getElementById(masters[i].id + '-overlay');
+
+					if(input == null || overlay == null)
+						continue;
+
+					// update local storage and overlay with current value
+					input_hover_store(input);
+					overlay.value = get(input.id + '_value');
+				}
+
+				// hide all input elements
+				input_hover_hide_all();
+
+				return;
+			}
+
 			if(!input_hover_active)
 				return;
 
@@ -293,3 +381,7 @@ $(document).ready(function(){
 		forms[i].addEventListener('submit', submit);
 	}
 });
+
+/* callbacks for show/reset-all buttons */
+$('#input-hover-show-all').click(function(){input_hover_show_all()});
+$('#input-hover-reset-all').click(function(){input_hover_hide_all()});

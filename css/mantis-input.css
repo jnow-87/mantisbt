@@ -31,6 +31,14 @@
 	z-index: 1;
 }
 
+#input-hover-reset-all{
+	display: none;
+}
+
+#input-hover-submit-all{
+	display: none;
+}
+
 select.input-hover-input{
 	height: 22px;
 	width: 95px;

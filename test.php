@@ -197,6 +197,18 @@ page_title($t_page_title);
 	<?php section_begin('input hover demo') ?>
 
 	<form action="test_post.php" class="input-hover-form">
+	<?php
+		actionbar_begin();
+
+		echo '<div class="pull-right">';
+		button('show all', 'input-hover-show-all');
+		button('reset', 'input-hover-reset-all');
+		button('submit', 'input-hover-submit-all', 'submit');
+		echo '</div>';
+		
+		actionbar_end();
+	?>
+
 		<?php table_begin(array('hover ink', 'hover text', 'hover select', 'hover checkbox'), 'table-bordered table-condensed table-striped') ?>
 		<tr>
 		<td><?php input_hover_element('l', format_link('lonk', '#', array(), '', 'margin-right:20px!important'), array(array('icon' => 'fa-times', 'link' => 'view.php?id=88', 'position' => 'right:4px'))); ?></td>
