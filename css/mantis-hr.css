@@ -18,7 +18,7 @@
   text-align: left;
   height: 1.5em;
   font-weight: bold;
-  font-size:14px;
+  font-size:13px;
   opacity: 1;
   cursor: Pointer;
   margin-top: 25px;
@@ -41,7 +41,7 @@
   display: inline-block;
   padding: 0 10px 0 0;
   line-height: 1.5em;
-  color: #818078;
+  color: #656565;
   background-color: #ffffff;
 }
 .hr-text.collapsed:after {
@@ -50,7 +50,7 @@
   display: inline-block;
   padding: 0 10px 0 0;
   line-height: 1.5em;
-  color: #818078;
+  color: #656565;
   background-color: #ffffff;
 }
 
@@ -60,7 +60,6 @@
   position: relative;
   outline: 0;
   border: 0;
-  color: black;
   text-align: center;
   height: 1.5em;
   font-weight: italic;
