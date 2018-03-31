@@ -210,12 +210,13 @@ function button_link($p_button_text, $p_link, $p_arg = array(), $p_class = 'btn-
  *
  *	@param	string	$p_text		text displayed as the button
  *	@param	string	$p_label	the label used as the button name
+ *	@param	string	$p_type		html button type, e.g. button, submit
  *	@param	string	$p_class	additional button class attributes
  *
  *	@return	nothing
  */
-function button_submit($p_text, $p_label, $p_class = 'btn-xs btn-round'){
-	echo '<input name="' . $p_label . '" class="btn btn-primary btn-white ' . $p_class . '" value="' . $p_text .'" type="submit"/>';
+function button($p_text, $p_label, $p_type = 'button', $p_class = 'btn-xs btn-round'){
+	echo '<input name="' . $p_label . '" id="' . $p_label . '" class="btn btn-primary btn-white ' . $p_class . '" value="' . $p_text .'" type="' . $p_type . '"/>';
 }
 
 /**

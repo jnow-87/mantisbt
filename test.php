@@ -17,6 +17,7 @@ require_api('elements_api.php');
 #	add time estimate, time spent to bug view
 #
 #	check which commit changed the html_operation_successful() output
+#	logwork if timetracking is disabled
 #
 #	pages
 #
@@ -176,7 +177,7 @@ page_title($t_page_title);
 	<?php
 	$f_form_button_input = gpc_get_string('form_button_input', '');
 	$f_submit_button_state = gpc_get_bool('submit_button', false);
-	$f_delete_button_state = gpc_get_bool('delete_button', false);
+	$f_delete_button_state = gpc_get_bool('reset_button', false);
 	?>
 
 	<?php section_begin('form button demo') ?>
@@ -187,8 +188,8 @@ page_title($t_page_title);
 
 	<form method="post" action="">
 		<input type="text" name="form_button_input" placeholder="type something"/>
-		<?php button_submit('submit', 'submit_button'); ?>
-		<?php button_submit('delete', 'delete_button', 'btn-xs'); ?>
+		<?php button('submit', 'submit_button', 'submit'); ?>
+		<?php button('reset', 'reset_button', 'reset', 'btn-xs'); ?>
 	</form>
 	<?php section_end() ?>
 

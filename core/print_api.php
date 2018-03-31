@@ -362,7 +362,7 @@ function print_tag_attach_form( $p_bug_id, $p_string = '' ) {
 	<?php echo form_security_field( 'tag_attach' )?>
 	<input type="hidden" name="bug_id" value="<?php echo $p_bug_id?>" class="input-xs" />
 	<?php print_tag_input(0, $p_string) ?>
-	<?php button_submit('Attach Tag(s)', '') ?>
+	<?php button('Attach Tag(s)', '', 'submit') ?>
 	</form>
 <?php
 	return true;
