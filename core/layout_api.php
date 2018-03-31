@@ -139,10 +139,9 @@ function layout_page_header_end( $p_page_id = null) {
 
 /**
  * Print page common elements including navbar, info bar
- * @param string $p_page_title the current page that is rendered
  * @return void
  */
-function layout_page_begin( $p_page_title = null ) {
+function layout_page_begin() {
 	layout_navbar();
 
 	if( !db_is_connected() ) {
@@ -281,6 +280,7 @@ function layout_head_css() {
 	html_css_link( 'mantis-elements.css' );
 	html_css_link( 'mantis-bootstrap.css' );
 	html_css_link( 'mantis-table.css' );
+	html_css_link( 'mantis-input.css' );
 
 	# handle IE separately
 	echo '<!--[if lte IE 9]>';

@@ -8,13 +8,15 @@ require_api('elements_api.php');
 # TODO
 #	proper action bar for buttons and inputs
 #
-#	input-toggle: either toggle on hover or show cursor on hover
+#	input-hover: either toggle on hover or show cursor on hover
 #	remove table from timeline
 #	select_input_toggle
 #	extend navbar issue search to actually perform a textual search, analog to filters
 #	remove lang_get()
 #	save collapse state for site reloads
 #	add time estimate, time spent to bug view
+#
+#	check which commit changed the html_operation_successful() output
 #
 #	pages
 #
@@ -71,12 +73,14 @@ $t_menu0 = array(
 	array('label' => 'item1', 'data' => array('link' => 'worklog_summary_page.php', 'icon' => 'fa-user')),
 );
 
+$t_page_title = 'Layout elements demos';
 
 
-layout_page_header('elements demos');
-layout_page_begin('elements demos');
 
-page_title("Layout elements demo");
+layout_page_header($t_page_title);
+layout_page_begin();
+
+page_title($t_page_title);
 
 ?>
 <div class="col-md-10">
@@ -189,83 +193,25 @@ page_title("Layout elements demo");
 	<?php section_end() ?>
 
 	<!-- input text toggle -->
-	<?php
-	$f_editable_input0 = gpc_get_string('editable_input0', 'click me');
-	$f_editable_input1 = gpc_get_string('editable_input1', 'click me');
-	$f_editable_input2 = gpc_get_string('editable_input2', 'click me');
-	?>
+	<?php section_begin('input hover demo') ?>
 
-	<?php section_begin('input text toggle demo') ?>
-	<h4>form inputs</h4>
-	<?php label('editable input0:', 'arrowed'); echo $f_editable_input0 . '<br>' ?>
-	<?php label('editable input1:', 'arrowed-right'); echo $f_editable_input1 . '<br>' ?>
-	<?php label('editable input2:', 'arrowed-in-right'); echo $f_editable_input2 ?>
-
-	<form method="post" action="">
-	<?php table_begin(array('clickable input0', 'clickable input1', 'clickable input2'), 'table-bordered table-condensed table-striped') ?>
+	<form action="test_post.php" class="input-hover-form">
+		<?php table_begin(array('hover ink', 'hover text', 'hover select', 'hover checkbox'), 'table-bordered table-condensed table-striped') ?>
 		<tr>
-			<td><?php text_input_toggle('editable_input0', $f_editable_input0, 'input-xs'); ?></td>
-			<td><?php text_input_toggle('editable_input1', $f_editable_input1, 'input-xs'); ?></td>
-			<td><?php text_input_toggle('editable_input2', $f_editable_input2, 'input-xs'); ?></td>
+		<td><?php input_hover_element('l', format_link('lonk', '#', array(), '', 'margin-right:20px!important'), array(array('icon' => 'fa-times', 'link' => 'view.php?id=88', 'position' => 'right:4px'))); ?></td>
+		<td>
+			<?php input_hover_text('text0', 'dummy text 0') ?>
+			<?php input_hover_text('text1', 'dummy text 1') ?>
+			<?php input_hover_text('text2', 'dummy text 2') ?>
+		</td>
+		<td><?php input_hover_select('select', array('bar', 'foo', 'foobar'), 'foo'); ?></td>
+		<td><?php input_hover_checkbox('checkbox', false); ?></td>
 		</tr>
 
-	<?php table_end() ?>
-	<?php button_submit('submit', '') ?>
+		<?php table_end() ?>
+
+		<?php input_hover_textarea('textarea', 'dummy text', '100%', '100px'); ?>
 	</form>
-	<?php section_end() ?>
-
-	<?php section_begin('hover demo') ?>
-
-	<span id="m0" class="input-toggle-master">
-	<a class="" href="#">hover here</a>
-	<a id="m0-commit" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
-	</span>
-
-	<span id="imaster" class="input-toggle-master">
-	<input type="text" id="imaster-input" class="input-xs input-toggle-input" value="test" readonly>
-	<a id="imaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
-	<a id="imaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
-	</span>
-
-	<span id="amaster" class="input-toggle-master">
-	<textarea id="amaster-input" rows="4" cols="30" class="input-xs input-toggle-input" value="test" readonly>test</textarea>
-	<a id="amaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
-	<a id="amaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
-	</span>
-
-	<span id="cmaster" class="input-toggle-master">
-	<input type="checkbox" id="cmaster-input" rows="4" cols="30" class="input-xs input-toggle-input" value="test0" readonly>test0
-	<a id="cmaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
-	<a id="cmaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
-	</span>
-
-	<span id="rmaster" class="input-toggle-master">
-	<input type="radio" name="foo" id="rmaster-input" class="input-xs input-toggle-input" readonly>test0
-	<input type="radio" name="foo" id="rmaster-input" class="input-xs input-toggle-input" readonly>test1
-	<input type="radio" name="foo" id="rmaster-input" class="input-xs input-toggle-input" readonly>test2
-	<a id="rmaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
-	<a id="rmaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
-	</span>
-
-	<span id="smaster" class="input-toggle-master">
-	<select id="smaster-input" class="input-xs input-toggle-input" readonly>
-		<option value="foo">foo</option>
-		<option value="bar">bar</option>
-		<option value="foobar">foobar</option>
-	</select>
-	<a id="smaster-commit" class="input-toggle-button" href="#"><i class="fa fa-check"></i></a>
-	<a id="smaster-cancel" class="input-toggle-button" href="#"><i class="fa fa-times"></i></a>
-	</span>
-
-
-	<style>
-	.input-toggle-input[readonly]{
-		background: transparent !important;
-		border-color: transparent !important;
-	}
-	</style>
-
-
 
 	<?php section_end() ?>
 </div>

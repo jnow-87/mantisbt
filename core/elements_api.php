@@ -35,6 +35,100 @@ function label($p_name, $p_class = ''){
 }
 
 /**
+ *	format a text input html element
+ *
+ *	@param	string	$p_id		string used as the elements id name properties
+ *	@param	string	$p_value	html value property
+ *	@param	string	$p_class	html class property
+ *	@param	string	$p_style	css stle
+ *	@param	string	$p_prop		any additionally required html properties
+ *
+ *	@return	a string containing the html element
+ */
+function format_text($p_id, $p_value, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	return '<input type="text" id="' . $p_id . '" name="' . $p_id . '" class="' . $p_class . '" value="' . $p_value . '" style="' . $p_style . '" ' . $p_prop . '/>';
+}
+
+/**
+ *	format a textarea input html element
+ *
+ *	@param	string	$p_id		string used as the elements id name properties
+ *	@param	string	$p_value	html value property
+ *	@param	string	$p_class	html class property
+ *	@param	string	$p_style	css stle
+ *	@param	string	$p_prop		any additionally required html properties
+ *
+ *	@return	a string containing the html element
+ */
+function format_textarea($p_id, $p_value, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	return '<textarea id="' . $p_id . '" name="' . $p_id . '" class="' . $p_class . '" style="' . $p_style . '" value="' . $p_value . '" ' . $p_prop . '>' . $p_value . '</textarea>';
+}
+
+/**
+ *	format a checkbox input html element
+ *
+ *	@param	string	$p_id		string used as the elements id name properties
+ *	@param	boolean	$p_checked	inidicate if the box checked
+ *	@param	string	$p_class	html class property
+ *	@param	string	$p_style	css stle
+ *	@param	string	$p_prop		any additionally required html properties
+ *
+ *	@return	a string containing the html element
+ */
+function format_checkbox($p_id, $p_checked = false, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	return 	'<input type="checkbox" id="' . $p_id . '" name="' . $p_id . '" class="' . $p_class . '" style="' . $p_style . '" ' . $p_prop . ' ' . ($p_checked ? ' checked' : '') . '/>';
+}
+
+/**
+ *	format a select input html element
+ *
+ *	@param	string	$p_id		string used as the elements id name properties
+ *	@param	array	$p_values	array containing the possible value strings
+ *	@param	string	$p_selected	the select value
+ *	@param	string	$p_class	html class property
+ *	@param	string	$p_style	css stle
+ *	@param	string	$p_prop		any additionally required html properties
+ *
+ *	@return	a string containing the html element
+ */
+function format_select($p_id, $p_values, $p_selected, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	$t_s = '<select id="' . $p_id . '" name="' . $p_id . '" class="' . $p_class . '" style="' . $p_style . '" ' . $p_prop . '>';
+
+	foreach($p_values as $t_value)
+		$t_s .= '<option value="' . $t_value . '" ' . ($t_value == $p_selected ? 'selected' : '') . '>' . $t_value . '</option>';
+
+	$t_s .= '</select>';
+
+	return $t_s;
+}
+
+/**
+ *	format a link html element
+ *
+ *	@param	string	$p_label	the string displayed
+ *	@param	string	$p_action	the href property
+ *	@param	array	$p_arg		array of arguments to add to the link (name => value)
+ *	@param	string	$p_class	html class property
+ *	@param	string	$p_style	css stle
+ *
+ *	@return	a string containing the html element
+ */
+function format_link($p_label, $p_action, $p_arg = array(), $p_class = '', $p_style = ''){
+	$t_link = '<a class="' . $p_class . '" style="' . $p_style . '" href="' . htmlspecialchars($p_action);
+
+	# arguments
+	if(count($p_arg) > 0)
+		$t_link .= '?';
+
+	foreach($p_arg as $t_arg_name => $t_arg_value)
+		$t_link .= '&' . $t_arg_name . '=' . $t_arg_value;
+	
+	$t_link .= '">' . $p_label . '</a>';
+
+	return $t_link;
+}
+
+/**
  *	print the page title
  *
  *	@param	string	$p_title	the page title
@@ -108,18 +202,7 @@ function actionbar_end(){
  *	@return nothing
  */
 function button_link($p_button_text, $p_link, $p_arg = array(), $p_class = 'btn-xs btn-round') {
-	# button start
-	echo '<a class="btn btn-primary btn-white ' . $p_class . '" href="' . htmlspecialchars( $p_link );
-
-	# arguments
-	if($p_arg)
-		echo '?';
-
-	foreach ($p_arg as $t_arg_name => $t_arg_value)
-		echo '&' . $t_arg_name . '=' . $t_arg_value;
-	
-	# button end
-	echo '">' . $p_button_text . '</a>';
+	echo format_link($p_button_text, $p_link, $p_arg, 'btn btn-primary btn-white ' . $p_class);
 }
 
 /**
@@ -289,26 +372,177 @@ function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = ''){
 }
 
 /**
- *	Print a toggleable text input, that is, by default the content of the field is
- *	shown but is not editable. Once clicked, the content is shown as text input and
- *	is made editable
+ *	print the header of input-hover elements
  *
- *	@param	$p_label	the label of the input field
- *	@param	$p_value	the current value of the field
- *	@param	$p_class	input field class attributes
- *
- *	@return nothing
+ *	@param	string	$p_id	the id of the master element
  */
-function text_input_toggle($p_label, $p_value, $p_class){
-	/*readonly input field, visible by default */
-	echo '<div id="' . $p_label . '" class="input-toggle" style="cursor:pointer;display:block">';
-	echo '<input type="text" class="' . $p_class . '" value="' . $p_value . '" style="cursor:pointer;background:transparent !important;border-color:transparent;" readonly/>';
-	echo '</div>';
+function input_hover_begin($p_id){
+	echo '<span id="' . $p_id . '" class="input-hover-master">';
+}
 
-	/* editable input field, visible once the readonly input field has been clicked */
-	echo '<div id="' . $p_label . '_rw" style="display:none">';
-	echo '<input type="text" class="' . $p_class . '" value="' . $p_value . '" name="' . $p_label . '" />';
-	echo '</div>';
+/**
+ *	print the footer of input-hover elements
+ */
+function input_hover_end(){
+	echo '</span>';
+}
+
+/**
+ *	print an input-hover element
+ *
+ *	@param	string	$p_id		the id of the element
+ *	@param	string	$p_element	html element
+ *	@param	array	$p_buttons	an array of buttons to allocate to the element
+ *								a single button contains the following fields
+ *									'icon' => string containing an icon
+ *									'link' => string with the link that shall be
+ *											  triggered when clicking the button
+ *									'position' => string with css positions
+ */
+function input_hover_element($p_id, $p_element, $p_buttons){
+	input_hover_begin($p_id);
+
+	echo $p_element;
+
+	$t_i = 0;
+
+	foreach($p_buttons as $t_button){
+		input_hover_button($p_id . '-action-' . $t_i, $t_button['icon'], 'link', $t_button['link'], $t_button['position']);
+		$t_i++;
+	}
+
+	input_hover_end();
+}
+
+/**
+ *	print an input-hover element with submit and reset button
+ *
+ *	@param	string	$p_id			the id the element
+ *	@param	string	$p_input		the html input element to display while the user hovers
+ *									over the element or it has been focused
+ *
+ *	@param	string	$p_overlay		the html element that shall be display while the input-hover
+ *									element is not hovered over or focused 
+ *
+ *	@param	string	$p_commit_pos	css position for the commit button
+ *	@param	string	$p_reset_pos	css position for the reset button
+ */
+function input_hover_submit_reset($p_id, $p_input, $p_overlay, $p_commit_pos = '', $p_reset_pos = ''){
+	input_hover_begin($p_id);
+
+	echo $p_input;
+	echo $p_overlay;
+
+	input_hover_button($p_id . '-action-0', 'fa-check', 'submit', '', $p_commit_pos);
+	input_hover_button($p_id . '-reset', 'fa-times', 'button', '', $p_reset_pos);
+
+	input_hover_end();
+}
+
+/**
+ *	print an input-hover button
+ *
+ *	@param	string	$p_id		button id
+ *	@param	string	$p_icon		button icon
+ *	@param	string	$p_type		button type, which is either of
+ *									'button'	for generic buttons, $p_action is required to be a formaction
+ *									'submit'	for submit buttons, $p_action is required to be a formaction
+ *									'link'		for links, $p_action is interpreted as href
+ *
+ *	@param	string	$p_action	the action to take when clicking the button
+ *									if $p_type is 'button' or 'submit' $p_action is required to be a formaction
+ *									if $p_type is 'link' $p_action is interpreted as href
+ *
+ *	@param	string	$p_position	css position
+ */
+function input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', $p_position = ''){
+	if($p_type == 'link'){
+		echo '<a id="' . $p_id . '" class="input-hover-button" href="' . $p_action . '" ';
+	}
+	else{
+		if($p_action != '')
+			$p_type = 'submit';
+
+		echo '<button type="' . $p_type . '" id="' . $p_id . '" class="input-hover-button" ';
+
+		if($p_action != '')
+			echo 'formaction="' . $p_action . '" ';
+	}
+
+	if($p_position != '')
+		echo 'style="position:absolute;' . $p_position . '" ';
+
+	echo '><i class="fa ' . $p_icon . '"></i>';
+
+	if($p_type == 'link')
+		echo '</a>';
+	else
+		echo '</button>';
+}
+
+/**
+ *	print an input-hover text element
+ *
+ *	@param	string	$p_id		the id of the master element
+ *								the value has to be accessed through $p_id . '-input'
+ *
+ *	@param	string	$p_value	the input value
+ */
+function input_hover_text($p_id, $p_value){
+	$t_input = format_text($p_id . '-input', $p_value, 'input-hover-input');
+	$t_overlay = format_text($p_id . '-overlay', $p_value, 'input-hover-overlay', '', 'readonly');
+
+	input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+}
+
+/**
+ *	print an input-hover textarea element
+ *
+ *	@param	string	$p_id		the id of the master element
+ *								the value has to be accessed through $p_id . '-input'
+ *
+ *	@param	string	$p_value	the input value
+ *	@param	string	$p_width	width
+ *	@param	string	$p_height	height
+ */
+function input_hover_textarea($p_id, $p_value, $p_width = '100%', $p_height = '50px'){
+	$t_style = 'width:' . $p_width . ';height:' . $p_height . ';';
+
+	$t_input = format_textarea($p_id . '-input', $p_value, 'input-hover-input', $t_style);
+	$t_overlay = format_textarea($p_id . '-overlay', $p_value, 'input-hover-overlay', $t_style, 'readonly');
+
+	input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+}
+
+/**
+ *	print an input-hover checkbox element
+ *
+ *	@param	string	$p_id		the id of the master element
+ *								the value has to be accessed through $p_id . '-input'
+ *
+ *	@param	boolean	$p_checked	state of the checkbox (true or false)
+ */
+function input_hover_checkbox($p_id, $p_checked = false){
+	$t_input = format_checkbox($p_id . '-input', $p_checked, 'input-hover-input', 'width:75px');
+	$t_overlay = format_text($p_id . '-overlay', $p_checked ? 'true' : 'false', 'input-hover-overlay', 'width:75px', 'readonly');
+
+	input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+}
+
+/**
+ *	print an input-hover select element
+ *
+ *	@param	string	$p_id		the id of the master element
+ *								the value has to be accessed through $p_id . '-input'
+ *
+ *	@param	array	$p_values	array containing the possible values
+ *	@param	string	$p_selected	the currently selected value
+ */
+function input_hover_select($p_id, $p_values, $p_selected){
+	$t_input = format_select($p_id . '-input', $p_values, $p_selected, 'input-hover-input', 'margin-right:35px');
+	$t_overlay = format_text($p_id . '-overlay', $p_selected, 'input-hover-overlay', 'width:130px', 'readonly');
+
+	input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:13px', 'right:0px');
 }
 
 /**
