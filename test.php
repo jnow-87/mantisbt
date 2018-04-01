@@ -8,6 +8,7 @@ require_api('elements_api.php');
 # TODO
 #	proper action bar for buttons and inputs
 #
+#	reset resolution if bug is reopened
 #	input-hover: either toggle on hover or show cursor on hover
 #	remove table from timeline
 #	select_input_toggle
@@ -18,6 +19,7 @@ require_api('elements_api.php');
 #
 #	check which commit changed the html_operation_successful() output
 #	logwork if timetracking is disabled
+#	handle markup for description, cf. plugins/BBCodePlus/files/markitup-init.js
 #
 #	pages
 #
@@ -211,7 +213,7 @@ page_title($t_page_title);
 
 		<?php table_begin(array('hover ink', 'hover text', 'hover select', 'hover checkbox'), 'table-bordered table-condensed table-striped') ?>
 		<tr>
-		<td><?php input_hover_element('l', format_link('lonk', '#', array(), '', 'margin-right:20px!important'), array(array('icon' => 'fa-times', 'link' => 'view.php?id=88', 'position' => 'right:4px'))); ?></td>
+		<td><?php input_hover_element('l', format_link('lonk', '#', array(), '', 'margin-right:20px!important'), array(array('icon' => 'fa-times', 'href' => format_href('view.php', array('id' => '89')), 'position' => 'right:4px'))); ?></td>
 		<td>
 			<?php input_hover_text('text0', 'dummy text 0') ?>
 			<?php input_hover_text('text1', 'dummy text 1') ?>

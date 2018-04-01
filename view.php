@@ -54,6 +54,7 @@ require_css('status_config.php');
 /* callback to render custom fields */
 function tab_custom_fields(){
 	global $f_bug_id;
+	global $t_bug;
 
 	$t_related_custom_field_ids = custom_field_get_linked_ids($t_bug->project_id);
 	$custom_fields_show = config_get('bug_custom_fields_show')['view'];
@@ -74,16 +75,10 @@ function tab_custom_fields(){
 			continue;
 		}
 
-		table_row_bug_info_long(string_display($t_def['name']) . ':', string_custom_field_value($t_def, $t_id, $f_bug_id));
+		table_row_bug_info_long($t_def['name'] . ':', string_custom_field_value($t_def, $t_id, $f_bug_id), '10%');
 	}
 
 	table_end();
-}
-
-/* callback to render tags */
-function tab_tags(){
-	global $f_bug_id;
-	tag_display_attached($f_bug_id);
 }
 
 /* callback to render relationships */
@@ -142,18 +137,17 @@ function table_row_bug_info_short($p_key, $p_value){
 	echo '</tr>';
 }
 
-function table_row_bug_info_long($p_key, $p_value){
+function table_row_bug_info_long($p_key, $p_value, $p_key_width = '50%'){
 	echo '<tr>';
 
 	if($p_key)
-		echo '<td class="no-border bug-header">' . $p_key . '</td>';
+		echo '<td class="no-border bug-header" width="' . $p_key_width . '">' . $p_key . '</td>';
 
 	if($p_value)
 		echo '<td class="no-border">' . $p_value . '</td>';
 
 	echo '</tr>';
 }
-
 
 
 compress_enable();
@@ -171,23 +165,90 @@ bug_ensure_exists($f_bug_id);
 access_ensure_bug_level(config_get('view_bug_threshold'), $f_bug_id);
 
 $t_bug = bug_get($f_bug_id, true);
+$t_project_id = $t_bug->project_id;
 $t_fields = config_get('bug_fields_show')['view'];
 
 $t_status_icon = '<i class="fa fa-square fa-status-box ' . html_get_status_css_class($t_bug->status) . '"></i> ';
-$t_status_string = string_display_line(get_enum_element('status', $t_bug->status));
-$t_product_version = in_array('version', $t_fields) ? string_display_line(prepare_version_string($t_bug->project_id, version_get_id($t_bug->version, $t_bug->project_id))) : '';
-$t_fixed_in_version = in_array('fixed_in_version', $t_fields) ? string_display_line(prepare_version_string($t_bug->project_id, version_get_id($t_bug->fixed_in_version, $t_bug->project_id))) : '';
 $t_product_build = in_array('build', $t_fields) ? string_display_line($t_bug->build) : '';
-$t_target_version_string = in_array('target_version', $t_fields) && access_has_bug_level(config_get('roadmap_view_threshold'), $f_bug_id) ? string_display_line(prepare_version_string($t_bug->project_id, version_get_id($t_bug->target_version, $t_bug->project_id))) : '';
 $t_platform = in_array('platform', $t_fields) ? string_display_line($t_bug->platform) : '';
-$t_os = in_array('os', $t_fields) ? string_display_line($t_bug->os) : '';
-$t_os_version = in_array('os', $t_fields) ? string_display_line($t_bug->os_build) : '';
-$t_bug_view_state_enum = in_array('view_state', $t_fields) ? string_display_line(get_enum_element('view_state', $t_bug->view_state)) : '';
 $t_bug_due_date = (access_has_bug_level(config_get('due_date_view_threshold'), $f_bug_id) && !date_is_null($t_bug->due_date)) ? date($t_date_format, $t_bug->due_date) : '';
 
 $t_show_tags = in_array('tags', $t_fields) && access_has_global_level(config_get('tag_view_threshold'));
 $t_show_history = gpc_get_bool('history', config_get('history_default_visible'));
 
+
+/* get user list */
+$t_users = project_get_all_user_rows($t_project_id);
+$t_user_names = array(
+	'[author]' => $t_bug->reporter_id,
+	'[me]' => auth_get_current_user_id(),
+	'[unassigned]' => 0,
+);
+
+foreach($t_users as $t_id => $t_user)
+	$t_user_names[$t_user['username']] = $t_id;
+
+ksort($t_user_names);
+
+/* get version list */
+$t_versions = version_get_all_rows((int)$t_project_id);
+$t_versions_all = array();
+$t_versions_unreleased = array();
+
+foreach($t_versions as $t_version){
+	$t_versions_all[$t_version['version']] = $t_version['id'];
+
+	if($t_version['released'] == 0)
+		$t_versions_unreleased[$t_version['version']] = $t_version['id'];
+}
+
+/* get category list */
+$t_categories = category_get_all_rows($t_project_id);
+$t_category_names = array();
+
+foreach($t_categories as $t_category)
+	$t_category_names[$t_category['name']] = $t_category['id'];
+
+/* get status list */
+$t_states = get_status_option_list(
+	access_get_project_level($t_project_id),
+	$t_bug->status,
+	false,
+	true,
+	$t_project_id);
+
+$t_state_names = array();
+
+foreach($t_states as $t_id => $t_name)
+	$t_state_names[$t_name] = $t_id;
+
+/* get priority list */
+$t_prios = MantisEnum::getValues(config_get('priority_enum_string'));
+$t_prio_names = array();
+
+foreach($t_prios as $t_id)
+	$t_prio_names[get_enum_element('priority', $t_id)] = $t_id;
+
+/* get severity list */
+$t_severities = MantisEnum::getValues(config_get('severity_enum_string'));
+$t_severity_names = array();
+
+foreach($t_severities as $t_id)
+	$t_severity_names[get_enum_element('severity', $t_id)] = $t_id;
+
+/* get view state list */
+$t_view_states = MantisEnum::getValues(config_get('view_state_enum_string'));
+$t_view_state_names = array();
+
+foreach($t_view_states as $t_id)
+	$t_view_state_names[get_enum_element('view_state', $t_id)] = $t_id;
+
+/* get tag list */
+$t_tags = tag_get_candidates_for_bug(0);
+$t_tag_names = array();
+
+foreach($t_tags as $t_tag)
+	$t_tag_names[$t_tag['name']] = $t_tag['id'];
 
 
 /* page header */
@@ -197,67 +258,93 @@ layout_page_begin('view_all_bug_page.php');
 page_title(bug_format_id($f_bug_id) . ' - ' . bug_format_summary($f_bug_id, SUMMARY_CAPTION));
 
 
+echo '<form action="" class="input-hover-form">';
+
+input_hidden('bug_id', $f_bug_id);
+
 /* left column */
-echo '<div class="col-md-10">';
+echo '<div class="col-md-9">';
 	/* bug data */
 	section_begin('Description');
 		/* actionbar */
 		actionbar_begin();
 		html_buttons_view_bug_page($f_bug_id);
-		print_tag_attach_form($f_bug_id);
+
+		echo '<div class="pull-right">';
+		button('Edit', 'input-hover-show-all');
+		button('Reset', 'input-hover-reset-all');
+		button('Update', 'input-hover-submit-all', 'submit');
+		echo '</div>';
+
 		actionbar_end();
 
 		/* bug info */
-		echo '<div class="row subsection">';
+		echo '<div class="row">';
 
 		echo '<div class="col-md-2 no-padding">';
 		table_begin('', 'no-border');
-		table_row_bug_info_short('Type:', string_display_line(category_full_name($t_bug->category_id)));
-
-		table_row_bug_info_short('Status:', $t_status_icon . ' ' . $t_status_string);
-		table_row_bug_info_short('Resolution:', string_display_line(get_enum_element('resolution', $t_bug->resolution)));
+		table_row_bug_info_short('Type:', format_input_hover_select('category_id', $t_category_names, category_get_name($t_bug->category_id)));
+		table_row_bug_info_short('Status:', format_input_hover_select('status', $t_state_names, get_enum_element('status', $t_bug->status)));
+		table_row_bug_info_short('Resolution:', get_enum_element('resolution', $t_bug->resolution));
 		table_end();
 		echo '</div>';
 
 		echo '<div class="col-md-2 no-padding">';
 		table_begin('', 'no-border');
-		table_row_bug_info_short('Priority:', string_display_line(get_enum_element('priority', $t_bug->priority)));
-		table_row_bug_info_short('Severity:', string_display_line(get_enum_element('severity', $t_bug->severity)));
+		table_row_bug_info_short('Priority:', format_input_hover_select('priority', $t_prio_names, get_enum_element('priority', $t_bug->priority)));
+		table_row_bug_info_short('Severity:', format_input_hover_select('severity', $t_severity_names, get_enum_element('severity', $t_bug->severity)));
 		table_end();
 		echo '</div>';
 
 		echo '<div class="col-md-2 no-padding">';
 		table_begin('', 'no-border');
-		table_row_bug_info_short('View Status:', $t_bug_view_state_enum);
+		table_row_bug_info_short('Visibility:', format_input_hover_select('view_state', $t_view_state_names, get_enum_element('view_state', $t_bug->view_state)));
 		table_end();
 		echo '</div>';
 
 		echo '</div>';
+		echo '<hr>';
 
 		/* description */
-		echo '<div class="row subsection">';
+		echo '<div class="row">';
 		table_begin('', 'no-border');
-		table_row_bug_info_short('Description:', '');
-		table_row_bug_info_short('', bug_format_summary($f_bug_id, SUMMARY_CAPTION));
-		table_row_bug_info_short('', string_display_links($t_bug->description));
+		table_row_bug_info_long('Description:', format_input_hover_text('summary', $t_bug->summary, '100%'), '7%');
 		table_end();
+
+		table_begin('', 'no-border');
+		table_row_bug_info_long(' ', format_input_hover_textarea('description', $t_bug->description, '100%', '100px'), '1%');
+		table_end();
+
 		echo '</div>';
+		echo '<hr>';
 
 		/* tags */
 		if($t_show_tags){
-			ob_start();
-			tag_display_attached($f_bug_id);
+			$t_tags = tag_bug_get_attached($f_bug_id);
+			$t_tag_line = '';
 
-			$t_tags = ob_get_contents();
-			ob_end_clean();
+			foreach($t_tags as $t_tag){
+				$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
+				$t_link = format_link($t_tag['name'], 'tag_view_page.php', array('tag_id' => $t_tag['id']), '', 'margin-right:20px!important');
+				$t_buttons = array(array('icon' => 'fa-times', 'href' => format_href('tag_detach.php', array('bug_id' => $f_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
 
-			echo '<div class="row subsection">';
+				$t_tag_line .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
+			}
+
+			if(count($t_tags) == 0)
+				$t_tag_line = 'No tags attached';
+
+			$t_tag_line .= format_label('Attach:', '', 'margin-right:10px !important');
+			$t_tag_line .= format_input_hover_select('tag_attach', $t_tag_names, '');
+
+			echo '<div class="row">';
 			table_begin('', 'no-border');
-			table_row_bug_info_short('Tags:', '');
-			table_row_bug_info_short('', $t_tags);
+			table_row_bug_info_long('Tags:', $t_tag_line, '5%');
 			table_end();
 			echo '</div>';
 		}
+
+		echo '<hr>';
 
 		/* custom fields and tags */
 		$t_tabs = array();
@@ -271,7 +358,7 @@ echo '<div class="col-md-10">';
 		event_signal('EVENT_VIEW_BUG_DETAILS', array($f_bug_id));
 	section_end();
 
-	/* bugnotes */
+	/* activities */
 	section_begin('Activities');
 		$t_tabs = array();
 		$t_tabs['Bugnotes'] = 'tab_bugnote';
@@ -285,39 +372,46 @@ echo '</div>';
 
 
 /* right column */
-echo '<div class="col-md-2">';
+echo '<div class="col-md-3">';
 	/* people */
 	section_begin('People');
+		echo '<div class="row">';
 		table_begin('', 'no-border');
-		table_row_bug_info_short('Assignee:', user_get_name($t_bug->handler_id));
+		table_row_bug_info_short('Assignee:', format_input_hover_select('handler_id', $t_user_names, user_get_name($t_bug->handler_id)));
 		table_row_bug_info_short('Author:', user_get_name($t_bug->reporter_id));
 		table_end();
+		echo '</div>';
 	section_end();
 
 	/* date and time */
 	section_begin('Date and Time');
+		echo '<div class="row">';
 		table_begin('', 'no-border');
-		table_row_bug_info_short('Due Date:', $t_bug_due_date);
+		table_row_bug_info_short('Due Date:', format_input_hover_text('due_date', $t_bug_due_date));
 		table_row_bug_info_short('Last Updated:', date($t_date_format, $t_bug->last_updated));
 		table_row_bug_info_short('Date Submitted:', date($t_date_format, $t_bug->date_submitted));
 		table_end();
+		echo '</div>';
 	section_end();
 
 	/* version info */
 	section_begin('Version Info');
+		echo '<div class="row">';
 		table_begin('', 'no-border');
-		table_row_bug_info_short('Fixed in Version:', $t_fixed_in_version);
-		table_row_bug_info_short('Target Version:', $t_target_version_string);
+		table_row_bug_info_short('Fixed in Version:', format_input_hover_select('fixed_in_version', $t_versions_unreleased, $t_bug->fixed_in_version));
+		table_row_bug_info_short('Target Version:', format_input_hover_select('target_version', $t_versions_unreleased, $t_bug->target_version));
+		table_row_bug_info_short('Affected Version:', format_input_hover_select('version', $t_versions_all, $t_bug->version));
 		table_row_bug_info_short(' ', '');
 		table_row_bug_info_short(' ', '');
-		table_row_bug_info_short('Product Build:', $t_product_build);
-		table_row_bug_info_short('Product Version:', $t_product_version);
-		table_row_bug_info_short('Platform:', $t_platform);
-		table_row_bug_info_short('OS Version:', $t_os  . ' ' . ($t_os ? ' / ' . $t_os_version : ''));
-
+		table_row_bug_info_short('Product Build:', format_input_hover_text('build', $t_product_build));
+		table_row_bug_info_short('Platform:', format_input_hover_text('platform', $t_platform));
+		table_row_bug_info_short('OS:', format_input_hover_text('os', $t_bug->os));
+		table_row_bug_info_short('OS Version:', format_input_hover_text('os_build', $t_bug->os_build));
 		table_end();
+		echo '</div>';
 	section_end();
 echo '</div>';
+echo '</form>';
 
 
 /* page footer */

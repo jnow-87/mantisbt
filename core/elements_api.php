@@ -23,15 +23,19 @@ function vspace($p_space){
 }
 
 /**
- *	print a label
+ *	format a label
  *
  *	@param	string	$p_name		the label name
  *	@param	string	$p_class	additional label class attributes
  *
- *	@return	nothing
+ *	@return	a string containing the html element
  */
-function label($p_name, $p_class = ''){
-	echo '<span class="label label-default ' . $p_class . '">' . $p_name . '</span>';
+function format_label($p_name, $p_class = '', $p_style = ''){
+	return '<span class="label label-default ' . $p_class . '" style="' . $p_style . '">' . $p_name . '</span>';
+}
+
+function label($p_name, $p_class = '', $p_style = ''){
+	echo format_label($p_name, $p_class, $p_style);
 }
 
 /**
@@ -103,6 +107,26 @@ function format_select($p_id, $p_values, $p_selected, $p_class = 'input-xs', $p_
 }
 
 /**
+ *	format a href string
+ *
+ *	@param	string	$p_action	link/action to trigger
+ *	@param	array	$p_args		array of arguments containing 'key' => 'value' pairs
+ *
+ *	@return	a string containing the html element
+ */
+function format_href($p_action, $p_args = array()){
+	$t_href = htmlspecialchars($p_action);
+
+	if(count($p_args) > 0)
+		$t_href .= '?';
+
+	foreach($p_args as $t_key => $t_value)
+		$t_href .= '&' . $t_key . (($t_value != '') ? '=' : '') . $t_value;
+
+	return $t_href;
+}
+
+/**
  *	format a link html element
  *
  *	@param	string	$p_label	the string displayed
@@ -114,18 +138,7 @@ function format_select($p_id, $p_values, $p_selected, $p_class = 'input-xs', $p_
  *	@return	a string containing the html element
  */
 function format_link($p_label, $p_action, $p_arg = array(), $p_class = '', $p_style = ''){
-	$t_link = '<a class="' . $p_class . '" style="' . $p_style . '" href="' . htmlspecialchars($p_action);
-
-	# arguments
-	if(count($p_arg) > 0)
-		$t_link .= '?';
-
-	foreach($p_arg as $t_arg_name => $t_arg_value)
-		$t_link .= '&' . $t_arg_name . '=' . $t_arg_value;
-	
-	$t_link .= '">' . $p_label . '</a>';
-
-	return $t_link;
+	return $t_link = '<a class="' . $p_class . '" style="' . $p_style . '" href="' . format_href($p_action, $p_arg) . '">' . $p_label . '</a>';
 }
 
 /**
@@ -375,6 +388,16 @@ function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = ''){
 }
 
 /**
+ *	print a hidden input field
+ *
+ *	@param	string	$p_id		element name
+ *	@param	string	$p_value	element value
+ */
+function input_hidden($p_id, $p_value){
+	echo '<input type="hidden" name="' . $p_id . '" value="' . $p_value . '"/>';
+}
+
+/**
  *	format the header of input-hover elements
  *
  *	@param	string	$p_id	the id of the master element
@@ -462,7 +485,7 @@ function input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', 
  *	@param	array	$p_buttons	an array of buttons to allocate to the element
  *								a single button contains the following fields
  *									'icon' => string containing an icon
- *									'link' => string with the link that shall be
+ *									'href' => string with the link that shall be
  *											  triggered when clicking the button
  *									'position' => string with css positions
  *
@@ -477,7 +500,7 @@ function format_input_hover_element($p_id, $p_element, $p_buttons){
 	$t_i = 0;
 
 	foreach($p_buttons as $t_button){
-		$t_s .= format_input_hover_button($p_id . '-action-' . $t_i, $t_button['icon'], 'link', $t_button['link'], $t_button['position']);
+		$t_s .= format_input_hover_button($p_id . '-action-' . $t_i, $t_button['icon'], 'link', $t_button['href'], $t_button['position']);
 		$t_i++;
 	}
 
@@ -532,18 +555,21 @@ function input_hover_submit_reset($p_id, $p_input, $p_overlay, $p_commit_pos = '
  *								the value has to be accessed through $p_id . '-input'
  *
  *	@param	string	$p_value	the input value
+ *	@param	string	$p_width	input width
  *
  *	@return	formated string
  */
-function format_input_hover_text($p_id, $p_value){
-	$t_input = format_text($p_id . '-input', $p_value, 'input-hover-input');
-	$t_overlay = format_text($p_id . '-overlay', $p_value, 'input-hover-overlay', '', 'readonly');
+function format_input_hover_text($p_id, $p_value, $p_width = ''){
+	$t_width = ($p_width != '') ? 'width:' . $p_width : '';
+
+	$t_input = format_text($p_id . '-input', $p_value, 'input-hover-input', $t_width);
+	$t_overlay = format_text($p_id . '-overlay', $p_value, 'input-hover-overlay', $t_width, 'readonly');
 
 	return format_input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
 }
 
-function input_hover_text($p_id, $p_value){
-	echo format_input_hover_text($p_id, $p_value);
+function input_hover_text($p_id, $p_value, $p_width = ''){
+	echo format_input_hover_text($p_id, $p_value, $p_width);
 }
 
 /**

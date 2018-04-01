@@ -1,22 +1,24 @@
 .input-hover-master{
 	position: relative;
+	left: -5px;
 }
 
 .input-hover-overlay,
 .input-hover-overlay[readonly]{
 	cursor:pointer;
 	display: inline-block;
-	font-size: 14px !important;
+	font-size: 13px !important;
 	vertical-align: middle !important;
 	padding: 0 30px 0 4px !important;
 	background: transparent !important;
-	color: #939192;
+	color: #393939 !important;
 	border-color: transparent !important;
 }
 
 .input-hover-input{
 	display: none;
-	font-size: 14px !important;
+	font-size: 13px !important;
+	color: #393939 !important;
 	vertical-align: middle !important;
 	padding: 0 30px 0 4px !important;
 }
@@ -40,6 +42,6 @@
 }
 
 select.input-hover-input{
-	height: 22px;
+	height: 20px;
 	width: 95px;
 }
