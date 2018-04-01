@@ -18,17 +18,23 @@
 
 /* action bar */
 .actionbar {
+	border-left-width: 10px !important;
+	border-right-width: 10px !important;
 	border-radius: 4px !important;
 	border-collapse: separate !important;
 	background: #b3b3b3;
 	color: #ffffff;
-	padding: 5px 10px 5px 10px !important;
+	padding: 5px 5px 5px 5px !important;
 	margin: 0 0 0 0 !important;
 	font-size: 13px;
 }
 
-.table.actionbar {
-	margin: 0 0px 0 0px;
+table.actionbar {
+	width: 100%;
+	margin: 0 0 0 0 !important;
+	padding: 0 0 0 0 !important;
+	background: transparent !important;
+	border-radius: 0px !important;
 }
 
 /* dropdown intermediate header and colors */

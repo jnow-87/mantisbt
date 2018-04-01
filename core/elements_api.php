@@ -174,7 +174,8 @@ function section_end(){
  *	@return	nothing
  */
 function actionbar_begin(){
-	echo '<table class="table actionbar">';
+	echo '<div class="actionbar">';
+	echo '<table class="actionbar">';
 	echo '<thead>';
 	echo '<tr><td class="actionbar">';
 }
@@ -188,6 +189,7 @@ function actionbar_end(){
 	echo '</td></tr>';
 	echo '</thead>';
 	echo '</table>';
+	echo '</div>';
 }
 
 /**
