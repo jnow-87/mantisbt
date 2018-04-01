@@ -217,7 +217,7 @@ page_title($t_page_title);
 			<?php input_hover_text('text1', 'dummy text 1') ?>
 			<?php input_hover_text('text2', 'dummy text 2') ?>
 		</td>
-		<td><?php input_hover_select('select', array('bar', 'foo', 'foobar'), 'foo'); ?></td>
+		<td><?php input_hover_select('select', array('bar' => 0, 'foo' => 1, 'foobar' => 2), 'foo'); ?></td>
 		<td><?php input_hover_checkbox('checkbox', false); ?></td>
 		</tr>
 

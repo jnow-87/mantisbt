@@ -20,6 +20,28 @@ function input_hover_store(input){
 }
 
 /**
+ * \brief	update the value stored for the input element
+ * 			and the value displayed by the overlay element
+ *
+ * \param	master	hover master element
+ */
+function input_hover_update(master){
+	var input = document.getElementById(master.id + '-input');
+	var overlay = document.getElementById(master.id + '-overlay');
+
+	if(input == null || overlay == null)
+		return;
+
+	// update local storage and overlay with current value
+	input_hover_store(input);
+
+	if(input.type == 'select-one')
+		overlay.value = input.options[get(input.id + '_value')].text;
+	else
+		overlay.value = get(input.id + '_value');
+}
+
+/**
  * \brief	show the input elements and buttons and hide the overlay
  * 			element of a hover master element
  * 			buttons are only shown if input_hover_show_all is set to false
@@ -302,18 +324,9 @@ function submit(e){
 			if(input_hover_active_all){
 				var masters = document.getElementsByClassName('input-hover-master');
 
-				// for all input-hover elements
-				for(var i=0; i<masters.length; i++){
-					var input = document.getElementById(masters[i].id + '-input');
-					var overlay = document.getElementById(masters[i].id + '-overlay');
-
-					if(input == null || overlay == null)
-						continue;
-
-					// update local storage and overlay with current value
-					input_hover_store(input);
-					overlay.value = get(input.id + '_value');
-				}
+				// update local storage and overlay with current value
+				for(var i=0; i<masters.length; i++)
+					input_hover_update(masters[i]);
 
 				// hide all input elements
 				input_hover_hide_all();
@@ -325,8 +338,7 @@ function submit(e){
 				return;
 
 			/* update the value of the input-hover elements */
-			input_hover_store(input_hover_active);
-			document.getElementById(input_hover_active.parentNode.id + '-overlay').value = get(input_hover_active.id + '_value');
+			input_hover_update(input_hover_active.parentNode);
 
 			/* hide the input-hover element */
 			input_hover_hide(input_hover_active.parentNode);
@@ -378,6 +390,10 @@ $(document).ready(function(){
 	forms = document.getElementsByClassName("input-hover-form");
 
 	for(var i=0; i<forms.length; i++){
+		// skip forms who's action targets the current page
+		if(forms[i].action == document.URL)
+			continue;
+
 		forms[i].addEventListener('submit', submit);
 	}
 });

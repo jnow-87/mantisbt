@@ -94,8 +94,8 @@ function format_checkbox($p_id, $p_checked = false, $p_class = 'input-xs', $p_st
 function format_select($p_id, $p_values, $p_selected, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
 	$t_s = '<select id="' . $p_id . '" name="' . $p_id . '" class="' . $p_class . '" style="' . $p_style . '" ' . $p_prop . '>';
 
-	foreach($p_values as $t_value)
-		$t_s .= '<option value="' . $t_value . '" ' . ($t_value == $p_selected ? 'selected' : '') . '>' . $t_value . '</option>';
+	foreach($p_values as $t_key => $t_value)
+		$t_s .= '<option value="' . $t_value . '" ' . ($t_key == $p_selected ? 'selected' : '') . '>' . $t_key . '</option>';
 
 	$t_s .= '</select>';
 
