@@ -373,75 +373,36 @@ function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = ''){
 }
 
 /**
- *	print the header of input-hover elements
+ *	format the header of input-hover elements
  *
  *	@param	string	$p_id	the id of the master element
+ *
+ *	@return	formated string
  */
+function format_input_hover_begin($p_id){
+	return '<span id="' . $p_id . '" class="input-hover-master">';
+}
+
 function input_hover_begin($p_id){
-	echo '<span id="' . $p_id . '" class="input-hover-master">';
+	echo format_input_hover_begin($p_id);
 }
 
+
 /**
- *	print the footer of input-hover elements
+ *	format the footer of input-hover elements
+ *
+ *	@return	formated string
  */
+function format_input_hover_end(){
+	return '</span>';
+}
+
 function input_hover_end(){
-	echo '</span>';
+	echo format_input_hover_end();
 }
 
 /**
- *	print an input-hover element
- *
- *	@param	string	$p_id		the id of the element
- *	@param	string	$p_element	html element
- *	@param	array	$p_buttons	an array of buttons to allocate to the element
- *								a single button contains the following fields
- *									'icon' => string containing an icon
- *									'link' => string with the link that shall be
- *											  triggered when clicking the button
- *									'position' => string with css positions
- */
-function input_hover_element($p_id, $p_element, $p_buttons){
-	input_hover_begin($p_id);
-
-	echo $p_element;
-
-	$t_i = 0;
-
-	foreach($p_buttons as $t_button){
-		input_hover_button($p_id . '-action-' . $t_i, $t_button['icon'], 'link', $t_button['link'], $t_button['position']);
-		$t_i++;
-	}
-
-	input_hover_end();
-}
-
-/**
- *	print an input-hover element with submit and reset button
- *
- *	@param	string	$p_id			the id the element
- *	@param	string	$p_input		the html input element to display while the user hovers
- *									over the element or it has been focused
- *
- *	@param	string	$p_overlay		the html element that shall be display while the input-hover
- *									element is not hovered over or focused 
- *
- *	@param	string	$p_commit_pos	css position for the commit button
- *	@param	string	$p_reset_pos	css position for the reset button
- */
-function input_hover_submit_reset($p_id, $p_input, $p_overlay, $p_commit_pos = '', $p_reset_pos = ''){
-	input_hover_begin($p_id);
-
-	echo $p_input;
-	echo $p_overlay;
-
-	input_hover_button($p_id . '-action-0', 'fa-check', 'submit', '', $p_commit_pos);
-	input_hover_button($p_id . '-reset', 'fa-times', 'button', '', $p_reset_pos);
-
-	input_hover_end();
-}
-
-/**
- *	print an input-hover button
+ *	format an input-hover button
  *
  *	@param	string	$p_id		button id
  *	@param	string	$p_icon		button icon
@@ -455,49 +416,136 @@ function input_hover_submit_reset($p_id, $p_input, $p_overlay, $p_commit_pos = '
  *									if $p_type is 'link' $p_action is interpreted as href
  *
  *	@param	string	$p_position	css position
+ *
+ *	@return	formated string
  */
-function input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', $p_position = ''){
+function format_input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', $p_position = ''){
+	$t_s = '';
+
 	if($p_type == 'link'){
-		echo '<a id="' . $p_id . '" class="input-hover-button" href="' . $p_action . '" ';
+		$t_s .= '<a id="' . $p_id . '" class="input-hover-button" href="' . $p_action . '" ';
 	}
 	else{
 		if($p_action != '')
 			$p_type = 'submit';
 
-		echo '<button type="' . $p_type . '" id="' . $p_id . '" class="input-hover-button" ';
+		$t_s .= '<button type="' . $p_type . '" id="' . $p_id . '" class="input-hover-button" ';
 
 		if($p_action != '')
-			echo 'formaction="' . $p_action . '" ';
+			$t_s .= 'formaction="' . $p_action . '" ';
 	}
 
 	if($p_position != '')
-		echo 'style="position:absolute;' . $p_position . '" ';
+		$t_s .= 'style="position:absolute;' . $p_position . '" ';
 
-	echo '><i class="fa ' . $p_icon . '"></i>';
+	$t_s .= '><i class="fa ' . $p_icon . '"></i>';
 
 	if($p_type == 'link')
-		echo '</a>';
+		$t_s .= '</a>';
 	else
-		echo '</button>';
+		$t_s .= '</button>';
+
+	return $t_s;
+}
+
+function input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', $p_position = ''){
+	echo format_input_hover_button($p_id, $p_icon, $p_type, $p_action, $p_position);
 }
 
 /**
- *	print an input-hover text element
+ *	format an input-hover element
+ *
+ *	@param	string	$p_id		the id of the element
+ *	@param	string	$p_element	html element
+ *	@param	array	$p_buttons	an array of buttons to allocate to the element
+ *								a single button contains the following fields
+ *									'icon' => string containing an icon
+ *									'link' => string with the link that shall be
+ *											  triggered when clicking the button
+ *									'position' => string with css positions
+ *
+ *	@return	formated string
+ */
+function format_input_hover_element($p_id, $p_element, $p_buttons){
+	$t_s = '';
+
+	$t_s .= format_input_hover_begin($p_id);
+	$t_s .= $p_element;
+
+	$t_i = 0;
+
+	foreach($p_buttons as $t_button){
+		$t_s .= format_input_hover_button($p_id . '-action-' . $t_i, $t_button['icon'], 'link', $t_button['link'], $t_button['position']);
+		$t_i++;
+	}
+
+	$t_s .= format_input_hover_end();
+
+	return $t_s;
+}
+
+function input_hover_element($p_id, $p_element, $p_buttons){
+	echo format_input_hover_element($p_id, $p_element, $p_buttons);
+}
+
+/**
+ *	format an input-hover element with submit and reset button
+ *
+ *	@param	string	$p_id			the id the element
+ *	@param	string	$p_input		the html input element to display while the user hovers
+ *									over the element or it has been focused
+ *
+ *	@param	string	$p_overlay		the html element that shall be display while the input-hover
+ *									element is not hovered over or focused 
+ *
+ *	@param	string	$p_commit_pos	css position for the commit button
+ *	@param	string	$p_reset_pos	css position for the reset button
+ *
+ *	@return	formated string
+ */
+function format_input_hover_submit_reset($p_id, $p_input, $p_overlay, $p_commit_pos = '', $p_reset_pos = ''){
+	$t_s = '';
+
+	$t_s .= format_input_hover_begin($p_id);
+
+	$t_s .= $p_input;
+	$t_s .= $p_overlay;
+
+	$t_s .= format_input_hover_button($p_id . '-action-0', 'fa-check', 'submit', '', $p_commit_pos);
+	$t_s .= format_input_hover_button($p_id . '-reset', 'fa-times', 'button', '', $p_reset_pos);
+
+	$t_s .= format_input_hover_end();
+
+	return $t_s;
+}
+
+function input_hover_submit_reset($p_id, $p_input, $p_overlay, $p_commit_pos = '', $p_reset_pos = ''){
+	echo format_input_hover_submit_reset($p_id, $p_input, $p_overlay, $p_commit_pos, $p_reset_pos);
+}
+
+/**
+ *	format an input-hover text element
  *
  *	@param	string	$p_id		the id of the master element
  *								the value has to be accessed through $p_id . '-input'
  *
  *	@param	string	$p_value	the input value
+ *
+ *	@return	formated string
  */
-function input_hover_text($p_id, $p_value){
+function format_input_hover_text($p_id, $p_value){
 	$t_input = format_text($p_id . '-input', $p_value, 'input-hover-input');
 	$t_overlay = format_text($p_id . '-overlay', $p_value, 'input-hover-overlay', '', 'readonly');
 
-	input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+	return format_input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+}
+
+function input_hover_text($p_id, $p_value){
+	echo format_input_hover_text($p_id, $p_value);
 }
 
 /**
- *	print an input-hover textarea element
+ *	format an input-hover textarea element
  *
  *	@param	string	$p_id		the id of the master element
  *								the value has to be accessed through $p_id . '-input'
@@ -505,45 +553,63 @@ function input_hover_text($p_id, $p_value){
  *	@param	string	$p_value	the input value
  *	@param	string	$p_width	width
  *	@param	string	$p_height	height
+ *
+ *	@return	formated string
  */
-function input_hover_textarea($p_id, $p_value, $p_width = '100%', $p_height = '50px'){
+function format_input_hover_textarea($p_id, $p_value, $p_width = '100%', $p_height = '50px'){
 	$t_style = 'width:' . $p_width . ';height:' . $p_height . ';';
 
 	$t_input = format_textarea($p_id . '-input', $p_value, 'input-hover-input', $t_style);
 	$t_overlay = format_textarea($p_id . '-overlay', $p_value, 'input-hover-overlay', $t_style, 'readonly');
 
-	input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+	return format_input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+}
+
+function input_hover_textarea($p_id, $p_value, $p_width = '100%', $p_height = '50px'){
+	echo format_input_hover_textarea($p_id, $p_value, $p_width, $p_height);
 }
 
 /**
- *	print an input-hover checkbox element
+ *	format an input-hover checkbox element
  *
  *	@param	string	$p_id		the id of the master element
  *								the value has to be accessed through $p_id . '-input'
  *
  *	@param	boolean	$p_checked	state of the checkbox (true or false)
+ *
+ *	@return	formated string
  */
-function input_hover_checkbox($p_id, $p_checked = false){
+function format_input_hover_checkbox($p_id, $p_checked = false){
 	$t_input = format_checkbox($p_id . '-input', $p_checked, 'input-hover-input', 'width:75px');
 	$t_overlay = format_text($p_id . '-overlay', $p_checked ? 'true' : 'false', 'input-hover-overlay', 'width:75px', 'readonly');
 
-	input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+	return format_input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:17px', 'right:4px');
+}
+
+function input_hover_checkbox($p_id, $p_checked = false){
+	echo format_input_hover_checkbox($p_id, $p_checked);
 }
 
 /**
- *	print an input-hover select element
+ *	format an input-hover select element
  *
  *	@param	string	$p_id		the id of the master element
  *								the value has to be accessed through $p_id . '-input'
  *
  *	@param	array	$p_values	array containing the possible values
  *	@param	string	$p_selected	the currently selected value
+ *
+ *	@return	formated string
  */
-function input_hover_select($p_id, $p_values, $p_selected){
+function format_input_hover_select($p_id, $p_values, $p_selected){
 	$t_input = format_select($p_id . '-input', $p_values, $p_selected, 'input-hover-input', 'margin-right:35px');
 	$t_overlay = format_text($p_id . '-overlay', $p_selected, 'input-hover-overlay', 'width:130px', 'readonly');
 
-	input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:13px', 'right:0px');
+	return format_input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:13px', 'right:0px');
+}
+
+function input_hover_select($p_id, $p_values, $p_selected){
+	echo format_input_hover_select($p_id, $p_values, $p_selected);
 }
 
 /**
