@@ -1,5 +1,10 @@
 <?php
 
+require_api('lang_api.php');
+require_api('date_api.php');
+require_api('config_api.php');
+
+
 /**
  *	format a horizontal space
  *
@@ -680,6 +685,34 @@ function format_input_hover_select($p_id, $p_values, $p_selected, $p_submit_acti
 function input_hover_select($p_id, $p_values, $p_selected, $p_submit_action = ''){
 	echo format_input_hover_select($p_id, $p_values, $p_selected, $p_submit_action);
 }
+
+/**
+ *	format an input-hover date picker element
+ *
+ *	@param	string	$p_id				the id of the master element
+ *										the value has to be accessed through $p_id . '-input'
+ *
+ *	@param	string	$p_value			the input value
+ *	@param	string	$p_width			input width
+ *	@param	string	$p_submit_action	alternate submit action, default is specified through the
+ *										form the button belongs to
+ *
+ *	@return	formated string
+ */
+function format_input_hover_date($p_id, $p_value, $p_width = '', $p_submit_action = ''){
+	$t_width = ($p_width != '') ? 'width:' . $p_width : '';
+	$t_date_prop = 'data-picker-locale="' . lang_get_current_datetime_locale() . '" data-picker-format="' . convert_date_format_to_momentjs(config_get('normal_date_format')) . '"';
+
+	$t_input = format_text($p_id . '-input', $p_id, $p_value, '', 'input-hover-input datetimepicker', $t_width, $t_date_prop);
+	$t_overlay = format_text($p_id . '-overlay', $p_id . '-overlay', $p_value, '', 'input-hover-overlay', $t_width, 'readonly');
+
+	return format_input_hover_submit_reset($p_id, $t_input, $t_overlay, 'right:22px', 'right:9px', $p_submit_action);
+}
+
+function input_hover_date($p_id, $p_value, $p_width = '', $p_submit_action = ''){
+	echo format_input_hover_date($p_id, $p_value, $p_width, $p_submit_action);
+}
+
 
 /**
  *	print a table header
