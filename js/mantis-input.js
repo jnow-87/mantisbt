@@ -311,14 +311,47 @@ function reset_click_hdlr(e){
 function submit(e){
 	event.preventDefault();
 
+	var reload = false;
+
+	/* identify the submit action to trigger */
+	// default is the form action
+	var action = this.action;
+
+	// check the currently focused element
+	var active = document.activeElement;
+
+	if(active.type == 'button'){
+		// if the clicked button contains the 'formaction' property it is used
+		if($(active).attr('formaction') && $(active).attr('formaction') != '')
+			action = $(active).attr('formaction');
+	}
+	else{
+		// if the current element is not a button, check if has '-action-0' sibling
+		var parent = active.parentNode;
+		active = document.getElementById(parent.id + '-action-0');
+
+		if(active != null){
+			if($(active).attr('formaction') && $(active).attr('formaction') != '')
+				action = $(active).attr('formaction');
+
+			if(parent.className != 'input-hover-master')
+				reload = true;
+		}
+	}
+
 	/* trigger ajax processing */
 	$.ajax({
 		method: 'post',
-		url: this.action,
+		url: action,
 		dataType: "text",
 		data : $(this).serialize(),
 		success: function(msg, status, data){
 			alert(msg);
+
+			if(reload){
+				location.reload();
+				return;
+			}
 
 			/* update all value if all elements have been active */
 			if(input_hover_active_all){
