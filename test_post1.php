@@ -10,7 +10,7 @@ $f_select = gpc_get_string('select-input', 'dummy');
 $f_checkbox = gpc_get_bool('checkbox-input', false);
 
 
-$t_res = 'test_post    ';
+$t_res = 'test_post1    ';
 
 $t_res .= 'text0: ' . $f_text0 . ' ';
 $t_res .= 'text1: ' . $f_text1 . ' ';

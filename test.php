@@ -191,14 +191,14 @@ page_title($t_page_title);
 	<form method="post" action="">
 		<input type="text" name="form_button_input" placeholder="type something"/>
 		<?php button('submit', 'submit_button', 'submit'); ?>
-		<?php button('reset', 'reset_button', 'reset', 'btn-xs'); ?>
+		<?php button('reset', 'reset_button', 'reset', '', 'btn-xs'); ?>
 	</form>
 	<?php section_end() ?>
 
 	<!-- input text toggle -->
 	<?php section_begin('input hover demo') ?>
 
-	<form action="test_post.php" class="input-hover-form">
+	<form action="test_post.php" class="input-hover-form" method="post">
 	<?php
 		actionbar_begin();
 
@@ -215,7 +215,7 @@ page_title($t_page_title);
 		<tr>
 		<td><?php input_hover_element('l', format_link('lonk', '#', array(), '', 'margin-right:20px!important'), array(array('icon' => 'fa-times', 'href' => format_href('view.php', array('id' => '89')), 'position' => 'right:4px'))); ?></td>
 		<td>
-			<?php input_hover_text('text0', 'dummy text 0') ?>
+			<?php input_hover_text('text0', 'dummy text 0', '', 'test_post1.php') ?>
 			<?php input_hover_text('text1', 'dummy text 1') ?>
 			<?php input_hover_text('text2', 'dummy text 2') ?>
 		</td>
