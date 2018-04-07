@@ -73,8 +73,8 @@ hr{
   font-weight: italic;
   font-size: 18px;
   opacity: 1;
-  margin-top: 5px;
-  margin-bottom: 0px;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
 }
 .hr-page-title:before {
   content: '';

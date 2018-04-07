@@ -1606,7 +1606,7 @@ $s_timeline_more = 'More events...';
 /**
  * ERROR strings
  */
-$s_missing_error_string = 'Missing Error String: %1$s';
+$s_missing_error_string = '';
 
 $MANTIS_ERROR[ERROR_INVALID_MISSING_INPUT] = 'Invalid or missing input \'%s\'';
 $MANTIS_ERROR[ERROR_GENERIC] = 'An error occurred during this action. You may wish to report this error to your local administrator.';
