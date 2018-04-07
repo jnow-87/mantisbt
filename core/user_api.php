@@ -964,10 +964,13 @@ function user_get_realname( $p_user_id ) {
  * @return string
  */
 function user_get_name( $p_user_id ) {
+	if($p_user_id == 0)
+		return '[unassigned]';
+
 	$t_row = user_cache_row( $p_user_id, false );
 
 	if( false == $t_row ) {
-		return lang_get( 'prefix_for_deleted_users' ) . (int)$p_user_id;
+		return '[deleted (' . (int)$p_user_id . ')]';
 	} else {
 		if( ON == config_get( 'show_realname' ) ) {
 			if( is_blank( $t_row['realname'] ) ) {
