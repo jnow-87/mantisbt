@@ -23,6 +23,40 @@
     padding: 0;
 }
 
+/* status bar */
+.statusbar {
+	font-size: 12px;
+	height: 25px;
+	margin: 2px 0 2px 0 !important;
+	width: 100%;
+}
+
+input.statusbar{
+	border: 0;
+	border-radius: 4px !important;
+	margin: 0 0 0 0 !important;
+	width: 100%;
+	text-align: center !important;
+	visibility: hidden;
+	display: none;
+}
+
+input.statusbar-err{
+	background: #f2dede !important;
+	color: #a94442 !important;
+}
+
+input.statusbar-ok{
+	background: #cae8bf !important;
+	color: #1d520a !important;
+}
+
+input.statusbar-warn{
+	background: #f7ecb5 !important;
+	color: #8a6d3b !important;
+}
+
+
 /* action bar */
 .actionbar {
 	border-left-width: 10px !important;

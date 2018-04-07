@@ -561,3 +561,41 @@ function error_proceed_url( $p_url ) {
 	$g_error_proceed_url = $p_url;
 }
 
+
+$g_json_msg = array();
+
+function json_prepare(){
+	global $g_json_msg;
+	$g_json_msg = array();
+}
+
+function json_add($p_type, $p_msg){
+	global $g_json_msg;
+	$g_json_msg[] = array('type' => $p_type, 'msg' => $p_msg);
+}
+
+function json_commit(){
+	global $g_json_msg;
+	echo json_encode($g_json_msg);
+}
+
+function json_error($p_msg){
+	json_add('error', $p_msg);
+	json_commit();
+	exit();
+}
+
+function json_success($p_msg){
+	json_add('success', $p_msg);
+	json_commit();
+}
+
+function json_warning($p_msg){
+	json_add('warning', $p_msg);
+}
+
+function json_html($p_content){
+	json_add('html', $p_content);
+	json_commit();
+	exit();
+}

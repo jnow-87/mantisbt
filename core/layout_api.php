@@ -149,10 +149,9 @@ function layout_page_begin() {
 	}
 
 	layout_main_container_begin();
-
 	layout_main_content_begin();
-
 	layout_page_content_begin();
+	layout_statusbar();
 
 	if( auth_is_user_authenticated() ) {
 		if( ON == config_get( 'show_project_menu_bar' ) ) {
@@ -523,6 +522,14 @@ function layout_navbar() {
 	label('Project:'); echo '<span class="white"> ' . $t_project . '</span>';
 
 	echo '</div>';
+	echo '</div>';
+}
+
+function layout_statusbar(){
+	echo '<div class="statusbar">';
+	echo '<input type="text" id="statusbar-err" class="statusbar statusbar-err" readonly/>';
+	echo '<input type="text" id="statusbar-ok" class="statusbar statusbar-ok" readonly/>';
+	echo '<input type="text" id="statusbar-warn" class="statusbar statusbar-warn" readonly/>';
 	echo '</div>';
 }
 
