@@ -198,7 +198,7 @@ page_title($t_page_title);
 	<!-- input text toggle -->
 	<?php section_begin('input hover demo') ?>
 
-	<form action="test_post.php" class="input-hover-form" method="post">
+	<form action="demo_post0.php" class="input-hover-form" method="post">
 	<?php
 		actionbar_begin();
 
@@ -215,7 +215,7 @@ page_title($t_page_title);
 		<tr>
 		<td><?php input_hover_element('l', format_link('lonk', '#', array(), '', 'margin-right:20px!important'), array(array('icon' => 'fa-times', 'href' => format_href('view.php', array('id' => '89')), 'position' => 'right:4px'))); ?></td>
 		<td>
-			<?php input_hover_text('text0', 'dummy text 0', '', 'test_post1.php') ?>
+			<?php input_hover_text('text0', 'dummy text 0', '', 'demo_post1.php') ?>
 			<?php input_hover_text('text1', 'dummy text 1') ?>
 			<?php input_hover_text('text2', 'dummy text 2') ?>
 		</td>
@@ -226,6 +226,15 @@ page_title($t_page_title);
 		<?php table_end() ?>
 
 		<?php input_hover_textarea('textarea', 'dummy text', '100%', '100px'); ?>
+	</form>
+
+	<?php section_end() ?>
+
+	<!-- inline page -->
+	<?php section_begin('subform demo') ?>
+
+	<form method="post" action="demo_inline_page.php" class="input-hover-form">
+		<?php button('submit', 'trigger_inline', 'submit') ?>
 	</form>
 
 	<?php section_end() ?>

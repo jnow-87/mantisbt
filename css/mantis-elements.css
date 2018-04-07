@@ -56,7 +56,6 @@ input.statusbar-warn{
 	color: #8a6d3b !important;
 }
 
-
 /* action bar */
 .actionbar {
 	border-left-width: 10px !important;
@@ -76,6 +75,13 @@ table.actionbar {
 	padding: 0 0 0 0 !important;
 	background: transparent !important;
 	border-radius: 0px !important;
+}
+
+.inline-page {
+	background-color:white;
+	padding: 10px 20px 10px 20px;
+	border-style: solid;
+	border-width: 1px;
 }
 
 /* dropdown intermediate header and colors */

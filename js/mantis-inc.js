@@ -81,7 +81,6 @@ function statusbar_print(type, msg){
 
 	/* show timeout */
 	setTimeout(function(){
-			$(actionbar).trigger('visible');
 			actionbar.style.display = 'block';
 			actionbar.style.visibility = 'visible';
 			actionbar.value = msg;
@@ -89,9 +88,11 @@ function statusbar_print(type, msg){
 			if(typeof html !== 'undefined'){
 				var el = document.createElement('div');
 				el.style = 'position:absolute; width: 100%; height: 100%; top: 0; padding:200px 300px 200px 300px; z-index:5000;';
-				el.innerHTML = '<div style="background:white">' + html + '</div>';
+				el.id = 'inline-page';
+				el.innerHTML = html;
 				document.body.appendChild(el);
-				$('body').trigger('domChanged');
+
+				$('body').trigger('user_event_body_changed');
 			}
 		},
 		show_delay + 10	// +10 ensures the next show occurs after the hide
@@ -105,8 +106,3 @@ function statusbar_print(type, msg){
 		show_time + show_delay
 	);
 }
-
-$('#statusbar-warn').on('visible', function(){
-		console.log("changes");
-	}
-);

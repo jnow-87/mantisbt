@@ -192,6 +192,25 @@ function layout_page_end() {
 }
 
 /**
+ * print elements at the begin of inline page
+ */
+function layout_inlinepage_begin(){
+	echo '<div class="inline-page">';
+	echo '<div class="row">';
+}
+
+/**
+ * print elements at the end of inline page
+ */
+function layout_inlinepage_end(){
+	echo '</div>';
+	echo '</div>';
+
+	html_body_end();
+	html_end();
+}
+
+/**
  * Print common elements for admin pages
  * @return void
  */

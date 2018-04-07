@@ -35,8 +35,14 @@ function input_hover_update(master){
 	// update local storage and overlay with current value
 	input_hover_store(input);
 
-	if(input.type == 'select-one')
-		overlay.value = input.options[get(input.id + '_value')].text;
+	if(input.type == 'select-one'){
+		var value = get(input.id + '_value');
+
+		for(var i=0; i<input.options.length; i++){
+			if(input.options[i].value == value)
+				overlay.value = input.options[i].text;
+		}
+	}
 	else
 		overlay.value = get(input.id + '_value');
 }
@@ -309,9 +315,13 @@ function reset_click_hdlr(e){
 
 /* callbacls for form submission */
 function submit(e){
-	event.preventDefault();
+	e.preventDefault();
 
 	var reload = false;
+	var cfg_reload = document.getElementById('reload');
+
+	if(cfg_reload != null && cfg_reload.value == 1)
+		reload = true;
 
 	/* identify the submit action to trigger */
 	// default is the form action
@@ -326,7 +336,7 @@ function submit(e){
 			action = $(active).attr('formaction');
 	}
 	else{
-		// if the current element is not a button, check if has '-action-0' sibling
+		// if the current element is not a button, check if it has '-action-0' sibling
 		var parent = active.parentNode;
 		active = document.getElementById(parent.id + '-action-0');
 
@@ -339,6 +349,13 @@ function submit(e){
 		}
 	}
 
+	/* if the current form is part of an inline page, close the inline page */
+	if($(this).hasClass('inline-page-form')){
+		var page = document.getElementById('inline-page');
+
+		document.body.removeChild(page);
+	}
+
 	/* trigger ajax processing */
 	$.ajax({
 		method: 'post',
@@ -346,11 +363,20 @@ function submit(e){
 		dataType: "text",
 		data : $(this).serialize(),
 		success: function(msg, status, data){
-			alert(msg);
-
 			if(reload){
 				location.reload();
 				return;
+			}
+
+			/* display status message */
+			try{
+				var resp = JSON.parse(msg);
+
+				for(var i=0; i<resp.length; i++)
+					statusbar_print(resp[i].type, resp[i].msg);
+			}
+			catch(e){
+				statusbar_print('html', msg);
 			}
 
 			/* update all value if all elements have been active */
@@ -377,14 +403,12 @@ function submit(e){
 			input_hover_hide(input_hover_active.parentNode);
 	 	},
 		error: function(xhr, desc, err){
-			alert("error invoking submit action: " + err);
+			statusbar_print('error', err);
 		}
 	});
 }
 
-
-/* document functions */
-$(document).ready(function(){
+function init(){
 	/* register mouseover and mouseout events for master elements */
 	masters = document.getElementsByClassName('input-hover-master');
 
@@ -429,7 +453,12 @@ $(document).ready(function(){
 
 		forms[i].addEventListener('submit', submit);
 	}
-});
+}
+
+
+/* document functions */
+$(document).ready(init);
+$('body').on('user_event_body_changed', init);
 
 /* callbacks for show/reset-all buttons */
 $('#input-hover-show-all').click(function(){input_hover_show_all()});
