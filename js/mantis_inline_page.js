@@ -6,7 +6,7 @@
  */
 function inline_page_create(html){
 	var el = document.createElement('div');
-	el.style = 'position:absolute; width: 100%; height: 100%; top: 0; padding:200px 300px 200px 300px; z-index:5000;';
+	el.className = 'inline-page-frame';
 	el.id = 'inline-page';
 
 	el.innerHTML = html;
@@ -21,8 +21,10 @@ function inline_page_create(html){
 function inline_page_close(){
 	var page = document.getElementById('inline-page');
 
-	if(page != null)
+	if(page != null){
 		document.body.removeChild(page);
+		$('body').trigger('user_event_body_changed');
+	}
 }
 
 /**
@@ -41,7 +43,6 @@ function inline_page_init(){
 
 	for(var i=0; i<forms.length; i++)
 		forms[i].addEventListener('submit', inline_page_close);
-
 }
 
 /* document change handler */
