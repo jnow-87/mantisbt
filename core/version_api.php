@@ -719,3 +719,27 @@ function version_get_project_where_clause( $p_project_id, $p_inherit ) {
 
 	return $t_project_where;
 }
+
+
+/**
+ *	get list of version names
+ *
+ *	@param	string	$p_project_id	project to get versions for
+ *	@param	boolean	$p_release		wether released versions shall
+ *									also be listed
+ *
+ *	@return	array containing the version names
+ */
+function version_list($p_project_id, $p_released = true){
+	$t_versions = version_get_all_rows((int)$p_project_id);
+	$t_version_names = array();
+
+	foreach($t_versions as $t_version){
+		if($p_released || $t_version['released'] == 0)
+			$t_version_names[$t_version['version']] = $t_version['version'];
+	}
+
+	ksort($t_version_names);
+
+	return $t_version_names;
+}

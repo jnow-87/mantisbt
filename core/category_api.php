@@ -647,3 +647,21 @@ function category_ensure_can_delete( $p_category_id ) {
 	}
 }
 
+/**
+ *	get list of issue categories
+ *
+ *	@param	string	$p_project_id	project to get categories for
+ *
+ *	@return	array of category names
+ */
+function category_list($p_project_id){
+	$t_categories = category_get_all_rows($p_project_id);
+	$t_category_names = array();
+
+	foreach($t_categories as $t_category)
+		$t_category_names[$t_category['name']] = $t_category['id'];
+
+	ksort($t_category_names);
+
+	return $t_category_names;
+}

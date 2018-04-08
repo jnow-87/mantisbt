@@ -1724,3 +1724,27 @@ function user_reset_password( $p_user_id, $p_send_email = true ) {
 
 	return true;
 }
+
+/**
+ *	get list of users
+ *
+ *	@param	string	$p_project_id	project to get versions for
+ *	@param	string	$p_reported_id	user id that shall be used as author
+ *
+ *	@return	array of user names
+ */
+function user_list($p_project_id, $p_reported_id){
+	$t_users = project_get_all_user_rows($p_project_id);
+	$t_user_names = array(
+		'[author]' => $p_reported_id,
+		'[me]' => auth_get_current_user_id(),
+		'[unassigned]' => 0,
+	);
+
+	foreach($t_users as $t_id => $t_user)
+		$t_user_names[$t_user['username']] = $t_id;
+
+	ksort($t_user_names);
+
+	return $t_user_names;
+}
