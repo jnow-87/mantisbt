@@ -194,15 +194,22 @@ function layout_page_end() {
 /**
  * print elements at the begin of inline page
  */
-function layout_inlinepage_begin(){
+function layout_inline_page_begin(){
 	echo '<div class="inline-page">';
+
+	echo '<div class="row">';
+	echo '<div class="pull-right">';
+	button('<i class="fa fa-times"></i>', 'close_inline_page', 'button', '',  'inline-page-close', true);
+	echo '</div>';
+	echo '</div>';
+
 	echo '<div class="row">';
 }
 
 /**
  * print elements at the end of inline page
  */
-function layout_inlinepage_end(){
+function layout_inline_page_end(){
 	echo '</div>';
 	echo '</div>';
 
@@ -368,6 +375,7 @@ function layout_body_javascript() {
 	html_javascript_link( 'ace.min.js' );
 
 	html_javascript_link('mantis-inc.js');
+	html_javascript_link('mantis-inline-page.js');
 	html_javascript_link('mantis-table.js');
 	html_javascript_link('mantis-hr.js');
 	html_javascript_link('mantis-input.js');

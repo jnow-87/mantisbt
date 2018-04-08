@@ -237,31 +237,40 @@ function button_link($p_button_text, $p_link, $p_arg = array(), $p_class = 'btn-
 /**
  *	format a submit button
  *
- *	@param	string	$p_text		text displayed as the button
- *	@param	string	$p_id		the label used as the button name
- *	@param	string	$p_type		html button type, e.g. button, submit
- *	@param	string	$p_class	additional button class attributes
+ *	@param	string	$p_text				text displayed as the button
+ *	@param	string	$p_id				the label used as the button name
+ *	@param	string	$p_type				html button type, e.g. button, submit
+ *	@param	string	$p_class			additional button class attributes
+ *	@param	boolean	$p_class_overwrite	if true, overwrite the internal class attributes
+ *										entirely by $p_class, otherwise $p_class is
+ *										appended to the internal attributes
  *
  *	@return	a string containing the html element
  */
-function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = 'btn-xs btn-round'){
+function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = 'btn-xs btn-round', $p_class_overwrite = false){
 	$t_btn = '';
+
+	$t_class = 'btn btn-primary btn-white ' . $p_class;
+
+	if($p_class_overwrite)
+		$t_class = $p_class;
+		
 
 	if($p_action != '')
 		$p_type = 'submit';
 
-	$t_btn .= '<input name="' . $p_id . '" id="' . $p_id . '" class="btn btn-primary btn-white ' . $p_class . '" value="' . $p_text .'" type="' . $p_type . '" ';
+	$t_btn .= '<button name="' . $p_id . '" id="' . $p_id . '" class="' . $t_class . '" type="' . $p_type . '" ';
 
 	if($p_action != '')
 		$t_btn .= 'formaction="' . $p_action . '" ';
 	
-	$t_btn .= '/>';
+	$t_btn .= '>' . $p_text . '</button>';
 
 	return $t_btn;
 }
 
-function button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = 'btn-xs btn-round'){
-	echo format_button($p_text, $p_id, $p_type, $p_action,  $p_class);
+function button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = 'btn-xs btn-round', $p_class_overwrite = false){
+	echo format_button($p_text, $p_id, $p_type, $p_action,  $p_class, $p_class_overwrite);
 }
 
 /**

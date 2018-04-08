@@ -85,15 +85,8 @@ function statusbar_print(type, msg){
 			actionbar.style.visibility = 'visible';
 			actionbar.value = msg;
 
-			if(typeof html !== 'undefined'){
-				var el = document.createElement('div');
-				el.style = 'position:absolute; width: 100%; height: 100%; top: 0; padding:200px 300px 200px 300px; z-index:5000;';
-				el.id = 'inline-page';
-				el.innerHTML = html;
-				document.body.appendChild(el);
-
-				$('body').trigger('user_event_body_changed');
-			}
+			if(typeof html !== 'undefined')
+				inline_page_create(html);
 		},
 		show_delay + 10	// +10 ensures the next show occurs after the hide
 	);

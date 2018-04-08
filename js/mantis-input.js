@@ -269,7 +269,7 @@ function input_hover_reset(master){
 
 
 /* callbacks for focus events */
-function focusin_hdlr(e){
+function input_hover_focusin_hdlr(e){
 	/* do not allow to focus a second element if the current one
 	 * contains modifications */
 	if(input_hover_active_modified()){
@@ -285,7 +285,7 @@ function focusin_hdlr(e){
 	input_hover_show(this.parentNode);
 }
 
-function focusout_hdlr(e){
+function input_hover_focusout_hdlr(e){
 	/* hide the current element if it has not been modified */
 	if(!input_hover_modified(this.parentNode)){
 		input_hover_hide(this.parentNode);
@@ -294,14 +294,14 @@ function focusout_hdlr(e){
 }
 
 /* callbacks for mouse events */
-function mouseenter_hdlr(e){
+function input_hover_mouseenter_hdlr(e){
 	/* show input-hover elements for a second element if the current
 	 * one does not contain modifications */
 	if(!input_hover_active_modified())
 		input_hover_show(this);
 }
 
-function mouseout_hdlr(e){
+function input_hover_mouseout_hdlr(e){
 	/* hide input-hover element if the element is neither focused
 	 * nor modified */
 	if(!input_hover_modified(this) && !input_hover_focused(this))
@@ -309,19 +309,22 @@ function mouseout_hdlr(e){
 }
 
 /* callbacks for click events */
-function reset_click_hdlr(e){
+function input_hover_reset_click_hdlr(e){
 	input_hover_reset(this.parentNode);
 }
 
 /* callbacls for form submission */
-function submit(e){
+function input_hover_submit(e){
 	e.preventDefault();
 
+	/* get form reload configuration */
 	var reload = false;
-	var cfg_reload = document.getElementById('reload');
 
-	if(cfg_reload != null && cfg_reload.value == 1)
+	if($(this).hasClass('input-hover-form-reload'))
 		reload = true;
+
+	if($(this).hasClass('input-hover-form-noreload'))
+		reload = false;
 
 	/* identify the submit action to trigger */
 	// default is the form action
@@ -347,13 +350,6 @@ function submit(e){
 			if(parent.className != 'input-hover-master')
 				reload = true;
 		}
-	}
-
-	/* if the current form is part of an inline page, close the inline page */
-	if($(this).hasClass('inline-page-form')){
-		var page = document.getElementById('inline-page');
-
-		document.body.removeChild(page);
 	}
 
 	/* trigger ajax processing */
@@ -408,13 +404,16 @@ function submit(e){
 	});
 }
 
-function init(){
+/**
+ * \brief	register callbacks required for input-hover elements
+ */
+function input_hover_init(){
 	/* register mouseover and mouseout events for master elements */
 	masters = document.getElementsByClassName('input-hover-master');
 
 	for(var i=0; i<masters.length; i++){
-		masters[i].addEventListener('mouseover', mouseenter_hdlr);
-		masters[i].addEventListener('mouseout', mouseout_hdlr);
+		masters[i].addEventListener('mouseover', input_hover_mouseenter_hdlr);
+		masters[i].addEventListener('mouseout', input_hover_mouseout_hdlr);
 	}
 
 	/* register reset action for reset buttons */
@@ -422,7 +421,7 @@ function init(){
 		btn = document.getElementById(masters[i].id + '-reset');
 
 		if(btn != null)
-			btn.addEventListener('click', reset_click_hdlr);
+			btn.addEventListener('click', input_hover_reset_click_hdlr);
 	}
 
 	/* hide button elements */
@@ -435,8 +434,8 @@ function init(){
 	inputs = document.getElementsByClassName("input-hover-input");
 
 	for(var i=0; i<inputs.length; i++){
-		inputs[i].addEventListener('focusin', focusin_hdlr);
-		inputs[i].addEventListener('focusout', focusout_hdlr);
+		inputs[i].addEventListener('focusin', input_hover_focusin_hdlr);
+		inputs[i].addEventListener('focusout', input_hover_focusout_hdlr);
 	}
 
 	/* remove local storage entries for input values */
@@ -451,14 +450,14 @@ function init(){
 		if(forms[i].action == document.URL)
 			continue;
 
-		forms[i].addEventListener('submit', submit);
+		forms[i].addEventListener('submit', input_hover_submit);
 	}
 }
 
 
-/* document functions */
-$(document).ready(init);
-$('body').on('user_event_body_changed', init);
+/* document change handler */
+$(document).ready(input_hover_init);
+$('body').on('user_event_body_changed', input_hover_init);
 
 /* callbacks for show/reset-all buttons */
 $('#input-hover-show-all').click(function(){input_hover_show_all()});

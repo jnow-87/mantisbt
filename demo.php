@@ -231,7 +231,7 @@ page_title($t_page_title);
 	<?php section_end() ?>
 
 	<!-- inline page -->
-	<?php section_begin('subform demo') ?>
+	<?php section_begin('inline page demo') ?>
 
 	<form method="post" action="demo_inline_page.php" class="input-hover-form">
 		<?php button('submit', 'trigger_inline', 'submit') ?>
