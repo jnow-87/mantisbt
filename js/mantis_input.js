@@ -359,20 +359,27 @@ function input_hover_submit(e){
 		dataType: "text",
 		data : $(this).serialize(),
 		success: function(msg, status, data){
-			if(reload){
-				location.reload();
-				return;
-			}
+			var prevent_reload = false;
 
 			/* display status message */
 			try{
 				var resp = JSON.parse(msg);
 
-				for(var i=0; i<resp.length; i++)
+				for(var i=0; i<resp.length; i++){
+					if(resp[i].type == 'error')
+						prevent_reload = true;
+
 					statusbar_print(resp[i].type, resp[i].msg);
+				}
 			}
 			catch(e){
 				statusbar_print('html', msg);
+				prevent_reload = true;
+			}
+
+			if(reload && !prevent_reload){
+				location.reload();
+				return;
 			}
 
 			/* update all value if all elements have been active */
