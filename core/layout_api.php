@@ -374,11 +374,11 @@ function layout_body_javascript() {
 	# ace theme scripts
 	html_javascript_link( 'ace.min.js' );
 
-	html_javascript_link('mantis-inc.js');
-	html_javascript_link('mantis-inline-page.js');
-	html_javascript_link('mantis-table.js');
-	html_javascript_link('mantis-hr.js');
-	html_javascript_link('mantis-input.js');
+	html_javascript_link('mantis_inc.js');
+	html_javascript_link('mantis_inline_page.js');
+	html_javascript_link('mantis_table.js');
+	html_javascript_link('mantis_hr.js');
+	html_javascript_link('mantis_input.js');
 	html_javascript_link('dataTables.bootstrap.min.js');
 	html_javascript_link('jquery.dataTables.min.js');
 }
