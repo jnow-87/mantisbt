@@ -943,169 +943,6 @@ function html_button( $p_action, $p_button_text, array $p_fields = array(), $p_m
 }
 
 /**
- * Print a button to update the given bug
- * @param integer $p_bug_id A Bug identifier.
- * @return void
- */
-function html_button_bug_update( $p_bug_id ) {
-	if( access_has_bug_level( config_get( 'update_bug_threshold' ), $p_bug_id ) ) {
-		html_button( string_get_bug_update_page(), lang_get( 'update_bug_button' ), array( 'bug_id' => $p_bug_id ) );
-	}
-}
-
-/**
- * Print Change Status to: button
- * This code is similar to print_status_option_list except
- * there is no masking, except for the current state
- *
- * @param BugData $p_bug A valid bug object.
- * @return void
- */
-function html_button_bug_change_status( BugData $p_bug ) {
-	$t_current_access = access_get_project_level( $p_bug->project_id );
-
-	# User must have rights to change status to use this button
-	if( !access_has_bug_level( config_get( 'update_bug_status_threshold' ), $p_bug->id ) ) {
-		return;
-	}
-
-	$t_enum_list = get_status_option_list(
-		$t_current_access,
-		$p_bug->status,
-		false,
-		# Add close if user is bug's reporter, still has rights to report issues
-		# (to prevent users downgraded to viewers from updating issues) and
-		# reporters are allowed to close their own issues
-		(  bug_is_user_reporter( $p_bug->id, auth_get_current_user_id() )
-		&& access_has_bug_level( config_get( 'report_bug_threshold' ), $p_bug->id )
-		&& ON == config_get( 'allow_reporter_close' )
-		),
-		$p_bug->project_id );
-
-	if( count( $t_enum_list ) > 0 ) {
-		# resort the list into ascending order after noting the key from the first element (the default)
-		$t_default_arr = each( $t_enum_list );
-		$t_default = $t_default_arr['key'];
-		ksort( $t_enum_list );
-		reset( $t_enum_list );
-
-		echo '<form method="post" action="bug_change_status_page.php" class="form-inline">';
-		# CSRF protection not required here - form does not result in modifications
-
-		echo ' <select name="new_status" class="input-xs">';
-
-		# space at beginning of line is important
-		foreach( $t_enum_list as $t_key => $t_val ) {
-			echo '<option value="' . $t_key . '" ';
-			check_selected( $t_key, $t_default );
-			echo '>' . $t_val . '</option>';
-		}
-		echo '</select>';
-
-		$t_button_text = lang_get( 'bug_status_to_button' );
-		echo '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="' . $t_button_text . '" />';
-
-
-		$t_bug_id = string_attribute( $p_bug->id );
-		echo '<input type="hidden" name="id" value="' . $t_bug_id . '" />' . "\n";
-		echo '<input type="hidden" name="change_type" value="' . BUG_UPDATE_TYPE_CHANGE_STATUS . '" />' . "\n";
-
-		echo '</form>' . "\n";
-	}
-}
-
-/**
- * Print Assign To: combo box of possible handlers
- * @param BugData $p_bug Bug object.
- * @return void
- */
-function html_button_bug_assign_to( BugData $p_bug ) {
-	# make sure status is allowed of assign would cause auto-set-status
-
-	# make sure current user has access to modify bugs.
-	if( !access_has_bug_level( config_get( 'update_bug_assign_threshold', config_get( 'update_bug_threshold' ) ), $p_bug->id ) ) {
-		return;
-	}
-
-	$t_current_user_id = auth_get_current_user_id();
-	$t_options = array();
-	$t_default_assign_to = null;
-
-	if( ( $p_bug->handler_id != $t_current_user_id )
-		&& access_has_bug_level( config_get( 'handle_bug_threshold' ), $p_bug->id, $t_current_user_id )
-	) {
-		$t_options[] = array(
-			$t_current_user_id,
-			'[' . lang_get( 'myself' ) . ']',
-		);
-		$t_default_assign_to = $t_current_user_id;
-	}
-
-	if( ( $p_bug->handler_id != $p_bug->reporter_id )
-		&& user_exists( $p_bug->reporter_id )
-		&& access_has_bug_level( config_get( 'handle_bug_threshold' ), $p_bug->id, $p_bug->reporter_id )
-	) {
-		$t_options[] = array(
-			$p_bug->reporter_id,
-			'[' . lang_get( 'reporter' ) . ']',
-		);
-
-		if( $t_default_assign_to === null ) {
-			$t_default_assign_to = $p_bug->reporter_id;
-		}
-	}
-
-	echo '<form method="post" action="bug_update.php" class="form-inline">';
-	echo form_security_field( 'bug_update' );
-	echo '<input type="hidden" name="last_updated" value="' . $p_bug->last_updated . '" />';
-	echo '<input type="hidden" name="action_type" value="' . BUG_UPDATE_TYPE_ASSIGN . '" />';
-
-	echo ' <select class="input-xs" name="handler_id">';
-
-	# space at beginning of line is important
-
-	$t_already_selected = false;
-
-	foreach( $t_options as $t_entry ) {
-		$t_id = (int)$t_entry[0];
-		$t_caption = string_attribute( $t_entry[1] );
-
-		# if current user and reporter can't be selected, then select the first
-		# user in the list.
-		if( $t_default_assign_to === null ) {
-			$t_default_assign_to = $t_id;
-		}
-
-		echo '<option value="' . $t_id . '" ';
-
-		if( ( $t_id == $t_default_assign_to ) && !$t_already_selected ) {
-			check_selected( $t_id, $t_default_assign_to );
-			$t_already_selected = true;
-		}
-
-		echo '>' . $t_caption . '</option>';
-	}
-
-	# allow un-assigning if already assigned.
-	if( $p_bug->handler_id != 0 ) {
-		echo '<option value="0"></option>';
-	}
-
-	# 0 means currently selected
-	print_assign_to_option_list( 0, $p_bug->project_id );
-	echo '</select>';
-
-	$t_button_text = lang_get( 'bug_assign_to_button' );
-	echo '<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="' . $t_button_text . '" />';
-
-
-	$t_bug_id = string_attribute( $p_bug->id );
-	echo '<input type="hidden" name="bug_id" value="' . $t_bug_id . '" />' . "\n";
-
-	echo '</form>' . "\n";
-}
-
-/**
  * Print a button to move the given bug to a different project
  * @param integer $p_bug_id A valid bug identifier.
  * @return void
@@ -1216,17 +1053,6 @@ function html_buttons_view_bug_page( $p_bug_id ) {
 	$t_bug = bug_get( $p_bug_id );
 
 	echo '<div class="btn-group">';
-	if( !$t_readonly ) {
-		# ASSIGN button
-		echo '<div class="pull-left padding-right-8">';
-		html_button_bug_assign_to( $t_bug );
-		echo '</div>';
-	}
-
-	# Change status button/dropdown
-	echo '<div class="pull-left padding-right-8">';
-	html_button_bug_change_status( $t_bug );
-	echo '</div>';
 
 	# MONITOR/UNMONITOR button
 	if(config_get('view_issue_button_monitor')){
@@ -1276,13 +1102,6 @@ function html_buttons_view_bug_page( $p_bug_id ) {
 		echo '<div class="pull-left padding-right-2">';
 		echo '<div class="pull-left padding-right-2">';
 		html_button_bug_delete( $p_bug_id );
-		echo '</div>';
-	}
-
-	if(!$t_readonly){
-		# UPDATE button
-		echo '<div class="pull-left padding-right-8">';
-		html_button_bug_update( $p_bug_id );
 		echo '</div>';
 	}
 

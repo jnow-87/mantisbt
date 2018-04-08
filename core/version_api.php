@@ -732,7 +732,7 @@ function version_get_project_where_clause( $p_project_id, $p_inherit ) {
  */
 function version_list($p_project_id, $p_released = true){
 	$t_versions = version_get_all_rows((int)$p_project_id);
-	$t_version_names = array();
+	$t_version_names = array('' => '');
 
 	foreach($t_versions as $t_version){
 		if($p_released || $t_version['released'] == 0)

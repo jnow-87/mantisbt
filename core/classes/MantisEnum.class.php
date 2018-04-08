@@ -268,3 +268,20 @@ function view_status_list(){
 
 	return $t_view_state_names;
 }
+
+/**
+ *	get list of resolutions
+ *
+ *	@return	array of resolution names
+ */
+function resolution_list(){
+	$t_resolutions = MantisEnum::getValues(config_get('resolution_enum_string'));
+	$t_resolution_names = array();
+
+	foreach($t_resolutions as $t_id)
+		$t_resolution_names[get_enum_element('resolution', $t_id)] = $t_id;
+
+	ksort($t_resolution_names);
+
+	return $t_resolution_names;
+}

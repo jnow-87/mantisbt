@@ -628,8 +628,6 @@ function string_get_bug_page( $p_action ) {
 	switch( $p_action ) {
 		case 'view':
 			return 'bug_view_page.php';
-		case 'update':
-			return 'bug_update_page.php';
 		case 'report':
 			return 'bug_report_page.php';
 	}
@@ -760,33 +758,6 @@ function string_get_bugnote_view_url_with_fqdn( $p_bug_id, $p_bugnote_id ) {
  */
 function string_get_bug_view_url_with_fqdn( $p_bug_id ) {
 	return config_get( 'path' ) . string_get_bug_view_url( $p_bug_id );
-}
-
-/**
- * return an href anchor that links to a bug UPDATE page for the given bug
- * @param integer $p_bug_id  A bug identifier.
- * @return string
- */
-function string_get_bug_update_link( $p_bug_id ) {
-	$t_summary = string_attribute( bug_get_field( $p_bug_id, 'summary' ) );
-	return '<a href="' . helper_mantis_url( string_get_bug_update_url( $p_bug_id ) ) . '" title="' . $t_summary . '">' . bug_format_id( $p_bug_id ) . '</a>';
-}
-
-/**
- * return the name and GET parameters of a bug UPDATE page
- * @param integer $p_bug_id  A bug identifier.
- * @return string
- */
-function string_get_bug_update_url( $p_bug_id ) {
-	return string_get_bug_update_page() . '?bug_id=' . $p_bug_id;
-}
-
-/**
- * return the name of a bug UPDATE page
- * @return string
- */
-function string_get_bug_update_page() {
-	return string_get_bug_page( 'update' );
 }
 
 /**

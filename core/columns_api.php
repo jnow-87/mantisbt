@@ -1023,29 +1023,6 @@ function print_column_plugin( $p_column_object, BugData $p_bug, $p_columns_targe
 }
 
 /**
- * Print column content for column edit
- *
- * @param BugData $p_bug            BugData object.
- * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
- * @return void
- * @access public
- */
-function print_column_edit( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-
-	echo '<td class="column-edit">';
-
-	if( !bug_is_readonly( $p_bug->id ) && access_has_bug_level( config_get( 'update_bug_threshold' ), $p_bug->id ) ) {
-		echo '<a href="' . string_get_bug_update_url( $p_bug->id ) . '">';
-		echo '<i class="fa fa-pencil bigger-130 padding-2 grey"';
-		echo ' title="' . lang_get( 'update_bug_button' ) . '"></i></a>';
-	} else {
-		echo '&#160;';
-	}
-
-	echo '</td>';
-}
-
-/**
  * Print column content for column priority
  *
  * @param BugData $p_bug            BugData object.

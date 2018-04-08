@@ -71,6 +71,7 @@ require_api( 'relationship_api.php' );
 require_api( 'tag_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
+require_api( 'print_api.php' );
 
 /**
  * Bug Data Structure Definition
@@ -721,25 +722,23 @@ class BugData {
 		# get regular expressions used to check field content
 		$field_regex = config_get('bug_fields_required_regex');
 
-
 		# check if there is any field that needs to be checked
-		if(empty($required_fields[$p_state])){
-			return;
-		}
-
+		if(empty($required_fields[$p_state]))
+			return '';
 
 		# check all required fields
 		foreach($required_fields[$p_state] as $field){
 			# check if regular expression for the current field is defined
-			if(empty($field_regex[$field])){
-				trigger_error('regex to match against field \'' . $field . '\' missing, cf. configuration variable \'bug_fields_required_regex\'', ERROR);
-			}
+			if(empty($field_regex[$field]))
+				return 'regex to match against field \'' . $field . '\' missing, cf. configuration variable \'bug_fields_required_regex\'';
 
 			# check field content against the regular expression
 			if(preg_match($field_regex[$field], $this->$field) == 0){
-				trigger_error( 'built-in field \'' . $field . '\' is required but not set: ' . $this->$field, ERROR);
+				return 'built-in field \'' . $field . '\' is required but not set';
 			}
 		}
+
+		return '';
 	}
 
 	public function check_fields_custom($p_state){
@@ -754,24 +753,20 @@ class BugData {
 
 
 		# check if there is any field that needs to be checked
-		if(empty($required_fields[$p_state])){
-			return;
-		}
-
+		if(empty($required_fields[$p_state]))
+			return '';
 
 		# check all required fields
 		foreach($required_fields[$p_state] as $field_name){
 			$field_id = custom_field_get_id_from_name($field_name);
 
 			# check if regular expression for the current field is defined
-			if(empty($field_regex[$field_name])){
-				trigger_error('regex to match against field \'' . $field_name . '\' missing, cf. configuration variable \'bug_fields_required_regex\'', ERROR);
-			}
+			if(empty($field_regex[$field_name]))
+				return 'regex to match against field \'' . $field_name . '\' missing, cf. configuration variable \'bug_fields_required_regex\'';
 
 			# check if the field is linked to the bug
-			if(!in_array($field_id, $related_custom_field_ids)){
-				trigger_error('custom field \'' . $field_name . '\' is not linked to the bug\' project', ERROR);
-			}
+			if(!in_array($field_id, $related_custom_field_ids))
+				return 'custom field \'' . $field_name . '\' is not linked to the bug\' project';
 
 			# get field definition
 			$field_def = custom_field_get_definition($field_id);
@@ -792,16 +787,17 @@ class BugData {
 				case CUSTOM_FIELD_TYPE_ENUM:
 				case CUSTOM_FIELD_TYPE_EMAIL:
 				case CUSTOM_FIELD_TYPE_TEXTAREA:
-					if(!gpc_isset( $form_field_name ) || !preg_match($field_regex[$field_name], gpc_get_string( $form_field_name ))){
-						trigger_error( 'custom field \'' . $field_name . '\' is required but not set', ERROR);
-					}
+					if(!gpc_isset( $form_field_name ) || !preg_match($field_regex[$field_name], gpc_get_string( $form_field_name )))
+						return 'custom field \'' . $field_name . '\' is required but not set';
 
 					break;
 
 				default:
-					trigger_error('unknown custom field type \'' . $field_def['type'] . '\'');
+					return 'unknown custom field type \'' . $field_def['type'] . '\'';
 			}
 		}
+
+		return '';
 	}
 }
 
@@ -2276,4 +2272,28 @@ function bug_cache_columns_data( array $p_bugs, array $p_selected_columns ) {
 	if( !empty( $t_custom_field_ids ) ) {
 		custom_field_cache_values( $t_bug_ids, $t_custom_field_ids );
 	}
+}
+
+/**
+ *	get list of possible issues states
+ *
+ *	@param	string	$p_project_id		issue project id
+ *	@param	string	$p_current_status	current issue status
+ *
+ *	@return	array of state names
+ */
+function bug_status_list($p_project_id, $p_current_status){
+	$t_states = get_status_option_list(
+		access_get_project_level($p_project_id),
+		$p_current_status,
+		false,
+		true,
+		$p_project_id);
+
+	$t_state_names = array('' => $p_current_status);
+
+	foreach($t_states as $t_id => $t_name)
+		$t_state_names[$t_name] = $t_id;
+
+	return $t_state_names;
 }

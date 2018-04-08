@@ -166,8 +166,15 @@ helper_call_custom_function( 'issue_create_validate', array( $t_bug_data ) );
 $t_bug_data->tags = &$f_tag_string;
 
 # check required fields
-$t_bug_data->check_fields_builtin('report');
-$t_bug_data->check_fields_custom('report');
+$t_res = $t_bug_data->check_fields_builtin('report');
+
+if($t_res != '')
+	trigger_error($t_res, ERROR);
+
+$t_res = $t_bug_data->check_fields_custom('report');
+
+if($t_res != '')
+	trigger_error($t_res, ERROR);
 
 
 # Validate the custom fields before adding the bug.

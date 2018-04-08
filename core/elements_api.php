@@ -121,6 +121,23 @@ function format_select($p_id, $p_name, $p_values, $p_selected, $p_class = 'input
 }
 
 /**
+ *	format a date input html element
+ *
+ *	@param	string	$p_id		string used as the elements id property
+ *	@param	string	$p_name		string used as the elements name property
+ *	@param	array	$p_value	string used as the elements value property
+ *	@param	string	$p_width	input width
+ *
+ *	@return	a string containing the html element
+ */
+function format_date($p_id, $p_name, $p_value, $p_width = ''){
+	$t_width = ($p_width != '') ? 'width:' . $p_width : '';
+	$t_date_prop = 'data-picker-locale="' . lang_get_current_datetime_locale() . '" data-picker-format="' . convert_date_format_to_momentjs(config_get('normal_date_format')) . '"';
+
+	return format_text($p_id, $p_name, $p_value, '', 'input-xs datetimepicker', $t_width, $t_date_prop);
+}
+
+/**
  *	format a href string
  *
  *	@param	string	$p_action	link/action to trigger
@@ -624,12 +641,12 @@ function input_hover_text($p_id, $p_value, $p_width = '', $p_submit_action = '')
 /**
  *	format an input-hover textarea element
  *
- *	@param	string	$p_id		the id of the master element
- *								the value has to be accessed through $p_id . '-input'
+ *	@param	string	$p_id				the id of the master element the value has to be accessed
+ *										through $p_id . '-input'
  *
- *	@param	string	$p_value	the input value
- *	@param	string	$p_width	width
- *	@param	string	$p_height	height
+ *	@param	string	$p_value			the input value
+ *	@param	string	$p_width			width
+ *	@param	string	$p_height			height
  *	@param	string	$p_submit_action	alternate submit action, default is specified through the
  *										form the button belongs to
  *
@@ -770,6 +787,38 @@ function table_row($p_data, $p_tr_attr = '', $p_td_attr = ''){
  */
 function table_end(){
 	echo '</table>';
+}
+
+/**
+ *	print a table row formated for bug information, that is with
+ *	heading and data and defined cell sizes
+ *
+ *	@param	string	$p_key		the heading cell content
+ *	@param	string	$p_value	the value cell content
+ *
+ *	@return	nothing
+ */
+function table_row_bug_info_short($p_key, $p_value){
+	echo '<tr>';
+	if($p_key)
+		echo '<td class="no-border bug-header" width="30%">' . $p_key . '</td>';
+
+	if($p_value)
+		echo '<td class="no-border">' . $p_value . '</td>';
+
+	echo '</tr>';
+}
+
+function table_row_bug_info_long($p_key, $p_value, $p_key_width = '50%'){
+	echo '<tr>';
+
+	if($p_key)
+		echo '<td class="no-border bug-header" width="' . $p_key_width . '">' . $p_key . '</td>';
+
+	if($p_value)
+		echo '<td class="no-border">' . $p_value . '</td>';
+
+	echo '</tr>';
 }
 
 ?>

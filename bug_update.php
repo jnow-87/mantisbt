@@ -61,13 +61,16 @@ require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'relationship_api.php' );
 
-form_security_validate( 'bug_update' );
+form_security_validate('bug_update');
+
+json_prepare();
 
 $f_bug_id = gpc_get_int( 'bug_id' );
 $t_existing_bug = bug_get( $f_bug_id, true );
 $f_update_type = gpc_get_string( 'action_type', BUG_UPDATE_TYPE_NORMAL );
 $f_reset_resolution = gpc_get_int('reset_resolution', 0);
 $f_reset_assignee = gpc_get_int('reset_assignee', 0);
+$f_status_change_enabled = gpc_get_int('status_change_enabled', 0);
 
 $t_current_user_id = auth_get_current_user_id();
 
@@ -99,7 +102,7 @@ $t_updated_bug->priority = gpc_get_int( 'priority', $t_existing_bug->priority );
 $t_updated_bug->reporter_id = gpc_get_int( 'reporter_id', $t_existing_bug->reporter_id );
 $t_updated_bug->resolution = gpc_get_int( 'resolution', $t_existing_bug->resolution );
 $t_updated_bug->severity = gpc_get_int( 'severity', $t_existing_bug->severity );
-$t_updated_bug->status = gpc_get_int( 'status', $t_existing_bug->status );
+$t_updated_bug->status = gpc_get_int( 'new_status', $t_existing_bug->status );
 $t_updated_bug->summary = gpc_get_string( 'summary', $t_existing_bug->summary );
 $t_updated_bug->target_version = gpc_get_string( 'target_version', $t_existing_bug->target_version );
 $t_updated_bug->version = gpc_get_string( 'version', $t_existing_bug->version );
@@ -114,10 +117,15 @@ $t_bug_note->time_tracking = gpc_get_string( 'time_tracking', '0:00' );
 $t_updated_bug->time_tracking = &$t_bug_note->time_tracking;
 $t_updated_bug->notes = &$t_bug_note->note;
 
-
-if( $t_existing_bug->last_updated != $t_updated_bug->last_updated ) {
-	trigger_error( ERROR_BUG_CONFLICTING_EDIT, ERROR );
+if(!$f_status_change_enabled && $t_existing_bug->status != $t_updated_bug->status){
+	json_error('state changes are not allowed through this form, trying to transition from \''
+		. get_enum_element('status', $t_existing_bug->status) . '\' to \''
+		. get_enum_element('status', $t_updated_bug->status) . '\''
+	);
 }
+
+if($t_existing_bug->last_updated != $t_updated_bug->last_updated)
+	json_warning('bug has been modified by another user, data might be overwritten');
 
 # Determine whether the new status will reopen, resolve or close the issue.
 # Note that multiple resolved or closed states can exist and thus we need to
@@ -161,25 +169,19 @@ if ( !$t_reporter_reopening && !$t_reporter_closing ) {
 
 	# Check if the bug is in a read-only state and whether the current user has
 	# permission to update read-only bugs.
-	if( bug_is_readonly( $f_bug_id ) ) {
-		error_parameters( $f_bug_id );
-		trigger_error( ERROR_BUG_READ_ONLY_ACTION_DENIED, ERROR );
-	}
+	if( bug_is_readonly( $f_bug_id ) )
+		json_error('issue is readonly');
 }
 
 # If resolving or closing, ensure that all dependant issues have been resolved.
-if( ( $t_resolve_issue || $t_close_issue ) &&
-	!relationship_can_resolve_bug( $f_bug_id )
-) {
-	trigger_error( ERROR_BUG_RESOLVE_DEPENDANTS_BLOCKING, ERROR );
-}
+if( ( $t_resolve_issue || $t_close_issue ) && !relationship_can_resolve_bug( $f_bug_id ))
+	json_error('issue cannot be resolved until all related issues have been resolved');
 
 # Validate any change to the status of the issue.
 if( $t_existing_bug->status != $t_updated_bug->status ) {
-	if( !bug_check_workflow( $t_existing_bug->status, $t_updated_bug->status ) ) {
-		error_parameters( lang_get( 'status' ) );
-		trigger_error( ERROR_CUSTOM_FIELD_INVALID_VALUE, ERROR );
-	}
+	if( !bug_check_workflow( $t_existing_bug->status, $t_updated_bug->status ) )
+		json_error('invalid value for field \'status\'');
+
 	if( !access_has_bug_level( access_get_status_threshold( $t_updated_bug->status, $t_updated_bug->project_id ), $f_bug_id ) ) {
 		# The reporter may be allowed to close or reopen the issue regardless.
 		$t_can_bypass_status_access_thresholds = false;
@@ -196,9 +198,8 @@ if( $t_existing_bug->status != $t_updated_bug->status ) {
 				   config_get( 'allow_reporter_reopen' ) ) {
 			$t_can_bypass_status_access_thresholds = true;
 		}
-		if( !$t_can_bypass_status_access_thresholds ) {
-			trigger_error( ERROR_ACCESS_DENIED, ERROR );
-		}
+		if( !$t_can_bypass_status_access_thresholds )
+			json_error('access denied for current user');
 	}
 	if( $t_reopen_issue ) {
 		# for everyone allowed to reopen an issue, set the reopen resolution
@@ -212,16 +213,15 @@ if($f_reset_resolution == 1){
 }
 
 # reset assignee if requested
-if($f_reset_resolution == 1){
+if($f_reset_assignee == 1){
 	$t_updated_bug->handler_id = config_get("reopen_bug_assignee");
 }
 
 # Validate any change to the handler of an issue.
 if( $t_existing_bug->handler_id != $t_updated_bug->handler_id ) {
 	if( $t_updated_bug->handler_id != NO_USER ) {
-		if( !access_has_bug_level( config_get( 'handle_bug_threshold' ), $f_bug_id, $t_updated_bug->handler_id ) ) {
-			trigger_error( ERROR_HANDLER_ACCESS_TOO_LOW, ERROR );
-		}
+		if( !access_has_bug_level( config_get( 'handle_bug_threshold' ), $f_bug_id, $t_updated_bug->handler_id ) )
+			json_error('assignee does not have sufficient access rights to handle issue at this status');
 	}
 }
 
@@ -244,11 +244,7 @@ if( $t_existing_bug->resolution != $t_updated_bug->resolution && (
 	   && $t_updated_bug->status >= $t_resolved_status
 	   )
 ) ) {
-	error_parameters(
-		get_enum_element( 'resolution', $t_updated_bug->resolution ),
-		get_enum_element( 'status', $t_updated_bug->status )
-	);
-	trigger_error( ERROR_INVALID_RESOLUTION, ERROR );
+	json_error('invalid resolution in current status');
 }
 
 # Ensure that the user has permission to change the target version of the issue.
@@ -261,11 +257,10 @@ if( $t_existing_bug->view_state != $t_updated_bug->view_state ) {
 	access_ensure_bug_level( config_get( 'change_view_status_threshold' ), $f_bug_id );
 }
 
+$t_res = $t_updated_bug->check_fields_custom($t_existing_bug->status . '_to_' . $t_updated_bug->status);
 
-
-$t_updated_bug->check_fields_custom($t_existing_bug->status . '_to_' . $t_updated_bug->status);
-
-
+if($t_res != '')
+	json_error($t_res);
 
 # Determine the custom field "require check" to use for validating
 # whether fields can be undefined during this bug update.
@@ -289,8 +284,7 @@ foreach ( $t_related_custom_field_ids as $t_cf_id ) {
 			custom_field_has_write_access( $t_cf_id, $f_bug_id ) ) {
 			# A value for the custom field was expected however
 			# no value was given by the user.
-			error_parameters( lang_get_defaulted( custom_field_get_field( $t_cf_id, 'name' ) ) );
-			trigger_error( ERROR_EMPTY_FIELD, ERROR );
+			json_error('required field \'' . lang_get_defaulted( custom_field_get_field( $t_cf_id, 'name' ) ) . '\' is empty');
 		}
 	}
 
@@ -299,9 +293,8 @@ foreach ( $t_related_custom_field_ids as $t_cf_id ) {
 		continue;
 	}
 
-	if( !custom_field_has_write_access( $t_cf_id, $f_bug_id ) ) {
-		trigger_error( ERROR_ACCESS_DENIED, ERROR );
-	}
+	if( !custom_field_has_write_access( $t_cf_id, $f_bug_id ) )
+		json_error('access denied for current user');
 
 	$t_new_custom_field_value = gpc_get_custom_field( 'custom_field_' . $t_cf_id, $t_cf_def['type'], '' );
 	$t_old_custom_field_value = custom_field_get_value( $t_cf_id, $f_bug_id );
@@ -310,10 +303,8 @@ foreach ( $t_related_custom_field_ids as $t_cf_id ) {
 	# This may cause an error if validation rules have recently been
 	# modified such that old values that were once OK are now considered
 	# invalid.
-	if( !custom_field_validate( $t_cf_id, $t_new_custom_field_value ) ) {
-		error_parameters( lang_get_defaulted( custom_field_get_field( $t_cf_id, 'name' ) ) );
-		trigger_error( ERROR_CUSTOM_FIELD_INVALID_VALUE, ERROR );
-	}
+	if( !custom_field_validate( $t_cf_id, $t_new_custom_field_value ) )
+		json_error('invalid value for field \'' . lang_get_defaulted( custom_field_get_field( $t_cf_id, 'name' ) ) . '\'');
 
 	# Remember the new custom field values so we can set them when updating
 	# the bug (done after all data passed to this update page has been
@@ -323,15 +314,13 @@ foreach ( $t_related_custom_field_ids as $t_cf_id ) {
 
 # Perform validation of the duplicate ID of the bug.
 if( $t_updated_bug->duplicate_id != 0 ) {
-	if( $t_updated_bug->duplicate_id == $f_bug_id ) {
-		trigger_error( ERROR_BUG_DUPLICATE_SELF, ERROR );
-	}
+	if( $t_updated_bug->duplicate_id == $f_bug_id )
+		json_error('unable to duplicate an issue by itself');
 
 	bug_ensure_exists( $t_updated_bug->duplicate_id );
 
-	if( !access_has_bug_level( config_get( 'update_bug_threshold' ), $t_updated_bug->duplicate_id ) ) {
-		trigger_error( ERROR_RELATIONSHIP_ACCESS_LEVEL_TO_DEST_BUG_TOO_LOW, ERROR );
-	}
+	if( !access_has_bug_level( config_get( 'update_bug_threshold' ), $t_updated_bug->duplicate_id ) )
+		json_error('access denied, higher privileges are required');
 }
 
 # Validate the new bug note (if any is provided).
@@ -340,12 +329,9 @@ if( $t_bug_note->note ||
 	  helper_duration_to_minutes( $t_bug_note->time_tracking ) > 0 )
 ) {
 	access_ensure_bug_level( config_get( 'add_bugnote_threshold' ), $f_bug_id );
-	if( !$t_bug_note->note &&
-		!config_get( 'time_tracking_without_note' )
-	) {
-		error_parameters( lang_get( 'bugnote' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
-	}
+	if( !$t_bug_note->note && !config_get( 'time_tracking_without_note' ))
+		json_error('required field \'bugnote\' is empty');
+
 	if( $t_bug_note->view_state != config_get( 'default_bugnote_view_status' ) ) {
 		access_ensure_bug_level( config_get( 'set_view_status_threshold' ), $f_bug_id );
 	}
@@ -381,13 +367,10 @@ helper_call_custom_function( 'issue_update_validate', array( $f_bug_id, $t_updat
 # Allow plugins to validate/modify the update prior to it being committed.
 $t_updated_bug = event_signal( 'EVENT_UPDATE_BUG_DATA', $t_updated_bug, $t_existing_bug );
 
+$t_res = $t_updated_bug->check_fields_builtin($t_existing_bug->status . '_to_' . $t_updated_bug->status);
 
-
-$t_updated_bug->check_fields_builtin($t_existing_bug->status . '_to_' . $t_updated_bug->status);
-
-
-
-
+if($t_res != '')
+	json_error($t_res);
 
 # Commit the bug updates to the database.
 $t_text_field_update_required = ( $t_existing_bug->description != $t_updated_bug->description );
@@ -445,6 +428,4 @@ if( $t_resolve_issue ) {
 	email_bug_updated( $f_bug_id );
 }
 
-form_security_purge( 'bug_update' );
-
-print_successful_redirect_to_bug( $f_bug_id );
+json_success('bug updated');
