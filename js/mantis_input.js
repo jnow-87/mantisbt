@@ -347,8 +347,17 @@ function input_hover_submit(e){
 			if($(active).attr('formaction') && $(active).attr('formaction') != '')
 				action = $(active).attr('formaction');
 
-			if(parent.className != 'input-hover-master')
+			if($(parent).hasClass('input-hover-form-reload'))
 				reload = true;
+
+			if($(parent).hasClass('input-hover-form-noreload'))
+				reload = false;
+
+			if($(active).hasClass('input-hover-form-reload'))
+				reload = true;
+
+			if($(active).hasClass('input-hover-form-noreload'))
+				reload = false;
 		}
 	}
 

@@ -175,7 +175,7 @@ $t_tag_attach .= format_text('tag_string', 'tag_string', '', 'tags separated by 
 $t_tag_attach .= format_hspace('5px');
 $t_tag_attach .= format_select('tag_select', 'tag_select', $t_tag_names, '');
 $t_tag_attach .= format_hspace('10px');
-$t_tag_attach .= format_button('Attach', 'tag_attach_div-action-0', 'submit', 'tag_attach.php');
+$t_tag_attach .= format_button('Attach', 'tag_attach_div-action-0', 'submit', 'tag_attach.php', 'btn-xs btn-round input-hover-form-reload');
 $t_tag_attach .= '</span>';
 
 
@@ -221,9 +221,9 @@ echo '<div class="col-md-9">';
 			// monitor buttons
 			if(!current_user_is_anonymous() && access_has_bug_level( config_get('monitor_bug_threshold'), $f_bug_id)){
 				if(user_is_monitoring_bug(auth_get_current_user_id(), $f_bug_id))
-					button_link('Unmonitor', 'bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'bug_monitor_delete_token' => form_security_token('bug_monitor_delete')));
+					button_link('Unwatch', 'bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'bug_monitor_delete_token' => form_security_token('bug_monitor_delete')));
 				else
-					button_link('Monitor', 'bug_monitor_add.php', array('bug_id' => $f_bug_id, 'bug_monitor_add_token' => form_security_token('bug_monitor_add')));
+					button_link('Watch', 'bug_monitor_add.php', array('bug_id' => $f_bug_id, 'bug_monitor_add_token' => form_security_token('bug_monitor_add')));
 			}
 
 			echo '</div>';
