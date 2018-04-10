@@ -643,6 +643,8 @@ function string_get_bug_page( $p_action ) {
  * @return string
  */
 function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = false, $p_style = '' ) {
+	$t_link = '';
+
 	if( bug_exists( $p_bug_id ) ) {
 		$t_link = '<a href="';
 		if( $p_fqdn ) {
@@ -667,8 +669,6 @@ function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = f
 			$t_link .= ' style="' . $p_style . '"';
 
 		$t_link .= '>' . bug_format_id( $p_bug_id ) . '</a>';
-	} else {
-		$t_link = bug_format_id( $p_bug_id );
 	}
 
 	return $t_link;

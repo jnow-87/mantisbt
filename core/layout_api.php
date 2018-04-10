@@ -527,7 +527,12 @@ function layout_navbar() {
 
 		if( count( $t_ids ) > 0 ) {
 			foreach( $t_ids as $t_id ) {
-				$t_issues .= $t_comma . ' ' . string_get_bug_view_link( $t_id, true, false, 'color:white;font-size:x-small' );
+				$t_bug_string = string_get_bug_view_link( $t_id, true, false, 'color:white;font-size:x-small' );
+
+				if($t_bug_string == '')
+					continue;
+
+				$t_issues .= $t_comma . ' ' . $t_bug_string;
 
 				if($t_comma == '')
 					$t_comma = ',';
