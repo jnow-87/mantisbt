@@ -1730,16 +1730,21 @@ function user_reset_password( $p_user_id, $p_send_email = true ) {
  *
  *	@param	string	$p_project_id	project to get versions for
  *	@param	string	$p_reported_id	user id that shall be used as author
+ *	@param	boolean	$p_meta_user	if true meta users such as 'author' are added
+ *									to the list. if false only existing users are
+ *									added to the list
  *
  *	@return	array of user names
  */
-function user_list($p_project_id, $p_reported_id){
+function user_list($p_project_id, $p_reported_id = '', $p_meta_user = false){
 	$t_users = project_get_all_user_rows($p_project_id);
-	$t_user_names = array(
-		'[author]' => $p_reported_id,
-		'[me]' => auth_get_current_user_id(),
-		'[unassigned]' => 0,
-	);
+	$t_user_names = array();
+
+	if($p_meta_user){
+		$t_user_names['author'] = $p_reported_id;
+		$t_user_names['me'] = auth_get_current_user_id();
+		$t_user_names['unassigned'] = 0;
+	}
 
 	foreach($t_users as $t_id => $t_user)
 		$t_user_names[$t_user['username']] = $t_id;

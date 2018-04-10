@@ -308,6 +308,22 @@ $(document).ready( function() {
 		$(this).val(0);
 	});
 
+	$(document).on('change', '#user_select', function() {
+		var tagSeparator = $('#user_separator').val();
+		var currentTagString = $('#user_string').val();
+		var newTagOptionID = $(this).val();
+		var newTag = $('#user_select option[value=' + newTagOptionID + ']').text();
+		if (currentTagString.indexOf(newTag) == -1) {
+			if (currentTagString.length > 0) {
+				$('#user_string').val(currentTagString + tagSeparator + newTag);
+			} else {
+				$('#user_string').val(newTag);
+			}
+		}
+		$(this).val(0);
+	});
+
+
 	$('a.click-url').bind("click", function() {
 		$(this).attr("href", $(this).attr("url"));
 	});

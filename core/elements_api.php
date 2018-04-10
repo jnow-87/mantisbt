@@ -64,6 +64,10 @@ function format_text($p_id, $p_name, $p_value, $p_placeholder = '', $p_class = '
 	return '<input type="text" id="' . $p_id . '" name="' . $p_name . '" class="' . $p_class . '" value="' . $p_value . '" placeholder="' . $p_placeholder . '" style="' . $p_style . '" ' . $p_prop . '/>';
 }
 
+function text($p_id, $p_name, $p_value, $p_placeholder = '', $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	echo format_text($p_id, $p_name, $p_value, $p_placeholder, $p_class, $p_style, $p_prop);
+}
+
 /**
  *	format a textarea input html element
  *
@@ -118,6 +122,10 @@ function format_select($p_id, $p_name, $p_values, $p_selected, $p_class = 'input
 	$t_s .= '</select>';
 
 	return $t_s;
+}
+
+function select($p_id, $p_name, $p_values, $p_selected, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	echo format_select($p_id, $p_name, $p_values, $p_selected, $p_class, $p_style, $p_prop);
 }
 
 /**

@@ -94,9 +94,46 @@ function tab_links(){
 /* callback to render monitoring users */
 function tab_monitored(){
 	global $f_bug_id;
+	global $t_bug;
+	global $t_project_id;
 
-	define('BUG_MONITOR_LIST_VIEW_INC_ALLOW', true);
-//	include('bug_monitor_list_view_inc.php');
+	/* user list */
+	$t_user_ids = bug_get_monitors($f_bug_id);
+	$t_can_delete_others = access_has_bug_level(config_get('monitor_delete_others_bug_threshold'), $f_bug_id);
+	$t_user_links = '';
+
+	foreach($t_user_ids as $t_id){
+		$t_link = format_link(user_get_name($t_id), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
+		$t_sec_token = htmlspecialchars(form_security_param('bug_monitor_delete'));
+
+		if($t_id != auth_get_current_user_id() && !$t_can_delete_others){
+			echo $t_link . format_hspace('10px');
+		}
+		else{
+			$t_buttons = array(array('icon' => 'fa-times', 'href' => format_href('bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'user_id' => $t_id, $t_sec_token => '')), 'position' => 'right:4px'));
+			input_hover_element('user_' . $t_id, $t_link, $t_buttons);
+		}
+	}
+
+	if(count($t_user_ids) == 0)
+		echo 'No users watching this issue' . format_hspace('20px');
+
+	/* append user input */
+	$t_users = array_merge(array('' => 0), user_list($t_project_id));
+
+	foreach($t_user_ids as $t_id)
+		unset($t_users[user_get_name($t_id)]);
+
+	echo '<span id="user_attach_div">';
+	echo form_security_field('bug_monitor_add');
+	input_hidden('user_separator', config_get('tag_separator'));
+	input_hidden('bug_id', $f_bug_id);
+	text('user_string', 'user_string', '', 'user names separated by \'' . config_get('tag_separator') . '\'', 'input-xs', '', 'size=50');
+	hspace('5px');
+	select('user_select', 'user_select', $t_users, '');
+	hspace('10px');
+	button('Attach', 'user_attach_div-action-0', 'submit', 'bug_monitor_add.php', 'btn-xs btn-round input-hover-form-reload');
+	echo '</span>';
 }
 
 /* callback to render bugnotes */
@@ -318,7 +355,7 @@ echo '<div class="col-md-3">';
 	section_begin('People');
 		echo '<div class="row">';
 		table_begin('', 'no-border');
-		table_row_bug_info_short('Assignee:', format_input_hover_select('handler_id', user_list($t_project_id, $t_bug->reporter_id), user_get_name($t_bug->handler_id)));
+		table_row_bug_info_short('Assignee:', format_input_hover_select('handler_id', user_list($t_project_id, $t_bug->reporter_id, true), user_get_name($t_bug->handler_id)));
 		table_row_bug_info_short('Author:', user_get_name($t_bug->reporter_id));
 		table_end();
 		echo '</div>';

@@ -212,7 +212,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 			if($t_suggested_handler_id == NO_USER && access_has_bug_level(config_get('handle_bug_threshold'), $f_bug_id))
 				$t_suggested_handler_id = $t_current_user_id;
 
-			table_row_bug_info_long($t_required . 'Assignee:', format_select('handler_id', 'handler_id', user_list($t_project_id, $t_bug->reporter_id), user_get_name($t_bug->handler_id)), '10%');
+			table_row_bug_info_long($t_required . 'Assignee:', format_select('handler_id', 'handler_id', user_list($t_project_id, $t_bug->reporter_id, true), user_get_name($t_bug->handler_id)), '10%');
 		}
 
 		// target version
