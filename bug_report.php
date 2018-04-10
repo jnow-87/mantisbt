@@ -79,7 +79,7 @@ form_security_validate( 'bug_report' );
 
 $t_project_id = null;
 
-$f_master_bug_id = gpc_get_int( 'm_id', 0 );
+$f_master_bug_id = gpc_get_int( 'id', 0 );
 if( $f_master_bug_id > 0 ) {
 	bug_ensure_exists( $f_master_bug_id );
 	if( bug_is_readonly( $f_master_bug_id ) ) {

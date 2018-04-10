@@ -90,7 +90,7 @@ function required_indicator($p_field_name, $p_required_fields){
 }
 
 
-$f_master_bug_id = gpc_get_int( 'm_id', 0 );
+$f_master_bug_id = gpc_get_int( 'id', 0 );
 
 if( $f_master_bug_id > 0 ) {
 	# master bug exists...
@@ -228,7 +228,7 @@ $t_form_encoding = '';
 	action="bug_report.php?posted=1"
 >
 <?php echo form_security_field( 'bug_report' ) ?>
-<input type="hidden" name="m_id" value="<?php echo $f_master_bug_id ?>" />
+<input type="hidden" name="d" value="<?php echo $f_master_bug_id ?>" />
 <input type="hidden" name="project_id" value="<?php echo $t_project_id ?>" />
 <div class="widget-box widget-color-blue2">
 	<div class="widget-header widget-header-small">

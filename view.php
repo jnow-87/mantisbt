@@ -201,14 +201,39 @@ echo '<div class="col-md-9">';
 	section_begin('Description');
 		/* actionbar */
 		actionbar_begin();
-//		html_buttons_view_bug_page($f_bug_id);
+			echo '<div class="pull-left">';
 
-		echo '<div class="pull-right">';
-		button('Edit', 'input-hover-show-all');
-		button('Reset', 'input-hover-reset-all');
-		button('Update', 'input-hover-submit-all', 'submit');
-		echo '</div>';
+			// edit button
+			if(access_has_bug_level(config_get('update_bug_threshold'), $f_bug_id)){
+				button('Edit', 'input-hover-show-all'); 
+				button('Reset', 'input-hover-reset-all');
+				button('Update', 'input-hover-submit-all', 'submit');
+			}
 
+			// clone button
+			if(access_has_bug_level(config_get('report_bug_threshold'), $f_bug_id))
+				button_link('Clone', 'bug_report_page.php', array('id' => $f_bug_id));
+
+			// move button
+			if(!bug_is_readonly($f_bug_id) && config_get('view_issue_button_move'))
+				button_link('Move', 'bug_actiongroup_page.php', array('action' => 'MOVE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_page_token' => form_security_token('bug_actiongroup_page')));
+
+			// monitor buttons
+			if(!current_user_is_anonymous() && access_has_bug_level( config_get('monitor_bug_threshold'), $f_bug_id)){
+				if(user_is_monitoring_bug(auth_get_current_user_id(), $f_bug_id))
+					button_link('Unmonitor', 'bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'bug_monitor_delete_token' => form_security_token('bug_monitor_delete')));
+				else
+					button_link('Monitor', 'bug_monitor_add.php', array('bug_id' => $f_bug_id, 'bug_monitor_add_token' => form_security_token('bug_monitor_add')));
+			}
+
+			echo '</div>';
+			echo '<div class="pull-right">';
+
+			// delete button
+			if(!bug_is_readonly($f_bug_id) && config_get('view_issue_button_delete'))
+				button_link('Delete', 'bug_actiongroup_page.php', array('action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_page_token' => form_security_token('bug_actiongroup_page')));
+
+			echo '</div>';
 		actionbar_end();
 
 		/* bug info */
@@ -218,7 +243,7 @@ echo '<div class="col-md-9">';
 		table_begin('', 'no-border');
 		table_row_bug_info_short('Type:', format_input_hover_select('category_id', category_list($t_project_id), category_get_name($t_bug->category_id)));
 		table_row_bug_info_short('Status:', '<span>' . $t_status_icon . format_hspace('10px') . format_input_hover_select('new_status', bug_status_list($t_project_id, $t_bug->status), get_enum_element('status', $t_bug->status), 'bug_change_status_page.php') . '</span>');
-		table_row_bug_info_short('Resolution:', get_enum_element('resolution', $t_bug->resolution));
+		table_row_bug_info_short('Resolution:', format_input_hover_select('resolution', resolution_list(), get_enum_element('resolution', $t_bug->resolution)));
 		table_end();
 		echo '</div>';
 

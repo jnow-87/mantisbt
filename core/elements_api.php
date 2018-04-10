@@ -240,15 +240,15 @@ function actionbar_end(){
  *	print a html link with a button look
  *
  *	@param	string	$p_button_text	text displayed as the button
- *	@param	string  $p_link			page URL.
+ *	@param	string  $p_action		page URL.
  *	@param	string  $p_class		additional class attributes
  *	@param	array   $p_arg			array of <key> <value> pairs that are passed on
  *									through the link
  *
  *	@return nothing
  */
-function button_link($p_button_text, $p_link, $p_arg = array(), $p_class = 'btn-xs btn-round') {
-	echo format_link($p_button_text, $p_link, $p_arg, 'btn btn-primary btn-white ' . $p_class);
+function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = 'btn-xs btn-round') {
+	echo format_link($p_button_text, $p_action, $p_arg, 'btn btn-primary btn-white ' . $p_class) . format_hspace('2px');
 }
 
 /**
@@ -282,6 +282,7 @@ function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_c
 		$t_btn .= 'formaction="' . $p_action . '" ';
 	
 	$t_btn .= '>' . $p_text . '</button>';
+	$t_btn .= format_hspace('2px');
 
 	return $t_btn;
 }
