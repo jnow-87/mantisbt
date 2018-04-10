@@ -122,7 +122,7 @@ $t_status_label = str_replace(' ', '_', MantisEnum::getLabel(config_get('status_
 
 if($f_old_status == $f_new_status){
 	json_prepare();
-	json_warning('no state change');
+	json_warning('No target status selected');
 	json_commit();
 	return;
 }

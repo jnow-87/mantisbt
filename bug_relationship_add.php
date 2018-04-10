@@ -82,7 +82,7 @@ foreach( $f_dest_bug_id_array as $f_dest_bug_id ) {
 
 	# bug is not read-only...
 	if( bug_is_readonly( $f_src_bug_id ) )
-		json_error('Issue is readonly');
+		json_error('Access denied to readonly issue');
 
 	# user can access to the related bug at least as viewer...
 	if( !access_has_bug_level( config_get( 'view_bug_threshold', null, null, $t_dest_bug->project_id ), $f_dest_bug_id ) )

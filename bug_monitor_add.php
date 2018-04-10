@@ -108,4 +108,4 @@ foreach($t_user_ids as $t_user_id)
 	bug_monitor($f_bug_id, $t_user_id);
 
 form_security_purge('bug_monitor_add');
-json_success('attached users');
+json_success('Attached users');

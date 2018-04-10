@@ -118,14 +118,14 @@ $t_updated_bug->time_tracking = &$t_bug_note->time_tracking;
 $t_updated_bug->notes = &$t_bug_note->note;
 
 if(!$f_status_change_enabled && $t_existing_bug->status != $t_updated_bug->status){
-	json_error('state changes are not allowed through this form, trying to transition from \''
+	json_error('State changes are not allowed through this form, trying to transition from \''
 		. get_enum_element('status', $t_existing_bug->status) . '\' to \''
 		. get_enum_element('status', $t_updated_bug->status) . '\''
 	);
 }
 
 if($t_existing_bug->last_updated != $t_updated_bug->last_updated)
-	json_warning('bug has been modified by another user, data might be overwritten');
+	json_warning('Bug has been modified by another user, data might be overwritten');
 
 # Determine whether the new status will reopen, resolve or close the issue.
 # Note that multiple resolved or closed states can exist and thus we need to
@@ -170,17 +170,17 @@ if ( !$t_reporter_reopening && !$t_reporter_closing ) {
 	# Check if the bug is in a read-only state and whether the current user has
 	# permission to update read-only bugs.
 	if( bug_is_readonly( $f_bug_id ) )
-		json_error('issue is readonly');
+		json_error('Access denied to readonly issue');
 }
 
 # If resolving or closing, ensure that all dependant issues have been resolved.
 if( ( $t_resolve_issue || $t_close_issue ) && !relationship_can_resolve_bug( $f_bug_id ))
-	json_error('issue cannot be resolved until all related issues have been resolved');
+	json_error('Issue cannot be resolved until all related issues have been resolved');
 
 # Validate any change to the status of the issue.
 if( $t_existing_bug->status != $t_updated_bug->status ) {
 	if( !bug_check_workflow( $t_existing_bug->status, $t_updated_bug->status ) )
-		json_error('invalid value for field \'status\'');
+		json_error('Invalid value for field \'status\'');
 
 	if( !access_has_bug_level( access_get_status_threshold( $t_updated_bug->status, $t_updated_bug->project_id ), $f_bug_id ) ) {
 		# The reporter may be allowed to close or reopen the issue regardless.
@@ -199,7 +199,7 @@ if( $t_existing_bug->status != $t_updated_bug->status ) {
 			$t_can_bypass_status_access_thresholds = true;
 		}
 		if( !$t_can_bypass_status_access_thresholds )
-			json_error('access denied for current user');
+			json_error('Access denied for current user');
 	}
 	if( $t_reopen_issue ) {
 		# for everyone allowed to reopen an issue, set the reopen resolution
@@ -221,7 +221,7 @@ if($f_reset_assignee == 1){
 if( $t_existing_bug->handler_id != $t_updated_bug->handler_id ) {
 	if( $t_updated_bug->handler_id != NO_USER ) {
 		if( !access_has_bug_level( config_get( 'handle_bug_threshold' ), $f_bug_id, $t_updated_bug->handler_id ) )
-			json_error('assignee does not have sufficient access rights to handle issue at this status');
+			json_error('Assignee does not have sufficient access rights to handle issue at this status');
 	}
 }
 
@@ -244,7 +244,7 @@ if( $t_existing_bug->resolution != $t_updated_bug->resolution && (
 	   && $t_updated_bug->status >= $t_resolved_status
 	   )
 ) ) {
-	json_error('invalid resolution in current status');
+	json_error('Invalid resolution in current status');
 }
 
 # Ensure that the user has permission to change the target version of the issue.
@@ -284,7 +284,7 @@ foreach ( $t_related_custom_field_ids as $t_cf_id ) {
 			custom_field_has_write_access( $t_cf_id, $f_bug_id ) ) {
 			# A value for the custom field was expected however
 			# no value was given by the user.
-			json_error('required field \'' . lang_get_defaulted( custom_field_get_field( $t_cf_id, 'name' ) ) . '\' is empty');
+			json_error('Required field \'' . lang_get_defaulted( custom_field_get_field( $t_cf_id, 'name' ) ) . '\' is empty');
 		}
 	}
 
@@ -294,7 +294,7 @@ foreach ( $t_related_custom_field_ids as $t_cf_id ) {
 	}
 
 	if( !custom_field_has_write_access( $t_cf_id, $f_bug_id ) )
-		json_error('access denied for current user');
+		json_error('Access denied for current user');
 
 	$t_new_custom_field_value = gpc_get_custom_field( 'custom_field_' . $t_cf_id, $t_cf_def['type'], '' );
 	$t_old_custom_field_value = custom_field_get_value( $t_cf_id, $f_bug_id );
@@ -304,7 +304,7 @@ foreach ( $t_related_custom_field_ids as $t_cf_id ) {
 	# modified such that old values that were once OK are now considered
 	# invalid.
 	if( !custom_field_validate( $t_cf_id, $t_new_custom_field_value ) )
-		json_error('invalid value for field \'' . lang_get_defaulted( custom_field_get_field( $t_cf_id, 'name' ) ) . '\'');
+		json_error('Invalid value for field \'' . lang_get_defaulted( custom_field_get_field( $t_cf_id, 'name' ) ) . '\'');
 
 	# Remember the new custom field values so we can set them when updating
 	# the bug (done after all data passed to this update page has been
@@ -315,12 +315,12 @@ foreach ( $t_related_custom_field_ids as $t_cf_id ) {
 # Perform validation of the duplicate ID of the bug.
 if( $t_updated_bug->duplicate_id != 0 ) {
 	if( $t_updated_bug->duplicate_id == $f_bug_id )
-		json_error('unable to duplicate an issue by itself');
+		json_error('Unable to duplicate an issue by itself');
 
 	bug_ensure_exists( $t_updated_bug->duplicate_id );
 
 	if( !access_has_bug_level( config_get( 'update_bug_threshold' ), $t_updated_bug->duplicate_id ) )
-		json_error('access denied, higher privileges are required');
+		json_error('Access denied for current user');
 }
 
 # Validate the new bug note (if any is provided).
@@ -330,7 +330,7 @@ if( $t_bug_note->note ||
 ) {
 	access_ensure_bug_level( config_get( 'add_bugnote_threshold' ), $f_bug_id );
 	if( !$t_bug_note->note && !config_get( 'time_tracking_without_note' ))
-		json_error('required field \'bugnote\' is empty');
+		json_error('Required field \'bugnote\' is empty');
 
 	if( $t_bug_note->view_state != config_get( 'default_bugnote_view_status' ) ) {
 		access_ensure_bug_level( config_get( 'set_view_status_threshold' ), $f_bug_id );
@@ -428,4 +428,4 @@ if( $t_resolve_issue ) {
 	email_bug_updated( $f_bug_id );
 }
 
-json_success('bug updated');
+json_success('Bug updated');

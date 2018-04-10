@@ -118,5 +118,5 @@ else{
 	event_signal('EVENT_TAG_ATTACHED', array($f_bug_id, $t_tags_attach));
 	form_security_purge('tag_attach');
 
-	json_success('attached tags');
+	json_success('Tags attached');
 }
