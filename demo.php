@@ -6,22 +6,28 @@ require_api('elements_api.php');
 
 
 # TODO
-#	proper action bar for buttons and inputs
-#
-#	reset resolution if bug is reopened
-#	input-hover: either toggle on hover or show cursor on hover
-#	remove table from timeline
-#	select_input_toggle
+#	check resolution in bug::check_builtin (if resolution is required it shall not be 'open')
+#	view.php: only make field editable if the respective access level is available (update_bug_threshold)
+#	view.php test acccess level checks
 #	extend navbar issue search to actually perform a textual search, analog to filters
 #	remove lang_get()
-#	save collapse state for site reloads
 #	add time estimate, time spent to bug view
 #
-#	check which commit changed the html_operation_successful() output
 #	logwork if timetracking is disabled
 #	handle markup for description, cf. plugins/BBCodePlus/files/markitup-init.js
 #
-#	pages
+#	add persistent error message -> they need to be removed by the user
+#	allow shwoing statusbar messages when loading a page (php-based)
+#	use proper functions for displaying custom fields, cf. TODOs in view.php and bug_change_status_page.php
+#
+#	fix inline-page-close
+#		reproduce:
+#			- select new bug status
+#			- trigger update either through 'return' or button
+#			- close the inline-page through the close button
+#
+#		behaviour:
+#			- input fields cannot be hovered
 #
 function tab_page0(){
 	echo '<div class="row">';
