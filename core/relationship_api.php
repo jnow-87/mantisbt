@@ -758,61 +758,6 @@ function relationship_get_details( $p_bug_id, BugRelationshipData $p_relationshi
 }
 
 /**
- * print ALL the RELATIONSHIPS OF A SPECIFIC BUG
- * @param integer $p_bug_id A bug identifier.
- * @return string
- */
-function relationship_get_summary_html( $p_bug_id ) {
-	$t_summary = '';
-	$t_show_project = false;
-
-	$t_relationship_all = relationship_get_all( $p_bug_id, $t_show_project );
-	$t_relationship_all_count = count( $t_relationship_all );
-
-	# prepare the relationships table
-	for( $i = 0; $i < $t_relationship_all_count; $i++ ) {
-		$t_summary .= relationship_get_details( $p_bug_id, $t_relationship_all[$i], true, false, $t_show_project );
-	}
-
-	if( !is_blank( $t_summary ) ) {
-		if( relationship_can_resolve_bug( $p_bug_id ) == false ) {
-			$t_summary .= '<tr><td colspan="' . ( 5 + $t_show_project ) . '"><strong>' .
-				lang_get( 'relationship_warning_blocking_bugs_not_resolved' ) . '</strong></td></tr>';
-		}
-		$t_summary = '<table class="table table-bordered table-condensed table-hover">' . $t_summary . '</table>';
-	}
-
-	return $t_summary;
-}
-
-/**
- * print ALL the RELATIONSHIPS OF A SPECIFIC BUG
- * @param integer $p_bug_id A bug identifier.
- * @return string
- */
-function relationship_get_summary_html_preview( $p_bug_id ) {
-	$t_summary = '';
-	$t_show_project = false;
-
-	$t_relationship_all = relationship_get_all( $p_bug_id, $t_show_project );
-	$t_relationship_all_count = count( $t_relationship_all );
-
-	# prepare the relationships table
-	for( $i = 0;$i < $t_relationship_all_count;$i++ ) {
-		$t_summary .= relationship_get_details( $p_bug_id, $t_relationship_all[$i], true, true, $t_show_project );
-	}
-
-	if( !is_blank( $t_summary ) ) {
-		if( relationship_can_resolve_bug( $p_bug_id ) == false ) {
-			$t_summary .= '<tr class="print"><td class="print" colspan=' . ( 5 + $t_show_project ) . '><strong>' . lang_get( 'relationship_warning_blocking_bugs_not_resolved' ) . '</strong></td></tr>';
-		}
-		$t_summary = '<table width="100%" cellpadding="0" cellspacing="1">' . $t_summary . '</table>';
-	}
-
-	return $t_summary;
-}
-
-/**
  * print ALL the RELATIONSHIPS OF A SPECIFIC BUG in text format (used by email_api.php
  * @param integer $p_bug_id A bug identifier.
  * @return string
@@ -865,75 +810,25 @@ function relationship_list_box( $p_default_rel_type = BUG_REL_ANY, $p_select_nam
 }
 
 /**
- * print HTML relationship form
- * @param integer $p_bug_id A bug identifier.
- * @return void
+ *	get list of relationships
+ *
+ *	@return	array of relationship names
  */
-function relationship_view_box( $p_bug_id ) {
-	$t_relationships_html = relationship_get_summary_html( $p_bug_id );
-	$t_can_update = !bug_is_readonly( $p_bug_id ) &&
-		access_has_bug_level( config_get( 'update_bug_threshold' ), $p_bug_id );
+function relationship_list(){
+	global $g_relationships;
+	$t_names = array();
 
-	if( !$t_can_update && empty( $t_relationships_html ) ) {
-		return;
-	}
+	foreach($g_relationships as $t_id => $t_relationship)
+		$t_names[lang_get($t_relationship['#description'])] = $t_id;
 
-	$t_relationship_graph = ON == config_get( 'relationship_graph_enable' );
-	$t_show_top_div = $t_can_update || $t_relationship_graph;
-	?>
+	return $t_names;
+}
 
-	<?php
-	$t_collapse_block = is_collapsed( 'relationships' );
-	$t_block_css = $t_collapse_block ? 'collapsed' : '';
-	$t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
-	?>
-	<div id="relationships" class="widget-box widget-color-blue2 <?php echo $t_block_css ?>">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<i class="ace-icon fa fa-sitemap"></i>
-			<?php echo lang_get( 'bug_relationships' ) ?>
-		</h4>
-		<div class="widget-toolbar">
-			<a data-action="collapse" href="#">
-				<i class="1 ace-icon fa <?php echo $t_block_icon ?> bigger-125"></i>
-			</a>
-		</div>
-	</div>
-	<div class="widget-body">
-		<?php if( $t_show_top_div ) { ?>
-		<div class="widget-toolbox padding-8 clearfix">
-		<?php
-			if( $t_relationship_graph ) {
-		?>
-		<div class="btn-group pull-right noprint">
-		<span class="small"><?php print_link_button( 'bug_relationship_graph.php?bug_id=' . $p_bug_id . '&graph=relation', lang_get( 'relation_graph' ) )?></span>
-		<span class="small"><?php print_link_button( 'bug_relationship_graph.php?bug_id=' . $p_bug_id . '&graph=dependency', lang_get( 'dependency_graph' ) )?></span>
-		</div>
-		<?php
-			} # $t_relationship_graph
-
-			if( $t_can_update ) {
-			?>
-		<form method="post" action="bug_relationship_add.php" class="form-inline noprint">
-		<?php echo form_security_field( 'bug_relationship_add' ) ?>
-		<input type="hidden" name="src_bug_id" value="<?php echo $p_bug_id?>" />
-		<label class="inline"><?php echo lang_get( 'this_bug' ) ?>&#160;&#160;</label>
-		<?php relationship_list_box( config_get( 'default_bug_relationship' ) )?>
-		<input type="text" class="input-sm" name="dest_bug_id" value="" />
-		<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" name="add_relationship" value="<?php echo lang_get( 'add_new_relationship_button' )?>" />
-		</form>
-			<?php
-			} # can update
-			?>
-		</div>
-		<?php } # show top div ?>
-
-		<div class="widget-main no-padding">
-			<div class="table-responsive">
-				<?php echo $t_relationships_html; ?>
-			</div>
-		</div>
-	</div>
-	</div>
-<?php
+/**
+ *	get default relationship
+ *
+ *	@return	string of the default relationship
+ */
+function relationship_default(){
+	return relationship_get_description_for_history(config_get('default_bug_relationship'));
 }

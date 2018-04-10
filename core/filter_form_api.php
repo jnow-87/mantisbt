@@ -1344,25 +1344,6 @@ function print_filter_values_relationship_type( array $p_filter ) {
 }
 
 /**
- * print relationship fields
- * @global array $g_filter
- * @param array $p_filter Filter array
- * @return void
- */
-function print_filter_relationship_type( array $p_filter = null ) {
-	global $g_filter;
-	if( null === $p_filter ) {
-		$p_filter = $g_filter;
-	}
-	$c_reltype_value = $p_filter[FILTER_PROPERTY_RELATIONSHIP_TYPE];
-	if( !$c_reltype_value ) {
-		$c_reltype_value = -1;
-	}
-	relationship_list_box( $c_reltype_value, 'relationship_type', true, false, "input-xs" );
-	echo '<input class="input-xs" type="text" name="', FILTER_PROPERTY_RELATIONSHIP_BUG, '" size="5" maxlength="10" value="', $p_filter[FILTER_PROPERTY_RELATIONSHIP_BUG], '" />';
-}
-
-/**
  * Print the current value of this filter field, as visible string, and as a hidden form input.
  * @param array $p_filter	Filter array
  * @return void

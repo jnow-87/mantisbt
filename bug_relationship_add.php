@@ -54,6 +54,8 @@ require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'relationship_api.php' );
 
+
+json_prepare();
 form_security_validate( 'bug_relationship_add' );
 
 $f_rel_type = gpc_get_int( 'rel_type' );
@@ -71,25 +73,20 @@ foreach( $f_dest_bug_id_array as $f_dest_bug_id ) {
 	$f_dest_bug_id = (int)$f_dest_bug_id;
 
 	# source and destination bugs are the same bug...
-	if( $f_src_bug_id == $f_dest_bug_id ) {
-		trigger_error( ERROR_RELATIONSHIP_SAME_BUG, ERROR );
-	}
+	if( $f_src_bug_id == $f_dest_bug_id )
+		json_error('Cannot create links to itself');
 
 	# the related bug exists...
 	bug_ensure_exists( $f_dest_bug_id );
 	$t_dest_bug = bug_get( $f_dest_bug_id, true );
 
 	# bug is not read-only...
-	if( bug_is_readonly( $f_src_bug_id ) ) {
-		error_parameters( $f_src_bug_id );
-		trigger_error( ERROR_BUG_READ_ONLY_ACTION_DENIED, ERROR );
-	}
+	if( bug_is_readonly( $f_src_bug_id ) )
+		json_error('Issue is readonly');
 
 	# user can access to the related bug at least as viewer...
-	if( !access_has_bug_level( config_get( 'view_bug_threshold', null, null, $t_dest_bug->project_id ), $f_dest_bug_id ) ) {
-		error_parameters( $f_dest_bug_id );
-		trigger_error( ERROR_RELATIONSHIP_ACCESS_LEVEL_TO_DEST_BUG_TOO_LOW, ERROR );
-	}
+	if( !access_has_bug_level( config_get( 'view_bug_threshold', null, null, $t_dest_bug->project_id ), $f_dest_bug_id ) )
+		json_error('Access denied for current user');
 
 	$t_bug = bug_get( $f_src_bug_id, true );
 	if( $t_bug->project_id != helper_get_current_project() ) {
@@ -102,5 +99,4 @@ foreach( $f_dest_bug_id_array as $f_dest_bug_id ) {
 }
 
 form_security_purge( 'bug_relationship_add' );
-
-print_header_redirect_view( $f_src_bug_id );
+json_success('Link created');

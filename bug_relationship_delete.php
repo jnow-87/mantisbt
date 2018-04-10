@@ -92,8 +92,6 @@ if( bug_exists( $t_dest_bug_id ) ) {
 	}
 }
 
-helper_ensure_confirmed( lang_get( 'delete_relationship_sure_msg' ), lang_get( 'delete_relationship_button' ) );
-
 relationship_delete( $f_rel_id );
 
 form_security_purge( 'bug_relationship_delete' );

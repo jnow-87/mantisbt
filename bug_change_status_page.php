@@ -127,6 +127,10 @@ if($f_old_status == $f_new_status){
 	return;
 }
 
+if($f_new_status >= $t_resolved && !relationship_can_resolve_bug($f_bug_id))
+	json_error('Not all children of this issue are yet resolved or closed');
+
+
 ####
 ## check state transition
 ####
@@ -185,13 +189,6 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 	input_hidden('action_type', string_attribute($f_change_type));
 
 	table_begin('', 'no-border');
-
-		if($f_new_status >= $t_resolved) {
-			if(relationship_can_resolve_bug($f_bug_id) == false) {
-				echo '<tr><td colspan="2">' . lang_get('relationship_warning_blocking_bugs_not_resolved_2') . '</td></tr>';
-			}
-		}
-
 		// priority
 		if($t_show_priority){
 			$t_required = required_indicator('priority', $t_required_fields);

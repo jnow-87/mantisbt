@@ -50,6 +50,7 @@ require_api('utility_api.php');
 require_api('version_api.php');
 require_api('elements_api.php');
 require_api('user_api.php');
+require_api('relationship_api.php');
 
 require_css('status_config.php');
 
@@ -88,7 +89,57 @@ function tab_custom_fields(){
 /* callback to render relationships */
 function tab_links(){
 	global $t_bug;
-//	relationship_view_box($t_bug->id);
+
+	/* input */
+	if(!bug_is_readonly($t_bug->id) && access_has_bug_level(config_get('update_bug_threshold'), $t_bug->id)){
+		actionbar_begin();
+		echo '<span id="rel_attach_div">';
+		echo form_security_field('bug_relationship_add');
+		input_hidden('src_bug_id', $t_bug->id);
+		text('dest_bug_id', 'dest_bug_id', '', 'Issue ID');
+		hspace('5px');
+		select('rel_type', 'rel_type', Relationship_list(), relationship_default());
+		hspace('10px');
+		button('Add', 'rel_attach_div-action-0', 'submit', 'bug_relationship_add.php', 'btn-xs btn-round input-hover-form-reload');
+		echo '</span>';
+		actionbar_end();
+	}
+
+	/* relationships */
+	$t_show_project = false;
+	$t_relationships = relationship_get_all($t_bug->id, $t_show_project);
+
+	table_begin(array('Link Type', 'Link Target', 'Target Status', 'Target Summary'), 'table-bordered table-condensed table-striped table-hover table-sortable');
+
+	foreach($t_relationships as $t_rel){
+		$t_tgt_id = $t_rel->src_bug_id;
+		$t_rel_name = relationship_get_description_dest_side($t_rel->type);
+
+		if($t_tgt_id == $t_bug->id){
+			$t_tgt_id = $t_rel->dest_bug_id;
+			$t_rel_name = relationship_get_description_src_side($t_rel->type);
+		}
+
+		if(bug_exists($t_tgt_id)){
+			if(access_has_bug_level(config_get('view_bug_threshold', null, null, $t_tgt_id), $t_tgt_id)){
+				$t_tgt_bug = bug_get($t_tgt_id);
+				$t_tgt_link = format_link(bug_format_id($t_tgt_id), 'view.php', array('id' => $t_tgt_id));
+				$t_tgt_status_icon = '<i class="fa fa-square fa-status-box ' . html_get_status_css_class($t_tgt_bug->status) . '"></i> ';
+				$t_tgt_status = get_enum_element('status', $t_tgt_bug->status);
+
+				$t_sec_token = htmlspecialchars(form_security_param('bug_relationship_delete'));
+				$t_btn_delete = format_link('<i class="fa fa-trash">', 'bug_relationship_delete.php', array('bug_id' => $t_bug->id, 'rel_id' => $t_rel->id, $t_sec_token => ''));
+
+				table_row(array($t_rel_name . format_hspace('5px') . $t_btn_delete, $t_tgt_link, $t_tgt_status_icon . $t_tgt_status, bug_format_summary($t_tgt_id, SUMMARY_CAPTION)));
+			}
+			else
+				table_row(array($t_rel_name, 'Access denied for current user', '', ''));
+		}
+		else
+			table_row(array($t_rel_name, 'Issue does not exist', '', ''));
+	}
+
+	table_end();
 }
 
 /* callback to render monitoring users */
@@ -110,7 +161,7 @@ function tab_monitored(){
 			echo $t_link . format_hspace('10px');
 		}
 		else{
-			$t_buttons = array(array('icon' => 'fa-times', 'href' => format_href('bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'user_id' => $t_id, $t_sec_token => '')), 'position' => 'right:4px'));
+			$t_buttons = array(array('icon' => 'fa-trash', 'href' => format_href('bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'user_id' => $t_id, $t_sec_token => '')), 'position' => 'right:4px'));
 			input_hover_element('user_' . $t_id, $t_link, $t_buttons);
 		}
 	}
@@ -190,7 +241,7 @@ $t_tag_links = '';
 foreach($t_tags_attached as $t_tag){
 	$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
 	$t_link = format_link($t_tag['name'], 'tag_view_page.php', array('tag_id' => $t_tag['id']), '', 'margin-right:20px!important');
-	$t_buttons = array(array('icon' => 'fa-times', 'href' => format_href('tag_detach.php', array('bug_id' => $f_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
+	$t_buttons = array(array('icon' => 'fa-trash', 'href' => format_href('tag_detach.php', array('bug_id' => $f_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
 
 	$t_tag_links .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
 }
