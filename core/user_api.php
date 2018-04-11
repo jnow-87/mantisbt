@@ -970,7 +970,7 @@ function user_get_name( $p_user_id ) {
 	$t_row = user_cache_row( $p_user_id, false );
 
 	if( false == $t_row ) {
-		return '[deleted (' . (int)$p_user_id . ')]';
+		return '[deleted user (' . (int)$p_user_id . ')]';
 	} else {
 		if( ON == config_get( 'show_realname' ) ) {
 			if( is_blank( $t_row['realname'] ) ) {

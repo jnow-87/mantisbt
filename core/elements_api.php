@@ -47,6 +47,23 @@ function label($p_name, $p_class = '', $p_style = ''){
 	echo format_label($p_name, $p_class, $p_style);
 }
 
+
+/**
+ *	format a font awesome icon
+ *
+ *	@param	string	$p_icon			font awesome icon name
+ *	@param	string	$p_space_right	horizontal space at the right hand side of the icon
+ *
+ *	@return	a string containing the html element
+ */
+function format_icon($p_icon, $p_color = 'grey', $p_space_right = '5px'){
+	return '<i class="ace-icon fa ' . $p_icon . ' ' . $p_color . '"></i>' . format_hspace($p_space_right);
+}
+
+function icon($p_icon, $p_color = 'grey', $p_space_right = '5px'){
+	echo format_icon($p_icon, $p_color, $p_space_right);
+}
+
 /**
  *	format a text input html element
  *
@@ -780,11 +797,11 @@ function table_begin($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = ''
  *
  *	@return nothing
  */
-function table_row($p_data, $p_tr_attr = '', $p_td_attr = ''){
+function table_row($p_data, $p_tr_attr = '', $p_td_attr = array()){
 	echo '<tr ' . $p_tr_attr . '>';
 
-	foreach($p_data as $t_el)
-		echo '<td ' . $p_td_attr . '>' . $t_el . '</td>';
+	for($t_i=0; $t_i<count($p_data); $t_i++)
+		echo '<td ' . $p_td_attr[$t_i] . '>' . $p_data[$t_i] . '</td>';
 
 	echo '</tr>';
 }
@@ -808,26 +825,11 @@ function table_end(){
  *	@return	nothing
  */
 function table_row_bug_info_short($p_key, $p_value){
-	echo '<tr>';
-	if($p_key)
-		echo '<td class="no-border bug-header" width="30%">' . $p_key . '</td>';
-
-	if($p_value)
-		echo '<td class="no-border">' . $p_value . '</td>';
-
-	echo '</tr>';
+	table_row(array($p_key, $p_value), '', array('class="no-border bug-header" width="30%"', 'class="no-border"'));
 }
 
 function table_row_bug_info_long($p_key, $p_value, $p_key_width = '50%'){
-	echo '<tr>';
-
-	if($p_key)
-		echo '<td class="no-border bug-header" width="' . $p_key_width . '">' . $p_key . '</td>';
-
-	if($p_value)
-		echo '<td class="no-border">' . $p_value . '</td>';
-
-	echo '</tr>';
+	table_row(array($p_key, $p_value), '', array('class="no-border bug-header" width="' . $p_key_width . '"', 'class="no-border"'));
 }
 
 ?>

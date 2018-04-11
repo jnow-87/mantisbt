@@ -37,6 +37,7 @@ require_api('custom_field_api.php');
 require_api('date_api.php');
 require_api('event_api.php');
 require_api('gpc_api.php');
+require_api('history_api.php');
 require_api('helper_api.php');
 require_api('html_api.php');
 require_api('lang_api.php');
@@ -128,7 +129,7 @@ function tab_links(){
 				$t_tgt_status = get_enum_element('status', $t_tgt_bug->status);
 
 				$t_sec_token = htmlspecialchars(form_security_param('bug_relationship_delete'));
-				$t_btn_delete = format_link('<i class="fa fa-trash">', 'bug_relationship_delete.php', array('bug_id' => $t_bug->id, 'rel_id' => $t_rel->id, $t_sec_token => ''));
+				$t_btn_delete = format_link(format_icon('fa-trash'), 'bug_relationship_delete.php', array('bug_id' => $t_bug->id, 'rel_id' => $t_rel->id, $t_sec_token => ''));
 
 				table_row(array($t_rel_name . format_hspace('5px') . $t_btn_delete, $t_tgt_link, $t_tgt_status_icon . $t_tgt_status, bug_format_summary($t_tgt_id, SUMMARY_CAPTION)));
 			}
@@ -205,8 +206,25 @@ function tab_bugnote(){
 function tab_history(){
 	global $f_bug_id;
 
-	define('HISTORY_INC_ALLOW', true);
-//	include('history_inc.php');
+	if(!access_has_bug_level(config_get('view_history_threshold'), $f_bug_id)){
+		echo 'Access denied for current user';
+		return;
+	}
+
+	$t_history = history_get_events_array( $f_bug_id );
+
+	table_begin(array(), 'table-condensed no-border table-hover');
+
+	foreach($t_history as $t_item){
+		$t_user = '<span class="username">' . format_icon('fa-user') . prepare_user_name($t_item['userid']) . '</span>';
+		$t_date = '<div class="time">' . format_icon('fa-clock-o') . $t_item['date'] . '</div>';
+		$t_note = string_display($t_item['note']);
+		$t_change = ($t_item['raw'] ? string_display_line_links( $t_item['change'] ) : $t_item['change']);
+
+		table_row(array($t_user . $t_date, $t_note . '<br>' . $t_change), 'style="border-bottom: 10pt solid transparent!important"', array('width=10%'));
+	}
+
+	table_end();
 }
 
 function format_tag_list(){
