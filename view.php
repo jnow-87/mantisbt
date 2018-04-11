@@ -183,7 +183,7 @@ function tab_monitored(){
 	hspace('5px');
 	select('user_select', 'user_select', $t_users, '');
 	hspace('10px');
-	button('Attach', 'user_attach_div-action-0', 'submit', 'bug_monitor_add.php', 'btn-xs btn-round input-hover-form-reload');
+	button('Add', 'user_attach_div-action-0', 'submit', 'bug_monitor_add.php', 'btn-xs btn-round input-hover-form-reload');
 	echo '</span>';
 }
 
@@ -207,6 +207,44 @@ function tab_history(){
 
 	define('HISTORY_INC_ALLOW', true);
 //	include('history_inc.php');
+}
+
+function format_tag_list(){
+	global $f_bug_id;
+
+	$t_tags_attached = tag_bug_get_attached($f_bug_id);
+	$t_tags = '';
+
+	foreach($t_tags_attached as $t_tag){
+		$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
+		$t_link = format_link($t_tag['name'], 'tag_view_page.php', array('tag_id' => $t_tag['id']), '', 'margin-right:20px!important');
+		$t_buttons = array(array('icon' => 'fa-trash', 'href' => format_href('tag_detach.php', array('bug_id' => $f_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
+
+		$t_tags .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
+	}
+
+	if(count($t_tags_attached) == 0)
+		$t_tags = 'No tags attached' . format_hspace('20px');
+
+	return $t_tags;
+}
+
+function format_tag_attach(){
+	$t_tags_attachable = tag_get_candidates_for_bug($f_bug_id);
+	$t_tag_names = array('' => 0);
+
+	foreach($t_tags_attachable as $t_tag)
+		$t_tag_names[$t_tag['name']] = $t_tag['id'];
+
+	return '<span id="tag_attach_div">'
+		. form_security_field('tag_attach')
+		. format_input_hidden('tag_separator', config_get('tag_separator'))
+		. format_text('tag_string', 'tag_string', '', 'tags separated by \'' . config_get('tag_separator') . '\'')
+		. format_hspace('5px')
+		. format_select('tag_select', 'tag_select', $t_tag_names, '')
+		. format_hspace('10px')
+		. format_button('Add', 'tag_attach_div-action-0', 'submit', 'tag_attach.php', 'btn-xs btn-round input-hover-form-reload')
+		. '</span>';
 }
 
 
@@ -233,38 +271,6 @@ $t_versions_unreleased = version_list($t_project_id, false);
 $t_versions_all = version_list($t_project_id, true);
 
 $t_show_tags = in_array('tags', $t_fields) && access_has_global_level(config_get('tag_view_threshold'));
-
-/* generate list of attached tag links */
-$t_tags_attached = tag_bug_get_attached($f_bug_id);
-$t_tag_links = '';
-
-foreach($t_tags_attached as $t_tag){
-	$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
-	$t_link = format_link($t_tag['name'], 'tag_view_page.php', array('tag_id' => $t_tag['id']), '', 'margin-right:20px!important');
-	$t_buttons = array(array('icon' => 'fa-trash', 'href' => format_href('tag_detach.php', array('bug_id' => $f_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
-
-	$t_tag_links .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
-}
-
-if(count($t_tags_attached) == 0)
-	$t_tag_links = 'No tags attached' . format_hspace('20px');
-
-/* generate attach tag input */
-$t_tags_attachable = tag_get_candidates_for_bug($f_bug_id);
-$t_tag_names = array('' => 0);
-
-foreach($t_tags_attachable as $t_tag)
-	$t_tag_names[$t_tag['name']] = $t_tag['id'];
-
-$t_tag_attach = '<span id="tag_attach_div">';
-$t_tag_attach .= form_security_field('tag_attach');
-$t_tag_attach .= format_input_hidden('tag_separator', config_get('tag_separator'));
-$t_tag_attach .= format_text('tag_string', 'tag_string', '', 'tags separated by \'' . config_get('tag_separator') . '\'');
-$t_tag_attach .= format_hspace('5px');
-$t_tag_attach .= format_select('tag_select', 'tag_select', $t_tag_names, '');
-$t_tag_attach .= format_hspace('10px');
-$t_tag_attach .= format_button('Attach', 'tag_attach_div-action-0', 'submit', 'tag_attach.php', 'btn-xs btn-round input-hover-form-reload');
-$t_tag_attach .= '</span>';
 
 
 /* page header */
@@ -368,7 +374,7 @@ echo '<div class="col-md-9">';
 		if($t_show_tags){
 			echo '<div class="row">';
 			table_begin('', 'no-border');
-			table_row_bug_info_long('Tags:', $t_tag_links . $t_tag_attach, '5%');
+			table_row_bug_info_long('Tags:', format_tag_list() . format_tag_attach(), '5%');
 			table_end();
 			echo '</div>';
 		}
@@ -379,7 +385,7 @@ echo '<div class="col-md-9">';
 		$t_tabs = array();
 		$t_tabs['Custom Fields'] = 'tab_custom_fields';
 		$t_tabs['Links'] = 'tab_links';
-		$t_tabs['Monitored by'] = 'tab_monitored';
+		$t_tabs['Watchers'] = 'tab_monitored';
 
 		tabs($t_tabs);
 
@@ -390,7 +396,7 @@ echo '<div class="col-md-9">';
 	/* activities */
 	section_begin('Activities');
 		$t_tabs = array();
-		$t_tabs['Bugnotes'] = 'tab_bugnote';
+		$t_tabs['Notes'] = 'tab_bugnote';
 
 		if($t_show_history)
 			$t_tabs['History'] = 'tab_history';
