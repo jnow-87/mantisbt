@@ -52,6 +52,7 @@ require_api('version_api.php');
 require_api('elements_api.php');
 require_api('user_api.php');
 require_api('relationship_api.php');
+require_api('bugnote_api.php');
 
 require_css('status_config.php');
 
@@ -129,7 +130,7 @@ function tab_links(){
 				$t_tgt_status = get_enum_element('status', $t_tgt_bug->status);
 
 				$t_sec_token = htmlspecialchars(form_security_param('bug_relationship_delete'));
-				$t_btn_delete = format_link(format_icon('fa-trash'), 'bug_relationship_delete.php', array('bug_id' => $t_bug->id, 'rel_id' => $t_rel->id, $t_sec_token => ''));
+				$t_btn_delete = format_link(format_icon('fa-trash', 'red'), 'bug_relationship_delete.php', array('bug_id' => $t_bug->id, 'rel_id' => $t_rel->id, $t_sec_token => ''));
 
 				table_row(array($t_rel_name . format_hspace('5px') . $t_btn_delete, $t_tgt_link, $t_tgt_status_icon . $t_tgt_status, bug_format_summary($t_tgt_id, SUMMARY_CAPTION)));
 			}
@@ -192,14 +193,10 @@ function tab_monitored(){
 function tab_bugnote(){
 	global $f_bug_id;
 
-	define('BUGNOTE_ADD_INC_ALLOW', true);
+//	define('BUGNOTE_ADD_INC_ALLOW', true);
 //	include('bugnote_add_inc.php');
 
-	define('BUGNOTE_VIEW_INC_ALLOW', true);
-//	include('bugnote_view_inc.php');
-
-	/* allow plugins to display stuff after notes */
-	event_signal('EVENT_VIEW_BUG_EXTRA', array($f_bug_id));
+	bugnote_view($f_bug_id);
 }
 
 /* callback to render history */
@@ -310,7 +307,7 @@ echo form_security_field('bug_update');
 /* left column */
 echo '<div class="col-md-9">';
 	/* bug data */
-	section_begin('Description');
+	section_begin('Details');
 		/* actionbar */
 		actionbar_begin();
 			echo '<div class="pull-left">';

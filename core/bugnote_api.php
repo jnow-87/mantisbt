@@ -61,6 +61,11 @@ require_api( 'mention_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'worklog_api.php' );
+require_api('bug_activity_api.php');
+require_api('prepare_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
+
 
 # Cache of bugnotes arrays related to a bug, indexed by bug_id.
 # Each item is an array of BugnoteData objects
@@ -234,21 +239,24 @@ function bugnote_add( $p_bug_id, $p_bugnote_text, $p_time_tracking = '0:00', $p_
 
 	antispam_check();
 
-	if( REMINDER !== $p_type ) {
-		# Check if this is a time-tracking note
-		$t_time_tracking_enabled = config_get( 'time_tracking_enabled' );
-		if( ON == $t_time_tracking_enabled && $c_time_tracking > 0 ) {
-			$t_time_tracking_without_note = config_get( 'time_tracking_without_note' );
-			if( is_blank( $p_bugnote_text ) && OFF == $t_time_tracking_without_note ) {
-				error_parameters( lang_get( 'bugnote' ) );
-				trigger_error( ERROR_EMPTY_FIELD, ERROR );
-			}
-			$c_type = TIME_TRACKING;
-		} else if( is_blank( $p_bugnote_text ) ) {
-			# This is not time tracking (i.e. it's a normal bugnote)
-			# @todo should we not trigger an error in this case ?
-			return false;
+	if($p_type == REMINDER){
+		error_parameters('bugnote type REMINDER no longer supported');
+		trigger_error(ERROR_INVALID_MISSING_INPUT, ERROR);
+	}
+
+	# Check if this is a time-tracking note
+	$t_time_tracking_enabled = config_get( 'time_tracking_enabled' );
+	if( ON == $t_time_tracking_enabled && $c_time_tracking > 0 ) {
+		$t_time_tracking_without_note = config_get( 'time_tracking_without_note' );
+		if( is_blank( $p_bugnote_text ) && OFF == $t_time_tracking_without_note ) {
+			error_parameters( lang_get( 'bugnote' ) );
+			trigger_error( ERROR_EMPTY_FIELD, ERROR );
 		}
+		$c_type = TIME_TRACKING;
+	} else if( is_blank( $p_bugnote_text ) ) {
+		# This is not time tracking (i.e. it's a normal bugnote)
+		# @todo should we not trigger an error in this case ?
+		return false;
 	}
 
 	# Event integration
@@ -831,4 +839,161 @@ function bugnote_clear_bug_cache( $p_bug_id = null ) {
 	}
 
 	return true;
+}
+
+
+function bugnote_view($p_bug_id){
+	#precache access levels
+	access_cache_matrix_project(helper_get_current_project());
+
+	$t_show_time_tracking = access_has_bug_level(config_get('time_tracking_view_threshold'), $p_bug_id);
+
+	# get attachments data
+	if(!isset($t_fields)){
+		$t_fields = config_get('bug_fields_show')['view'];
+		$t_fields = columns_filter_disabled($t_fields);
+	}
+
+	$t_show_attachments = in_array('attachments', $t_fields);
+
+	$t_result = bug_activity_get_all($p_bug_id, /* include_attachments */ $t_show_attachments);
+	$t_activities = $t_result['activities'];
+	$t_bugnotes = $t_result['bugnotes'];
+
+	# Pre-cache users
+	$t_users_to_cache = array();
+
+	foreach($t_activities as $t_activity)
+		$t_users_to_cache[$t_activity['user_id']] = true;
+
+	user_cache_array_rows(array_keys($t_users_to_cache));
+
+	$t_normal_date_format = config_get('normal_date_format');
+	$t_security_token_attachments_delete = form_security_token('bug_file_delete');
+
+
+	table_begin(array());
+		if(count($t_activities) == 0) 
+			table_row(array('There are no notes attached to this issue', ''), '', array('class="center" colspan=2'));
+
+		event_signal('EVENT_VIEW_BUGNOTES_START', array($p_bug_id, $t_bugnotes));
+
+		$t_total_time = 0;
+
+		foreach($t_activities as $t_activity){
+			$t_id = $t_activity['id'];
+
+			if($t_activity['type'] == ENTRY_TYPE_NOTE && $t_activity['note']->time_tracking != 0){
+				$t_time_tracking_hhmm = db_minutes_to_hhmm($t_activity['note']->time_tracking);
+				$t_total_time += $t_activity['note']->time_tracking;
+			}
+			else
+				$t_time_tracking_hhmm = '';
+
+			$t_user = format_icon('fa-user') . prepare_user_name($t_activity['user_id']);
+			$t_date = format_icon('fa-clock-o') . 'Created: ' . date($t_normal_date_format, $t_activity['timestamp']);
+
+			$t_note_link = '';
+
+			if($t_activity['type'] == ENTRY_TYPE_NOTE)
+				$t_note_link = format_icon('fa-link') . format_link(htmlentities(config_get_global('bugnote_link_tag')) . $t_activity['id_formatted'], string_get_bugnote_view_url($t_activity['note']->bug_id, $t_activity['note']->id));
+
+			$t_last_update = '';
+
+			if($t_activity['modified'])
+				$t_last_update = format_icon('fa-retweet') . 'Last Updated: ' . date($t_normal_date_format, $t_activity['last_modified']);
+
+			$t_time_spent = '';
+
+			if($t_time_tracking_hhmm != '')
+				$t_time_spent = format_label('Time Spent:') . format_hspace('5px') . $t_time_tracking_hhmm;
+
+
+			echo '<tr class="bugnote" id="c' . $t_id . '">';
+				echo '<td class="category">';
+					echo '<div class="pull-left padding-2">';
+					echo '<p class="no-margin lighter small">';
+						echo $t_note_link . format_hspace('10px') . $t_user . format_hspace('10px') . ($t_activity['private'] ? format_icon('fa-eye-slash', 'red') . 'private' : format_icon('fa-eye') . 'public') . '<br>';
+						echo $t_date . '<br>';
+						echo $t_last_update . '<br>';
+						echo $t_time_spent;
+					echo '</p>';
+				echo '</td>';
+
+				echo '<td class="' . $t_activity['style'] .'">';
+					actionbar_begin();
+
+					echo '<div class="pull-left">';
+
+					// edit button
+					if($t_activity['can_edit'])
+						button_link('Edit', 'bugnote_edit_page.php', array('bugnote_id' => $t_id));
+
+					// make public/private button
+					if($t_activity['can_change_view_state'])
+						button_link('Make ' . ($t_activity['private'] ? 'Public' : 'Private'), 'bugnote_set_view_state.php', array('private' => ($t_activity['private'] ? '0' : '1'), 'bugnote_id' => $t_id, 'bugnote_set_view_state_token' => form_security_token('bugnote_set_view_state')));
+
+					// log work
+					if(config_get('time_tracking_enabled') && $t_activity['can_edit']){
+						hspace('20px');
+
+						echo '<span id="log_work_div">';
+						text('time_tracking_' . $t_id, 'time_tracking_' . $t_id, '', 'hh:mm', 'input-xs', '','size=5');
+						hspace('2px');
+						button('Log Work', 'log_work_div-action-0', 'submit', format_href('worklog_update.php', array('bugnote_id' => $t_id, 'action' => 'add')), 'btn-xs btn-round input-hover-form-reload');
+						echo '</span>';
+
+						button_link('View Work Log', 'worklog_issue_page.php', array('bugnote_id' => $t_id));
+					}
+
+					// view revisions
+					if(bug_revision_count($p_bug_id, REV_BUGNOTE, $t_id) > 0){
+						hspace('20px');
+						button_link('View Revisions', 'bug_revision_view_page.php', array('bugnote_id' => $t_id));
+					}
+
+					echo '</div>';
+					echo '<div class="pull-right">';
+
+					// delete button
+					if($t_activity['can_delete']){
+						if($t_activity['type'] == ENTRY_TYPE_NOTE)
+							button_link('Delete', 'bugnote_delete.php', array('bugnote_id' => $t_id, 'bugnote_delete_token' => form_security_token('bugnote_delete')));
+						else if($t_activity['can_delete'])
+							button_link('Delete', 'bug_file_delete.php', array('file_id' => $t_id, 'bug_file_token' => $t_security_token_attachments_delete));
+					}
+
+					echo '</div>';
+
+					actionbar_end();
+
+					if($t_activity['type'] == ENTRY_TYPE_NOTE){
+						echo string_display_links($t_activity['note']->note);
+
+						if(isset($t_activity['attachments']) && count($t_activity['attachments']) > 0)
+							echo '<br/><br/>';
+					}
+					else
+						print_bug_attachment($t_activity['attachment'], $t_security_token_attachments_delete);
+
+					if(isset($t_activity['attachments']) && count($t_activity['attachments']) > 0){
+						foreach($t_activity['attachments'] as $t_attachment){
+							print_bug_attachment($t_attachment, $t_security_token_attachments_delete);
+						}
+					}
+				echo '</td>';
+			echo '</tr>';
+
+			if($t_activity['type'] == ENTRY_TYPE_NOTE)
+				event_signal('EVENT_VIEW_BUGNOTE', array($p_bug_id, $t_id, $t_activity['private']));
+		}
+
+		event_signal('EVENT_VIEW_BUGNOTES_END', $p_bug_id);
+	table_end();
+
+	if($t_total_time > 0 && $t_show_time_tracking)
+		echo '<div class="time-tracking-total pull-right">' . format_icon('fa-clock-o', 'red') . 'Total Time for Issue: ' . db_minutes_to_hhmm($t_total_time) . '</div>';
+
+	/* allow plugins to display stuff after notes */
+	event_signal('EVENT_VIEW_BUG_EXTRA', array($p_bug_id));
 }

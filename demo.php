@@ -6,6 +6,10 @@ require_api('elements_api.php');
 
 
 # TODO
+#	json interface
+#		make worklog pages use a json interface
+#
+#	use input-hover for bugnotes
 #	check resolution in bug::check_builtin (if resolution is required it shall not be 'open')
 #	view.php: only make field editable if the respective access level is available (update_bug_threshold)
 #	view.php test acccess level checks

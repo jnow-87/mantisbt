@@ -539,19 +539,19 @@ function layout_navbar() {
 			}
 		}
 
-		label('Recently visited:'); echo '<span class="white" style="padding-right:5px"> ' . $t_issues . '</span>';
+		echo format_label('Recently Visited:') . format_hspace('5px') . $t_issues . format_hspace('5px');
 	}
 
 	/* user info */
 	$t_user = string_html_specialchars(current_user_get_field( 'username' ));
 
-	label('User:'); echo '<span class="white" style="padding-right:5px"> ' . $t_user . '</span>';
+	echo format_label('User:') . format_hspace('5px') . $t_user . format_hspace('5px');
 
 	/* project info */
 	$t_current_project_id = helper_get_current_project();
 	$t_project = string_attribute(($t_current_project_id == ALL_PROJECTS ? lang_get( 'all_projects' ) : project_get_field( $t_current_project_id, 'name' )));
 
-	label('Project:'); echo '<span class="white"> ' . $t_project . '</span>';
+	echo format_label('Project:') . format_hspace('5px') . $t_project;
 
 	echo '</div>';
 	echo '</div>';

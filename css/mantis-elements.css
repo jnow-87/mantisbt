@@ -9,6 +9,7 @@
 /* reduced height of navigation bar */
 .navbar {
     min-height: 5px;
+	color: white;
 }
 
 .nav-tabs{

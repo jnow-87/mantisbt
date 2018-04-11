@@ -40,7 +40,7 @@ function vspace($p_space){
  *	@return	a string containing the html element
  */
 function format_label($p_name, $p_class = '', $p_style = ''){
-	return '<span class="label label-default ' . $p_class . '" style="' . $p_style . '">' . $p_name . '</span>';
+	return '<span class="label label-sm ' . $p_class . '" style="' . $p_style . '">' . $p_name . '</span>';
 }
 
 function label($p_name, $p_class = '', $p_style = ''){
