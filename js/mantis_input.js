@@ -333,7 +333,7 @@ function input_hover_submit(e){
 	// check the currently focused element
 	var active = document.activeElement;
 
-	if(active.type == 'button'){
+	if(active.type == 'button' || active.type == 'submit'){
 		// if the clicked button contains the 'formaction' property it is used
 		if($(active).attr('formaction') && $(active).attr('formaction') != '')
 			action = $(active).attr('formaction');
