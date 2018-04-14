@@ -61,7 +61,7 @@ require_api('worklog_api.php');
 # form inputs
 $f_bugnote_id = gpc_get_int('bugnote_id', 0);
 $f_worklog_id = gpc_get_int('worklog_id', 0);
-$f_time_tracking = gpc_get_string('time_tracking_' . $f_bugnote_id, '');
+$f_time_tracking = gpc_get_string('time_tracking');
 $f_action = gpc_get_string('action', '');
 
 

@@ -67,6 +67,14 @@ function tab_custom_fields(){
 
 	custom_field_cache_values(array($t_bug->id) , $t_related_custom_field_ids);
 
+	echo '<form action="bug_update.php" method="post" class="input-hover-form input-hover-form-noreload">';
+
+	input_hidden('id', $f_bug_id);
+	input_hidden('bug_id', $f_bug_id);
+	input_hidden('last_updated', $t_bug->last_updated);
+
+	echo form_security_field('bug_update');
+
 	table_begin('', 'no-border');
 
 	foreach($t_related_custom_field_ids as $t_id) {
@@ -86,11 +94,15 @@ function tab_custom_fields(){
 	}
 
 	table_end();
+
+	echo '</form>';
 }
 
 /* callback to render relationships */
 function tab_links(){
 	global $t_bug;
+
+	echo '<form action="bug_relationship_add.php" method="post">';
 
 	/* input */
 	if(!bug_is_readonly($t_bug->id) && access_has_bug_level(config_get('update_bug_threshold'), $t_bug->id)){
@@ -102,7 +114,7 @@ function tab_links(){
 		hspace('5px');
 		select('rel_type', 'rel_type', Relationship_list(), relationship_default());
 		hspace('10px');
-		button('Add', 'rel_attach_div-action-0', 'submit', 'bug_relationship_add.php', 'btn-xs btn-round input-hover-form-reload');
+		button('Add', 'rel_attach_div-action-0', 'submit');
 		echo '</span>';
 		actionbar_end();
 	}
@@ -142,6 +154,8 @@ function tab_links(){
 	}
 
 	table_end();
+
+	echo '</form>';
 }
 
 /* callback to render monitoring users */
@@ -154,6 +168,8 @@ function tab_monitored(){
 	$t_user_ids = bug_get_monitors($f_bug_id);
 	$t_can_delete_others = access_has_bug_level(config_get('monitor_delete_others_bug_threshold'), $f_bug_id);
 	$t_user_links = '';
+
+	echo '<form action="bug_monitor_add.php" method="post">';
 
 	foreach($t_user_ids as $t_id){
 		$t_link = format_link(user_get_name($t_id), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
@@ -185,18 +201,17 @@ function tab_monitored(){
 	hspace('5px');
 	select('user_select', 'user_select', $t_users, '');
 	hspace('10px');
-	button('Add', 'user_attach_div-action-0', 'submit', 'bug_monitor_add.php', 'btn-xs btn-round input-hover-form-reload');
+	button('Add', 'user_attach_div-action-0', 'submit');
 	echo '</span>';
+	echo '</form>';
 }
 
 /* callback to render bugnotes */
 function tab_bugnote(){
 	global $f_bug_id;
 
-//	define('BUGNOTE_ADD_INC_ALLOW', true);
-//	include('bugnote_add_inc.php');
-
 	bugnote_view($f_bug_id);
+	bugnote_add_form($f_bug_id);
 }
 
 /* callback to render history */
@@ -245,21 +260,27 @@ function format_tag_list(){
 }
 
 function format_tag_attach(){
+	global $f_bug_id;
+
 	$t_tags_attachable = tag_get_candidates_for_bug($f_bug_id);
 	$t_tag_names = array('' => 0);
 
 	foreach($t_tags_attachable as $t_tag)
 		$t_tag_names[$t_tag['name']] = $t_tag['id'];
 
-	return '<span id="tag_attach_div">'
+	return 
+		'<form action="tag_attach.php" method="post" class="form-inline">'
+		. format_input_hidden('bug_id', $f_bug_id)
+		. '<span id="tag_attach_div">'
 		. form_security_field('tag_attach')
 		. format_input_hidden('tag_separator', config_get('tag_separator'))
 		. format_text('tag_string', 'tag_string', '', 'tags separated by \'' . config_get('tag_separator') . '\'')
 		. format_hspace('5px')
 		. format_select('tag_select', 'tag_select', $t_tag_names, '')
 		. format_hspace('10px')
-		. format_button('Add', 'tag_attach_div-action-0', 'submit', 'tag_attach.php', 'btn-xs btn-round input-hover-form-reload')
-		. '</span>';
+		. format_button('Add', 'tag_attach_div-action-0', 'submit')
+		. '</span>'
+		. '</form>';
 }
 
 
@@ -287,6 +308,7 @@ $t_versions_all = version_list($t_project_id, true);
 
 $t_show_tags = in_array('tags', $t_fields) && access_has_global_level(config_get('tag_view_threshold'));
 
+form_security_purge('bug_update');
 
 /* page header */
 layout_page_header(bug_format_summary($f_bug_id, SUMMARY_CAPTION), null, 'view-issue-page');
@@ -294,29 +316,27 @@ layout_page_begin('view_all_bug_page.php');
 
 page_title(bug_format_id($f_bug_id) . ' - ' . bug_format_summary($f_bug_id, SUMMARY_CAPTION));
 
-
-echo '<form action="bug_update.php" method="post" class="input-hover-form input-hover-form-noreload">';
-
-input_hidden('id', $f_bug_id);
-input_hidden('bug_id', $f_bug_id);
-input_hidden('last_updated', $t_bug->last_updated);
-
-form_security_purge('bug_update');
-echo form_security_field('bug_update');
-
 /* left column */
 echo '<div class="col-md-9">';
 	/* bug data */
 	section_begin('Details');
+		echo '<form action="bug_update.php" method="post" class="input-hover-form input-hover-form-noreload">';
+
+		input_hidden('id', $f_bug_id);
+		input_hidden('bug_id', $f_bug_id);
+		input_hidden('last_updated', $t_bug->last_updated);
+
+		echo form_security_field('bug_update');
+
 		/* actionbar */
 		actionbar_begin();
 			echo '<div class="pull-left">';
 
 			// edit button
 			if(access_has_bug_level(config_get('update_bug_threshold'), $f_bug_id)){
-				button('Edit', 'input-hover-show-all'); 
-				button('Reset', 'input-hover-reset-all');
-				button('Update', 'input-hover-submit-all', 'submit');
+				button('Edit', 'edit-details', 'button', '', 'input-hover-show-all'); 
+				button('Reset', 'reset-details', 'button', '', 'input-hover-reset-all');
+				button('Update', 'update-details', 'submit', '', 'input-hover-submit-all');
 			}
 
 			// clone button
@@ -383,6 +403,8 @@ echo '<div class="col-md-9">';
 		table_end();
 
 		echo '</div>';
+		echo '</form>';
+
 		echo '<hr>';
 
 		/* tags */
@@ -423,6 +445,14 @@ echo '</div>';
 
 /* right column */
 echo '<div class="col-md-3">';
+	echo '<form action="bug_update.php" method="post" class="input-hover-form input-hover-form-noreload">';
+
+	input_hidden('id', $f_bug_id);
+	input_hidden('bug_id', $f_bug_id);
+	input_hidden('last_updated', $t_bug->last_updated);
+
+	echo form_security_field('bug_update');
+
 	/* people */
 	section_begin('People');
 		echo '<div class="row">';
@@ -460,8 +490,9 @@ echo '<div class="col-md-3">';
 		table_end();
 		echo '</div>';
 	section_end();
+
+	echo '</form>';
 echo '</div>';
-echo '</form>';
 
 
 /* page footer */

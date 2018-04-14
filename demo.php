@@ -6,6 +6,7 @@ require_api('elements_api.php');
 
 
 # TODO
+#	check bootstrap modal as replacement for inline pages
 #	json interface
 #		make worklog pages use a json interface
 #
@@ -34,6 +35,7 @@ require_api('elements_api.php');
 #			- input fields cannot be hovered
 #
 #	fix the delete input-hover button fpr tags that cause a line is not shown properly
+#	close existing inline-page when opening one
 #
 function tab_page0(){
 	echo '<div class="row">';
@@ -210,14 +212,14 @@ page_title($t_page_title);
 	<!-- input text toggle -->
 	<?php section_begin('input hover demo') ?>
 
-	<form action="demo_post0.php" class="input-hover-form" method="post">
+	<form id="input-hover" action="demo_post0.php" class="input-hover-form" method="post">
 	<?php
 		actionbar_begin();
 
 		echo '<div class="pull-right">';
-		button('show all', 'input-hover-show-all');
-		button('reset', 'input-hover-reset-all');
-		button('submit', 'input-hover-submit-all', 'submit');
+		button('show all', 'x0', 'button', '', 'input-hover-show-all');
+		button('reset', 'x1', 'button', '', 'input-hover-reset-all');
+		button('submit', 'x2', 'submit', '', 'input-hover-submit-all');
 		echo '</div>';
 		
 		actionbar_end();
@@ -229,7 +231,6 @@ page_title($t_page_title);
 		<td>
 			<?php input_hover_text('text0', 'dummy text 0', '', 'demo_post1.php') ?>
 			<?php input_hover_text('text1', 'dummy text 1') ?>
-			<?php input_hover_text('text2', 'dummy text 2') ?>
 		</td>
 		<td><?php input_hover_select('select', array('bar' => 0, 'foo' => 1, 'foobar' => 2), 'foo'); ?></td>
 		<td><?php input_hover_checkbox('checkbox', false); ?></td>
@@ -245,8 +246,23 @@ page_title($t_page_title);
 	<!-- inline page -->
 	<?php section_begin('inline page demo') ?>
 
-	<form method="post" action="demo_inline_page.php" class="input-hover-form">
-		<?php button('submit', 'trigger_inline', 'submit') ?>
+	<form id="inline" method="post" action="demo_post1.php" class="input-hover-form">
+		<?php
+		actionbar_begin();
+
+		echo '<div class="pull-right">';
+		button('submit', 'trigger_inline', 'submit');
+		button('show all', 'x3', 'button', '', 'input-hover-show-all');
+		button('reset', 'x4', 'button', '', 'input-hover-reset-all');
+		button('submit', 'x5', 'submit', '', 'input-hover-submit-all');
+		echo '</div>';
+		
+		actionbar_end();
+		input_hidden('text0', 'v0');
+		input_hidden('text1', 'v1');
+
+		input_hover_text('text2', 'v3');
+		?>
 	</form>
 
 	<?php section_end() ?>

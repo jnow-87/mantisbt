@@ -3,8 +3,8 @@
 	border-bottom: 0px;
 }
 
-/* center div */
-div.center {
+/* center div for data tables */
+div.table-center {
 	margin: 0 auto;
 	width: 100px;
 }
@@ -15,4 +15,8 @@ input{
 
 .page-content{
 	padding-top: 0 !important;
+}
+
+.form-inline{
+	display: inline-block;
 }

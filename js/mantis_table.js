@@ -1,7 +1,7 @@
 /* configure DataTables and assign it all tables with class table-sortable */
 $(document).ready(function(){
 	$('table.table-sortable').DataTable({
-		'dom': '<"pull-left"il><"pull-right"f><"center"p><t><"pull-left"il><"pull-right"f><"center"p>'
+		'dom': '<"pull-left"il><"pull-right"f><"table-center"p><t><"pull-left"il><"pull-right"f><"center"p>'
 	});
 });
 

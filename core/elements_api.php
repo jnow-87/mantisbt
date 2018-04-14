@@ -101,6 +101,11 @@ function format_textarea($p_id, $p_name, $p_value, $p_class = 'input-xs', $p_sty
 	return '<textarea id="' . $p_id . '" name="' . $p_name . '" class="' . $p_class . '" style="' . $p_style . '" value="' . $p_value . '" ' . $p_prop . '>' . $p_value . '</textarea>';
 }
 
+function textarea($p_id, $p_name, $p_value, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	echo format_textarea($p_id, $p_name, $p_value, $p_class, $p_style, $p_prop);
+}
+
+
 /**
  *	format a checkbox input html element
  *
@@ -115,6 +120,10 @@ function format_textarea($p_id, $p_name, $p_value, $p_class = 'input-xs', $p_sty
  */
 function format_checkbox($p_id, $p_name, $p_checked = false, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
 	return 	'<input type="checkbox" id="' . $p_id . '" name="' . $p_name . '" class="' . $p_class . '" style="' . $p_style . '" ' . $p_prop . ' ' . ($p_checked ? ' checked' : '') . '/>';
+}
+
+function checkbox($p_id, $p_name, $p_checked = false, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	echo format_checkbox($p_id, $p_name, $p_checked, $p_class, $p_style, $p_prop);
 }
 
 /**
@@ -272,8 +281,13 @@ function actionbar_end(){
  *
  *	@return nothing
  */
-function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = 'btn-xs btn-round') {
-	echo format_link($p_button_text, $p_action, $p_arg, 'btn btn-primary btn-white ' . $p_class) . format_hspace('2px');
+function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '', $p_class_overwrite = false, $p_visible = true){
+	$t_class = 'btn btn-primary btn-white btn-xs btn-round ' . $p_class;
+
+	if($p_class_overwrite == true)
+		$t_class = $p_class;
+
+	echo format_link($p_button_text, $p_action, $p_arg, $t_class . ($p_visible ? '' : ' invisible')) . format_hspace('2px');
 }
 
 /**
@@ -289,24 +303,35 @@ function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = 'bt
  *
  *	@return	a string containing the html element
  */
-function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = 'btn-xs btn-round', $p_class_overwrite = false){
+function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = '', $p_class_overwrite = false){
 	$t_btn = '';
 
-	$t_class = 'btn btn-primary btn-white ' . $p_class;
+	$t_class = 'btn btn-primary btn-white btn-xs btn-round ' . $p_class;
+
+	if($p_type == '')
+		$p_type = 'button';
 
 	if($p_class_overwrite)
 		$t_class = $p_class;
-		
 
 	if($p_action != '')
 		$p_type = 'submit';
 
-	$t_btn .= '<button name="' . $p_id . '" id="' . $p_id . '" class="' . $t_class . '" type="' . $p_type . '" ';
+	if($p_type == 'submit')
+		$t_btn .= '<input ';
+	else
+		$t_btn .= '<button ';
+
+	$t_btn .= 'name="' . $p_id . '" id="' . $p_id . '" class="' . $t_class . '" type="' . $p_type . '" ';
 
 	if($p_action != '')
 		$t_btn .= 'formaction="' . $p_action . '" ';
 	
-	$t_btn .= '>' . $p_text . '</button>';
+	if($p_type == 'submit')
+		$t_btn .= ' value="' . $p_text . '"/>';
+	else
+		$t_btn .= '>' . $p_text . '</button>';
+
 	$t_btn .= format_hspace('2px');
 
 	return $t_btn;

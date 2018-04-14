@@ -3,23 +3,24 @@ require_once('core.php');
 require_api('error_api.php');
 require_api('gpc_api.php');
 
-$f_text0 = gpc_get_string('text0', 'dummy');
-$f_text1 = gpc_get_string('text1', 'dummy');
-$f_text2 = gpc_get_string('text2', 'dummy');
-$f_textarea = gpc_get_string('textarea', 'dummy');
-$f_select = gpc_get_string('select', 'dummy');
+$f_text0 = gpc_get_string('text0', 'empty');
+$f_text1 = gpc_get_string('text1', 'empty');
+$f_text2 = gpc_get_string('text2', 'empty');
+$f_textarea = gpc_get_string('textarea', 'empty');
+$f_select = gpc_get_string('select', 'empty');
 $f_checkbox = gpc_get_bool('checkbox', false);
 
 
 $t_res = '';
-$t_res .= 'text0: ' . $f_text0 . ' ';
-$t_res .= 'text1: ' . $f_text1 . ' ';
-$t_res .= 'text2: ' . $f_text2 . ' ';
-$t_res .= 'textarea: ' . $f_textarea . ' ';
-$t_res .= 'select: ' . $f_select . ' ';
-$t_res .= 'checkbox: ' . ($f_checkbox ? 'true' : 'false');
+$t_res .= $f_text0 . ' ';
+$t_res .= $f_text1 . ' ';
+$t_res .= $f_text2 . ' ';
+$t_res .= $f_textarea . ' ';
+$t_res .= $f_select . ' ';
+$t_res .= ($f_checkbox ? 'true' : 'false');
 
 json_prepare();
-json_warning('test_post1: this is a warning');
-json_error('test_post1: this is an error');
+json_warning('test_post1: this is a warning: ' . $t_res);
+//json_error('test_post1: this is an error');
+json_commit();
 ?>

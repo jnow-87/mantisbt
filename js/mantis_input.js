@@ -150,22 +150,25 @@ function input_hover_hide(master){
  * \brief	show the inputs of all input-hover elements, hiding their overlay
  * 			show the reset-all and submit-all button, hiding the show-all button
  */
-function input_hover_show_all(){
+function input_hover_show_all(form){
+	if(form == null)
+		return;
+
 	/* enable active_all mode */
 	input_hover_active_all = true;
 	input_hover_active = null;
 
 	/* show inputs, hiding overlays */
-	var masters = document.getElementsByClassName('input-hover-master');
+	var masters = form.querySelectorAll('.input-hover-master');
 
 	for(var i=0; i<masters.length; i++){
 		input_hover_show(masters[i]);
 	}
 
 	/* toggle show-all, reset-all, submit-all buttons */
-	var show_all = document.getElementById('input-hover-show-all');
-	var reset_all = document.getElementById('input-hover-reset-all');
-	var submit_all = document.getElementById('input-hover-submit-all');
+	var show_all = form.querySelector('.input-hover-show-all');
+	var reset_all = form.querySelector('.input-hover-reset-all');
+	var submit_all = form.querySelector('.input-hover-submit-all');
 	
 	show_all.style.display = 'none';
 	reset_all.style.display = 'inline-block';
@@ -176,12 +179,15 @@ function input_hover_show_all(){
  * \brief	hide the inputs of all input-hover elements, showing their overlays
  *			hide the reset-all and submit-all button, showing the show-all button
  */
-function input_hover_hide_all(){
+function input_hover_hide_all(form){
+	if(form == null)
+		return;
+
 	/* disable active_all mode */
 	input_hover_active_all = false;
 
 	/* hide inputs, showing their overlays */
-	var masters = document.getElementsByClassName('input-hover-master');
+	var masters = form.querySelectorAll('.input-hover-master');
 
 	for(var i=0; i<masters.length; i++){
 		input_hover_reset(masters[i]);
@@ -189,9 +195,9 @@ function input_hover_hide_all(){
 	}
 
 	/* toggle show-all, reset-all, submit-all buttons */
-	var show_all = document.getElementById('input-hover-show-all');
-	var reset_all = document.getElementById('input-hover-reset-all');
-	var submit_all = document.getElementById('input-hover-submit-all');
+	var show_all = form.querySelector('.input-hover-show-all');
+	var reset_all = form.querySelector('.input-hover-reset-all');
+	var submit_all = form.querySelector('.input-hover-submit-all');
 	
 	show_all.style.display = 'inline-block';
 	reset_all.style.display = 'none';
@@ -317,21 +323,14 @@ function input_hover_reset_click_hdlr(e){
 function input_hover_submit(e){
 	e.preventDefault();
 
-	/* get form reload configuration */
-	var reload = false;
-
-	if($(this).hasClass('input-hover-form-reload'))
-		reload = true;
-
-	if($(this).hasClass('input-hover-form-noreload'))
-		reload = false;
-
 	/* identify the submit action to trigger */
 	// default is the form action
+	var theform = this;
 	var action = this.action;
 
 	// check the currently focused element
 	var active = document.activeElement;
+	var parent = active.parentNode;
 
 	if(active.type == 'button' || active.type == 'submit'){
 		// if the clicked button contains the 'formaction' property it is used
@@ -339,27 +338,38 @@ function input_hover_submit(e){
 			action = $(active).attr('formaction');
 	}
 	else{
-		// if the current element is not a button, check if it has '-action-0' sibling
-		var parent = active.parentNode;
+		// if the current element is not a button, check if it has a '-action-0' sibling
 		active = document.getElementById(parent.id + '-action-0');
 
 		if(active != null){
 			if($(active).attr('formaction') && $(active).attr('formaction') != '')
 				action = $(active).attr('formaction');
-
-			if($(parent).hasClass('input-hover-form-reload'))
-				reload = true;
-
-			if($(parent).hasClass('input-hover-form-noreload'))
-				reload = false;
-
-			if($(active).hasClass('input-hover-form-reload'))
-				reload = true;
-
-			if($(active).hasClass('input-hover-form-noreload'))
-				reload = false;
 		}
 	}
+	
+	/* check if the form shall trigger a reload on submit */
+	var reload = false;
+
+	// check form class
+	if($(this).hasClass('input-hover-form-reload'))
+		reload = true;
+
+	if($(this).hasClass('input-hover-form-noreload'))
+		reload = false;
+
+	// check parent class
+	if($(parent).hasClass('input-hover-form-reload'))
+		reload = true;
+
+	if($(parent).hasClass('input-hover-form-noreload'))
+		reload = false;
+
+	// check active element class
+	if(active && $(active).hasClass('input-hover-form-reload'))
+		reload = true;
+
+	if(active && $(active).hasClass('input-hover-form-noreload'))
+		reload = false;
 
 	/* trigger ajax processing */
 	$.ajax({
@@ -400,7 +410,7 @@ function input_hover_submit(e){
 					input_hover_update(masters[i]);
 
 				// hide all input elements
-				input_hover_hide_all();
+				input_hover_hide_all(theform);
 
 				return;
 			}
@@ -476,5 +486,5 @@ $(document).ready(input_hover_init);
 $('body').on('user_event_body_changed', input_hover_init);
 
 /* callbacks for show/reset-all buttons */
-$('#input-hover-show-all').click(function(){input_hover_show_all()});
-$('#input-hover-reset-all').click(function(){input_hover_hide_all()});
+$('.input-hover-show-all').click(function(){input_hover_show_all(this.form)});
+$('.input-hover-reset-all').click(function(){input_hover_hide_all(this.form)});

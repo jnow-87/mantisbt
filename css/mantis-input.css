@@ -33,11 +33,11 @@
 	z-index: 1;
 }
 
-#input-hover-reset-all{
+.input-hover-reset-all{
 	display: none;
 }
 
-#input-hover-submit-all{
+.input-hover-submit-all{
 	display: none;
 }
 
@@ -53,4 +53,8 @@ select.input-hover-input{
 	color: #1d520a;
 	position: relative;
 	top: 0px;
+}
+
+.invisible{
+	visibility: hidden;
 }
