@@ -1,3 +1,6 @@
+var inline_page_last_scoll_x = 0;
+var inline_page_last_scoll_y = 0;
+
 /**
  * \brief	create a div which overlays the current page, rendering the given
  * 			html code
@@ -5,14 +8,25 @@
  * \param	html	html code to render
  */
 function inline_page_create(html){
+	inline_page_close();
+
+	/* create inline-page element */
 	var el = document.createElement('div');
 	el.className = 'inline-page-frame';
 	el.id = 'inline-page';
 
 	el.innerHTML = html;
 
+	/* show inline-page */
 	document.body.appendChild(el);
 	$('body').trigger('user_event_body_changed');
+
+	/* scroll to top of page */
+	// save current scroll position
+	inline_page_last_scoll_x = window.scrollX;
+	inline_page_last_scoll_y = window.scrollY;
+
+	window.scrollTo(0, 0);
 }
 
 /**
@@ -21,10 +35,15 @@ function inline_page_create(html){
 function inline_page_close(){
 	var page = document.getElementById('inline-page');
 
-	if(page != null){
-		document.body.removeChild(page);
-		$('body').trigger('user_event_body_changed');
-	}
+	if(page == null)
+		return;
+
+	/* remove inline-page */
+	document.body.removeChild(page);
+	$('body').trigger('user_event_body_changed');
+
+	/* restore previous scroll position */
+	window.scrollTo(inline_page_last_scoll_x, inline_page_last_scoll_y);
 }
 
 /**

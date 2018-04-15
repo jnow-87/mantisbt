@@ -35,7 +35,6 @@ require_api('elements_api.php');
 #			- input fields cannot be hovered
 #
 #	fix the delete input-hover button fpr tags that cause a line is not shown properly
-#	close existing inline-page when opening one
 #
 function tab_page0(){
 	echo '<div class="row">';
