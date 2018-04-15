@@ -964,9 +964,9 @@ function bugnote_view($p_bug_id){
 					// delete button
 					if($t_activity['can_delete']){
 						if($t_activity['type'] == ENTRY_TYPE_NOTE)
-							button_link('Delete', 'bugnote_delete.php', array('bugnote_id' => $t_id, 'bugnote_delete_token' => form_security_token('bugnote_delete')));
+							button_confirm('Delete', 'bn-delete', format_href('bugnote_delete.php', array('bugnote_id' => $t_id, 'bugnote_delete_token' => form_security_token('bugnote_delete'))), 'Delete bug note?', 'confirm-err', false);
 						else if($t_activity['can_delete'])
-							button_link('Delete', 'bug_file_delete.php', array('file_id' => $t_id, 'bug_file_delete_token' => $t_security_token_attachments_delete));
+							button_confirm('Delete', 'bn-delete', format_href('bug_file_delete.php', array('file_id' => $t_id, 'bug_file_delete_token' => $t_security_token_attachments_delete)), 'Delete attachment?', 'confirm-err', false);
 					}
 
 					echo '</div>';

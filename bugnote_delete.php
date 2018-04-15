@@ -77,9 +77,6 @@ if( $t_user_id == $t_reporter_id ) {
 	access_ensure_bugnote_level( config_get( 'delete_bugnote_threshold' ), $f_bugnote_id );
 }
 
-helper_ensure_confirmed( lang_get( 'delete_bugnote_sure_msg' ),
-						 lang_get( 'delete_bugnote_button' ) );
-
 bugnote_delete( $f_bugnote_id );
 
 form_security_purge( 'bugnote_delete' );

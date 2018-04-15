@@ -64,8 +64,6 @@ if( !$t_current_user_is_attachment_owner || ( $t_current_user_is_attachment_owne
 	access_ensure_bug_level( config_get( 'delete_attachments_threshold' ), $t_bug_id );
 }
 
-helper_ensure_confirmed( lang_get( 'delete_attachment_sure_msg' ), lang_get( 'delete_attachment_button' ) );
-
 file_delete( $f_file_id, 'bug' );
 
 form_security_purge( 'bug_file_delete' );

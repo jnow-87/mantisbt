@@ -360,7 +360,7 @@ echo '<div class="col-md-9">';
 
 			// delete button
 			if(!bug_is_readonly($f_bug_id) && config_get('view_issue_button_delete'))
-				button_link('Delete', 'bug_actiongroup_page.php', array('action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_page_token' => form_security_token('bug_actiongroup_page')));
+				button_confirm('Delete', 'bug-delete', format_href('bug_actiongroup.php', array('action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_DELETE_token' => form_security_token('bug_actiongroup_DELETE'))), 'Delete bug?', 'confirm-err');
 
 			echo '</div>';
 		actionbar_end();
