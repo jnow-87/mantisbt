@@ -199,11 +199,12 @@ function format_href($p_action, $p_args = array()){
  *	@param	array	$p_arg		array of arguments to add to the link (name => value)
  *	@param	string	$p_class	html class property
  *	@param	string	$p_style	css stle
+ *	@param	string	$p_prop		additional properties
  *
  *	@return	a string containing the html element
  */
-function format_link($p_label, $p_action, $p_arg = array(), $p_class = '', $p_style = ''){
-	return $t_link = '<a class="' . $p_class . '" style="' . $p_style . '" href="' . format_href($p_action, $p_arg) . '">' . $p_label . '</a>';
+function format_link($p_label, $p_action, $p_arg = array(), $p_class = '', $p_style = '', $p_prop = ''){
+	return $t_link = '<a class="' . $p_class . '" style="' . $p_style . '" href="' . format_href($p_action, $p_arg) . '" ' . $p_prop . '>' . $p_label . '</a>';
 }
 
 /**
@@ -273,21 +274,33 @@ function actionbar_end(){
 /**
  *	print a html link with a button look
  *
- *	@param	string	$p_button_text	text displayed as the button
- *	@param	string  $p_action		page URL.
- *	@param	string  $p_class		additional class attributes
- *	@param	array   $p_arg			array of <key> <value> pairs that are passed on
- *									through the link
+ *	@param	string	$p_button_text		text displayed as the button
+ *	@param	string  $p_action			page URL.
+ *	@param	array   $p_arg				array of <key> <value> pairs that are passed on
+ *										through the link
+ *
+ *	@param	string  $p_class			additional class attributes
+ *	@param	boolean	$p_class_overwrite	if true, overwrite the internal class attributes
+ *										entirely by $p_class, otherwise $p_class is
+ *										appended to the internal attributes
+ *
+ *	@param	boolean	$p_visible			if true the button is shown, otherwise the button
+ *										present, i.e. occupies space, but not visible
+ *
+ *	@param	string	$p_prop				additional properties
  *
  *	@return nothing
  */
-function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '', $p_class_overwrite = false, $p_visible = true){
+function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '', $p_class_overwrite = false, $p_visible = true, $p_prop = ''){
 	$t_class = 'btn btn-primary btn-white btn-xs btn-round ' . $p_class;
 
 	if($p_class_overwrite == true)
 		$t_class = $p_class;
 
-	echo format_link($p_button_text, $p_action, $p_arg, $t_class . ($p_visible ? '' : ' invisible')) . format_hspace('2px');
+	 if(!$p_visible)
+	 	$t_class .= ' invisible';
+
+	echo format_link($p_button_text, $p_action, $p_arg, $t_class, '', $p_prop) . format_hspace('2px');
 }
 
 /**
@@ -301,9 +314,14 @@ function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '',
  *										entirely by $p_class, otherwise $p_class is
  *										appended to the internal attributes
  *
+ *	@param	boolean	$p_visible			if true the button is shown, otherwise the button
+ *										present, i.e. occupies space, but not visible
+ *
+ *	@param	string	$p_prop				additional properties
+ *
  *	@return	a string containing the html element
  */
-function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = '', $p_class_overwrite = false){
+function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = '', $p_class_overwrite = false, $p_visible = true, $p_prop = ''){
 	$t_btn = '';
 
 	$t_class = 'btn btn-primary btn-white btn-xs btn-round ' . $p_class;
@@ -322,7 +340,7 @@ function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_c
 	else
 		$t_btn .= '<button ';
 
-	$t_btn .= 'name="' . $p_id . '" id="' . $p_id . '" class="' . $t_class . '" type="' . $p_type . '" ';
+	$t_btn .= 'name="' . $p_id . '" id="' . $p_id . '" class="' . $t_class . '" type="' . $p_type . '" ' . $p_prop . ' ';
 
 	if($p_action != '')
 		$t_btn .= 'formaction="' . $p_action . '" ';
@@ -337,8 +355,45 @@ function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_c
 	return $t_btn;
 }
 
-function button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = 'btn-xs btn-round', $p_class_overwrite = false){
-	echo format_button($p_text, $p_id, $p_type, $p_action,  $p_class, $p_class_overwrite);
+function button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = '', $p_class_overwrite = false, $p_prop = ''){
+	echo format_button($p_text, $p_id, $p_type, $p_action,  $p_class, $p_class_overwrite, $p_prop);
+}
+
+/**
+ *	format a button that triggers a confirm inline-page
+ *
+ *	@param	string	$p_text			text displayed as the button
+ *	@param	string	$p_id			button id
+ *	@param	string	$p_action		action to trigger if it is confirmed
+ *	@param	string	$p_msg			message to display at the inline page
+ *	@param	string	$p_msg_class	class to be used for message div
+ *	@param	boolean	$p_in_form		if true the button is assumed to be part of form and thus no
+ *									new one is created
+ *									if false the button is embedded into a form
+ *
+ *	@return	a string containing the html element
+ */
+function format_button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class = '', $p_in_form = true){
+	$t_r = '';
+
+	if(!$p_in_form)
+		$t_r .= '<form method="post" class="input-hover-form">';
+
+	$t_r .= format_input_hidden('confirm_btn', $p_text);
+	$t_r .= format_input_hidden('confirm_redirect', $p_action);
+	$t_r .= format_input_hidden('confirm_msg', $p_msg);
+	$t_r .= format_input_hidden('confirm_msg_class', $p_msg_class);
+
+	$t_r .= format_button($p_text, $p_id, 'submit', 'confirm.php');
+
+	if(!$p_in_form)
+		$t_r .= '</form>';
+
+	return $t_r;
+}
+
+function button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class = '', $p_in_form = true){
+	echo format_button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class, $p_in_form);
 }
 
 /**

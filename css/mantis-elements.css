@@ -78,6 +78,7 @@ table.actionbar {
 	border-radius: 0px !important;
 }
 
+/* inline page */
 div.inline-page-frame{
 	position: absolute;
 	width: 100%;
@@ -85,6 +86,7 @@ div.inline-page-frame{
 	top: 0;
 	padding: 7% 25% 20% 25%;
 	z-index: 5000;
+	background-color: rgba(0, 0, 0, 0.8);
 }
 
 .inline-page {
@@ -92,6 +94,31 @@ div.inline-page-frame{
 	padding: 10px 20px 10px 20px;
 	border-style: solid;
 	border-width: 1px;
+}
+
+.inline-page-close-icon{
+	border: 0;
+	padding: 0;
+	background: transparent;
+	color: #1d520a;
+	position: relative;
+	top: 0px;
+}
+
+/* confirm popup */
+.confirm-err{
+	background: #f2dede !important;
+	color: #a94442 !important;
+}
+
+.confirm-ok{
+	background: #cae8bf !important;
+	color: #1d520a !important;
+}
+
+.confirm-warn{
+	background: #f7ecb5 !important;
+	color: #8a6d3b !important;
 }
 
 /* dropdown intermediate header and colors */

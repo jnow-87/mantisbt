@@ -46,15 +46,6 @@ select.input-hover-input{
 	width: 95px;
 }
 
-.inline-page-close{
-	border: 0;
-	padding: 0;
-	background: transparent;
-	color: #1d520a;
-	position: relative;
-	top: 0px;
-}
-
 .invisible{
 	visibility: hidden;
 }
