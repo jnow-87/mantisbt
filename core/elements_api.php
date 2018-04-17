@@ -314,14 +314,14 @@ function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '',
  *										entirely by $p_class, otherwise $p_class is
  *										appended to the internal attributes
  *
- *	@param	boolean	$p_visible			if true the button is shown, otherwise the button
- *										present, i.e. occupies space, but not visible
- *
  *	@param	string	$p_prop				additional properties
+ *	@param	boolean	$p_force_input		force the use of an html input element instead of a button element
+ *										this is somehow required when submitting forms that contain file
+ *										input elements
  *
  *	@return	a string containing the html element
  */
-function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = '', $p_class_overwrite = false, $p_visible = true, $p_prop = ''){
+function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = '', $p_class_overwrite = false, $p_prop = '', $p_force_input = false){
 	$t_btn = '';
 
 	$t_class = 'btn btn-primary btn-white btn-xs btn-round ' . $p_class;
@@ -335,7 +335,7 @@ function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_c
 	if($p_action != '')
 		$p_type = 'submit';
 
-	if($p_type == 'submit')
+	if($p_force_input == true)
 		$t_btn .= '<input ';
 	else
 		$t_btn .= '<button ';
@@ -345,7 +345,7 @@ function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_c
 	if($p_action != '')
 		$t_btn .= 'formaction="' . $p_action . '" ';
 	
-	if($p_type == 'submit')
+	if($p_force_input == true)
 		$t_btn .= ' value="' . $p_text . '"/>';
 	else
 		$t_btn .= '>' . $p_text . '</button>';
@@ -355,8 +355,8 @@ function format_button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_c
 	return $t_btn;
 }
 
-function button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = '', $p_class_overwrite = false, $p_prop = ''){
-	echo format_button($p_text, $p_id, $p_type, $p_action,  $p_class, $p_class_overwrite, $p_prop);
+function button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = '', $p_class_overwrite = false, $p_prop = '', $p_force_input = false){
+	echo format_button($p_text, $p_id, $p_type, $p_action,  $p_class, $p_class_overwrite, $p_prop, $p_force_input);
 }
 
 /**
@@ -394,6 +394,45 @@ function format_button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class =
 
 function button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class = '', $p_in_form = true){
 	echo format_button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class, $p_in_form);
+}
+
+/**
+ *	format an icon that triggers a confirm inline-page
+ *
+ *	@param	string	$p_icon			font-awsome icon
+ *	@param	string	$p_text			text displayed as the button in the confirm page
+ *	@param	string	$p_id			button id
+ *	@param	string	$p_action		action to trigger if it is confirmed
+ *	@param	string	$p_msg			message to display at the inline page
+ *	@param	string	$p_msg_class	class to be used for message div
+ *	@param	string	$p_icon_class	class to be used for icon
+ *	@param	boolean	$p_in_form		if true the button is assumed to be part of form and thus no
+ *									new one is created
+ *									if false the button is embedded into a form
+ *
+ *	@return	a string containing the html element
+ */
+function format_icon_confirm($p_icon, $p_text, $p_id, $p_action, $p_msg, $p_msg_class = '', $p_icon_class, $p_in_form = true){
+	$t_r = '';
+
+	if(!$p_in_form)
+		$t_r .= '<form method="post" class="input-hover-form">';
+
+	$t_r .= format_input_hidden('confirm_btn', $p_text);
+	$t_r .= format_input_hidden('confirm_redirect', $p_action);
+	$t_r .= format_input_hidden('confirm_msg', $p_msg);
+	$t_r .= format_input_hidden('confirm_msg_class', $p_msg_class);
+
+	$t_r .= format_button('<i class="fa ' . $p_icon .'"></i>', $p_id, 'submit', 'confirm.php',  'btn-icon ' . $p_icon_class, true);
+
+	if(!$p_in_form)
+		$t_r .= '</form>';
+
+	return $t_r;
+}
+
+function icon_confirm($p_icon, $p_text, $p_id, $p_action, $p_msg, $p_msg_class = '', $p_in_form = true){
+	echo format_icon_confirm($p_icon, $p_text, $p_id, $p_action, $p_msg, $p_msg_class, $p_in_form);
 }
 
 /**

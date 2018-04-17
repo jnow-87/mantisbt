@@ -61,13 +61,17 @@ require_api('worklog_api.php');
 # form inputs
 $f_bugnote_id = gpc_get_int('bugnote_id', 0);
 $f_worklog_id = gpc_get_int('worklog_id', 0);
-$f_time_tracking = gpc_get_string('time_tracking');
-$f_action = gpc_get_string('action', '');
+$f_time_tracking = gpc_get_string('time_tracking', '');
+$f_cmd = gpc_get_string('cmd', '');
 
 
 ####
 ## access validation
 ####
+
+json_prepare();
+
+form_security_validate('worklog_update');
 
 # get bug note
 $t_bug_id = bugnote_get_field($f_bugnote_id, 'bug_id');
@@ -80,10 +84,8 @@ if($t_bug->project_id != helper_get_current_project()) {
 }
 
 # Check if the bug is readonly
-if(bug_is_readonly($t_bug_id)) {
-	error_parameters($t_bug_id);
-	trigger_error(ERROR_BUG_READ_ONLY_ACTION_DENIED, ERROR);
-}
+if(bug_is_readonly($t_bug_id))
+	json_error('Access denied to readonly issue');
 
 # Check if the current user is allowed to change the view state of this bugnote
 $t_user_id = bugnote_get_field($f_bugnote_id, 'reporter_id');
@@ -107,36 +109,30 @@ $t_redirect_buttons = array(
 );
 
 
-# perform action
-switch($f_action){
+# perform cmd
+switch($f_cmd){
 case 'add':
 	worklog_add($f_bugnote_id, $f_time_tracking);
 	$t_redirect_url = string_get_bug_view_url($t_bug_id);
+	
+	json_success('Worklog entry added');
 	break;
 
 case 'delete':
 	worklog_delete($f_bugnote_id, $f_worklog_id);
 	$t_redirect_url = string_get_worklog_issue_url($f_bugnote_id);
+
+	json_success('Worklog deleted');
 	break;
 
 case 'update':
 	worklog_update($f_bugnote_id, $f_worklog_id, $f_time_tracking);
 	$t_redirect_url = string_get_worklog_issue_url($f_bugnote_id);
+
+	json_success('Worklog updated');
 	break;
 
 default:
-	error_parameters('action = ' . $f_action);
-	trigger_error(ERROR_INVALID_MISSING_INPUT, ERROR);
+	json_error('Invalid command \'' . $f_cmd . '\'');
 	break;
 }
-
-
-layout_page_header_begin();
-layout_page_header_end();
-
-layout_page_begin();
-
-html_meta_redirect($t_redirect_url);
-html_operation_confirmation($t_redirect_buttons, '', CONFIRMATION_TYPE_SUCCESS);
-
-layout_page_end();

@@ -873,6 +873,10 @@ function bugnote_view($p_bug_id){
 	$t_normal_date_format = config_get('normal_date_format');
 	$t_security_token_attachments_delete = form_security_token('bug_file_delete');
 
+	# clear security token
+	form_security_purge('bugnote_update');
+	form_security_purge('bugnote_set_view_state');
+	form_security_purge('worklog_update');
 
 	table_begin(array());
 		if(count($t_activities) == 0) 
@@ -886,6 +890,7 @@ function bugnote_view($p_bug_id){
 			$t_id = $t_activity['id'];
 			$t_can_edit = $t_activity['can_edit'];
 			$t_rev_count = bug_revision_count($p_bug_id, REV_BUGNOTE, $t_id);
+			$t_private = $t_activity['private'];
 
 			if($t_activity['type'] == ENTRY_TYPE_NOTE && $t_activity['note']->time_tracking != 0){
 				$t_time_tracking_hhmm = db_minutes_to_hhmm($t_activity['note']->time_tracking);
@@ -910,84 +915,75 @@ function bugnote_view($p_bug_id){
 			if($t_time_tracking_hhmm != '')
 				$t_time_spent = format_label('Time Spent:') . format_hspace('5px') . $t_time_tracking_hhmm;
 
+			$t_delete_btn = '';
+			if($t_activity['can_delete']){
+				if($t_activity['type'] == ENTRY_TYPE_NOTE)
+					$t_delete_btn = format_icon_confirm('fa-trash', 'Delete', 'bn-delete', format_href('bugnote_delete.php', array('bugnote_id' => $t_id, 'bugnote_delete_token' => form_security_token('bugnote_delete'))), 'Delete bug note?', 'confirm-err', 'red', false);
+				else if($t_activity['can_delete'])
+					$t_delete_btn = format_icon_confirm('fa-trash', 'Delete', 'bn-delete', format_href('bug_file_delete.php', array('file_id' => $t_id, 'bug_file_delete_token' => $t_security_token_attachments_delete)), 'Delete attachment?', 'confirm-err', 'red', false);
+			}
 
 			echo '<tr id="c' . $t_id . '">';
 				echo '<td class="category" width="17%">';
-					echo '<p class="no-margin lighter small">';
-						if(isset($t_note_link))
-							echo $t_note_link . format_hspace('10px');
-							
-						echo $t_user . format_hspace('10px') . ($t_activity['private'] ? format_icon('fa-eye-slash', 'red') . 'private' : format_icon('fa-eye') . 'public') . '<br>';
-						echo $t_date . '<br>';
-						echo $t_last_update . '<br>';
-						echo $t_time_spent;
-					echo '</p>';
+					// bugnote details
+					table_begin(array(), 'no-border no-padding table-condensed transparent');
+					table_row(
+						array(
+							  (isset($t_note_link) ? $t_note_link . format_hspace('10px') : '')
+							. $t_user . format_hspace('10px')
+							. ($t_private ? format_icon('fa-eye-slash', 'red') : format_icon('fa-eye'))
+							. format_link(($t_private ? 'private' : 'public'), 'bugnote_set_view_state.php', array('private' => ($t_private ? '0' : '1'), 'bugnote_id' => $t_id, 'bugnote_set_view_state_token' => form_security_token('bugnote_set_view_state')))
+							. '<div class="pull-right">' . $t_delete_btn . '</div>'
+						),
+						'',
+						array('class="no-margin lighter small" colspan="2"', 'class="pull-right"')
+					);
+					echo '<tr class="spacer"></tr>';
+
+					// time and revision
+					table_row(array($t_date), '', array('colspan="2" class="no-margin lighter small"'));
+					table_row(array($t_last_update), '', array('colspan="2" class="no-margin lighter small"'));
+					table_row(array('', format_link('View Revisions', 'bug_revision_view_page.php', array('bugnote_id' => $t_id), '', false, $t_rev_count > 0)), '', array('', 'class="no-margin lighter small pull-right"'));
+					echo '<tr class="spacer"></tr>';
+
+					// worklog
+					table_row(array($t_time_spent, format_link('View Work Log', 'worklog_issue_page.php', array('bugnote_id' => $t_id))), '', array('class="no-margin lighter small"', 'class="no-margin lighter small pull-right"'));
+					table_row(
+						array(
+							'', 
+							'<form action="worklog_update.php" method="post" class="input-hover-form input-hover-form-reload">'
+							. format_input_hidden('bugnote_id', $t_id)
+							. format_input_hidden('cmd', 'add')
+							. format_input_hidden('worklog_update_token', form_security_token('worklog_update'))
+							. '<span id="log_work_div">'
+							. format_text('time_tracking', 'time_tracking', '', 'hh:mm', 'input-xxs', '','size=5')
+							. format_hspace('2px')
+							. format_button('Log Work', 'log_work_div-action-0', 'submit', '', 'btn-xxs')
+							. '</span>'
+							. '</form>'
+						),
+						'',
+						array('', 'class="no-margin lighter small pull-right"')
+					);
+					table_end();
 				echo '</td>';
 
 				echo '<td class="' . $t_activity['style'] .'">';
-					actionbar_begin();
-
-					echo '<div class="pull-left">';
-
-					// edit button
-					button_link('Edit', 'bugnote_edit_page.php', array('bugnote_id' => $t_id), '', false, $t_can_edit);
-
-					// view revisions
-					button_link('View Revisions', 'bug_revision_view_page.php', array('bugnote_id' => $t_id), '', false, $t_rev_count > 0);
-					hspace('20px');
-
-					// make public/private button
-					button_link('Toggle Privacy', 'bugnote_set_view_state.php', array('private' => ($t_activity['private'] ? '0' : '1'), 'bugnote_id' => $t_id, 'bugnote_set_view_state_token' => form_security_token('bugnote_set_view_state')), '', false, $t_activity['can_change_view_state']);
-					hspace('20px');
-
-					// log work
-					if(config_get('time_tracking_enabled') && $t_can_edit){
-						echo '<form action="worklog_update.php" method="post" class="form-inline">';
-
-						input_hidden('bugnote_id', $t_id);
-						input_hidden('action', 'add');
-
-						echo '<span id="log_work_div">';
-						text('time_tracking', 'time_tracking', '', 'hh:mm', 'input-xs', '','size=5');
-						hspace('2px');
-						button('Log Work', '', 'submit');
-						echo '</span>';
-
-						button_link('View Work Log', 'worklog_issue_page.php', array('bugnote_id' => $t_id));
-	
-						echo '</form>';
-					}
-
-					echo '</div>';
-					echo '<div class="pull-right">';
-
-					// delete button
-					if($t_activity['can_delete']){
-						if($t_activity['type'] == ENTRY_TYPE_NOTE)
-							button_confirm('Delete', 'bn-delete', format_href('bugnote_delete.php', array('bugnote_id' => $t_id, 'bugnote_delete_token' => form_security_token('bugnote_delete'))), 'Delete bug note?', 'confirm-err', false);
-						else if($t_activity['can_delete'])
-							button_confirm('Delete', 'bn-delete', format_href('bug_file_delete.php', array('file_id' => $t_id, 'bug_file_delete_token' => $t_security_token_attachments_delete)), 'Delete attachment?', 'confirm-err', false);
-					}
-
-					echo '</div>';
-
-					actionbar_end();
-
 					if($t_activity['type'] == ENTRY_TYPE_NOTE){
-						echo string_display_links($t_activity['note']->note);
+						echo '<form action="bugnote_update.php" method="post" class="input-hover-form">';
+							input_hidden('bugnote_id', $t_id);
+							echo form_security_field('bugnote_update');
 
-						if(isset($t_activity['attachments']) && count($t_activity['attachments']) > 0)
-							echo '<br/><br/>';
+							input_hover_textarea('bugnote_text_' . $t_id, $t_activity['note']->note, '100%', '100px');
+						echo '</form>';
 					}
 					else
 						print_bug_attachment($t_activity['attachment'], $t_security_token_attachments_delete);
 
 					if(isset($t_activity['attachments']) && count($t_activity['attachments']) > 0){
-						foreach($t_activity['attachments'] as $t_attachment){
+						foreach($t_activity['attachments'] as $t_attachment)
 							print_bug_attachment($t_attachment, $t_security_token_attachments_delete);
-						}
 					}
-
 				echo '</td>';
 			echo '</tr>';
 
@@ -1065,8 +1061,7 @@ function bugnote_add_form($p_bug_id){
 				echo '</div>';
 				echo '<div class="pull-right">';
 
-				button('Add', 'bugnote-add-btn', 'submit');
-
+				button('Add', 'bugnote-add-btn', 'submit', '', '', false, '', true);
 				echo '</div>';
 
 				actionbar_end();

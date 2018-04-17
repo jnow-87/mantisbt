@@ -20,3 +20,19 @@ input{
 .form-inline{
 	display: inline-block;
 }
+
+.input-xxs{
+	font-size: 11px !important;
+    width: auto !important;
+    vertical-align: middle !important;
+	padding: 0px 1px !important;
+}
+
+.btn-xxs{
+	font-size: 11px !important;
+    width: auto !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+	padding: 0px 2px !important;
+	border: 0 !important;
+}

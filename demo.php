@@ -9,6 +9,7 @@ require_api('elements_api.php');
 #	check bootstrap modal as replacement for inline pages
 #	json interface
 #		make worklog pages use a json interface
+#		update access_has_bug_level and similar functions to return json data if requested
 #
 #	use input-hover for bugnotes
 #	check resolution in bug::check_builtin (if resolution is required it shall not be 'open')

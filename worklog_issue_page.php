@@ -178,8 +178,9 @@ layout_page_begin();
 							<form id="worklog" method="post" action="worklog_update.php">
 								<input type="hidden" name="bugnote_id" value="<?php echo $f_bugnote_id ?>"/>
 								<input type="hidden" name="worklog_id" value="<?php echo $t_worklog_id ?>"/>
-								<input type="text" name="time_tracking_<?php echo $f_bugnote_id ?>" class="input-xs pull-left" size="5" value="<?php echo $t_time ?>" />
-								<input type="hidden" name="action" value="update"/>
+								<input type="hidden" name="worklog_update_token" value="<?php echo form_security_token('worklog_update') ?>" />
+								<input type="text" name="time_tracking" class="input-xs pull-left" size="5" value="<?php echo $t_time ?>" />
+								<input type="hidden" name="cmd" value="update"/>
 
 								<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get('update') ?>" />
 							</form>

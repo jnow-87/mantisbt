@@ -96,15 +96,6 @@ div.inline-page-frame{
 	border-width: 1px;
 }
 
-.inline-page-close-icon{
-	border: 0;
-	padding: 0;
-	background: transparent;
-	color: #1d520a;
-	position: relative;
-	top: 0px;
-}
-
 /* confirm popup */
 .confirm-err{
 	background: #f2dede !important;
@@ -135,4 +126,14 @@ div.inline-page-frame{
 .dropdown-green > li.active:hover > a {
     background: #cae8bf;
     color: #444444;
+}
+
+/* buttons */
+.btn-icon{
+	border: 0;
+	padding: 0;
+	background: transparent;
+	color: #1d520a;
+	position: relative;
+	top: 0px;
 }

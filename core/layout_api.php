@@ -199,7 +199,7 @@ function layout_inline_page_begin(){
 
 	echo '<div class="row">';
 	echo '<div class="pull-right">';
-	button('<i class="fa fa-times"></i>', 'close_inline_page', 'button', '',  'inline-page-close inline-page-close-icon', true);
+	button('<i class="fa fa-times"></i>', 'close_inline_page', 'button', '',  'btn-icon inline-page-close', true);
 	echo '</div>';
 	echo '</div>';
 
