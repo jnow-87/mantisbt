@@ -157,16 +157,18 @@ function select($p_id, $p_name, $p_values, $p_selected, $p_class = 'input-xs', $
 /**
  *	format a date input html element
  *
- *	@param	string	$p_id		string used as the elements id property
- *	@param	string	$p_name		string used as the elements name property
- *	@param	array	$p_value	string used as the elements value property
- *	@param	string	$p_width	input width
+ *	@param	string	$p_id			string used as the elements id property
+ *	@param	string	$p_name			string used as the elements name property
+ *	@param	array	$p_value		string used as the elements value property
+ *	@param	string	$p_width		input width
+ *	@param	boolean	$p_fmt_short	if true use the short date format, otherwise
+ *									use the normal date format
  *
  *	@return	a string containing the html element
  */
-function format_date($p_id, $p_name, $p_value, $p_width = ''){
+function format_date($p_id, $p_name, $p_value, $p_width = '', $p_fmt_short = false){
 	$t_width = ($p_width != '') ? 'width:' . $p_width : '';
-	$t_date_prop = 'data-picker-locale="' . lang_get_current_datetime_locale() . '" data-picker-format="' . convert_date_format_to_momentjs(config_get('normal_date_format')) . '"';
+	$t_date_prop = 'data-picker-locale="' . lang_get_current_datetime_locale() . '" data-picker-format="' . convert_date_format_to_momentjs($p_fmt_short ? config_get('short_date_format') : config_get('normal_date_format')) . '"';
 
 	return format_text($p_id, $p_name, $p_value, '', 'input-xs datetimepicker', $t_width, $t_date_prop);
 }
@@ -272,7 +274,7 @@ function actionbar_end(){
 }
 
 /**
- *	print a html link with a button look
+ *	format a html link with a button look
  *
  *	@param	string	$p_button_text		text displayed as the button
  *	@param	string  $p_action			page URL.
@@ -291,7 +293,7 @@ function actionbar_end(){
  *
  *	@return nothing
  */
-function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '', $p_class_overwrite = false, $p_visible = true, $p_prop = ''){
+function format_button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '', $p_class_overwrite = false, $p_visible = true, $p_prop = ''){
 	$t_class = 'btn btn-primary btn-white btn-xs btn-round ' . $p_class;
 
 	if($p_class_overwrite == true)
@@ -300,7 +302,11 @@ function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '',
 	 if(!$p_visible)
 	 	$t_class .= ' invisible';
 
-	echo format_link($p_button_text, $p_action, $p_arg, $t_class, '', $p_prop) . format_hspace('2px');
+	return format_link($p_button_text, $p_action, $p_arg, $t_class, '', $p_prop) . format_hspace('2px');
+}
+
+function button_link($p_button_text, $p_action, $p_arg = array(), $p_class = '', $p_class_overwrite = false, $p_visible = true, $p_prop = ''){
+	echo format_button_link($p_button_text, $p_action, $p_arg, $p_class, $p_class_overwrite, $p_visible, $p_prop);
 }
 
 /**

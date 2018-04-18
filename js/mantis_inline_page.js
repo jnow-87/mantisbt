@@ -47,6 +47,35 @@ function inline_page_close(){
 }
 
 /**
+ * \brief	trigger a link using ajax to show the target content
+ * 			within an inline-page
+ */
+function inline_page_open_link(e){
+	e.preventDefault();
+
+	var action = $(this).attr('href');
+
+	$.ajax({
+		url: action,
+		success: function(msg, status, data){
+			/* display status message */
+			try{
+				var resp = JSON.parse(msg);
+
+				for(var i=0; i<resp.length; i++)
+					statusbar_print(resp[i].type, resp[i].msg);
+			}
+			catch(e){
+				statusbar_print('html', msg);
+			}
+	 	},
+		error: function(xhr, desc, err){
+			statusbar_print('error', err);
+		}
+	});
+}
+
+/**
  * \brief	register handlers required for inline pages
  */
 function inline_page_init(){
@@ -56,6 +85,11 @@ function inline_page_init(){
 	for(var i=0; i<btn.length; i++)
 		btn[i].addEventListener('click', inline_page_close);
 
+	/* register click handler to inline-page links */
+	links = document.getElementsByClassName('inline-page-link');
+
+	for(var i=0; i<links.length; i++)
+		links[i].addEventListener('click', inline_page_open_link);
 
 	/* register submit handler for inline-page forms */
 	forms = document.getElementsByClassName('inline-page-form');

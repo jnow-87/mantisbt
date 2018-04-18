@@ -262,6 +262,8 @@ page_title($t_page_title);
 		input_hidden('text1', 'v1');
 
 		input_hover_text('text2', 'v3');
+
+		echo format_link('open link in inline-page', 'demo_inline_page.php', array(), 'inline-page-link');
 		?>
 	</form>
 
