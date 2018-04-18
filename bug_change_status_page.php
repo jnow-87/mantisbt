@@ -188,7 +188,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 	input_hidden('last_updated', $t_bug->last_updated);
 	input_hidden('action_type', string_attribute($f_change_type));
 
-	table_begin('', 'no-border');
+	table_begin(array(), 'no-border');
 		// priority
 		if($t_show_priority){
 			$t_required = required_indicator('priority', $t_required_fields);

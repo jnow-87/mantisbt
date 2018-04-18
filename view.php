@@ -75,7 +75,7 @@ function tab_custom_fields(){
 
 	echo form_security_field('bug_update');
 
-	table_begin('', 'no-border');
+	table_begin(array(), 'no-border');
 
 	foreach($t_related_custom_field_ids as $t_id) {
 		if(!custom_field_has_read_access($t_id, $f_bug_id))
@@ -369,7 +369,7 @@ echo '<div class="col-md-9">';
 		echo '<div class="row">';
 
 		echo '<div class="col-md-3 no-padding">';
-		table_begin('', 'no-border');
+		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Type:', format_input_hover_select('category_id', category_list($t_project_id), category_get_name($t_bug->category_id)));
 		table_row_bug_info_short('Status:', '<span>' . $t_status_icon . format_hspace('10px') . format_input_hover_select('new_status', bug_status_list($t_project_id, $t_bug->status), get_enum_element('status', $t_bug->status), 'bug_change_status_page.php') . '</span>');
 		table_row_bug_info_short('Resolution:', format_input_hover_select('resolution', resolution_list(), get_enum_element('resolution', $t_bug->resolution)));
@@ -377,14 +377,14 @@ echo '<div class="col-md-9">';
 		echo '</div>';
 
 		echo '<div class="col-md-3 no-padding">';
-		table_begin('', 'no-border');
+		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Priority:', format_input_hover_select('priority', priority_list(), get_enum_element('priority', $t_bug->priority)));
 		table_row_bug_info_short('Severity:', format_input_hover_select('severity', severity_list(), get_enum_element('severity', $t_bug->severity)));
 		table_end();
 		echo '</div>';
 
 		echo '<div class="col-md-3 no-padding">';
-		table_begin('', 'no-border');
+		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Visibility:', format_input_hover_select('view_state', view_status_list(), get_enum_element('view_state', $t_bug->view_state)));
 		table_end();
 		echo '</div>';
@@ -394,11 +394,11 @@ echo '<div class="col-md-9">';
 
 		/* description */
 		echo '<div class="row">';
-		table_begin('', 'no-border');
+		table_begin(array(), 'no-border');
 		table_row_bug_info_long('Description:', format_input_hover_text('summary', $t_bug->summary, '100%'), '7%');
 		table_end();
 
-		table_begin('', 'no-border');
+		table_begin(array(), 'no-border');
 		table_row_bug_info_long(' ', format_input_hover_textarea('description', $t_bug->description, '100%', '100px'), '1%');
 		table_end();
 
@@ -410,7 +410,7 @@ echo '<div class="col-md-9">';
 		/* tags */
 		if($t_show_tags){
 			echo '<div class="row">';
-			table_begin('', 'no-border');
+			table_begin(array(), 'no-border');
 			table_row_bug_info_long('Tags:', format_tag_list() . format_tag_attach(), '5%');
 			table_end();
 			echo '</div>';
@@ -456,7 +456,7 @@ echo '<div class="col-md-3">';
 	/* people */
 	section_begin('People');
 		echo '<div class="row">';
-		table_begin('', 'no-border');
+		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Assignee:', format_input_hover_select('handler_id', user_list($t_project_id, $t_bug->reporter_id, true), user_get_name($t_bug->handler_id)));
 		table_row_bug_info_short('Author:', user_get_name($t_bug->reporter_id));
 		table_end();
@@ -466,7 +466,7 @@ echo '<div class="col-md-3">';
 	/* date and time */
 	section_begin('Date and Time');
 		echo '<div class="row">';
-		table_begin('', 'no-border');
+		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Due Date:', format_input_hover_date('due_date', $t_bug_due_date));
 		table_row_bug_info_short('Last Updated:', date($t_date_format, $t_bug->last_updated));
 		table_row_bug_info_short('Date Submitted:', date($t_date_format, $t_bug->date_submitted));
@@ -477,7 +477,7 @@ echo '<div class="col-md-3">';
 	/* version info */
 	section_begin('Version Info');
 		echo '<div class="row">';
-		table_begin('', 'no-border');
+		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Fixed in Version:', format_input_hover_select('fixed_in_version', $t_versions_unreleased, $t_bug->fixed_in_version));
 		table_row_bug_info_short('Target Version:', format_input_hover_select('target_version', $t_versions_unreleased, $t_bug->target_version));
 		table_row_bug_info_short('Affected Version:', format_input_hover_select('version', $t_versions_all, $t_bug->version));

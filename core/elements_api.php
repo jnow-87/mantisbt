@@ -925,8 +925,10 @@ function table_begin($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = ''
 function table_row($p_data, $p_tr_attr = '', $p_td_attr = array()){
 	echo '<tr ' . $p_tr_attr . '>';
 
-	for($t_i=0; $t_i<count($p_data); $t_i++)
-		echo '<td ' . $p_td_attr[$t_i] . '>' . $p_data[$t_i] . '</td>';
+	for($t_i=0; $t_i<count($p_data); $t_i++){
+		$t_td = (isset($p_td_attr[$t_i]) ? $p_td_attr[$t_i] : '');
+		echo '<td ' . $t_td . '>' . $p_data[$t_i] . '</td>';
+	}
 
 	echo '</tr>';
 }
