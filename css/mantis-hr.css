@@ -1,6 +1,6 @@
 /* section margin */
 .section {
-	margin: 0 6px 0 6px;
+	margin: 0 6px 25px 6px;
 }
 .subsection {
 	margin: 0 12px 0 12px;
@@ -30,7 +30,7 @@ hr{
   font-size:13px;
   opacity: 1;
   cursor: Pointer;
-  margin: 25px 0 10px 0 !important;
+  margin: 0 0 10px 0 !important;
 }
 
 .hr-text:before {
@@ -74,7 +74,7 @@ hr{
   font-size: 18px;
   opacity: 1;
   margin-top: 0px !important;
-  margin-bottom: 0px !important;
+  margin-bottom: 25px !important;
 }
 .hr-page-title:before {
   content: '';
