@@ -74,6 +74,7 @@ $f_resp_type = gpc_get_int('resp_type', RESP_NONE);
 json_prepare();
 
 form_security_validate('worklog_update');
+form_security_purge('worklog_update');
 
 # get bug note
 $t_bug_id = bugnote_get_field($f_bugnote_id, 'bug_id');

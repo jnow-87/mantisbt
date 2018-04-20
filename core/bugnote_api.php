@@ -876,7 +876,6 @@ function bugnote_view($p_bug_id){
 	# clear security token
 	form_security_purge('bugnote_update');
 	form_security_purge('bugnote_set_view_state');
-	form_security_purge('worklog_update');
 
 	table_begin(array());
 		if(count($t_activities) == 0) 
