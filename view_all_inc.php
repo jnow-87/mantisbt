@@ -54,6 +54,7 @@ require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 
 $t_filter = current_user_get_bug_filter();
+$f_hide_filter = gpc_get_bool('hide_filter', false);
 filter_init( $t_filter );
 
 list( $t_sort, ) = explode( ',', $g_filter['sort'] );
@@ -74,7 +75,7 @@ bug_cache_columns_data( $t_rows, $g_columns );
 $t_filter_position = config_get( 'filter_position' );
 
 # -- ====================== FILTER FORM ========================= --
-if( ( $t_filter_position & FILTER_POSITION_TOP ) == FILTER_POSITION_TOP ) {
+if( !$f_hide_filter && ( $t_filter_position & FILTER_POSITION_TOP ) == FILTER_POSITION_TOP ) {
 	filter_draw_selection_area( $f_page_number );
 }
 # -- ====================== end of FILTER FORM ================== --
@@ -230,7 +231,7 @@ write_bug_rows( $t_rows );
 <?php
 
 # -- ====================== FILTER FORM ========================= --
-if( ( $t_filter_position & FILTER_POSITION_BOTTOM ) == FILTER_POSITION_BOTTOM ) {
+if( ( !$f_hide_filter && $t_filter_position & FILTER_POSITION_BOTTOM ) == FILTER_POSITION_BOTTOM ) {
 	filter_draw_selection_area( $f_page_number );
 }
 # -- ====================== end of FILTER FORM ================== --

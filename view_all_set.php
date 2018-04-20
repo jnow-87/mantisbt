@@ -129,6 +129,8 @@ if( !is_blank( $t_view_all_cookie ) ) {
 	$f_type = 1;
 }
 
+$t_hide_filter = '';
+
 # Clear the source query id.  Since we have entered new filter criteria.
 $t_setting_arr['_source_query_id'] = '';
 switch( $f_type ) {
@@ -197,9 +199,11 @@ switch( $f_type ) {
 
 		break;
 	case '5':
+	case '42':
 		# Just set the search string value (filter_gpc_get is called over current filter)
 		log_event( LOG_FILTERING, 'view_all_set.php: Search Text' );
 		$t_setting_arr = filter_gpc_get( $t_setting_arr );
+		$t_hide_filter = '&hide_filter=1';
 		break;
 	case '6':
 		# Just set the view_state (simple / advanced) value. (filter_gpc_get is called over current filter)
@@ -230,13 +234,13 @@ if( !$f_temp_filter ) {
 
 # redirect to print_all or view_all page
 if( $f_print ) {
-	$t_redirect_url = 'print_all_bug_page.php';
+	$t_redirect_url = 'print_all_bug_page.php?';
 } else {
-	$t_redirect_url = 'view_all_bug_page.php';
+	$t_redirect_url = 'view_all_bug_page.php?';
 }
 
 if( $f_temp_filter ) {
 	$t_token_id = token_set( TOKEN_FILTER, json_encode( $t_setting_arr ) );
-	$t_redirect_url = $t_redirect_url . '?filter=' . $t_token_id;
+	$t_redirect_url = $t_redirect_url . 'filter=' . $t_token_id;
 }
-print_header_redirect( $t_redirect_url );
+print_header_redirect( $t_redirect_url . $t_hide_filter );

@@ -6,35 +6,41 @@ require_api('elements_api.php');
 
 
 # TODO
-#	check bootstrap modal as replacement for inline pages
-#	json interface
-#		update access_has_bug_level and similar functions to return json data if requested
+#	validation
+#		access control
+#			update access_has_bug_level and similar functions to return json data if requested
+#			test access level check (view.php, ...)
 #
-#	check resolution in bug::check_builtin (if resolution is required it shall not be 'open')
-#	view.php: only make field editable if the respective access level is available (update_bug_threshold)
-#	view.php test acccess level checks
-#	extend navbar issue search to actually perform a textual search, analog to filters
-#	remove lang_get()
-#	add time estimate, time spent to bug view
+#		check resolution in bug::check_builtin (if resolution is required it shall not be 'open')
+#		view.php: only make field editable if the respective access level is available (update_bug_threshold)
+#		logwork if timetracking is disabled
 #
-#	logwork if timetracking is disabled
-#	handle markup for description, cf. plugins/BBCodePlus/files/markitup-init.js
 #
-#	add persistent error message -> they need to be removed by the user
-#	allow shwoing statusbar messages when loading a page (php-based)
-#	use proper functions for displaying custom fields, cf. TODOs in view.php and bug_change_status_page.php
+#	features
+#		extend navbar issue search to actually perform a textual search, analog to filters
+#		add time estimate, time spent to bug view
+#		add persistent error message -> they need to be removed by the user
+#		allow shwoing statusbar messages when loading a page (php-based)
+#		handle markup for description, cf. plugins/BBCodePlus/files/markitup-init.js
 #
-#	fix inline-page-close
-#		reproduce:
-#			- select new bug status
-#			- trigger update either through 'return' or button
-#			- close the inline-page through the close button
 #
-#		behaviour:
-#			- input fields cannot be hovered
+#	bugs
+#		fix inline-page-close
+#			reproduce:
+#				- select new bug status
+#				- trigger update either through 'return' or button
+#				- close the inline-page through the close button
 #
-#	fix the delete input-hover button fpr tags that cause a line is not shown properly
+#			behaviour:
+#				- input fields cannot be hovered
 #
+#		fix the delete input-hover button fpr tags that cause a line is not shown properly
+#		use proper functions for displaying custom fields, cf. TODOs in view.php and bug_change_status_page.php
+#
+#
+#	misc
+#		remove lang_get()
+
 function tab_page0(){
 	echo '<div class="row">';
 	echo '<div class="col-md-6-left">';
