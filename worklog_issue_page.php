@@ -162,7 +162,7 @@ if($f_date_to == '')
 
 
 layout_inline_page_begin();
-page_title(bug_format_summary($t_bug_id, SUMMARY_CAPTION));
+page_title('Note Worklog Summary');
 
 
 report_warning('Invalid command \'' . 'pp' . '\'', false);
@@ -234,8 +234,8 @@ table_begin(array(), 'table-condensed no-border');
 			array(
 				'',
 				'',
-				'width="35%"',
-				''
+				'width="30%"',
+				'width="60%"'
 			)
 		);
 	}
