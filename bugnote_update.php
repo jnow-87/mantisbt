@@ -75,7 +75,7 @@ $t_bug_id = bugnote_get_field( $f_bugnote_id, 'bug_id' );
 if( bug_is_readonly( $t_bug_id ) )
 	json_error('Access denied to readonly issue');
 
-$f_bugnote_text = trim( $f_bugnote_text ) . "\n\n";
+$f_bugnote_text = trim( $f_bugnote_text );
 
 bugnote_set_text( $f_bugnote_id, $f_bugnote_text );
 bugnote_set_time_tracking( $f_bugnote_id, $f_time_tracking );
