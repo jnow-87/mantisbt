@@ -36,3 +36,9 @@ input{
 	padding: 0px 2px !important;
 	border: 0 !important;
 }
+
+input[type=checkbox].ace{
+	opacity: 1 !important;
+	position: static !important;
+	margin-left: 0 !important;
+}

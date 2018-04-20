@@ -119,7 +119,7 @@ function textarea($p_id, $p_name, $p_value, $p_class = 'input-xs', $p_style = ''
  *	@return	a string containing the html element
  */
 function format_checkbox($p_id, $p_name, $p_checked = false, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
-	return 	'<input type="checkbox" id="' . $p_id . '" name="' . $p_name . '" class="' . $p_class . '" style="' . $p_style . '" ' . $p_prop . ' ' . ($p_checked ? ' checked' : '') . '/>';
+	return 	'<input type="checkbox" id="' . $p_id . '" name="' . $p_name . '" class="ace ' . $p_class . '" style="' . $p_style . '" ' . $p_prop . ' ' . ($p_checked ? ' checked' : '') . '/>';
 }
 
 function checkbox($p_id, $p_name, $p_checked = false, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
