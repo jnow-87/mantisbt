@@ -671,8 +671,7 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 						} else {
 							$t_bug_revision_view_page_argument = 'rev_id=' . $t_new_value;
 						}
-						$t_change = '<a href="bug_revision_view_page.php?' . $t_bug_revision_view_page_argument . '">' .
-							lang_get( 'view_revisions' ) . '</a>';
+						$t_change = format_link('View Revisions', 'bug_revision_view_page.php?' . $t_bug_revision_view_page_argument, array(), 'inline-page-link', '', '');
 						$t_raw = false;
 					}
 					break;
@@ -683,8 +682,7 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 					$t_note = lang_get( 'description_updated' );
 					$t_old_value = (int)$p_old_value;
 					if( $p_linkify && bug_revision_exists( $t_old_value ) ) {
-						$t_change = '<a href="bug_revision_view_page.php?rev_id=' . $t_old_value . '#r' . $t_old_value . '">' .
-							lang_get( 'view_revisions' ) . '</a>';
+						$t_change = format_link('View Revisions', 'bug_revision_view_page.php', array('rev_id' => $t_old_value . '#r' . $t_old_value), 'inline-page-link', '', '');
 						$t_raw = false;
 					}
 					break;

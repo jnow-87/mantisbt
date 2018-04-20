@@ -943,7 +943,10 @@ function bugnote_view($p_bug_id){
 					// time and revision
 					table_row(array($t_date), '', array('colspan="2" class="no-margin lighter small"'));
 					table_row(array($t_last_update), '', array('colspan="2" class="no-margin lighter small"'));
-					table_row(array('', format_link('View Revisions', 'bug_revision_view_page.php', array('bugnote_id' => $t_id), '', false, $t_rev_count > 0)), '', array('', 'class="no-margin lighter small pull-right"'));
+
+					if($t_rev_count > 0)
+						table_row(array('', format_link('View Revisions', 'bug_revision_view_page.php', array('bugnote_id' => $t_id), 'inline-page-link', '', 'inline-page-reload')), '', array('', 'class="no-margin lighter small pull-right"'));
+
 					echo '<tr class="spacer"></tr>';
 
 					// worklog
