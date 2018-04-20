@@ -92,8 +92,10 @@ div.inline-page-frame{
 .inline-page {
 	background-color:white;
 	padding: 10px 20px 10px 20px;
+	max-height: 70%;
 	border-style: solid;
 	border-width: 1px;
+	overflow: scroll;
 }
 
 /* confirm popup */
