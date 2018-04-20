@@ -1,5 +1,6 @@
 var inline_page_last_scoll_x = 0;
 var inline_page_last_scoll_y = 0;
+var inline_page_reload = false;
 
 /**
  * \brief	create a div which overlays the current page, rendering the given
@@ -8,7 +9,8 @@ var inline_page_last_scoll_y = 0;
  * \param	html	html code to render
  */
 function inline_page_create(html){
-	inline_page_close();
+	/* auto-closing existing inline page */
+	inline_page_close(true);
 
 	/* create inline-page element */
 	var el = document.createElement('div');
@@ -17,7 +19,7 @@ function inline_page_create(html){
 
 	el.innerHTML = html;
 
-	/* show inline-page */
+	/* show inline page */
 	document.body.appendChild(el);
 	$('body').trigger('user_event_body_changed');
 
@@ -31,14 +33,22 @@ function inline_page_create(html){
 
 /**
  * \brief	close an existing inline page
+ *
+ * \param	prevent_reload	overwriting inline_page_reload, i.e. do not	reload
+ * 							current page, even if inline-page-reload is set true
  */
-function inline_page_close(){
+function inline_page_close(prevent_reload){
 	var page = document.getElementById('inline-page');
 
 	if(page == null)
 		return;
 
-	/* remove inline-page */
+	if(inline_page_reload && !prevent_reload){
+		inline_page_reload = false;
+		location.reload();
+	}
+
+	/* remove inline page */
 	document.body.removeChild(page);
 	$('body').trigger('user_event_body_changed');
 
@@ -48,12 +58,16 @@ function inline_page_close(){
 
 /**
  * \brief	trigger a link using ajax to show the target content
- * 			within an inline-page
+ * 			within an inline page
  */
 function inline_page_open_link(e){
 	e.preventDefault();
 
 	var action = $(this).attr('href');
+	var reload = $(this).attr('inline-page-reload');
+
+	if(reload != null)
+		inline_page_reload = true;
 
 	$.ajax({
 		url: action,
@@ -76,6 +90,13 @@ function inline_page_open_link(e){
 }
 
 /**
+ * \brief	event handler for inline-page close
+ */
+function inline_page_close_hdlr(){
+	inline_page_close(false);
+}
+
+/**
  * \brief	register handlers required for inline pages
  */
 function inline_page_init(){
@@ -83,7 +104,7 @@ function inline_page_init(){
 	btn = document.getElementsByClassName('inline-page-close');
 
 	for(var i=0; i<btn.length; i++)
-		btn[i].addEventListener('click', inline_page_close);
+		btn[i].addEventListener('click', inline_page_close_hdlr);
 
 	/* register click handler to inline-page links */
 	links = document.getElementsByClassName('inline-page-link');
@@ -95,7 +116,20 @@ function inline_page_init(){
 	forms = document.getElementsByClassName('inline-page-form');
 
 	for(var i=0; i<forms.length; i++)
-		forms[i].addEventListener('submit', inline_page_close);
+		forms[i].addEventListener('submit', inline_page_close_hdlr);
+
+	/* register datetimepicker for elements on inline page */
+	el = document.getElementsByClassName('inline-page-datetime');
+
+	for(var i=0; i<el.length; i++){
+		var locale = $(el[i]).attr('data-picker-locale');
+		var format = $(el[i]).attr('data-picker-format');
+
+		$(el[i]).datetimepicker({
+			format: format,
+			locale: locale,
+		});
+	}
 }
 
 /* document change handler */

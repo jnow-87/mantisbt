@@ -167,10 +167,10 @@ function select($p_id, $p_name, $p_values, $p_selected, $p_class = 'input-xs', $
  *	@return	a string containing the html element
  */
 function format_date($p_id, $p_name, $p_value, $p_width = '', $p_fmt_short = false){
-	$t_width = ($p_width != '') ? 'width:' . $p_width : '';
+	$t_width = ($p_width != '') ? 'width:' . $p_width . ' !important' : '';
 	$t_date_prop = 'data-picker-locale="' . lang_get_current_datetime_locale() . '" data-picker-format="' . convert_date_format_to_momentjs($p_fmt_short ? config_get('short_date_format') : config_get('normal_date_format')) . '"';
 
-	return format_text($p_id, $p_name, $p_value, '', 'input-xs datetimepicker', $t_width, $t_date_prop);
+	return format_text($p_id, $p_name, $p_value, '', 'input-xs datetimepicker inline-page-datetime', $t_width, $t_date_prop);
 }
 
 /**
