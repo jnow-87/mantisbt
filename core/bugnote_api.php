@@ -947,16 +947,17 @@ function bugnote_view($p_bug_id){
 					echo '<tr class="spacer"></tr>';
 
 					// worklog
-					table_row(array($t_time_spent, format_link('View Work Log', 'worklog_issue_page.php', array('bugnote_id' => $t_id))), '', array('class="no-margin lighter small"', 'class="no-margin lighter small pull-right"'));
+					table_row(array($t_time_spent, format_link('View Work Log', 'worklog_issue_page.php', array('bugnote_id' => $t_id, 'worklog_update_token' => form_security_token('worklog_update')), 'inline-page-link', '', 'inline-page-reload')), '', array('class="no-margin lighter small"', 'class="no-margin lighter small pull-right"'));
 					table_row(
 						array(
 							'', 
 							'<form action="worklog_update.php" method="post" class="input-hover-form input-hover-form-reload">'
 							. format_input_hidden('bugnote_id', $t_id)
 							. format_input_hidden('cmd', 'add')
+							. format_input_hidden('resp_type', RESP_JSON)
 							. format_input_hidden('worklog_update_token', form_security_token('worklog_update'))
 							. '<span id="log_work_div">'
-							. format_text('time_tracking', 'time_tracking', '', 'hh:mm', 'input-xxs', '','size=5')
+							. format_text('time_tracking_' . $t_id, 'time_tracking_0', '', 'hh:mm', 'input-xxs', '','size=5')
 							. format_hspace('2px')
 							. format_button('Log Work', 'log_work_div-action-0', 'submit', '', 'btn-xxs')
 							. '</span>'

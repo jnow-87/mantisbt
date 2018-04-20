@@ -599,3 +599,39 @@ function json_html($p_content){
 	json_commit();
 	exit();
 }
+
+function report_success($p_msg, $p_redirect_url = '', $p_resp_type = RESP_HTML){
+	switch($p_resp_type){
+	case RESP_HTML:
+		html_operation_successful($p_redirect_url, $p_msg);
+		exit();
+
+	case RESP_JSON:
+		json_success($p_msg);
+		break;
+	}
+}
+
+function report_error($p_msg, $p_redirect_url = '', $p_resp_type = RESP_HTML){
+	switch($p_resp_type){
+	case RESP_HTML:
+		html_operation_failure($p_redirect_url, $p_msg);
+		exit();
+
+	case RESP_JSON:
+		json_error($p_msg);
+		break;
+	}
+}
+
+function report_warning($p_msg, $p_resp_type = RESP_HTML){
+	switch($p_resp_type){
+	case RESP_HTML:
+		html_operation_warning('', $p_msg);
+		break;
+
+	case RESP_JSON:
+		json_warning($p_msg);
+		break;
+	}
+}

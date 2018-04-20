@@ -144,10 +144,11 @@ function worklog_delete($p_bugnote_id, $p_worklog_id){
  * @param	integer	$p_bugnote_id		id of the associated bugnote
  * @param	integer	$p_worklog_id		id of the target worklog entry
  * @param	string	$p_time_tracking	timetracking string, format hh:mm
+ * @param	string	$p_date				timestamp
  *
  * @return	result of the database operation
  */
-function worklog_update($p_bugnote_id, $p_worklog_id, $p_time_tracking) {
+function worklog_update($p_bugnote_id, $p_worklog_id, $p_time_tracking, $p_date = '') {
 	check_worklog_id($p_worklog_id);
 	check_worklog_user($p_worklog_id);
 	check_bugnote_id($p_bugnote_id);
@@ -157,7 +158,7 @@ function worklog_update($p_bugnote_id, $p_worklog_id, $p_time_tracking) {
 
 	db_param_push();
 	$t_query = 'UPDATE {worklog} SET time = ' . db_param() . ', date = ' . db_param() . ' WHERE id=' . db_param();
-	db_query($t_query, array($t_time_mm, db_now(), $p_worklog_id));
+	db_query($t_query, array($t_time_mm, ($p_date != '' ? $p_date : db_now()), $p_worklog_id));
 
 	bugnote_date_update($p_bugnote_id);
 }
@@ -189,7 +190,7 @@ function worklog_get($p_bugnote_id, $p_from = 0, $p_to = 0) {
 
 
 	db_param_push();
-	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param() . $t_from . ' ' . $t_to;
+	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param() . $t_from . ' ' . $t_to . ' ORDER BY date ASC';
 	$t_result = db_query($t_query, $t_params);
 
 	if($t_result == false)
