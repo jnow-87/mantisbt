@@ -149,24 +149,28 @@ $(document).ready( function() {
 	$('input.autofocus:first, select.autofocus:first, textarea.autofocus:first').focus();
 
 	var checkAllSelectors = '';
-	$(':checkbox.check_all').each(function() {
+	$('.check-all').each(function() {
 		var baseFieldName = $(this).attr('name').replace(/_all$/, '');
 		if (checkAllSelectors.length > 0) {
 			checkAllSelectors += ', ';
 		}
 		checkAllSelectors += ':checkbox[name="' + baseFieldName + '[]"]';
 	});
+
+	var all_checked = false;
 	if (checkAllSelectors.length > 0) {
 		$(checkAllSelectors).click(function() {
 			var fieldName = $(this).attr('name').replace(/\[\]/g, '');
 			var checkedCount = $(this).closest('form').find(':checkbox[name="' + fieldName + '[]"]:checked').length;
 			var totalCount = $(this).closest('form').find(':checkbox[name="' + fieldName + '[]"]').length;
 			var allSelected = checkedCount == totalCount;
+			all_checked = checkedCount == totalCount;
 			$(this).closest('form').find(':checkbox[name=' + fieldName + '_all]').prop('checked', allSelected);
 		});
-		$(':checkbox.check_all').click(function() {
+		$('.check-all').click(function() {
 			var baseFieldName = $(this).attr('name').replace(/_all$/, '');
-			$(this).closest('form').find(':checkbox[name="' + baseFieldName + '[]"]').prop('checked', $(this).is(':checked'));
+			all_checked = !all_checked;
+			$(this).closest('form').find(':checkbox[name="' + baseFieldName + '[]"]').prop('checked', all_checked);
 		});
 	}
 

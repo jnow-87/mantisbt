@@ -61,6 +61,7 @@ auth_ensure_user_authenticated();
 
 $f_action = gpc_get_string( 'action', '' );
 $f_bug_arr = gpc_get_int_array( 'bug_arr', array() );
+$f_filter_num_total = gpc_get_int('filter_num_total', 0);
 
 # redirects to all_bug_page if nothing is selected
 if( is_blank( $f_action ) || ( 0 == count( $f_bug_arr ) ) ) {
@@ -393,7 +394,7 @@ if( $t_multiple_projects ) {
 	}
 ?>
 		<tr class="spacer"></tr>
-		<?php bug_group_action_print_bug_list( $f_bug_arr ); ?>
+		<?php bug_group_action_print_bug_list( $f_bug_arr, $f_filter_num_total ); ?>
 		<tr class="spacer"></tr>
 			</tbody>
 		</table>

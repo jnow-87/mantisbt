@@ -88,10 +88,10 @@ function bug_group_action_print_bottom() {
  * @param array $p_bug_ids_array An array of issue ids.
  * @return void
  */
-function bug_group_action_print_bug_list( array $p_bug_ids_array ) {
+function bug_group_action_print_bug_list( array $p_bug_ids_array, $p_filter_num_total = 0 ) {
 	echo '<tr>';
 	echo '<th class="category" colspan="2">';
-	echo lang_get( 'actiongroup_bugs' );
+	echo lang_get( 'actiongroup_bugs' ) . ' ' . count($p_bug_ids_array) . ($p_filter_num_total > 0 ? ' / ' . $p_filter_num_total : '');
 	echo '</th>';
 	echo '</tr>';
 

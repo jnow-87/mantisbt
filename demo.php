@@ -17,7 +17,6 @@ require_api('elements_api.php');
 #
 #
 #	features
-#		extend navbar issue search to actually perform a textual search, analog to filters
 #		add time estimate, time spent to bug view
 #		add persistent error message -> they need to be removed by the user
 #		allow shwoing statusbar messages when loading a page (php-based)

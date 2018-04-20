@@ -36,202 +36,125 @@
  * @uses print_api.php
  */
 
-if( !defined( 'VIEW_ALL_INC_ALLOW' ) ) {
+if(!defined('VIEW_ALL_INC_ALLOW'))
 	return;
-}
 
-require_api( 'category_api.php' );
-require_api( 'columns_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'event_api.php' );
-require_api( 'filter_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
+require_api('category_api.php');
+require_api('columns_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('event_api.php');
+require_api('filter_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('elements_api.php');
+require_api('bug_group_action_api.php');
 
 $t_filter = current_user_get_bug_filter();
 $f_hide_filter = gpc_get_bool('hide_filter', false);
-filter_init( $t_filter );
 
-list( $t_sort, ) = explode( ',', $g_filter['sort'] );
-list( $t_dir, ) = explode( ',', $g_filter['dir'] );
-
-$g_checkboxes_exist = false;
+filter_init($t_filter);
+list($t_sort,) = explode(',', $g_filter['sort']);
+list($t_dir,) = explode(',', $g_filter['dir']);
 
 
-# Improve performance by caching category data in one pass
-if( helper_get_current_project() > 0 ) {
-	category_get_all_rows( helper_get_current_project() );
-}
+/* Improve performance by caching category data in one pass */
+if(helper_get_current_project() > 0)
+	category_get_all_rows(helper_get_current_project());
 
-$g_columns = helper_get_columns_to_view( COLUMNS_TARGET_VIEW_PAGE );
+$g_columns = helper_get_columns_to_view(COLUMNS_TARGET_VIEW_PAGE);
+bug_cache_columns_data($t_rows, $g_columns);
 
-bug_cache_columns_data( $t_rows, $g_columns );
+/* bulk edit actions */
+$t_cmds = bug_group_action_get_commands(null);
+$t_cmd_list = array();
 
-$t_filter_position = config_get( 'filter_position' );
-
-# -- ====================== FILTER FORM ========================= --
-if( !$f_hide_filter && ( $t_filter_position & FILTER_POSITION_TOP ) == FILTER_POSITION_TOP ) {
-	filter_draw_selection_area( $f_page_number );
-}
-# -- ====================== end of FILTER FORM ================== --
+while(list($t_action_id, $t_action_label) = each($t_cmds))
+	$t_cmd_list[$t_action_label] = $t_action_id;
 
 
-# -- ====================== BUG LIST ============================ --
+/* left column */
+echo '<div class="col-md-9">';
+echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php">';
+	input_hidden('filter_num_total', count($t_rows));
 
-?>
-<div class="col-md-6-left col-xs-12">
-<form id="bug_action" method="post" action="bug_actiongroup_page.php">
-<?php # CSRF protection not required here - form does not result in modifications ?>
-<div class="widget-box widget-color-blue2">
-	<div class="widget-header widget-header-small">
-	<h4 class="widget-title lighter">
-		<i class="ace-icon fa fa-columns"></i>
-		<?php echo lang_get( 'viewing_bugs_title' ) ?>
-		<?php
-			# -- Viewing range info --
-			$v_start = 0;
-			$v_end = 0;
-			if (count($t_rows) > 0) {
-				$v_start = $g_filter['per_page'] * ($f_page_number - 1) + 1;
-				$v_end = $v_start + count($t_rows) - 1;
-			}
-			echo '<span class="badge"> ' . $v_start . ' - ' . $v_end . ' / ' . $t_bug_count . '</span>' ;
-		?>
-	</h4>
-	</div>
+	actionbar_begin();
+		echo '<div class="pull-left">';
+			/* select all button */
+			button('Select All', 'bug_arr_all', 'button', '', 'check-all');
 
-	<div class="widget-body">
+			/* bulk edit action */
+			select('action', 'action', $t_cmd_list, '');
+			hspace('2px');
+			button('Apply', 'apply_bulk', 'submit');
+		echo '</div>';
 
-<div class="widget-main no-padding">
-	<div class="table-responsive">
-	<table id="buglist" class="table table-bordered table-condensed table-hover table-striped">
-	<thead>
-<?php # -- Bug list column header row -- ?>
-<tr class="buglist-headers">
-<?php
-	$t_title_function = 'print_column_title';
-	$t_sort_properties = filter_get_visible_sort_properties_array( $t_filter, COLUMNS_TARGET_VIEW_PAGE );
-	foreach( $g_columns as $t_column ) {
-		helper_call_custom_function( $t_title_function, array( $t_column, COLUMNS_TARGET_VIEW_PAGE, $t_sort_properties ) );
-	}
-?>
-</tr>
+		echo '<div class="pull-right">';
+			/* print and export buttons */
+			button_link('Print Report', 'print_all_bug_page.php');
+			button_link('CSV Export', 'csv_export.php');
 
-</thead><tbody>
+			/* plugin handling */
+			$t_event_menu_options = event_signal('EVENT_MENU_FILTER');
 
-<?php
-/**
- * Output Bug Rows
- *
- * @param array $p_rows An array of bug objects.
- * @return void
- */
-function write_bug_rows( array $p_rows ) {
-	global $g_columns, $g_filter;
+			foreach ($t_event_menu_options as $t_plugin => $t_plugin_menu_options){
+				foreach ($t_plugin_menu_options as $t_callback => $t_callback_menu_options){
+					if (!is_array($t_callback_menu_options))
+						$t_callback_menu_options = array($t_callback_menu_options);
 
-	# -- Loop over bug rows --
-
-	$t_rows = count( $p_rows );
-	for( $i=0; $i < $t_rows; $i++ ) {
-		$t_row = $p_rows[$i];
-
-		echo '<tr>';
-
-		$t_column_value_function = 'print_column_value';
-		foreach( $g_columns as $t_column ) {
-			helper_call_custom_function( $t_column_value_function, array( $t_column, $t_row ) );
-		}
-		echo '</tr>';
-	}
-}
-
-
-write_bug_rows( $t_rows );
-# -- ====================== end of BUG LIST ========================= --
-?>
-
-</tbody>
-</table>
-</div>
-
-<div class="widget-toolbox padding-8 clearfix">
-<?php
-# -- ====================== MASS BUG MANIPULATION =================== --
-# @@@ ideally buglist-footer would be in <tfoot>, but that's not possible due to global g_checkboxes_exist set via write_bug_rows()
-?>
-		<div class="form-inline pull-left">
-<?php
-		if( $g_checkboxes_exist ) {
-			echo '<label class="inline">';
-			echo '<input class="ace check_all input-xs" type="checkbox" id="bug_arr_all" name="bug_arr_all" value="all" />';
-			echo '<span class="lbl"> ' . lang_get( 'select_all' ) . ' </span > ';
-			echo '</label>';
-			echo '<span class="lbl"> &nbsp </span>';
-
-		}
-		if( $g_checkboxes_exist ) {
-?>
-			<select name="action" class="input-xs">
-				<?php print_all_bug_action_option_list($t_unique_project_ids) ?>
-			</select>
-			<input type="submit" class="btn btn-primary btn-white btn-xs btn-round" value="<?php echo lang_get('ok'); ?>"/>
-			<span class="lbl"> &nbsp </span>
-
-<?php
-		} else {
-			echo '&#160;';
-		}
-?>
-		</div>
-		<div class="btn-toolbar">
-			<div class="btn-group"><?php
-				# -- Page number links --
-				$f_filter	= gpc_get_int( 'filter', 0);
-				print_page_links( 'view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter );
-				?>
-			</div>
-
-			<div class="btn-group pull-right">
-			<?php
-				# -- Print and Export links --
-				print_link_button( 'print_all_bug_page.php', lang_get( 'print_all_bug_page_link' ) );
-				print_link_button( 'csv_export.php', lang_get( 'csv_export' ) );
-
-				$t_event_menu_options = $t_links = event_signal('EVENT_MENU_FILTER');
-
-				foreach ($t_event_menu_options as $t_plugin => $t_plugin_menu_options) {
-					foreach ($t_plugin_menu_options as $t_callback => $t_callback_menu_options) {
-						if (!is_array($t_callback_menu_options)) {
-							$t_callback_menu_options = array($t_callback_menu_options);
-						}
-
-						foreach ($t_callback_menu_options as $t_menu_option) {
-							if ($t_menu_option) {
-								echo $t_menu_option;
-							}
-						}
+					foreach ($t_callback_menu_options as $t_menu_option){
+						if ($t_menu_option)
+							echo $t_menu_option;
 					}
 				}
-			?>
-			</div>
-		</div>
+			}
+		echo '</div>';
+	actionbar_end();
 
-<?php # -- ====================== end of MASS BUG MANIPULATION ========================= -- ?>
-</div>
-</div>
-</div>
-</div>
-</form>
-</div>
-<?php
+	/* prepare table head */
+	$t_thead = array();
+	foreach($g_columns as $t_column)
+		$t_thead[] = lang_get($t_column);
 
-# -- ====================== FILTER FORM ========================= --
-if( ( !$f_hide_filter && $t_filter_position & FILTER_POSITION_BOTTOM ) == FILTER_POSITION_BOTTOM ) {
-	filter_draw_selection_area( $f_page_number );
+	table_begin($t_thead, 'table-bordered table-condensed table-striped table-hover table-sortable'); 
+
+	/* issue list */
+	foreach($t_rows as $t_row){
+		$t_trow = array();
+
+		foreach($g_columns as $t_column){
+			/* get formated cell (including 'td' tags) */
+			ob_start();
+			helper_call_custom_function('print_column_value', array($t_column, $t_row));
+			$t_cell = ob_get_contents();
+			ob_end_clean();
+
+			/* strip 'td' tags */
+			$t_cell = preg_replace('#<td[^>]*>#', '', $t_cell);
+			$t_cell = preg_replace('#</td[^>]*>#', '', $t_cell);
+
+			$t_trow[] = $t_cell;
+		}
+
+		table_row($t_trow);
+	}
+
+	table_end();
+
+echo '</form>';
+echo '</div>';
+
+
+/* right column */
+echo '<div class="col-md-3">';
+
+if(!$f_hide_filter){
+	/* filter */
+	filter_draw_selection_area($f_page_number);
 }
-# -- ====================== end of FILTER FORM ================== --
+
+echo '</div>';

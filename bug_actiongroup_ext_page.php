@@ -44,6 +44,8 @@ require_api( 'print_api.php' );
 require_api( 'string_api.php' );
 require_api( 'utility_api.php' );
 
+$f_filter_num_total = gpc_get_int('filter_num_total', 0);
+
 $t_external_action = utf8_strtolower( utf8_substr( $f_action, utf8_strlen( $t_external_action_prefix ) ) );
 $t_form_fields_page = 'bug_actiongroup_' . $t_external_action . '_inc.php';
 $t_form_name = 'bug_actiongroup_' . $t_external_action;
@@ -75,7 +77,7 @@ bug_group_action_print_top();
 	bug_group_action_print_action_fields( $t_external_action );
 ?>
 	<tr class="spacer"></tr>
-	<?php bug_group_action_print_bug_list( $f_bug_arr ); ?>
+	<?php bug_group_action_print_bug_list( $f_bug_arr, $f_filter_num_total ); ?>
 	<tr class="spacer"></tr>
 	</tbody>
 	</table>
