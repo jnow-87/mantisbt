@@ -418,6 +418,9 @@ function html_operation_confirmation( array $p_buttons, $p_message = '', $p_type
 	# Print buttons
 	echo '<div class="btn-group">';
 	foreach( $p_buttons as $t_button ) {
+		if($t_button[0] == '')
+			continue;
+
 		$t_url = string_sanitize_url( $t_button[0] );
 		$t_label = isset( $t_button[1] ) ? $t_button[1] : lang_get( 'proceed' );
 

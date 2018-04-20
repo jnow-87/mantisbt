@@ -54,6 +54,16 @@ div.dataTables_wrapper div.dataTables_info{
 	margin-bottom: 10px;
 }
 
+table.dataTable th,
+table.dataTable td{
+	padding: 5px 10px 5px 10px !important;
+	border-color: rgb(211, 211, 211) !important;
+}
+
+table{
+	border-color: rgb(211, 211, 211) !important;
+}
+
 table.transparent{
 	background: transparent !important;
 }

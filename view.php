@@ -123,7 +123,7 @@ function tab_links(){
 	$t_show_project = false;
 	$t_relationships = relationship_get_all($t_bug->id, $t_show_project);
 
-	table_begin(array('Link Type', 'Link Target', 'Target Status', 'Target Summary'), 'table-bordered table-condensed table-striped table-hover table-sortable');
+	table_begin(array('', 'Link Type', 'Link Target', 'Target Status', 'Target Summary'), 'table-bordered table-condensed table-hover table-sortable');
 
 	foreach($t_relationships as $t_rel){
 		$t_tgt_id = $t_rel->src_bug_id;
@@ -144,7 +144,7 @@ function tab_links(){
 				$t_sec_token = htmlspecialchars(form_security_param('bug_relationship_delete'));
 				$t_btn_delete = format_link(format_icon('fa-trash', 'red'), 'bug_relationship_delete.php', array('bug_id' => $t_bug->id, 'rel_id' => $t_rel->id, $t_sec_token => ''));
 
-				table_row(array($t_rel_name . format_hspace('5px') . $t_btn_delete, $t_tgt_link, $t_tgt_status_icon . $t_tgt_status, bug_format_summary($t_tgt_id, SUMMARY_CAPTION)));
+				table_row(array($t_btn_delete, $t_rel_name . format_hspace('5px'), $t_tgt_link, $t_tgt_status_icon . $t_tgt_status, bug_format_summary($t_tgt_id, SUMMARY_CAPTION)), '', array('width="20px"'));
 			}
 			else
 				table_row(array($t_rel_name, 'Access denied for current user', '', ''));
@@ -179,7 +179,7 @@ function tab_monitored(){
 			echo $t_link . format_hspace('10px');
 		}
 		else{
-			$t_buttons = array(array('icon' => 'fa-trash', 'href' => format_href('bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'user_id' => $t_id, $t_sec_token => '')), 'position' => 'right:4px'));
+			$t_buttons = array(array('icon' => 'fa-trash red', 'href' => format_href('bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'user_id' => $t_id, $t_sec_token => '')), 'position' => 'right:4px'));
 			input_hover_element('user_' . $t_id, $t_link, $t_buttons);
 		}
 	}
@@ -248,7 +248,7 @@ function format_tag_list(){
 	foreach($t_tags_attached as $t_tag){
 		$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
 		$t_link = format_link($t_tag['name'], 'tag_view_page.php', array('tag_id' => $t_tag['id']), '', 'margin-right:20px!important');
-		$t_buttons = array(array('icon' => 'fa-trash', 'href' => format_href('tag_detach.php', array('bug_id' => $f_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
+		$t_buttons = array(array('icon' => 'fa-trash red', 'href' => format_href('tag_detach.php', array('bug_id' => $f_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
 
 		$t_tags .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
 	}
