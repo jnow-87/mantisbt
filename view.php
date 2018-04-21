@@ -102,7 +102,7 @@ function tab_custom_fields(){
 function tab_links(){
 	global $t_bug;
 
-	echo '<form action="bug_relationship_add.php" method="post">';
+	echo '<form action="bug_relationship_add.php" method="post" class="input-hover-form input-hover-form-reload">';
 
 	/* input */
 	if(!bug_is_readonly($t_bug->id) && access_has_bug_level(config_get('update_bug_threshold'), $t_bug->id)){
@@ -169,7 +169,7 @@ function tab_monitored(){
 	$t_can_delete_others = access_has_bug_level(config_get('monitor_delete_others_bug_threshold'), $f_bug_id);
 	$t_user_links = '';
 
-	echo '<form action="bug_monitor_add.php" method="post">';
+	echo '<form action="bug_monitor_add.php" method="post" class="input-hover-form input-hover-form-reload">';
 
 	foreach($t_user_ids as $t_id){
 		$t_link = format_link(user_get_name($t_id), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
@@ -269,7 +269,7 @@ function format_tag_attach(){
 		$t_tag_names[$t_tag['name']] = $t_tag['id'];
 
 	return 
-		'<form action="tag_attach.php" method="post" class="form-inline">'
+		'<form action="tag_attach.php" method="post" class="form-inline input-hover-form input-hover-form-reload">'
 		. format_input_hidden('bug_id', $f_bug_id)
 		. '<span id="tag_attach_div">'
 		. form_security_field('tag_attach')
@@ -350,9 +350,9 @@ echo '<div class="col-md-9">';
 			// monitor buttons
 			if(!current_user_is_anonymous() && access_has_bug_level( config_get('monitor_bug_threshold'), $f_bug_id)){
 				if(user_is_monitoring_bug(auth_get_current_user_id(), $f_bug_id))
-					button_link('Unwatch', 'bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'bug_monitor_delete_token' => form_security_token('bug_monitor_delete')));
+					button_link('Unwatch', 'bug_monitor_delete.php', array('bug_id' => $f_bug_id, 'user_id' => auth_get_current_user_id(), 'bug_monitor_delete_token' => form_security_token('bug_monitor_delete')));
 				else
-					button_link('Watch', 'bug_monitor_add.php', array('bug_id' => $f_bug_id, 'bug_monitor_add_token' => form_security_token('bug_monitor_add')));
+					button_link('Watch', 'bug_monitor_add.php', array('bug_id' => $f_bug_id, 'user_string' => user_get_name(auth_get_current_user_id()), 'redirect' => true, 'bug_monitor_add_token' => form_security_token('bug_monitor_add')));
 			}
 
 			echo '</div>';

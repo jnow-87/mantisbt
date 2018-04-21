@@ -59,6 +59,7 @@ form_security_validate('bug_monitor_add');
 $f_bug_id = gpc_get_int('bug_id');
 $t_bug = bug_get($f_bug_id, true);
 $f_usernames = trim(gpc_get_string('user_string', ''));
+$f_redirect = gpc_get_bool('redirect', false);
 
 bug_ensure_exists($f_bug_id);
 
@@ -109,3 +110,6 @@ foreach($t_user_ids as $t_user_id)
 
 form_security_purge('bug_monitor_add');
 json_success('Attached users');
+
+if($f_redirect)
+	print_successful_redirect_to_bug( $f_bug_id );
