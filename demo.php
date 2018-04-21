@@ -21,6 +21,7 @@ require_api('elements_api.php');
 #		add persistent error message -> they need to be removed by the user
 #		allow shwoing statusbar messages when loading a page (php-based)
 #		handle markup for description, cf. plugins/BBCodePlus/files/markitup-init.js
+#		use user-defined filters for my_view.php
 #
 #
 #	bugs
