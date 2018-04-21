@@ -139,3 +139,7 @@ div.inline-page-frame{
 	position: relative;
 	top: 0px;
 }
+
+.dynamic-filter-expander{
+	cursor: pointer;
+}

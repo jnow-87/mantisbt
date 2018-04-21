@@ -56,6 +56,7 @@ require_api( 'print_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'string_api.php' );
 require_api( 'user_api.php' );
+require_api( 'elements_api.php' );
 
 
 /**
@@ -126,7 +127,7 @@ function filter_form_get_input( array $p_filter, $p_filter_target, $p_show_input
  */
 function filter_select_modifier( array $p_filter ) {
 	if( FILTER_VIEW_TYPE_ADVANCED == $p_filter['_view_type'] ) {
-		return ' multiple="multiple" size="10"';
+		return ' multiple="multiple"';
 	} else {
 		return '';
 	}
@@ -2481,6 +2482,159 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 	<?php
 }
 
+function filter_form_draw_inputs_column($p_filter){
+	/* prepare input */
+	$t_filter = filter_ensure_valid_filter($p_filter);
+	$t_view_type = $t_filter['_view_type'];
+	$t_source_query_id = isset($t_filter['_source_query_id']) ? (int)$t_filter['_source_query_id'] : -1;
+
+	// If it's a stored filter, linked to a secific project, use that project_id to render available fields
+	if($t_source_query_id > 0){
+		$t_project_id = (int)filter_get_field($t_source_query_id, 'project_id');
+
+		if(ALL_PROJECTS == $t_project_id){
+			// If all_projects, the filter can be used at any project, select the current project id
+			$t_project_id = helper_get_current_project();
+		} else if($t_project_id < 0){
+			// If filter is an unnamed filter, project id is stored as negative value.
+			$t_project_id = -1 * $t_project_id;
+		}
+	}
+	else
+		$t_project_id = helper_get_current_project();
+
+	// overload handler_id setting if user isn't supposed to see them (ref #6189)
+	if(!access_has_any_project(config_get('view_handler_threshold')))
+		$t_filter[FILTER_PROPERTY_HANDLER_ID] = array(META_FILTER_ANY,);
+
+	$t_dynamic_filter_expander_class = '';
+
+	if(config_get('use_dynamic_filters'))
+		$t_dynamic_filter_expander_class = ' class="dynamic-filter-expander"';
+
+	/* render a filter table row */
+	$func_table_row_filter = function($p_text, $p_id, $p_content = '') use ($t_filter){
+		table_row(
+			array(
+				$p_text . ':',
+				'<div id="' . $p_id . '_filter_target">' . ($p_content != '' ? $p_content : filter_form_get_input($t_filter, $p_id, false)) . '</div>'
+			),
+			'',
+			array(
+				'class="no-border bug-header" width="30%"',
+				'class="no-border dynamic-filter-expander" id="' . $p_id . '_filter"'
+			)
+		);
+	};
+
+	/* print filter for builtin fields */
+	section_begin('Details');
+		table_begin(array(), 'table-condensed no-border');
+
+		if($t_view_type == FILTER_VIEW_TYPE_ADVANCED)
+			$func_table_row_filter('Project', 'project_id');
+
+		$func_table_row_filter('Priority', 'show_priority');
+		$func_table_row_filter('Severity', 'show_severity');
+		$func_table_row_filter('Visibility', 'view_state');
+		$func_table_row_filter('Category', 'show_category');
+		$func_table_row_filter('Status', 'show_status');
+
+		if($t_view_type == FILTER_VIEW_TYPE_SIMPLE)
+			$func_table_row_filter('Hide Status', 'hide_status');
+
+		$func_table_row_filter('Resolution', 'show_resolution');
+		$func_table_row_filter('Links', 'relationship_type');
+
+		if(access_has_global_level(config_get('tag_view_threshold')))
+			$func_table_row_filter('Tags', 'tag_string');
+
+		table_end();
+	section_end();
+
+	section_begin('People');
+		table_begin(array(), 'table-condensed no-border');
+
+		$func_table_row_filter('Author', 'reporter_id');
+		$func_table_row_filter('Assignee', 'handler_id');
+		$func_table_row_filter('Monitored by', 'user_monitor');
+		$func_table_row_filter('Note from', 'note_user_id');
+
+		table_end();
+	section_end();
+
+	section_begin('Date and Time');
+		table_begin(array(), 'table-condensed no-border');
+
+		$func_table_row_filter('Date Submitted', 'do_filter_by_date');
+		$func_table_row_filter('Last Updated', 'do_filter_by_last_updated_date');
+
+		table_end();
+	section_end();
+
+	section_begin('Version Info');
+		table_begin(array(), 'table-condensed no-border');
+
+		if(config_get('enable_profiles') == ON)
+			$func_table_row_filter('Profile', 'show_profile');
+
+		$func_table_row_filter('Platform', 'platform');
+		$func_table_row_filter('OS', 'os');
+		$func_table_row_filter('OS Version', 'os_build');
+		$func_table_row_filter('Product Build', 'show_build');
+		$func_table_row_filter('Affected Version', 'show_version');
+		$func_table_row_filter('Target Version', 'show_target_version');
+		$func_table_row_filter('Fixed in Version', 'show_fixed_in_version');
+
+		table_end();
+	section_end();
+
+	/* print filter for custom fields */
+	$t_custom_fields = custom_field_get_linked_ids($t_project_id);
+	$t_accessible_custom_fields = array();
+
+	foreach($t_custom_fields as $t_cfid){
+		$t_cfdef = custom_field_get_definition($t_cfid);
+
+		if($t_cfdef['access_level_r'] <= current_user_get_access_level() && $t_cfdef['filter_by'])
+			$t_accessible_custom_fields[] = $t_cfdef;
+	}
+
+	if(config_get('filter_by_custom_fields') == ON && count($t_accessible_custom_fields) > 0){
+		section_begin('Custom Fields');
+			table_begin(array(), 'table-condensed no-border');
+
+			foreach($t_accessible_custom_fields as $t_cfdef){
+				ob_start();
+				print_filter_values_custom_field($t_filter, $t_cfdef['id']);
+				$t_content = ob_get_clean();
+
+				$func_table_row_filter(string_display_line(lang_get_defaulted($t_cfdef['name'])), 'custom_field_' . $t_cfdef['id'], $t_content);
+			}
+
+			table_end();
+		section_end();
+	}
+
+	/* print filter for plugin fields */
+	$t_plugin_filters = filter_get_plugin_filters();
+
+	if(count($t_plugin_filters) > 0){
+		section_begin('Plugin Fields');
+			table_begin(array(), 'table-condensed no-border');
+
+			foreach($t_plugin_filters as $t_field_name => $t_filter_object){
+				ob_start();
+				print_filter_values_plugin_field($t_filter, $t_field_name, $t_filter_object);
+				$t_content = ob_get_clean();
+
+				$func_table_row_filter(string_display_line($t_filter_object->title), string_attribute($t_field_name), $t_content);
+			}
+
+			table_end();
+		section_end();
+	}
+}
 
 /**
  * Class that extends TableGridLayout and implements the specific HTML output needed for the

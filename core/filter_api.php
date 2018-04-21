@@ -2390,12 +2390,9 @@ function filter_draw_selection_area($p_page_number){
 	input_hidden('page_number', $p_page_number);
 	input_hidden('view_type', $t_view_type);
 
-	echo format_label('Text:') . format_hspace('2px');
-	text('filter-search-txt', FILTER_PROPERTY_SEARCH, string_attribute($t_filter[FILTER_PROPERTY_SEARCH]), 'Search');
-
-	echo '<div class="table-responsive">';
-	filter_form_draw_inputs( $t_filter, true, false, 'view_filters_page.php' );
-	echo '</div>';
+	text('filter-search-txt', FILTER_PROPERTY_SEARCH, string_attribute($t_filter[FILTER_PROPERTY_SEARCH]), 'Search', 'input-xs', 'width:100%!important');
+	vspace('5px');
+	filter_form_draw_inputs_column($t_filter);
 
 	echo '</form>';
 }

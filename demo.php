@@ -17,11 +17,15 @@ require_api('elements_api.php');
 #
 #
 #	features
+#		add page titles
 #		add time estimate, time spent to bug view
 #		add persistent error message -> they need to be removed by the user
-#		allow shwoing statusbar messages when loading a page (php-based)
+#		allow showing statusbar messages when loading a page (php-based)
 #		handle markup for description, cf. plugins/BBCodePlus/files/markitup-init.js
 #		use user-defined filters for my_view.php
+#		remove distinction between simple and advanced filters
+#		maybe remove platform/os/os version, replacing them with custom fields
+#			add 'category' custom fields to define their location on the bug view page
 #
 #
 #	bugs
@@ -36,6 +40,11 @@ require_api('elements_api.php');
 #
 #		fix the delete input-hover button fpr tags that cause a line is not shown properly
 #		use proper functions for displaying custom fields, cf. TODOs in view.php and bug_change_status_page.php
+#		fix filter errors
+#			- relationship_type: shows 'error Bad Request' -- true before layout overhaul
+#			- hide_status: does not filter correctly -- true before layout overhaul
+#			- date submitted/updated: does not filter correctly -- true before layout overhaul
+#			- profile, platform, os, os version, product build: do not show the values actually used
 #
 #
 #	misc

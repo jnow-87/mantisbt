@@ -28,7 +28,7 @@ function hspace($p_space){
  *	@return	nothing
  */
 function vspace($p_space){
-	echo '<span style="margin-top:' . $p_space . '"></span>';
+	echo '<div style="margin-top:' . $p_space . '"></div>';
 }
 
 /**

@@ -34,6 +34,41 @@ if (a!= -1) {
 }
 style_display = 'block';
 
+function dynamic_filter_expander_click_hdlr(event) {
+	event.preventDefault();
+	var fieldID = $(this).attr('id');
+	var filter_id = $(this).data('filter_id');
+	var targetID = fieldID + '_target';
+	var viewType = $('#filters_form_open input[name=view_type]').val();
+	$('#' + targetID).html('<span class="dynamic-filter-loading">' + translations['loading'] + "</span>");
+	var params = 'view_type=' + viewType + '&filter_target=' + fieldID;
+	if( undefined !== filter_id ) {
+		params += '&filter_id=' + filter_id;
+	}
+
+	var trigger_el = this;
+
+	console.log("id: " + this.id);
+	$.ajax({
+		url: 'return_dynamic_filters.php',
+		data: params,
+		cache: false,
+		context: $('#' + targetID),
+		success: function(html) {
+			$(this).html(html);
+			$(this).find('input[type=text].datetimepicker').each(function(index, element) {
+				enableDateTimePicker(this);
+			});
+
+			console.log("rm " + trigger_el.id);
+			trigger_el.removeEventListener('click', dynamic_filter_expander_click_hdlr);
+		},
+		error: function(obj,status,error) {
+			$(this).html('<span class="error-msg">' + status + ': ' + error + '</span>');
+		}
+	});
+}
+
 $(document).ready( function() {
     $('.collapse-open').show();
     $('.collapse-closed').hide();
@@ -118,33 +153,13 @@ $(document).ready( function() {
 		});
 	});
 
-	$('a.dynamic-filter-expander').click(function(event) {
-		event.preventDefault();
-		var fieldID = $(this).attr('id');
-		var filter_id = $(this).data('filter_id');
-		var targetID = fieldID + '_target';
-		var viewType = $('#filters_form_open input[name=view_type]').val();
-		$('#' + targetID).html('<span class="dynamic-filter-loading">' + translations['loading'] + "</span>");
-		var params = 'view_type=' + viewType + '&filter_target=' + fieldID;
-		if( undefined !== filter_id ) {
-			params += '&filter_id=' + filter_id;
-		}
-		$.ajax({
-			url: 'return_dynamic_filters.php',
-			data: params,
-			cache: false,
-			context: $('#' + targetID),
-			success: function(html) {
-				$(this).html(html);
-                $(this).find('input[type=text].datetimepicker').each(function(index, element) {
-                    enableDateTimePicker(this);
-                });
-			},
-			error: function(obj,status,error) {
-				$(this).html('<span class="error-msg">' + status + ': ' + error + '</span>');
-			}
-		});
-	});
+	/* register dynamic-filter-expander click handlers */
+	// NOTE addEventListener() is required to be used, since removeEventListener()
+	//      doesn't work if .click() is used
+	var expander = document.getElementsByClassName('dynamic-filter-expander');
+	
+	for(var i=0; i<expander.length; i++)
+		expander[i].addEventListener('click', dynamic_filter_expander_click_hdlr);
 
 	$('input.autofocus:first, select.autofocus:first, textarea.autofocus:first').focus();
 
