@@ -45,6 +45,7 @@ require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'rss_api.php' );
+require_api( 'elements_api.php' );
 
 auth_ensure_user_authenticated();
 
@@ -112,6 +113,7 @@ function table_print_filter_row( $p_filter_id ) {
 	echo '<td>';
 	echo '<div class="pull-left">';
 	print_form_button( 'view_all_set.php', lang_get( 'apply_filter_button' ), array( 'type' => 3, 'source_query_id' =>  $p_filter_id ), /* security token */ OFF );
+
 	echo '</div>';
 	if( $t_editable ) {
 		echo '<div class="pull-left">';
@@ -122,6 +124,14 @@ function table_print_filter_row( $p_filter_id ) {
 		echo '</div>';
 	}
 	echo '</div>';
+
+	# Permalink
+	if(access_has_project_level(config_get('create_permalink_threshold'))){
+		$t_filter = filter_deserialize(filter_db_get_filter($p_filter_id));
+
+		button_link('Create Perma Link', 'permalink_page.php', array('url' => urlencode(filter_get_url($t_filter))));
+	}
+
 	echo '</td>';
 	echo '</tr>';
 }
