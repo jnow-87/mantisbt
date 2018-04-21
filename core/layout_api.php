@@ -503,12 +503,13 @@ function layout_navbar() {
 	// settings
 	$t_menu = array(
 		array('label' => 'My Account', 'data' => array('link' => 'account_page.php', 'icon' => 'fa-user')),
-		array('label' => 'Manage', 'data' => array('link' => 'manage_overview_page.php', 'icon' => 'fa-gears')),
+		array('label' => 'Filters', 'data' => array('link' => 'manage_filter_page.php', 'icon' => 'fa-filter')),
+		array('label' => 'Settings', 'data' => array('link' => 'manage_overview_page.php', 'icon' => 'fa-gears')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Logout', 'data' => array('link' => 'logout_page.php', 'icon' => 'fa-sign-out')),
 	);
 
-	dropdown_menu('Settings', $t_menu, 'grey', 'fa-sliders');
+	dropdown_menu('Manage', $t_menu, 'grey', 'fa-sliders');
 
 	/* issue search */
 	echo '<div class="input-xs">';
