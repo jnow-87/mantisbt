@@ -14,11 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once( 'core.php' );
-require_api( 'timeline_api.php' );
-require_api( 'elements_api.php' );
-
-define( 'MAX_EVENTS', 50 );
+require_once('core.php');
+require_api('timeline_api.php');
+require_api('elements_api.php');
 
 # Variables that are defined in parent script:
 #
@@ -26,86 +24,59 @@ define( 'MAX_EVENTS', 50 );
 #						If undefined, it's initialized as null.
 # $g_timeline_user		User id to limit timeline scope.
 #						If undefined, it's initialized as null.
-#
 
 
-/**
- * Print for display an array of events
- * @param array $p_events   Array of events to display
- * @return void
- */
-function timeline_print_events( array $p_events ) {
-	if(empty( $p_events )){
-		echo '<tr><td>No activity within time range</td></tr>';
-		return;
-	}
-
-	foreach( $p_events as $t_event ) {
-		echo '<tr><td>' . $t_event->html() . '</td></tr>';
-	}
-}
-
-if( !isset( $g_timeline_filter ) ) {
+if(!isset($g_timeline_filter))
 	$g_timeline_filter = null;
-}
-if( !isset( $g_timeline_user ) ) {
+
+if(!isset($g_timeline_user))
 	$g_timeline_user = null;
-}
 
-$f_days = gpc_get_int( 'days', 0 );
-$f_all = gpc_get_int( 'all', 0 );
-$t_max_events = $f_all ? 0 : MAX_EVENTS + 1;
 
-$t_end_time = time() - ( $f_days * SECONDS_PER_DAY );
-$t_start_time = $t_end_time - ( 7 * SECONDS_PER_DAY );
-$t_events = timeline_events( $t_start_time, $t_end_time, $t_max_events, $g_timeline_filter, $g_timeline_user );
+/* prepare */
+$f_days = gpc_get_int('days', 0);
 
-$t_collapse_block = is_collapsed( 'timeline' );
-$t_block_css = $t_collapse_block ? 'collapsed' : '';
-$t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
+$t_end_time = time() - ($f_days * SECONDS_PER_DAY);
+$t_start_time = $t_end_time - (7 * SECONDS_PER_DAY);
+$t_events = timeline_events($t_start_time, $t_end_time, 0, $g_timeline_filter, $g_timeline_user);
 
 $t_url_page = $_SERVER["PHP_SELF"];
 $t_url_params = $_GET;
-if( isset( $t_url_params['all'] ) ) {
-	unset( $t_url_params['all'] );
-}
+if(isset($t_url_params['all']))
+	unset($t_url_params['all']);
 
-$t_short_date_format = config_get( 'short_date_format' );
+$t_short_date_format = config_get('short_date_format');
 $t_url_params['days'] = $f_days + 7;
-$t_next_days = ( $f_days - 7 ) > 0 ? $f_days - 7 : 0;
-?>
+$t_next_days = ($f_days - 7) > 0 ? $f_days - 7 : 0;
 
-<!-- timeline table -->
-<?php
-	actionbar_begin();
-		echo '<div class="pull-right">';
-		label(date( $t_short_date_format, $t_start_time ), 'label-grey');
-		echo ' - ';
-		label(date( $t_short_date_format, $t_end_time ), 'label-grey');
-		hspace('10px');
 
-		$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
+/* main */
+actionbar_begin();
+	echo '<div class="pull-right">';
+	label(date($t_short_date_format, $t_start_time), 'label-grey');
+	echo ' - ';
+	label(date($t_short_date_format, $t_end_time), 'label-grey');
+	hspace('10px');
 
-		button_link('Prev', $t_href);
-		hspace('1px');
+	$t_href = $t_url_page . '?' . http_build_query($t_url_params);
 
-		if( $t_next_days != $f_days ) {
-			$t_url_params['days'] = $t_next_days;
-			$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-			button_link('Next', $t_href);
-		}
+	button_link('Prev', $t_href);
+	hspace('1px');
 
-		if(!$f_all && count( $t_events ) > MAX_EVENTS){
-			hspace('3px');
+	if($t_next_days != $f_days){
+		$t_url_params['days'] = $t_next_days;
+		$t_href = $t_url_page . '?' . http_build_query($t_url_params);
+		button_link('Next', $t_href);
+	}
+	echo '</div>';
+actionbar_end();
 
-			$t_url_params['all'] = 1;
-			$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-			button_link('More events', $t_href);
-		}
-		echo '</div>';
-	actionbar_end();
+table_begin(array(''), 'table-condensed table-datatable no-border', 'style="background:transparent"');
 
-if(!$f_all && count( $t_events ) > MAX_EVENTS)
-	$t_events = array_slice( $t_events, 0, MAX_EVENTS );
+if(empty($t_events))
+	echo '<tr><td class="center">No activity within time range</td></tr>';
 
-timeline_print_events( $t_events );
+foreach($t_events as $t_event)
+	echo '<tr><td>' . $t_event->html() . '</td></tr>';
+
+table_end();
