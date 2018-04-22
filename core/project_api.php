@@ -919,8 +919,16 @@ function project_list(){
 			continue;
 
 		$t_r[project_get_field($t_id, 'name')] = $t_id;
+
+		$t_sub_projects = user_get_accessible_subprojects($t_user_id, $t_id);
+
+		foreach($t_sub_projects as $t_sub_id){
+			if(!access_has_project_level($t_report_bug_threshold, $t_sub_id, $t_user_id))
+				continue;
+
+			$t_r[project_get_field($t_sub_id, 'name')] = $t_sub_id;
+		}
 	}
 
 	return $t_r;
 }
-

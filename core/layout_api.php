@@ -475,14 +475,24 @@ function layout_navbar() {
 	$t_menu[] = array('label' => 'All Project', 'data' => array('link' => helper_mantis_url( 'set_project.php' ) . '?project_id=' . ALL_PROJECTS, 'icon' => ''));
 	$t_menu[] = array('label' => 'divider', 'data' => '');
 
-	$t_project_ids = user_get_accessible_projects(auth_get_current_user_id());
+	$t_user_id = auth_get_current_user_id();
+	$t_project_ids = user_get_accessible_projects($t_user_id);
 	project_cache_array_rows( $t_project_ids );
 
-	foreach( $t_project_ids as $t_id ) {
-		$t_link = helper_mantis_url( 'set_project.php' ) . '?project_id=' . $t_id;
-		$t_name = string_attribute( project_get_field( $t_id, 'name' ) );
+	foreach($t_project_ids as $t_id){
+		$t_link = helper_mantis_url('set_project.php') . '?project_id=' . $t_id;
+		$t_name = string_attribute(project_get_field($t_id, 'name'));
 
 		$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
+
+		$t_sub_projects = user_get_accessible_subprojects($t_user_id, $t_id);
+
+		foreach($t_sub_projects as $t_sub_id){
+			$t_link = helper_mantis_url('set_project.php') . '?project_id=' . $t_sub_id;
+			$t_name = format_icon('fa-indent') . string_attribute(project_get_field($t_sub_id, 'name'));
+
+			$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
+		}
 	}
 
 	dropdown_menu('Projects', $t_menu, 'grey', 'fa-book');
