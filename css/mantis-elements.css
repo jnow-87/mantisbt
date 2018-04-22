@@ -32,7 +32,7 @@
 	width: 100%;
 }
 
-input.statusbar{
+p.statusbar{
 	border: 0;
 	border-radius: 4px !important;
 	margin: 0 0 0 0 !important;
@@ -40,19 +40,20 @@ input.statusbar{
 	text-align: center !important;
 	visibility: hidden;
 	display: none;
+	line-height: 25px;
 }
 
-input.statusbar-err{
+p.statusbar-err{
 	background: #f2dede !important;
 	color: #a94442 !important;
 }
 
-input.statusbar-ok{
+p.statusbar-ok{
 	background: #cae8bf !important;
 	color: #1d520a !important;
 }
 
-input.statusbar-warn{
+p.statusbar-warn{
 	background: #f7ecb5 !important;
 	color: #8a6d3b !important;
 }
@@ -95,7 +96,7 @@ div.inline-page-frame{
 	max-height: 70%;
 	border-style: solid;
 	border-width: 1px;
-	overflow: scroll;
+	overflow: auto;
 }
 
 /* confirm popup */

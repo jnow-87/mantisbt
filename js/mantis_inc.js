@@ -54,16 +54,16 @@ var show_time = 3000;	// time [ms] that a status bar message shall be displayed
  */
 function statusbar_print(type, msg){
 	if(type == 'error'){
-		var actionbar = document.getElementById('statusbar-err');
+		var statusbar = document.getElementById('statusbar-err');
 	}
 	else if(type == 'success'){
-		var actionbar = document.getElementById('statusbar-ok');
+		var statusbar = document.getElementById('statusbar-ok');
 	}
 	else if(type == 'warning'){
-		var actionbar = document.getElementById('statusbar-warn');
+		var statusbar = document.getElementById('statusbar-warn');
 	}
 	else if(type == 'html'){
-		var actionbar = document.getElementById('statusbar-warn');
+		var statusbar = document.getElementById('statusbar-warn');
 		var html = msg;
 		msg = 'Rendering result in container';
 	}
@@ -81,9 +81,9 @@ function statusbar_print(type, msg){
 
 	/* show timeout */
 	setTimeout(function(){
-			actionbar.style.display = 'block';
-			actionbar.style.visibility = 'visible';
-			actionbar.value = msg;
+			statusbar.style.display = 'block';
+			statusbar.style.visibility = 'visible';
+			statusbar.innerHTML = msg;
 
 			if(typeof html !== 'undefined')
 				inline_page_create(html);
@@ -93,8 +93,8 @@ function statusbar_print(type, msg){
 
 	/* hide timeout */
 	setTimeout(function(){
-			actionbar.style.visibility = 'hidden';
-			actionbar.style.display = 'none';
+			statusbar.style.visibility = 'hidden';
+			statusbar.style.display = 'none';
 		},
 		show_time + show_delay
 	);

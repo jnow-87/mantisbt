@@ -568,9 +568,9 @@ function layout_navbar() {
 
 function layout_statusbar(){
 	echo '<div class="statusbar">';
-	echo '<input type="text" id="statusbar-err" class="statusbar statusbar-err" readonly/>';
-	echo '<input type="text" id="statusbar-ok" class="statusbar statusbar-ok" readonly/>';
-	echo '<input type="text" id="statusbar-warn" class="statusbar statusbar-warn" readonly/>';
+	echo '<p id="statusbar-err" class="statusbar statusbar-err"/></p>';
+	echo '<p id="statusbar-ok" class="statusbar statusbar-ok"/></p>';
+	echo '<p id="statusbar-warn" class="statusbar statusbar-warn"/></p>';
 	echo '</div>';
 }
 
