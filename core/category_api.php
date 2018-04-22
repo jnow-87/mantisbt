@@ -557,6 +557,8 @@ function category_get_field( $p_category_id, $p_field_name ) {
  * @access public
  */
 function category_get_name( $p_category_id ) {
+	if($p_category_id == 0)
+		return '';
 	return category_get_field( $p_category_id, 'name' );
 }
 

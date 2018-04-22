@@ -188,7 +188,7 @@ function tab_monitored(){
 		echo 'No users watching this issue' . format_hspace('20px');
 
 	/* append user input */
-	$t_users = array_merge(array('' => 0), user_list($t_project_id));
+	$t_users = user_list($t_project_id);
 
 	foreach($t_user_ids as $t_id)
 		unset($t_users[user_get_name($t_id)]);

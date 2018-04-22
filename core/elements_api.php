@@ -32,6 +32,24 @@ function vspace($p_space){
 }
 
 /**
+ *	return required indicator if the given field is required
+ *
+ *	@param	string	$p_field_name		field name to check
+ *	@param	array	$p_required_fields	array of required fields
+ *
+ *	@return	a string containing the html element
+ */
+function format_required_indicator($p_field_name, $p_required_fields){
+	if(in_array($p_field_name, $p_required_fields))
+		return '<span class="required">*</span>';
+	return '';
+}
+
+function required_indicator($p_field_name, $p_required_fields){
+	echo format_required_indicator($p_field_name, $p_required_fields);
+}
+
+/**
  *	format a label
  *
  *	@param	string	$p_name		the label name

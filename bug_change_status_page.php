@@ -62,12 +62,6 @@ require_api('version_api.php');
 require_api('elements_api.php');
 
 
-function required_indicator($p_field_name, $p_required_fields){
-	if(in_array($p_field_name, $p_required_fields))
-		return '<span class="required">*</span>';
-}
-
-
 $f_bug_id = gpc_get_int('id');
 $t_bug = bug_get($f_bug_id);
 
@@ -191,19 +185,19 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 	table_begin(array(), 'no-border');
 		// priority
 		if($t_show_priority){
-			$t_required = required_indicator('priority', $t_required_fields);
+			$t_required = format_required_indicator('priority', $t_required_fields);
 			table_row_bug_info_long($t_required . 'Priority:', format_select('priority', 'priority', priority_list(), get_enum_element('priority', $t_bug->priority)), '10%');
 		}
 
 		// severity
 		if($t_show_severity){
-			$t_required = required_indicator('severity', $t_required_fields);
+			$t_required = format_required_indicator('severity', $t_required_fields);
 			table_row_bug_info_long($t_required . 'Severity:', format_select('severity', 'severity', severity_list(), get_enum_element('severity', $t_bug->severity)), '10%');
 		}
 
 		// assignee
 		if($t_show_assignee && access_has_bug_level(config_get('update_bug_assign_threshold', config_get('update_bug_threshold')), $f_bug_id)){
-			$t_required = required_indicator('handler_id', $t_required_fields);
+			$t_required = format_required_indicator('handler_id', $t_required_fields);
 			$t_suggested_handler_id = $t_bug->handler_id;
 
 			if($t_suggested_handler_id == NO_USER && access_has_bug_level(config_get('handle_bug_threshold'), $f_bug_id))
@@ -214,19 +208,19 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 
 		// target version
 		if($t_show_target_version){
-			$t_required = required_indicator('target_version', $t_required_fields);
+			$t_required = format_required_indicator('target_version', $t_required_fields);
 			table_row_bug_info_long($t_required . 'Target Version:', format_select('target_version', 'target_version', $t_versions_unreleased, $t_bug->target_version), '10%');
 		}
 
 		// fixed version
 		if($t_show_fixed_in_version){
-			$t_required = required_indicator('fixed_in_version', $t_required_fields);
+			$t_required = format_required_indicator('fixed_in_version', $t_required_fields);
 			table_row_bug_info_long($t_require . 'Fixed in Version:', format_select('fixed_in_version', 'fixed_in_version', $t_versions_unreleased, $t_bug->fixed_in_version), '10%');
 		}
 
 		// due date
 		if($t_show_due_date && $t_can_update_due_date){
-			$t_required = required_indicator('due_date', $t_required_fields);
+			$t_required = format_required_indicator('due_date', $t_required_fields);
 			$t_date_to_display = '';
 
 			if(!date_is_null($t_bug->due_date))
@@ -237,7 +231,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 
 		// resolution
 		if($t_show_resolution){
-			$t_required = required_indicator('resolution', $t_required_fields);
+			$t_required = format_required_indicator('resolution', $t_required_fields);
 
 			$t_resolution = ($t_bug->resolution >= $t_resolution_fixed)? $t_bug->resolution : $t_resolution_fixed;
 			$t_relationships = relationship_get_all_src($f_bug_id);
@@ -253,7 +247,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 
 		// time tracking
 		if($t_show_time_tracking && config_get('time_tracking_enabled') && access_has_bug_level(config_get('time_tracking_edit_threshold'), $f_bug_id)){
-			$t_required = required_indicator('time_tracking', $t_required_fields);
+			$t_required = format_required_indicator('time_tracking', $t_required_fields);
 			table_row_bug_info_long($t_required . 'Work Log:', format_text('time_tracking', 'time_tracking', '', 'hh:mm', 'input-xs', '', 'size=5'), '10%');
 		}
 
@@ -271,7 +265,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 
 			// display field
 			$t_def = custom_field_get_definition($t_id);
-			$t_required = required_indicator($t_def['name'], $custom_fields_required);
+			$t_required = format_required_indicator($t_def['name'], $custom_fields_required);
 			$t_value = custom_field_get_value($t_def, $f_bug_id);
 
 			// TODO use print_custom_field_input() for displaying custom fields
@@ -281,7 +275,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 
 		// notes
 		if($t_show_notes){
-			$t_required = required_indicator('notes', $t_required_fields);
+			$t_required = format_required_indicator('notes', $t_required_fields);
 			table_row_bug_info_long($t_required . 'Note:', format_textarea('bugnote_text', 'bugnote_text', '', 'input-xs', 'width:100% !important;height:100px;'), '10%');
 		}
 

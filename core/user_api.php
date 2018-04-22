@@ -1741,10 +1741,12 @@ function user_list($p_project_id, $p_reported_id = '', $p_meta_user = false){
 	$t_user_names = array();
 
 	if($p_meta_user){
-		$t_user_names['author'] = $p_reported_id;
-		$t_user_names['me'] = auth_get_current_user_id();
-		$t_user_names['unassigned'] = 0;
+		$t_user_names['[author]'] = $p_reported_id;
+		$t_user_names['[me]'] = auth_get_current_user_id();
+		$t_user_names['[unassigned]'] = 0;
 	}
+	else
+		$t_user_names[''] = 0;
 
 	foreach($t_users as $t_id => $t_user)
 		$t_user_names[$t_user['username']] = $t_id;
