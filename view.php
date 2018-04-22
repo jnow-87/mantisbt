@@ -56,6 +56,30 @@ require_api('bugnote_api.php');
 
 require_css('status_config.php');
 
+/* create hidden custom form inputs */
+function hidden_custom_fields(){
+	global $f_bug_id;
+	global $t_bug;
+
+	$t_related_custom_field_ids = custom_field_get_linked_ids($t_bug->project_id);
+	$custom_fields_show = config_get('bug_custom_fields_show')['view'];
+
+	custom_field_cache_values(array($t_bug->id) , $t_related_custom_field_ids);
+
+	foreach($t_related_custom_field_ids as $t_id) {
+		if(!custom_field_has_read_access($t_id, $f_bug_id))
+			continue;
+
+		$t_def = custom_field_get_definition($t_id);
+
+		# ignore field if it shall not be shown
+		if(!in_array($t_def['name'], $custom_fields_show))
+			continue;
+
+		input_hidden('custom_field_' . $t_id, custom_field_get_value($t_def, $f_bug_id));
+		input_hidden('custom_field_' . $t_id . '_presence', 0);
+	}
+}
 
 /* callback to render custom fields */
 function tab_custom_fields(){
@@ -325,6 +349,7 @@ echo '<div class="col-md-9">';
 		input_hidden('id', $f_bug_id);
 		input_hidden('bug_id', $f_bug_id);
 		input_hidden('last_updated', $t_bug->last_updated);
+		hidden_custom_fields();
 
 		echo form_security_field('bug_update');
 
@@ -450,6 +475,7 @@ echo '<div class="col-md-3">';
 	input_hidden('id', $f_bug_id);
 	input_hidden('bug_id', $f_bug_id);
 	input_hidden('last_updated', $t_bug->last_updated);
+	hidden_custom_fields();
 
 	echo form_security_field('bug_update');
 
