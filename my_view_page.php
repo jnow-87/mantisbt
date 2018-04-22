@@ -208,7 +208,7 @@ $t_url_link_parameters['my_comments'] = FILTER_PROPERTY_NOTE_USER_ID. '=' . META
 /**
  *	actual content
  */
-page_title('My View');
+page_title('Dashboard');
 
 echo '<div class="col-md-7">';
 

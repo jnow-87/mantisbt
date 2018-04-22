@@ -899,3 +899,28 @@ function project_format_id( $p_project_id ) {
 	$t_padding = config_get( 'display_project_padding' );
 	return( utf8_str_pad( $p_project_id, $t_padding, '0', STR_PAD_LEFT ) );
 }
+
+/**
+ * get list of projects the current user has access to
+ *
+ * @return array with project names and ids
+ */
+function project_list(){
+	$t_user_id = auth_get_current_user_id();
+	$t_project_ids = user_get_accessible_projects($t_user_id);
+	project_cache_array_rows($t_project_ids);
+
+	$t_r = array();
+
+	foreach($t_project_ids as $t_id){
+		$t_report_bug_threshold = config_get('report_bug_threshold', null, $t_user_id, $t_id);
+		
+		if(!access_has_project_level($t_report_bug_threshold, $t_id, $t_user_id))
+			continue;
+
+		$t_r[project_get_field($t_id, 'name')] = $t_id;
+	}
+
+	return $t_r;
+}
+

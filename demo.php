@@ -39,7 +39,7 @@ require_api('elements_api.php');
 #				- input fields cannot be hovered
 #
 #		fix the delete input-hover button fpr tags that cause a line is not shown properly
-#		use proper functions for displaying custom fields, cf. TODOs in view.php and bug_change_status_page.php
+#		use proper functions for displaying custom fields, cf. TODOs in view.php, bug_change_status_page.php, bug_report_page.php
 #		fix filter errors
 #			- relationship_type: shows 'error Bad Request' -- true before layout overhaul
 #			- hide_status: does not filter correctly -- true before layout overhaul

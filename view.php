@@ -366,7 +366,7 @@ echo '<div class="col-md-9">';
 
 			// clone button
 			if(access_has_bug_level(config_get('report_bug_threshold'), $f_bug_id))
-				button_link('Clone', 'bug_report_page.php', array('id' => $f_bug_id));
+				button_link('Clone', 'bug_report.php', array('id' => $f_bug_id, 'bug_report_token' => form_security_token('bug_report')), 'inline-page-link');
 
 			// move button
 			if(!bug_is_readonly($f_bug_id) && config_get('view_issue_button_move'))

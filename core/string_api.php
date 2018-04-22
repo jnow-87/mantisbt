@@ -619,23 +619,6 @@ function string_restore_valid_html_tags( $p_string, $p_multiline = true ) {
 }
 
 /**
- * return the name of a bug page
- * $p_action should be something like 'view', 'update', or 'report'
- * @param string  $p_action  A valid action being performed - currently one of view, update or report.
- * @return string
- */
-function string_get_bug_page( $p_action ) {
-	switch( $p_action ) {
-		case 'view':
-			return 'bug_view_page.php';
-		case 'report':
-			return 'bug_report_page.php';
-	}
-
-	trigger_error( ERROR_GENERIC, ERROR );
-}
-
-/**
  * return an href anchor that links to a bug VIEW page for the given bug
  * @param integer $p_bug_id	     A bug identifier.
  * @param boolean $p_detail_info Whether to include more detailed information (e.g. title attribute / project) in the returned string.
@@ -758,22 +741,6 @@ function string_get_bugnote_view_url_with_fqdn( $p_bug_id, $p_bugnote_id ) {
  */
 function string_get_bug_view_url_with_fqdn( $p_bug_id ) {
 	return config_get( 'path' ) . string_get_bug_view_url( $p_bug_id );
-}
-
-/**
- * return an href anchor that links to a bug REPORT page
- * @return string
- */
-function string_get_bug_report_link() {
-	return '<a href="' . helper_mantis_url( string_get_bug_report_url() ) . '">' . lang_get( 'report_bug_link' ) . '</a>';
-}
-
-/**
- * return the name of a bug REPORT page
- * @return string
- */
-function string_get_bug_report_url() {
-	return string_get_bug_page( 'report' );
 }
 
 /**

@@ -8,18 +8,18 @@
 #
 # MantisBT is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
+# along with MantisBT. If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * This file POSTs data to report_bug.php
  *
  * @package MantisBT
- * @copyright Copyright 2000 - 2002  Kenzaburo Ito - kenito@300baud.org
- * @copyright Copyright 2002  MantisBT Team - mantisbt-dev@lists.sourceforge.net
+ * @copyright Copyright 2000 - 2002 Kenzaburo Ito - kenito@300baud.org
+ * @copyright Copyright 2002 MantisBT Team - mantisbt-dev@lists.sourceforge.net
  * @link http://www.mantisbt.org
  *
  * @uses core.php
@@ -51,508 +51,116 @@
 
 $g_allow_browser_cache = 1;
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'collapse_api.php' );
-require_api( 'columns_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'custom_field_api.php' );
-require_api( 'date_api.php' );
-require_api( 'error_api.php' );
-require_api( 'event_api.php' );
-require_api( 'file_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'profile_api.php' );
-require_api( 'project_api.php' );
-require_api( 'relationship_api.php' );
-require_api( 'string_api.php' );
-require_api( 'utility_api.php' );
-require_api( 'version_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('bug_api.php');
+require_api('collapse_api.php');
+require_api('columns_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('custom_field_api.php');
+require_api('date_api.php');
+require_api('error_api.php');
+require_api('event_api.php');
+require_api('file_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('profile_api.php');
+require_api('project_api.php');
+require_api('relationship_api.php');
+require_api('string_api.php');
+require_api('utility_api.php');
+require_api('version_api.php');
+require_api('elements_api.php');
 
 
-function table_empty($p_cols){
-	echo '<td colspan="', $p_cols, '">&#160;</td>';
-}
+$f_resp_type = RESP_JSON;
+$t_fields_display = array('project_id', 'description', 'summary', 'category_id');
+$t_custom_fields_display = array();
 
+json_prepare();
 
-function required_indicator($p_field_name, $p_required_fields){
-	if(in_array($p_field_name, $p_required_fields)){
-		echo '<span class="required">*</span>';
-	}
-}
+/* get project id */
+$t_project_id = helper_get_current_project();
+$t_default_project_id = user_pref_get_pref(auth_get_current_user_id(), 'default_project');
 
+if($t_project_id == ALL_PROJECTS)
+	$t_project_id = $t_default_project_id;
 
-$f_master_bug_id = gpc_get_int( 'id', 0 );
+if($t_project_id == ALL_PROJECTS)
+	report_error('Select a project first', '', $f_resp_type);
 
-if( $f_master_bug_id > 0 ) {
-	# master bug exists...
-	bug_ensure_exists( $f_master_bug_id );
+if(!project_exists($t_project_id))
+	report_error('Current/default project does not exists', '', $f_resp_type);
 
-	# master bug is not read-only...
-	if( bug_is_readonly( $f_master_bug_id ) ) {
-		error_parameters( $f_master_bug_id );
-		trigger_error( ERROR_BUG_READ_ONLY_ACTION_DENIED, ERROR );
-	}
-
-	$t_bug = bug_get( $f_master_bug_id, true );
-
-	#@@@ (thraxisp) Note that the master bug is cloned into the same project as the master, independent of
-	#       what the current project is set to.
-	if( $t_bug->project_id != helper_get_current_project() ) {
-		# in case the current project is not the same project of the bug we are viewing...
-		# ... override the current project. This to avoid problems with categories and handlers lists etc.
-		$g_project_override = $t_bug->project_id;
-		$t_changed_project = true;
-	} else {
-		$t_changed_project = false;
-	}
-
-	access_ensure_project_level( config_get( 'report_bug_threshold' ) );
-
-	$f_build				= $t_bug->build;
-	$f_platform				= $t_bug->platform;
-	$f_os					= $t_bug->os;
-	$f_os_build				= $t_bug->os_build;
-	$f_product_version		= $t_bug->version;
-	$f_handler_id			= $t_bug->handler_id;
-
-	$f_category_id			= $t_bug->category_id;
-	$f_severity				= $t_bug->severity;
-	$f_priority				= $t_bug->priority;
-	$f_summary				= $t_bug->summary;
-	$f_description			= $t_bug->description;
-	$f_due_date				= $t_bug->due_date;
-
-	$t_project_id			= $t_bug->project_id;
-} else {
-	# Get Project Id and set it as current
-	$t_current_project = helper_get_current_project();
-	$t_project_id = gpc_get_int( 'project_id', $t_current_project );
-
-	# If all projects, use default project if set
-	$t_default_project = user_pref_get_pref( auth_get_current_user_id(), 'default_project' );
-	if( ALL_PROJECTS == $t_project_id && ALL_PROJECTS != $t_default_project ) {
-		$t_project_id = $t_default_project;
-	}
-
-	if( ( ALL_PROJECTS == $t_project_id || project_exists( $t_project_id ) )
-		&& $t_project_id != $t_current_project
-		&& project_enabled( $t_project_id ) ) {
-		helper_set_current_project( $t_project_id );
-		# Reloading the page is required so that the project browser
-		# reflects the new current project
-		print_header_redirect( $_SERVER['REQUEST_URI'], true, false, true );
-	}
-
-	# New issues cannot be reported for the 'All Project' selection
-	if( ALL_PROJECTS == $t_current_project ) {
-		print_header_redirect( 'login_select_proj_page.php?ref=bug_report_page.php' );
-	}
-
-	# Check for bug report threshold
-	if( !access_has_project_level( config_get( 'report_bug_threshold' ) ) ) {
-		# If can't report on current project, show project selector if there is any other allowed project
-		access_ensure_any_project_level( 'report_bug_threshold' );
-		print_header_redirect( 'login_select_proj_page.php?ref=bug_report_page.php' );
-	}
-	access_ensure_project_level( config_get( 'report_bug_threshold' ) );
-
-	$f_build				= gpc_get_string( 'build', '' );
-	$f_platform				= gpc_get_string( 'platform', '' );
-	$f_os					= gpc_get_string( 'os', '' );
-	$f_os_build				= gpc_get_string( 'os_build', '' );
-	$f_product_version		= gpc_get_string( 'product_version', '' );
-	$f_handler_id			= gpc_get_int( 'handler_id', 0 );
-
-	$f_category_id			= gpc_get_int( 'category_id', 0 );
-	$f_severity				= gpc_get_int( 'severity', (int)config_get( 'default_bug_severity' ) );
-	$f_priority				= gpc_get_int( 'priority', (int)config_get( 'default_bug_priority' ) );
-	$f_summary				= gpc_get_string( 'summary', '' );
-	$f_description			= gpc_get_string( 'description', '' );
-	$f_due_date				= gpc_get_string( 'due_date', date_strtotime( config_get( 'due_date_default' ) ) );
-
-	if( $f_due_date == '' ) {
-		$f_due_date = date_get_null();
-	}
-
-	$t_changed_project		= false;
-}
-
-$t_fields = config_get( 'bug_fields_show' )['report'];
-
+/* get required fields */
 $t_required_fields = config_get('bug_fields_required')['report'];
+$t_required_custom_fields = config_get('bug_custom_fields_required')['report'];
 
-$t_show_platform = in_array( 'platform', $t_fields ) || in_array('platform', $t_required_fields);
-$t_platform_str = $t_show_platform ? lang_get( 'platform' ) : '';
+// check if any fields are configured required but not displayed a this page
+$t_missing_fields = array_merge(
+	array_diff($t_required_fields, $t_fields_display),
+	array_diff($t_required_custom_fields, $t_custom_fields_display)
+);
 
-$t_show_os = in_array( 'os', $t_fields ) || in_array('os', $t_required_fields);
-$t_os_str = $t_show_os ? lang_get( 'os' ) : '';
-$t_os_version_str = $t_show_os ? lang_get( 'os_version' ) : '';
+if(count($t_missing_fields) > 0){
+	$t_missing_fields_str = '';
 
-$t_show_tags = in_array( 'tags', $t_fields ) && access_has_project_level(config_get( 'tag_attach_threshold', /* default */ null, /* user */ null, $t_project_id ), $t_project_id );
+	foreach($t_missing_fields as $t_field)
+		$t_missing_fields_str .= '\'' . $t_field . '\' ';
 
-$t_show_product_version = in_array( 'version', $t_fields ) || in_array('version', $t_required_fields);
-$t_product_version_str = $t_show_product_version ? lang_get( 'product_version' ) : '';
-
-$t_show_product_build = in_array( 'build', $t_fields ) || in_array('build', $t_required_fields);
-$t_product_build_str = $t_show_product_build ?	lang_get( 'product_build' ) : '';
-
-$t_show_target_version = (in_array( 'target_version', $t_fields ) || in_array('target_version', $t_required_fields)) && access_has_project_level( config_get( 'roadmap_update_threshold' ) );
-$t_target_version_str = $t_show_target_version ? lang_get( 'target_version' ) : '';
-
-$t_show_view_state = (in_array( 'view_state', $t_fields ) || in_array('view_state', $t_required_fields)) && access_has_project_level( config_get( 'set_view_status_threshold' ) );
-$t_view_status_str = $t_show_view_state ? lang_get( 'view_status' ) : '';
-
+	report_error(
+		'The following fields are configured as required fields but not supported when reporting an issue: '
+		. $t_missing_fields_str,
+		'',
+		$f_resp_type
+	);
+}
 
 
-# don't index bug report page
+/* page content */
+// don't index bug report page
 html_robots_noindex();
 
-layout_page_header( lang_get( 'report_bug_link' ) );
+layout_inline_page_begin();
+page_title('Report Issue');
 
-layout_page_begin( __FILE__ );
+echo '<form action="bug_report.php?posted=1" method="post" class="input-hover-form input-hover-form-noreload">';
 
-$t_form_encoding = '';
-?>
-<div class="col-md-6-left col-xs-12">
-<form id="report_bug_form"
-	method="post" <?php echo $t_form_encoding; ?>
-	action="bug_report.php?posted=1"
->
-<?php echo form_security_field( 'bug_report' ) ?>
-<input type="hidden" name="d" value="<?php echo $f_master_bug_id ?>" />
-<input type="hidden" name="project_id" value="<?php echo $t_project_id ?>" />
-<div class="widget-box widget-color-blue2">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-				<i class="ace-icon fa fa-edit"></i>
-				<?php echo lang_get( 'enter_report_details_title' ) ?>
-		</h4>
-	</div>
-<div class="widget-body dz-clickable">
-<div class="widget-main no-padding">
-<div class="table-responsive">
-<table class="table table-bordered table-condensed">
-<?php
-	event_signal( 'EVENT_REPORT_BUG_FORM_TOP', array( $t_project_id ) );
-?>
+input_hidden('project_id', $t_project_id);
+input_hidden('resp_type', RESP_HTML);
 
+event_signal('EVENT_REPORT_BUG_FORM_TOP', array());
 
-<?php # summary ?>
-<tr>
-	<th class="category" width="15%"><?php required_indicator('summary', $t_required_fields); print_documentation_link( 'summary' ); ?></th>
-	<td colspan=5>
-		<input class="input-xs" <?php echo helper_get_tab_index() ?> type="text" id="summary" name="summary" size="80" maxlength="128" value="<?php echo string_attribute( $f_summary ) ?>" />
-	</td>
-</tr>
+echo form_security_field('bug_report');
 
+echo '<div class="col-md-12">';
+	/* actionbar */
+	actionbar_begin();
+		echo '<div class="pull-left">';
+		button('Create', 'create', 'submit');
+		echo '</div>';
+	actionbar_end();
 
-<?php # description ?>
-<tr>
-	<th class="category" colspan=6><?php required_indicator('description', $t_required_fields); print_documentation_link( 'description' ); ?></th></tr><tr>
-	<td colspan=6>
-		<textarea class="form-control" <?php echo helper_get_tab_index() ?> id="description" name="description" cols="80" rows="10"><?php echo string_textarea( $f_description ) ?></textarea>
-	</td>
-</tr>
+	echo '<div class="row">';
+	table_begin(array(), 'no-border');
+	table_row_bug_info_long('Project:', project_get_name($t_project_id), '7%');
+	table_row_bug_info_long(format_required_indicator('category_id', $t_required_fields) . 'Type:', format_select('category_id', 'category_id', category_list($t_project_id), ''), '7%');
+	table_row_bug_info_long(format_required_indicator('summary', $t_required_fields) . 'Summary:', format_text('summary', 'summary', string_attribute($f_summary), '', 'input-xs', 'width:100%!important'), '7%');
+	table_row_bug_info_long(format_required_indicator('description', $t_required_fields) . 'Description:', format_textarea('description', 'description', string_textarea($f_description), 'input-xs', 'width:100% !important;height:100px'), '7%');
 
+	table_row_bug_info_long(' ', '<span class="required pull-right"> * required</span>', '10%');
+	table_end();
+	echo '</div>';
+echo '</div>';
 
-<?php
-	# relation to parent
-	if( $f_master_bug_id > 0 ) {
-		# spacer
-		echo '<tr class="spacer"><td colspan="6"></td></tr>';
-		echo '<tr class="hidden"></tr>';
-?>
-	<tr>
-		<th class="category">	<?php echo lang_get( 'relationship_with_parent' ) . ' ' . bug_format_id( $f_master_bug_id ) ?></th>
-		<td colspan="5"><?php relationship_list_box( config_get( 'default_bug_relationship_clone' ), "rel_type", false, true ) ?></td>
-	</tr>
-<?php
-	}
-?>
+event_signal('EVENT_REPORT_BUG_FORM', array());
 
+echo '</form>';
 
-<?php # spacer ?>
-<tr class="spacer"><td colspan="6"></td></tr>
-<tr class="hidden"></tr>
-
-
-<?php # line ?>
-<tr>
-	<?php # priority ?>
-	<th class="category"><?php required_indicator('priority', $t_required_fields); print_documentation_link( 'priority' ); ?></th>
-	<td width="15%">
-		<select <?php echo helper_get_tab_index() ?> id="priority" name="priority" class="input-xs"><?php print_enum_string_option_list( 'priority', $f_priority, 1) ?></select>
-	</td>
-
-	<?php # category ?>
-	<th class="category" width="15%"><?php required_indicator('category_id', $t_required_fields); print_documentation_link( 'category' ); ?></th>
-	<td width="15%">
-		<?php if( $t_changed_project ) {
-			echo '[' . project_get_field( $t_bug->project_id, 'name' ) . '] ';
-		} ?>
-		<select <?php echo helper_get_tab_index() ?> id="category_id" name="category_id" class="autofocus input-xs">
-			<?php
-				print_category_option_list( $f_category_id );
-			?>
-		</select>
-	</td>
-
-	<?php # due date ?>
-	<?php
-	$t_date_to_display = '';
-
-	if( !date_is_null( $f_due_date ) ) {
-		$t_date_to_display = date( config_get( 'normal_date_format' ), $f_due_date );
-	}
-	?>
-		<th class="category" width="17%"><?php required_indicator('due_date', $t_required_fields); print_documentation_link( 'due_date' ); ?></th>
-		<td width="100%">
-			<?php echo '<input ' . helper_get_tab_index() . ' type="text" id="due_date" name="due_date" class="datetimepicker" ' .
-				'data-picker-locale="' . lang_get_current_datetime_locale() .
-				'" data-picker-format="' . convert_date_format_to_momentjs( config_get( 'normal_date_format' ) ) . '" ' .
-				'size="16" maxlength="20" value="' . $t_date_to_display . '" />' ?>
-			<i class="fa fa-calendar fa-xlg datetimepicker"></i>
-		</td>
-</tr>
-
-
-<?php # line ?>
-<tr>
-	<?php # severity ?>
-	<th class="category"><?php required_indicator('severity', $t_required_fields); print_documentation_link( 'severity' ); ?></th>
-	<td>
-		<select <?php echo helper_get_tab_index() ?> id="severity" name="severity" class="input-xs">
-			<?php print_enum_string_option_list( 'severity', $f_severity, 1) ?>
-		</select>
-	</td>
-
-	<?php # assignee ?>
-	<th class="category"><?php required_indicator('handler_id', $t_required_fields); echo lang_get( 'email_handler' ); ?></th>
-	<td>
-		<select <?php echo helper_get_tab_index() ?> id="handler_id" name="handler_id" class="input-xs">
-			<option value="0" selected="selected"></option>
-			<?php print_assign_to_option_list( $f_handler_id ) ?>
-		</select>
-	</td>
-
-	<?php table_empty(2); ?>
-</tr>
-
-
-<?php # spacer ?>
-<?php if($t_show_product_build || $t_show_platform || $t_show_view_state || $t_show_product_version || $t_show_os || $t_show_target_version || $t_show_tags){ ?>
-<tr class="spacer"><td colspan="6"></td></tr>
-<tr class="hidden"></tr>
-<?php } ?>
-
-
-<?php # optional line ?>
-<?php if($t_show_product_build || $t_show_platform || $t_show_view_state){ ?>
-<tr>
-	<?php # product build ?>
-	<th class="category"><?php required_indicator('build', $t_required_fields); echo $t_product_build_str; ?></th>
-	<td>
-		<?php if($t_show_product_build){ ?>
-		<input class="input-xs" <?php echo helper_get_tab_index() ?> type="text" id="build" name="build" size="16" maxlength="32" value="<?php echo string_attribute( $f_build ) ?>" />
-		<?php }?>
-	</td>	
-	
-	<?php # platform ?>
-	<th class="category"><?php required_indicator('platform', $t_required_fields); echo $t_platform_str; ?></th>
-	<td>
-		<?php if($t_show_platform){ ?>
-		<?php if( config_get( 'allow_freetext_in_profile_fields' ) == OFF ) { ?>
-		<select id="platform" name="platform" class="input-xs">
-			<option value=""></option>
-			<?php print_platform_option_list( $f_platform ); ?>
-		</select>
-		<?php
-			} else {
-				echo '<input class="typeahead input-xs" type="text" id="platform" name="platform" autocomplete = "off" size="16" maxlength="32" tabindex="' . helper_get_tab_index_value() . '" value="' . string_attribute( $f_platform ) . '" />';
-			}
-		?>
-		<?php }?>
-	</td>
-
-	<?php # view status ?>
-	<th class="category">
-		<?php required_indicator('view_state', $t_required_fields); echo $t_view_status_str; ?>
-	</th>
-	<td>
-		<?php if($t_show_view_state){ ?>
-		<?php
-		echo '<select ' . helper_get_tab_index() . ' id="view_state" name="view_state" class="input-xs">';
-		print_enum_string_option_list( 'view_state' );
-		echo '</select>';
-		?>
-		<?php }?>
-	</td>
-</tr>
-
-<?php } ?>
-
-<?php # optional line ?>
-<?php if($t_show_product_version || $t_show_os){ ?>
-<tr>
-	<?php # product version?>
-	<th class="category"><?php required_indicator('version', $t_required_fields); echo $t_product_version_str; ?></th>
-	<td>
-		<?php if($t_show_product_version){ ?>
-		<select <?php echo helper_get_tab_index() ?> id="product_version" name="product_version" class="input-xs">
-			<?php print_version_option_list( $f_product_version, $t_project_id, $t_product_version_released_mask ) ?>
-		</select>
-		<?php } ?>
-	</td>
-
-	<?php # operating system?>
-	<th class="category"><?php required_indicator('os', $t_required_fields); echo $t_os_str; ?></th>
-	<td>
-		<?php if($t_show_os){ ?>
-		<?php if( config_get( 'allow_freetext_in_profile_fields' ) == OFF ) { ?>
-		<select id="os" name="os" class="input-xs">
-			<option value=""></option>
-			<?php print_os_option_list( $f_os ); ?>
-		</select>
-		<?php
-			} else {
-				echo '<input class="typeahead input-xs" type="text" id="os" name="os" autocomplete = "off" size="16" maxlength="32" tabindex="' . helper_get_tab_index_value() . '" value="' . string_attribute( $f_os ) . '" />';
-			}
-		}
-		?>
-	</td>
-
-	<?php table_empty(2); ?>
-</tr>
-<?php } ?>
-
-
-<?php # optional line ?>
-<?php if($t_show_os || $t_show_target_version){ ?>
-<tr>
-	<?php # target version?>
-	<th class="category"><?php required_indicator('target_version', $t_required_fields); echo $t_target_version_str; ?></th>
-	<td>
-		<?php if($t_show_target_version){ ?>	
-		<select <?php echo helper_get_tab_index() ?> id="target_version" name="target_version" class="input-xs">
-			<?php print_version_option_list( '', null, VERSION_FUTURE ) ?>
-		</select>
-		<?php } ?>
-	</td>
-
-	<?php # os version?>
-	<th class="category"><?php required_indicator('os', $t_required_fields); echo $t_os_version_str; ?></th>
-	<td>
-		<?php if($t_show_os){ ?>
-		<?php
-			if( config_get( 'allow_freetext_in_profile_fields' ) == OFF ) {
-		?>
-		<select id="os_build" name="os_build" class="input-xs">
-			<option value=""></option>
-				<?php print_os_build_option_list( $f_os_build ); ?>
-			</select>
-		<?php
-			} else {
-				echo '<input class="typeahead input-xs" type="text" id="os_build" name="os_build" autocomplete = "off" size="16" maxlength="16" tabindex="' . helper_get_tab_index_value() . '" value="' . string_attribute( $f_os_build ) . '" />';
-			}
-		}
-		?>
-	</td>
-
-	<?php table_empty(2); ?>
-</tr>
-<?php } ?>
-
-
-<?php event_signal( 'EVENT_REPORT_BUG_FORM', array( $t_project_id ) ) ?>
-
-<?php # optional line ?>
-<?php if( $t_show_tags ) { ?>
-	<tr>
-		<?php # tags ?>
-		<th class="category"><?php required_indicator('tags', $t_required_fields); echo lang_get( 'tag_attach_long' ); ?></th>
-		<td colspan="5"><?php print_tag_input( '' ); ?></td>
-	</tr>
-<?php } ?>
-
-
-<?php ## custom fields ?>
-<?php
-	$t_related_custom_field_ids = custom_field_get_linked_ids( $t_project_id );
-
-	# spacer
-	if($t_related_custom_field_ids){
-		echo '<tr class="spacer"><td colspan="6"></td></tr>';
-		echo '<tr class="hidden"></tr>';
-	}
-
-	$i=0;
-
-	$custom_fields_show = config_get('bug_custom_fields_show')['report'];
-	$custom_fields_required = config_get('bug_custom_fields_required')['report'];
-
-	foreach( $t_related_custom_field_ids as $t_id ) {
-		# check if the field is required when reporting an issue
-		$field_name = custom_field_get_field( $t_id, 'name' );
-
-		if(!in_array($field_name, $custom_fields_show) && !in_array($field_name, $custom_fields_required) ){
-			continue;
-		}
-
-		# display field if access is granted
-		$t_def = custom_field_get_definition( $t_id );
-		if( custom_field_has_write_access_to_project( $t_id, $t_project_id ) ) {
-			if($i == 0){
-				echo '<tr>';
-			}
-	?>
-			<th class="category">
-				<?php required_indicator($t_def['name'], $custom_fields_required); ?>
-				<?php if( $t_def['type'] != CUSTOM_FIELD_TYPE_RADIO && $t_def['type'] != CUSTOM_FIELD_TYPE_CHECKBOX ) { ?>
-						<?php echo string_display( lang_get_defaulted( $t_def['name'] ) ) ?>
-				<?php } else { echo string_display( lang_get_defaulted( $t_def['name'] ) ); } ?>
-			</th>
-			<td>
-				<?php print_custom_field_input( $t_def, ( $f_master_bug_id === 0 ) ? null : $f_master_bug_id ) ?>
-			</td>
-<?php
-			if($i == 2){
-				echo '</tr>';
-				$i = 0;
-			}
-			else{
-				$i = $i + 1;
-			}
-		}
-		else{
-			trigger_error('custom field \'' . $field_name . '\' is required but not configured with write access', ERROR);
-		}
-	}
-
-	if($i != 0){
-		table_empty(2 * (3 - $i));
-		echo '</tr>';
-	}
-?>
-
-</table>
-</div>
-</div>
-<div class="widget-toolbox padding-8 clearfix">
-	<span class="required pull-right"> * <?php echo lang_get( 'required' ) ?></span>
-	<input <?php echo helper_get_tab_index() ?> type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get( 'submit_report_button' ) ?>" />
-</div>
-</div>
-</div>
-</form>
-</div>
-<?php
-layout_page_end();
+layout_inline_page_end();

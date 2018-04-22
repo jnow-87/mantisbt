@@ -454,24 +454,26 @@ function layout_navbar() {
 	/* menus */
 	// issues
 	$t_menu = array(
-		array('label' => 'Report Issue', 'data' => array('link' => 'bug_report_page.php', 'icon' => 'fa-edit')),
+		array('label' => 'Report Issue', 'data' => array('link' => 'bug_report_page.php', 'icon' => 'fa-edit', 'class' => 'inline-page-link')),
 		array('label' => 'divider', 'data' => ''),
-		array('label' => 'My View', 'data' => array('link' => 'my_view_page.php', 'icon' => 'fa-dashboard')),
-		array('label' => 'View Issues', 'data' => array('link' => 'view_all_bug_page.php', 'icon' => 'fa-tasks'))
+		array('label' => 'Dashboard', 'data' => array('link' => 'my_view_page.php', 'icon' => 'fa-dashboard')),
+		array('label' => 'Filter', 'data' => array('link' => 'view_all_bug_page.php', 'icon' => 'fa-tasks'))
 	);
 
 	dropdown_menu('Issues', $t_menu, 'grey', 'fa-bug');
 
 	// projects
 	$t_project_search_hdr =
-		'<div id="projects-list">' . 
-		'<input class="search form-control" placeholder="search" />' . 
-		'<ul class="list dropdown-green no-margin">';
+		'<div id="projects-list">'
+		. '<input class="search form-control input-xs" placeholder="Search" />'
+		. '<ul class="list dropdown-green no-margin">';
 
 	$t_project_search_ftr = '</ul></div>';
 
 	$t_menu = array();
 	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_hdr);
+	$t_menu[] = array('label' => 'All Project', 'data' => array('link' => helper_mantis_url( 'set_project.php' ) . '?project_id=' . ALL_PROJECTS, 'icon' => ''));
+	$t_menu[] = array('label' => 'divider', 'data' => '');
 
 	$t_project_ids = user_get_accessible_projects(auth_get_current_user_id());
 	project_cache_array_rows( $t_project_ids );
@@ -482,10 +484,6 @@ function layout_navbar() {
 
 		$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
 	}
-
-	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_ftr);
-	$t_menu[] = array('label' => 'divider', 'data' => '');
-	$t_menu[] = array('label' => 'Any Project', 'data' => array('link' => helper_mantis_url( 'set_project.php' ) . '?project_id=' . ALL_PROJECTS, 'icon' => ''));
 
 	dropdown_menu('Projects', $t_menu, 'grey', 'fa-book');
 
@@ -521,7 +519,7 @@ function layout_navbar() {
 
 	echo '<form method="post" action="view_all_set.php" class="form-inline">';
 	input_hidden('type', 42);
-	text('filter-search-txt', FILTER_PROPERTY_SEARCH, '', 'Search', 'input-xs', '', 'size="7"');
+	text('filter-search-txt', FILTER_PROPERTY_SEARCH, '', 'Search', 'input-xs', '', 'size="13"');
 	echo '</form>';
 
 	echo '</div>';
