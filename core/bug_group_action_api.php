@@ -263,19 +263,16 @@ function bug_group_action_get_commands( array $p_project_ids = null ) {
 		}
 
 		if( !isset( $t_commands['UP_PRODUCT_VERSION'] ) &&
-			version_should_show_product_version( $t_project_id ) &&
 			access_has_project_level( config_get( 'update_bug_threshold', null, null, $t_project_id ), $t_project_id ) ) {
 			$t_commands['UP_PRODUCT_VERSION'] = lang_get( 'actiongroup_menu_update_product_version' );
 		}
 
 		if( !isset( $t_commands['UP_FIXED_IN_VERSION'] ) &&
-			version_should_show_product_version( $t_project_id ) &&
 			access_has_project_level( config_get( 'update_bug_threshold', null, null, $t_project_id ), $t_project_id ) ) {
 			$t_commands['UP_FIXED_IN_VERSION'] = lang_get( 'actiongroup_menu_update_fixed_in_version' );
 		}
 
 		if( !isset( $t_commands['UP_TARGET_VERSION'] ) &&
-			version_should_show_product_version( $t_project_id ) &&
 			access_has_project_level( config_get( 'roadmap_update_threshold', null, null, $t_project_id ), $t_project_id ) ) {
 			$t_commands['UP_TARGET_VERSION'] = lang_get( 'actiongroup_menu_update_target_version' );
 		}

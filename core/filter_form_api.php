@@ -2153,8 +2153,7 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 		: FILTER_VIEW_TYPE_SIMPLE;
 	$t_filters_url .= '?' . http_build_query( $t_get_params );
 
-	$t_show_product_version =  version_should_show_product_version( $t_project_id );
-	$t_show_build = $t_show_product_version && ( config_get( 'enable_product_build' ) == ON );
+	$t_show_build = ( config_get( 'enable_product_build' ) == ON );
 
 	# overload handler_id setting if user isn't supposed to see them (ref #6189)
 	if( !access_has_any_project( config_get( 'view_handler_threshold' ) ) ) {
@@ -2340,29 +2339,28 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 				'show_build_filter_target' /* content id */
 				));
 	}
-	if( $t_show_product_version ) {
-		$t_row3->add_item( new TableFieldsItem(
-				$get_field_header( 'show_version_filter', lang_get( 'product_version' ) ),
-				filter_form_get_input( $t_filter, 'show_version', $t_show_inputs ),
-				1 /* colspan */,
-				null /* class */,
-				'show_version_filter_target' /* content id */
-				));
-		$t_row3->add_item( new TableFieldsItem(
-				$get_field_header( 'show_fixed_in_version_filter', lang_get( 'fixed_in_version' ) ),
-				filter_form_get_input( $t_filter, 'show_fixed_in_version', $t_show_inputs ),
-				1 /* colspan */,
-				null /* class */,
-				'show_fixed_in_version_filter_target' /* content id */
-				));
-		$t_row3->add_item( new TableFieldsItem(
-				$get_field_header( 'show_target_version_filter', lang_get( 'target_version' ) ),
-				filter_form_get_input( $t_filter, 'show_target_version', $t_show_inputs ),
-				1 /* colspan */,
-				null /* class */,
-				'show_target_version_filter_target' /* content id */
-				));
-	}
+
+	$t_row3->add_item( new TableFieldsItem(
+			$get_field_header( 'show_version_filter', lang_get( 'product_version' ) ),
+			filter_form_get_input( $t_filter, 'show_version', $t_show_inputs ),
+			1 /* colspan */,
+			null /* class */,
+			'show_version_filter_target' /* content id */
+			));
+	$t_row3->add_item( new TableFieldsItem(
+			$get_field_header( 'show_fixed_in_version_filter', lang_get( 'fixed_in_version' ) ),
+			filter_form_get_input( $t_filter, 'show_fixed_in_version', $t_show_inputs ),
+			1 /* colspan */,
+			null /* class */,
+			'show_fixed_in_version_filter_target' /* content id */
+			));
+	$t_row3->add_item( new TableFieldsItem(
+			$get_field_header( 'show_target_version_filter', lang_get( 'target_version' ) ),
+			filter_form_get_input( $t_filter, 'show_target_version', $t_show_inputs ),
+			1 /* colspan */,
+			null /* class */,
+			'show_target_version_filter_target' /* content id */
+			));
 	$t_row3->add_item( new TableFieldsItem(
 			$get_field_header( 'relationship_type_filter', lang_get( 'bug_relationships' ) ),
 			filter_form_get_input( $t_filter, 'relationship_type', $t_show_inputs ),

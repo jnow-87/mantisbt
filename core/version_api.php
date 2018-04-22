@@ -676,18 +676,6 @@ function version_get( $p_version_id ) {
 }
 
 /**
- * Checks whether the product version should be shown
- * (i.e. report, update, view, print).
- * @param integer $p_project_id The project id.
- * @return boolean true: show, false: otherwise.
- */
-function version_should_show_product_version( $p_project_id ) {
-	return ( ON == config_get( 'show_product_version', null, null, $p_project_id ) )
-		|| ( ( AUTO == config_get( 'show_product_version', null, null, $p_project_id ) )
-				&& ( count( version_get_all_rows( $p_project_id ) ) > 0 ) );
-}
-
-/**
  * Gets the where clause to use for retrieving versions.
  *
  * @param integer $p_project_id The project id to use.
