@@ -225,7 +225,7 @@ function tab_history(){
 
 	$t_history = history_get_events_array( $f_bug_id );
 
-	table_begin(array(), 'table-condensed no-border table-hover');
+	table_begin(array('', ''), 'table-condensed table-hover table-datatable no-border', 'style="background:transparent"');
 
 	foreach($t_history as $t_item){
 		$t_user = '<span class="username">' . format_icon('fa-user') . prepare_user_name($t_item['userid']) . '</span>';
@@ -233,7 +233,7 @@ function tab_history(){
 		$t_note = string_display($t_item['note']);
 		$t_change = ($t_item['raw'] ? string_display_line_links( $t_item['change'] ) : $t_item['change']);
 
-		table_row(array($t_user . $t_date, $t_note . '<br>' . $t_change), 'style="border-bottom: 10pt solid transparent!important"', array('width=10%'));
+		table_row(array($t_user . $t_date, $t_note . '<br>' . $t_change), 'style="border-bottom: 10pt solid transparent!important"', array('width=15%'));
 	}
 
 	table_end();
