@@ -378,7 +378,7 @@ function input_hover_submit(e){
 		dataType: "text",
 		data : $(this).serialize(),
 		success: function(msg, status, data){
-			var prevent_reload = false;
+			var had_error = false;
 
 			/* display status message */
 			try{
@@ -386,20 +386,24 @@ function input_hover_submit(e){
 
 				for(var i=0; i<resp.length; i++){
 					if(resp[i].type == 'error')
-						prevent_reload = true;
+						had_error = true;
 
 					statusbar_print(resp[i].type, resp[i].msg);
 				}
 			}
 			catch(e){
 				statusbar_print('html', msg);
-				prevent_reload = true;
+				had_error = true;
 			}
 
-			if(reload && !prevent_reload){
+			if(reload && !had_error){
 				location.reload();
 				return;
 			}
+
+			/* prevent input-hover value updates */
+			if(had_error)
+				return;
 
 			/* update all value if all elements have been active */
 			if(input_hover_active_all){
