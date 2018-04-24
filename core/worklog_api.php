@@ -288,13 +288,17 @@ function worklog_ensure_reporting_access( $p_project_id = null, $p_user_id = nul
  */
 function worklog_get_for_project( $p_project_id, $p_from, $p_to ) {
 	$t_params = array();
-	$c_to = strtotime( $p_to ) + SECONDS_PER_DAY - 1;
+	$c_to = strtotime( $p_to );
 	$c_from = strtotime( $p_from );
 
-	if( $c_to === false || $c_from === false ) {
-		error_parameters( array( $p_from, $p_to ) );
-		trigger_error( ERROR_GENERIC, ERROR );
-	}
+	if($c_from === false)
+		$c_from = 0;
+
+	if($c_to === false)
+		$c_to = time();
+
+	$c_to += SECONDS_PER_DAY - 1;
+
 
 	db_param_push();
 

@@ -553,6 +553,9 @@ function access_has_bugnote_level( $p_access_level, $p_bugnote_id, $p_user_id = 
 		$p_user_id = auth_get_current_user_id();
 	}
 
+	if(!bugnote_exists($p_bugnote_id))
+		return false;
+
 	$t_bug_id = bugnote_get_field( $p_bugnote_id, 'bug_id' );
 	$t_project_id = bug_get_field( $t_bug_id, 'project_id' );
 
