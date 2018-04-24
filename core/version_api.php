@@ -727,7 +727,5 @@ function version_list($p_project_id, $p_released = true){
 			$t_version_names[$t_version['version']] = $t_version['version'];
 	}
 
-	ksort($t_version_names);
-
 	return $t_version_names;
 }

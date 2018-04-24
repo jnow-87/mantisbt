@@ -39,6 +39,7 @@ require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'string_api.php' );
+require_api( 'elements_api.php' );
 
 require_css( 'status_config.php' );
 
@@ -66,42 +67,22 @@ function bug_group_action_init( $p_action ) {
 }
 
 /**
- * Print the top part for the bug action group page.
- * @return void
- */
-function bug_group_action_print_top() {
-	layout_page_header();
-	layout_page_begin();
-}
-
-/**
- * Print the bottom part for the bug action group page.
- * @return void
- */
-function bug_group_action_print_bottom() {
-	layout_page_end();
-}
-
-/**
  * Print the list of selected issues and the legend for the status colors.
  *
  * @param array $p_bug_ids_array An array of issue ids.
  * @return void
  */
-function bug_group_action_print_bug_list( array $p_bug_ids_array, $p_filter_num_total = 0 ) {
-	echo '<tr>';
-	echo '<th class="category" colspan="2">';
-	echo lang_get( 'actiongroup_bugs' ) . ' ' . count($p_bug_ids_array) . ($p_filter_num_total > 0 ? ' / ' . $p_filter_num_total : '');
-	echo '</th>';
-	echo '</tr>';
+function bug_group_action_print_bug_list(array $p_bug_ids_array){
+	table_begin(array(), 'table-condensed table-hover no-border');
 
-	foreach( $p_bug_ids_array as $t_bug_id ) {
-		# choose color based on status
-		$t_status_label = html_get_status_css_class( bug_get_field( $t_bug_id, 'status' ), auth_get_current_user_id(), bug_get_field( $t_bug_id, 'project_id' ) );
-		$t_lead = '<i class="fa fa-square fa-status-box ' . $t_status_label . '"></i> ';
-		$t_lead .= ' ' . string_get_bug_view_link( $t_bug_id );
-		echo sprintf( "<tr> <td>%s</td> <td>%s</td> </tr>\n", $t_lead, string_attribute( bug_get_field( $t_bug_id, 'summary' ) ) );
+	foreach($p_bug_ids_array as $t_bug_id){
+		$t_status_label = html_get_status_css_class(bug_get_field($t_bug_id, 'status'), auth_get_current_user_id(), bug_get_field($t_bug_id, 'project_id'));
+		$t_lead = '<i class="fa fa-square fa-status-box ' . $t_status_label . '"></i> ' . string_get_bug_view_link($t_bug_id);
+
+		table_row(array($t_lead, bug_format_summary($t_bug_id, SUMMARY_CAPTION)), '', array('width="20%"', ''));
 	}
+
+	table_end();
 }
 
 /**
@@ -127,18 +108,6 @@ function bug_group_action_print_hidden_fields( array $p_bug_ids_array ) {
  */
 function bug_group_action_print_action_fields( $p_action ) {
 	$t_function_name = 'action_' . $p_action . '_print_fields';
-	$t_function_name();
-}
-
-/**
- * Prints some title text for the custom action page.  This ends up calling
- * action_<action>_print_title() from bug_actiongroup_<action>_inc.php
- *
- * @param string $p_action The custom action name without the "EXT_" prefix.
- * @return void
- */
-function bug_group_action_print_title( $p_action ) {
-	$t_function_name = 'action_' . $p_action . '_print_title';
 	$t_function_name();
 }
 
@@ -186,11 +155,6 @@ function bug_group_action_get_commands( array $p_project_ids = null ) {
 		if( !isset( $t_commands['MOVE'] ) &&
 			access_has_project_level( config_get( 'move_bug_threshold', null, null, $t_project_id ), $t_project_id ) ) {
 			$t_commands['MOVE'] = lang_get( 'actiongroup_menu_move' );
-		}
-
-		if( !isset( $t_commands['COPY'] ) &&
-			access_has_any_project( config_get( 'report_bug_threshold', null, null, $t_project_id ) ) ) {
-			$t_commands['COPY'] = lang_get( 'actiongroup_menu_copy' );
 		}
 
 		if( !isset( $t_commands['ASSIGN'] ) &&

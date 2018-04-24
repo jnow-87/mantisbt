@@ -73,13 +73,13 @@ bug_cache_columns_data($t_rows, $g_columns);
 $t_cmds = bug_group_action_get_commands(null);
 $t_cmd_list = array();
 
-while(list($t_action_id, $t_action_label) = each($t_cmds))
+foreach($t_cmds as $t_action_id => $t_action_label)
 	$t_cmd_list[$t_action_label] = $t_action_id;
 
 
 /* left column */
 echo '<div class="col-md-9">';
-echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php">';
+echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" class="input-hover-form">';
 	input_hidden('filter_num_total', count($t_rows));
 
 	actionbar_begin();
@@ -88,7 +88,7 @@ echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php">';
 			button('Select All', 'bug_arr_all', 'button', '', 'check-all');
 
 			/* bulk edit action */
-			select('action', 'action', $t_cmd_list, '');
+			select('bulk_action', 'bulk_action', $t_cmd_list, '');
 			hspace('2px');
 			button('Apply', 'apply_bulk', 'submit');
 		echo '</div>';

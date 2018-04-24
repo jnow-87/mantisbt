@@ -40,14 +40,8 @@ require_api( 'config_api.php' );
 require_api( 'gpc_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
-
-/**
- * Prints the title for the custom action page.
- * @return void
- */
-function action_update_severity_print_title() {
-	echo lang_get( 'update_severity_title' );
-}
+require_api( 'helper_api.php' );
+require_api( 'elements_api.php' );
 
 /**
  * Prints the field within the custom action form.  This has an entry for
@@ -57,18 +51,7 @@ function action_update_severity_print_title() {
  * @return void
  */
 function action_update_severity_print_fields() {
-?>
-	<tr>
-		<th class="category">
-			<?php echo lang_get( 'update_severity_msg' ); ?>
-		</th>
-		<td>
-			<select name="severity" class="input-sm">';
-				<?php print_enum_string_option_list( 'severity' ); ?>
-			</select>
-		</td>
-	</tr>
-<?php
+	table_row_bug_info_long('Severity:', format_select('severity', 'severity', severity_list(), ''), '10%');
 }
 
 /**

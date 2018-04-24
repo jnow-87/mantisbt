@@ -48,14 +48,7 @@ require_api( 'helper_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'utility_api.php' );
-
-/**
- * Prints the title for the custom action page.
- * @return void
- */
-function action_add_note_print_title() {
-	echo lang_get( 'add_bugnote_title' );
-}
+require_api('elements_api.php');
 
 /**
  * Prints the field within the custom action form.  This has an entry for
@@ -65,39 +58,13 @@ function action_add_note_print_title() {
  * @return void
  */
 function action_add_note_print_fields() {
-?>
-	<tr>
-		<th class="category">
-			<?php echo lang_get( 'add_bugnote_title' ); ?>
-		</th>
-		<td>
-			<textarea class="form-control" name="bugnote_text" id="bugnote_text" cols="80" rows="10"></textarea>
-		</td>
-	</tr>
-
-	<!-- View Status -->
-	<tr>
-		<th class="category">
-			<?php echo lang_get( 'view_status' ) ?>
-		</th>
-		<td>
-<?php
-	$t_default_state = config_get( 'default_bugnote_view_status' );
-	if( access_has_project_level( config_get( 'set_view_status_threshold' ) ) ) { ?>
-				<select name="view_state" class="input-sm">
-					<?php print_enum_string_option_list( 'view_state', $t_default_state ) ?>
-				</select>
-<?php
-	} else {
-		echo get_enum_element( 'view_state', $t_default_state );
-?>
-				<input type="hidden" name="view_state" value="<?php echo $t_default_state; ?>" />';
-<?php
+	if(access_has_project_level(config_get('private_bugnote_threshold'))
+		&& access_has_project_level(config_get('set_view_status_threshold'))
+	){
+		$t_private = format_label('Private:') . format_hspace('2px') . format_checkbox('private', 'private');
 	}
-?>
-		</td>
-	</tr>
-<?php
+
+	table_row_bug_info_long('Note:<br>' . $t_private, format_textarea('bugnote_text', 'bugnote_text', '', 'input-xs', 'width:100%!important;height:150px;'), '10%');
 }
 
 /**
@@ -136,7 +103,7 @@ function action_add_note_validate( $p_bug_id ) {
  */
 function action_add_note_process( $p_bug_id ) {
 	$f_bugnote_text = gpc_get_string( 'bugnote_text' );
-	$f_view_state = gpc_get_int( 'view_state' );
+	$f_private = gpc_get_bool( 'private' );
 	$t_bugnote_id = bugnote_add( $p_bug_id, $f_bugnote_text, '0:00', $f_view_state != VS_PUBLIC );
 	bugnote_process_mentions( $p_bug_id, $t_bugnote_id, $f_bugnote_text );
 	return null;

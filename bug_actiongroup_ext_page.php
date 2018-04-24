@@ -32,67 +32,63 @@
  * @uses utility_api.php
  */
 
-if( !defined( 'BUG_ACTIONGROUP_INC_ALLOW' ) ) {
+if(!defined('BUG_ACTIONGROUP_INC_ALLOW')){
 	return;
 }
 
-require_api( 'authentication_api.php' );
-require_api( 'bug_group_action_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'print_api.php' );
-require_api( 'string_api.php' );
-require_api( 'utility_api.php' );
+require_api('authentication_api.php');
+require_api('bug_group_action_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
+require_api('utility_api.php');
+require_api('elements_api.php');
 
 $f_filter_num_total = gpc_get_int('filter_num_total', 0);
+$f_action = gpc_get_string('bulk_action', '');
 
-$t_external_action = utf8_strtolower( utf8_substr( $f_action, utf8_strlen( $t_external_action_prefix ) ) );
-$t_form_fields_page = 'bug_actiongroup_' . $t_external_action . '_inc.php';
+$t_cmds = bug_group_action_get_commands(null);
+$t_action_name = $t_cmds[$f_action];
+
+$t_external_action = utf8_strtolower(utf8_substr($f_action, utf8_strlen('EXT_')));
 $t_form_name = 'bug_actiongroup_' . $t_external_action;
 
-bug_group_action_init( $t_external_action );
+bug_group_action_init($t_external_action);
 
-bug_group_action_print_top();
-?>
+layout_page_header();
+layout_inline_page_begin();
 
-<div class="col-md-12 col-xs-12">
+page_title('Bulk Operation: ' . $t_action_name);
 
-<div id="action-group-div" class="form-container" >
-<form method="post" action="bug_actiongroup_ext.php">
-	<?php echo form_security_field( $t_form_name ); ?>
-	<input type="hidden" name="action" value="<?php echo string_attribute( $t_external_action ) ?>" />
-	<div class="widget-box widget-color-blue2">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<?php bug_group_action_print_title( $t_external_action ); ?>
-		</h4>
-	</div>
-	<div class="widget-body">
-	<div class="widget-main no-padding">
-	<div class="table-responsive">
-	<table class="table table-bordered table-condensed table-striped">
-	<tbody>
-<?php
-	bug_group_action_print_hidden_fields( $f_bug_arr );
-	bug_group_action_print_action_fields( $t_external_action );
-?>
-	<tr class="spacer"></tr>
-	<?php bug_group_action_print_bug_list( $f_bug_arr, $f_filter_num_total ); ?>
-	<tr class="spacer"></tr>
-	</tbody>
-	</table>
-	</div>
-	</div>
-	<div class="widget-toolbox padding-8 clearfix">
-		<input type="submit" class="btn btn-primary btn-white btn-round" value="<?php bug_group_action_print_title( $t_external_action ); ?>" />
-	</div>
-	</div>
-	</div>
-</form>
-</div>
-</div>
+echo '<div class="col-md-12">';
 
+/* print alerts */
+// hint on the number of issues compared to the total number of the filter result
+if(count($f_bug_arr) < $f_filter_num_total)
+	alert('info', 'Performing action on ' . count($f_bug_arr) . ' out of  ' . $f_filter_num_total) . ' issues';
 
+/* main form */
+echo '<form method="post" action="bug_actiongroup_ext.php">';
+	actionbar_begin();
+		echo '<div class="pull-right">';
+		button('Start Action', 'bulk-submit', 'submit');
+		echo '</div>';
+	actionbar_end();
 
-<?php
-bug_group_action_print_bottom();
+	/* hidden inputs */
+	echo form_security_field($t_form_name);
+	input_hidden('bulk_action', string_attribute($t_external_action));
+	bug_group_action_print_hidden_fields($f_bug_arr);
+
+	/* additionally required data based on the given action */
+	table_begin(array(), 'table-condensed no-border');
+		bug_group_action_print_action_fields($t_external_action);
+	table_end();
+echo '</form>';
+
+/* list of bugs to apply action on */
+bug_group_action_print_bug_list($f_bug_arr);
+
+echo '</div>';
+layout_inline_page_end();

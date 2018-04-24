@@ -1023,3 +1023,44 @@ function tag_stats_related( $p_tag_id, $p_limit = 5 ) {
 	return $t_tags;
 }
 
+
+
+function format_tag_list($p_bug_id){
+	$t_tags_attached = tag_bug_get_attached($p_bug_id);
+	$t_tags = '';
+
+	foreach($t_tags_attached as $t_tag){
+		$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
+		$t_link = format_link($t_tag['name'], 'tag_view_page.php', array('tag_id' => $t_tag['id']), '', 'margin-right:20px!important');
+		$t_buttons = array(array('icon' => 'fa-trash red', 'href' => format_href('tag_detach.php', array('bug_id' => $p_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
+
+		$t_tags .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
+	}
+
+	if(count($t_tags_attached) == 0)
+		$t_tags = 'No tags attached' . format_hspace('20px');
+
+	return $t_tags;
+}
+
+function format_tag_attach($p_bug_id){
+	$t_tags_attachable = tag_get_candidates_for_bug($p_bug_id);
+	$t_tag_names = array('' => 0);
+
+	foreach($t_tags_attachable as $t_tag)
+		$t_tag_names[$t_tag['name']] = $t_tag['id'];
+
+	return 
+		'<form action="tag_attach.php" method="post" class="form-inline input-hover-form input-hover-form-reload">'
+		. format_input_hidden('bug_id', $p_bug_id)
+		. '<span id="tag_attach_div">'
+		. form_security_field('tag_attach')
+		. format_input_hidden('tag_separator', config_get('tag_separator'))
+		. format_text('tag_string', 'tag_string', '', 'tags separated by \'' . config_get('tag_separator') . '\'')
+		. format_hspace('5px')
+		. format_select('tag_select', 'tag_select', $t_tag_names, '')
+		. format_hspace('10px')
+		. format_button('Add', 'tag_attach_div-action-0', 'submit')
+		. '</span>'
+		. '</form>';
+}

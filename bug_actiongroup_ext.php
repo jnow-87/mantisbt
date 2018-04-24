@@ -53,7 +53,7 @@ auth_ensure_user_authenticated();
 
 helper_begin_long_process();
 
-$f_action = gpc_get_string( 'action' );
+$f_action = gpc_get_string( 'bulk_action' );
 $f_bug_arr	= gpc_get_int_array( 'bug_arr', array() );
 
 $t_form_name = 'bug_actiongroup_' . $f_action;

@@ -40,17 +40,6 @@ require_api( 'gpc_api.php' );
 require_api( 'lang_api.php' );
 
 /**
- * Prints the title for the custom action page.
- * @return void
- */
-function action_update_product_build_print_title() {
-	echo '<tr>';
-	echo '<td class="bold" colspan="2">';
-	echo lang_get( 'product_build' );
-	echo '</td></tr>';
-}
-
-/**
  * Prints the field within the custom action form.  This has an entry for
  * every field the user need to supply + the submit button.  The fields are
  * added as rows in a table that is already created by the calling code.
@@ -58,25 +47,7 @@ function action_update_product_build_print_title() {
  * @return void
  */
 function action_update_product_build_print_fields() {
-?>
-	<tbody>
-		<tr>
-			<th class="category">
-				<?php echo lang_get( 'product_build' ); ?>
-			</th>
-			<td>
-				<input type="text" name="build" class="input-sm" size="32" maxlength="32" />
-			</td>
-		</tr>
-	</tbody>
-	<tfoot>
-		<tr>
-			<td colspan="2" class="center">
-				<input type="submit" class="button" value="<?php echo lang_get( 'actiongroup_menu_update_product_build' ); ?>" />
-			</td>
-		</tr>
-	</tfoot>
-<?php
+	table_row_bug_info_long('Product Build:', format_text('build', 'build', ''), '10%');
 }
 
 /**

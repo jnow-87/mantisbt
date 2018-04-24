@@ -17,6 +17,8 @@ require_api('elements_api.php');
 #
 #
 #	features
+#		why does bug_report::clone not use bug_copy()
+#		check if bulk operations that change state perform required field checks
 #		add page titles
 #		add time estimate, time spent to bug view
 #		add persistent error message -> they need to be removed by the user
@@ -45,6 +47,9 @@ require_api('elements_api.php');
 #			- hide_status: does not filter correctly -- true before layout overhaul
 #			- date submitted/updated: does not filter correctly -- true before layout overhaul
 #			- profile, platform, os, os version, product build: do not show the values actually used
+#
+#		css of checkbox
+#			checkboxes sometimes look odd, compare view_all_bug_page and bugnote_add
 #
 #
 #	misc

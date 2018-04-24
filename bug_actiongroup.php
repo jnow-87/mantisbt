@@ -66,7 +66,7 @@ require_api( 'version_api.php' );
 auth_ensure_user_authenticated();
 helper_begin_long_process();
 
-$f_action	= gpc_get_string( 'action' );
+$f_action	= gpc_get_string( 'bulk_action' );
 $f_custom_field_id = gpc_get_int( 'custom_field_id', 0 );
 $f_bug_arr	= gpc_get_int_array( 'bug_arr', array() );
 $f_bug_notetext = gpc_get_string( 'bugnote_text', '' );
@@ -134,16 +134,6 @@ foreach( $f_bug_arr as $t_bug_id ) {
 				# @todo we need to issue a helper_call_custom_function( 'issue_update_validate', array( $t_bug_id, $t_bug_data, $f_bugnote_text ) );
 				bug_move( $t_bug_id, $f_project_id );
 				helper_call_custom_function( 'issue_update_notify', array( $t_bug_id ) );
-			} else {
-				$t_failed_ids[$t_bug_id] = lang_get( 'bug_actiongroup_access' );
-			}
-			break;
-		case 'COPY':
-			$f_project_id = gpc_get_int( 'project_id' );
-
-			if( access_has_project_level( config_get( 'report_bug_threshold' ), $f_project_id ) ) {
-				# Copy everything except history
-				bug_copy( $t_bug_id, $f_project_id, true, true, false, true, true, true );
 			} else {
 				$t_failed_ids[$t_bug_id] = lang_get( 'bug_actiongroup_access' );
 			}

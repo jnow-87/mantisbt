@@ -39,6 +39,5 @@ input{
 
 input[type=checkbox].ace{
 	opacity: 1 !important;
-	position: static !important;
-	margin-left: 0 !important;
+	margin: 0 !important;
 }

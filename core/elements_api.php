@@ -65,7 +65,6 @@ function label($p_name, $p_class = '', $p_style = ''){
 	echo format_label($p_name, $p_class, $p_style);
 }
 
-
 /**
  *	format a font awesome icon
  *
@@ -81,6 +80,23 @@ function format_icon($p_icon, $p_color = 'grey', $p_space_right = '5px'){
 function icon($p_icon, $p_color = 'grey', $p_space_right = '5px'){
 	echo format_icon($p_icon, $p_color, $p_space_right);
 }
+
+/**
+ *	format an alert based on the given type
+ *
+ *	@param	string	$p_type		alert type, either of success, warning, danger, info
+ *	@param	string	$p_msg		message to display
+ *
+ *	@return	a string containing the html element
+ */
+function format_alert($p_type, $p_msg){
+	return '<div class="alert alert-' . $p_type . '"><p class="bold">' . $p_msg . '</p></div>';
+}
+
+function alert($p_type, $p_msg){
+	echo format_alert($p_type, $p_msg);
+}
+
 
 /**
  *	format a text input html element

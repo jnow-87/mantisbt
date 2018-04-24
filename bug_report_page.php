@@ -142,7 +142,7 @@ echo form_security_field('bug_report');
 echo '<div class="col-md-12">';
 	/* actionbar */
 	actionbar_begin();
-		echo '<div class="pull-left">';
+		echo '<div class="pull-right">';
 		button('Create', 'create', 'submit');
 		echo '</div>';
 	actionbar_end();

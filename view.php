@@ -263,50 +263,6 @@ function tab_history(){
 	table_end();
 }
 
-function format_tag_list(){
-	global $f_bug_id;
-
-	$t_tags_attached = tag_bug_get_attached($f_bug_id);
-	$t_tags = '';
-
-	foreach($t_tags_attached as $t_tag){
-		$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
-		$t_link = format_link($t_tag['name'], 'tag_view_page.php', array('tag_id' => $t_tag['id']), '', 'margin-right:20px!important');
-		$t_buttons = array(array('icon' => 'fa-trash red', 'href' => format_href('tag_detach.php', array('bug_id' => $f_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
-
-		$t_tags .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
-	}
-
-	if(count($t_tags_attached) == 0)
-		$t_tags = 'No tags attached' . format_hspace('20px');
-
-	return $t_tags;
-}
-
-function format_tag_attach(){
-	global $f_bug_id;
-
-	$t_tags_attachable = tag_get_candidates_for_bug($f_bug_id);
-	$t_tag_names = array('' => 0);
-
-	foreach($t_tags_attachable as $t_tag)
-		$t_tag_names[$t_tag['name']] = $t_tag['id'];
-
-	return 
-		'<form action="tag_attach.php" method="post" class="form-inline input-hover-form input-hover-form-reload">'
-		. format_input_hidden('bug_id', $f_bug_id)
-		. '<span id="tag_attach_div">'
-		. form_security_field('tag_attach')
-		. format_input_hidden('tag_separator', config_get('tag_separator'))
-		. format_text('tag_string', 'tag_string', '', 'tags separated by \'' . config_get('tag_separator') . '\'')
-		. format_hspace('5px')
-		. format_select('tag_select', 'tag_select', $t_tag_names, '')
-		. format_hspace('10px')
-		. format_button('Add', 'tag_attach_div-action-0', 'submit')
-		. '</span>'
-		. '</form>';
-}
-
 
 compress_enable();
 
@@ -370,7 +326,7 @@ echo '<div class="col-md-9">';
 
 			// move button
 			if(!bug_is_readonly($f_bug_id) && config_get('view_issue_button_move'))
-				button_link('Move', 'bug_actiongroup_page.php', array('action' => 'MOVE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_page_token' => form_security_token('bug_actiongroup_page')));
+				button_link('Move', 'bug_actiongroup_page.php', array('bulk_action' => 'MOVE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_page_token' => form_security_token('bug_actiongroup_page')), 'inline-page-link');
 
 			// monitor buttons
 			if(!current_user_is_anonymous() && access_has_bug_level( config_get('monitor_bug_threshold'), $f_bug_id)){
@@ -385,7 +341,7 @@ echo '<div class="col-md-9">';
 
 			// delete button
 			if(!bug_is_readonly($f_bug_id) && config_get('view_issue_button_delete'))
-				button_confirm('Delete', 'bug-delete', format_href('bug_actiongroup.php', array('action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_DELETE_token' => form_security_token('bug_actiongroup_DELETE'))), 'Delete bug?', 'confirm-err');
+				button_confirm('Delete', 'bug-delete', format_href('bug_actiongroup.php', array('bulk_action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_DELETE_token' => form_security_token('bug_actiongroup_DELETE'))), 'Delete bug?', 'confirm-err');
 
 			echo '</div>';
 		actionbar_end();
@@ -436,7 +392,7 @@ echo '<div class="col-md-9">';
 		if($t_show_tags){
 			echo '<div class="row">';
 			table_begin(array(), 'no-border');
-			table_row_bug_info_long('Tags:', format_tag_list() . format_tag_attach(), '5%');
+			table_row_bug_info_long('Tags:', format_tag_list($f_bug_id) . format_tag_attach($f_bug_id), '5%');
 			table_end();
 			echo '</div>';
 		}
