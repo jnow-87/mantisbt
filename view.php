@@ -147,7 +147,7 @@ function tab_links(){
 	$t_show_project = false;
 	$t_relationships = relationship_get_all($t_bug->id, $t_show_project);
 
-	table_begin(array('', 'Link Type', 'Link Target', 'Target Status', 'Target Summary'), 'table-bordered table-condensed table-hover table-sortable');
+	table_begin(array('', 'Link Type', 'Link Target', 'Target Status', 'Target Summary'), 'table-condensed table-hover table-sortable no-border');
 
 	foreach($t_relationships as $t_rel){
 		$t_tgt_id = $t_rel->src_bug_id;

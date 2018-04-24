@@ -326,7 +326,7 @@ if( count( $t_failed_ids ) > 0 ) {
 
 	echo '<div><br />';
 	echo '<div class="table-responsive">';
-	echo '<table class="table table-bordered table-condensed table-striped">';
+	echo '<table class="table table-bordered table-condensed">';
 	$separator = lang_get( 'word_separator' );
 	foreach( $t_failed_ids as $t_id => $t_reason ) {
 		$label = sprintf( lang_get( 'label' ), string_get_bug_view_link( $t_id ) ) . $separator;

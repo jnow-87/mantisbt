@@ -923,7 +923,7 @@ function bugnote_view($p_bug_id){
 			}
 
 			echo '<tr id="c' . $t_id . '">';
-				echo '<td class="category" width="17%">';
+				echo '<td class="category" width="15%">';
 					// bugnote details
 					table_begin(array(), 'no-border no-padding table-condensed transparent');
 					table_row(
@@ -1032,7 +1032,6 @@ function bugnote_add_form($p_bug_id){
 				$t_attach_style = ( $t_default_bugnote_view_status != VS_PUBLIC ) ? 'display: none;' : '';
 
 				echo '<tr id="bugnote-attach-files" style="' . $t_attach_style . '"><td>';
-
 					input_hidden('max_file_size', $t_max_file_size);
 					echo '<div class="dropzone center">';
 					icon('fa-cloud-upload');

@@ -120,7 +120,7 @@ echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" clas
 	foreach($g_columns as $t_column)
 		$t_thead[] = lang_get($t_column);
 
-	table_begin($t_thead, 'table-bordered table-condensed table-striped table-hover table-sortable'); 
+	table_begin($t_thead, 'table-condensed table-hover table-sortable no-border'); 
 
 	/* issue list */
 	foreach($t_rows as $t_row){

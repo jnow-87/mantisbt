@@ -489,7 +489,7 @@ function layout_navbar() {
 
 		foreach($t_sub_projects as $t_sub_id){
 			$t_link = helper_mantis_url('set_project.php') . '?project_id=' . $t_sub_id;
-			$t_name = format_icon('fa-indent') . string_attribute(project_get_field($t_sub_id, 'name'));
+			$t_name = format_icon('fa-angle-double-right') . string_attribute(project_get_field($t_sub_id, 'name'));
 
 			$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
 		}

@@ -132,7 +132,7 @@ include('worklog_update.php');
 ####
 
 $t_from = 0;
-$t_to = 0;
+$t_to = time();
 
 if($f_date_from != '')
 	$t_from = strtotime($f_date_from);
@@ -143,22 +143,26 @@ if($f_date_to != '')
 $t_work_log = worklog_get($f_bugnote_id, $t_from, $t_to);
 
 # get earliest and latest worklog date
-$t_from = 0;
+$t_from = time();
 $t_to = 0;
 
 foreach($t_work_log as $t_entry){
-	if($t_entry->date < $t_from || $t_from == 0)
+	if($t_entry->date < $t_from)
 		$t_from = $t_entry->date;
 
-	if($t_entry->date > $t_to || $t_to == 0)
+	if($t_entry->date > $t_to)
 		$t_to = $t_entry->date;
 }
 
-if($f_date_from == '')
-	$f_date_from = date(config_get('short_date_format'), $t_from);
+if($f_date_from == ''){
+	if($t_from != time())	$f_date_from = date(config_get('short_date_format'), $t_from);
+	else					$f_date_from = date(config_get('short_date_format'), 0);
+}
 
-if($f_date_to == '')
-	$f_date_to = date(config_get('short_date_format'), $t_to);
+if($f_date_to == ''){
+	if($t_to != 0)	$f_date_to = date(config_get('short_date_format'), $t_to);
+	else			$f_date_to = date(config_get('short_date_format'));
+}
 
 
 layout_inline_page_begin();
@@ -186,8 +190,10 @@ actionbar_begin();
 	echo form_header('undefined', $f_bugnote_id);
 	echo format_label('From: ') . format_hspace('2px');
 	echo format_date('date_from', 'date_from', $f_date_from, '7em', true);
+	echo format_hspace('5px');
 	echo format_label('To: ') . format_hspace('2px');
 	echo format_date('date_to', 'date_to', $f_date_to, '7em', true);
+	echo format_hspace('5px');
 	button('Apply', 'get_bugnote_stats_button','submit');
 	echo '</form>';
 
