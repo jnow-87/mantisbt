@@ -2147,6 +2147,10 @@ function bug_unmonitor( $p_bug_id, $p_user_id ) {
  */
 function bug_format_id( $p_bug_id ) {
 	$t_padding = config_get( 'display_bug_padding' );
+
+	if(!bug_exists($p_bug_id))
+		return event_signal( 'EVENT_DISPLAY_BUG_ID', '[deleted issue ' . $p_bug_id . ']', array( $p_bug_id ) );
+
 	$t_project_id = bug_get_field( $p_bug_id, 'project_id' );
 	$t_project_name =  project_get_name($t_project_id, false);
 
