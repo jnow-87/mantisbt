@@ -90,7 +90,7 @@ function icon($p_icon, $p_color = 'grey', $p_space_right = '5px'){
  *	@return	a string containing the html element
  */
 function format_alert($p_type, $p_msg){
-	return '<div class="alert alert-' . $p_type . '"><p class="bold">' . $p_msg . '</p></div>';
+	return '<div class="alert alert-' . $p_type . '">' . $p_msg . '</div>';
 }
 
 function alert($p_type, $p_msg){
@@ -991,6 +991,26 @@ function table_row_bug_info_short($p_key, $p_value){
 
 function table_row_bug_info_long($p_key, $p_value, $p_key_width = '50%'){
 	table_row(array($p_key, $p_value), '', array('class="no-border bug-header" width="' . $p_key_width . '"', 'class="no-border"'));
+}
+
+/**
+ *	format a progressbar
+ *
+ *	@param	$p_percentage	string	fill state of the bar
+ *	@param	$p_label		string	text to show, if empty $p_percentage is shown
+ *	@param	$p_class		string	progessbar class
+ *
+ *	@return	a string containing the html element
+ */
+function format_progressbar($p_percentage, $p_label = '', $p_class = 'progress-bar progress-bar-success'){
+	if($p_label == '')
+		$p_label = $p_percentage . '%';
+
+	return '<div class="progress"><div class="' . $p_class . '" role="progressbar" style="width:' . $p_percentage . '%" >' . $p_label . '</div></div>';
+}
+
+function progressbar($p_percentage, $p_label = '', $p_class = 'progress-bar progress-bar-success'){
+	echo format_progressbar($p_percentage, $p_label, $p_class);
 }
 
 ?>

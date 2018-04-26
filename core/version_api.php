@@ -510,16 +510,6 @@ function version_get_all_rows( $p_project_id, $p_released = null, $p_obsolete = 
 
 	$t_query_params = array();
 
-	if( $p_released !== null ) {
-		$t_query .= ' AND released = ' . db_param();
-		$t_query_params[] = (bool)$p_released;
-	}
-
-	if( $p_obsolete !== null ) {
-		$t_query .= ' AND obsolete = ' . db_param();
-		$t_query_params[] = (bool)$p_obsolete;
-	}
-
 	$t_query .= ' ORDER BY date_order DESC';
 
 	$t_result = db_query( $t_query, $t_query_params );

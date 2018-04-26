@@ -500,8 +500,8 @@ function layout_navbar() {
 	// reports
 	$t_menu = array(
 		array('label' => 'Work Log', 'data' => array('link' => 'worklog_summary_page.php', 'icon' => 'fa-clock-o')),
-		array('label' => 'Roadmap', 'data' => array('link' => 'roadmap_page.php', 'icon' => 'fa-road')),
-		array('label' => 'Change Log', 'data' => array('link' => 'changelog_page.php', 'icon' => 'fa-retweet')),
+		array('label' => 'Roadmap', 'data' => array('link' => 'versions_page.php?type=unreleased', 'icon' => 'fa-road')),
+		array('label' => 'Releases', 'data' => array('link' => 'versions_page.php?type=released', 'icon' => 'fa-retweet')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Summary', 'data' => array('link' => 'summary_page.php', 'icon' => 'fa-bar-chart-o'))
 	);

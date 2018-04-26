@@ -877,7 +877,7 @@ function bugnote_view($p_bug_id){
 	form_security_purge('bugnote_update');
 	form_security_purge('bugnote_set_view_state');
 
-	table_begin(array());
+	table_begin(array(), 'table-bordered');
 		if(count($t_activities) == 0) 
 			table_row(array('There are no notes attached to this issue', ''), '', array('class="center" colspan=2'));
 

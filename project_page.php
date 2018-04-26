@@ -73,10 +73,10 @@ echo '<p>';
 print_link_button( $t_view_issues_url, lang_get( 'view_bugs_link' ) );
 
 # Changelog
-print_link_button( 'changelog_page.php?project_id=' . $f_project_id, lang_get( 'changelog_link' ) );
+print_link_button( 'versions_page.php?type=released&project_id=' . $f_project_id, lang_get( 'changelog_link' ) );
 
 # Roadmap
-print_link_button( 'roadmap_page.php?project_id=' . $f_project_id, lang_get( 'roadmap_link' ) );
+print_link_button( 'versions_page.php?type=unreleased&project_id=' . $f_project_id, lang_get( 'roadmap_link' ) );
 
 # Documentation
 if( config_get( 'enable_project_documentation' ) == ON ) {

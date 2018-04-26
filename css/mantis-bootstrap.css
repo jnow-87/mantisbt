@@ -41,3 +41,7 @@ input[type=checkbox].ace{
 	opacity: 1 !important;
 	margin: 0 !important;
 }
+
+.progress{
+	margin-bottom: 0;
+}
