@@ -248,7 +248,21 @@ function tab_history(){
 		return;
 	}
 
-	$t_history = history_get_events_array( $f_bug_id );
+	$f_load_full_history = gpc_get_bool('history_full', false);
+
+	echo '<form action="" method="post">';
+		input_hidden('history_full', true);
+
+		if(!$f_load_full_history){
+			actionbar_begin();
+				echo '<div class="pull-right">';
+				button('Load Full History', 'load-history', 'submit');
+				echo '</div>';
+			actionbar_end();
+		}
+	echo '</form>';
+
+	$t_history = history_get_events_array($f_bug_id, null, ($f_load_full_history ? -1 : 10));
 
 	table_begin(array('', ''), 'table-condensed table-hover table-datatable no-border', 'style="background:transparent"');
 
