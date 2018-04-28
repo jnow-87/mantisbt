@@ -53,6 +53,7 @@ require_api('elements_api.php');
 require_api('user_api.php');
 require_api('relationship_api.php');
 require_api('bugnote_api.php');
+require_api('database_api.php');
 
 require_css('status_config.php');
 
@@ -452,6 +453,9 @@ echo '<div class="col-md-3">';
 		table_row_bug_info_short('Due Date:', format_input_hover_date('due_date', $t_bug_due_date));
 		table_row_bug_info_short('Last Updated:', date($t_date_format, $t_bug->last_updated));
 		table_row_bug_info_short('Date Submitted:', date($t_date_format, $t_bug->date_submitted));
+		table_row_bug_info_short(' ', '');
+		table_row_bug_info_short(' ', '');
+		table_row_bug_info_short('Time Spent:', db_minutes_to_hhmm(worklog_get_time_bug($f_bug_id)));
 		table_end();
 		echo '</div>';
 	section_end();

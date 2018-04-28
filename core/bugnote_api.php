@@ -574,7 +574,7 @@ function bugnote_row_to_object( array $p_row ) {
 	$t_bugnote->note_attr = $p_row['note_attr'];
 	$t_bugnote->time_tracking = (int)$p_row['time_tracking'];
 
-	$t_bugnote->time_tracking = worklog_get_time($t_bugnote->id);
+	$t_bugnote->time_tracking = worklog_get_time_bugnote($t_bugnote->id);
 
 	# Handle old bugnotes before setting type to time tracking
 	if ( $t_bugnote->time_tracking != 0 ) {

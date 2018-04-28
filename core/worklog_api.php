@@ -220,7 +220,7 @@ function worklog_get($p_bugnote_id, $p_from = 0, $p_to = 0) {
  *
  * @return	number of minutes spent
  */
-function worklog_get_time($p_bugnote_id, $p_from = 0, $p_to = 0) {
+function worklog_get_time_bugnote($p_bugnote_id, $p_from = 0, $p_to = 0){
 	check_bugnote_id($p_bugnote_id);
 
 	$t_params = array($p_bugnote_id);
@@ -239,19 +239,49 @@ function worklog_get_time($p_bugnote_id, $p_from = 0, $p_to = 0) {
 
 
 	db_param_push();
-	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param() . $t_from . $t_to;
+	$t_query = 'SELECT SUM(wl.time) as time FROM {worklog} wl WHERE bugnote_id=' . db_param() . $t_from . $t_to;
 	$t_result = db_query($t_query, $t_params);
 
 	if($t_result == false)
 		return 0;
 
-	$t_time = 0;
+	return db_fetch_array($t_result)['time'];
+}
 
-	while($t_row = db_fetch_array($t_result)){
-		$t_time += $t_row['time'];
+/**
+ * get total time spent for a given bug in a given time period
+ *
+ * @param	integer	$p_bug_id			id of the associated bug
+ * @param	integer	$p_from				unix timestamp for start date, ignored if 0
+ * @param	integer $p_to				unix timestamp for end date, ignored if 0
+ *
+ * @return	number of minutes spent
+ */
+function worklog_get_time_bug($p_bug_id, $p_from = 0, $p_to = 0){
+	$t_params = array($p_bug_id);
+	$t_from = '';
+	$t_to = '';
+
+	if($p_from != 0){
+		$t_from = ' AND date >= ' . db_param();
+		$t_params[] = $p_from;
 	}
 
-	return $t_time;
+	if($p_to != 0){
+		$t_to = ' AND date <= ' . db_param();
+		$t_params[] = $p_to;
+	}
+
+
+	db_param_push();
+
+	$t_query = 'SELECT SUM(wl.time) as time FROM {bug} b, {bugnote} bn, {worklog} wl WHERE b.id=bn.bug_id AND bn.id=wl.bugnote_id AND b.id=' . db_param() . $t_from . $t_to;
+	$t_result = db_query($t_query, $t_params);
+
+	if($t_result == false)
+		return 0;
+
+	return db_fetch_array($t_result)['time'];
 }
 
 /**
