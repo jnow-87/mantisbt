@@ -1345,6 +1345,25 @@ function print_filter_values_relationship_type( array $p_filter ) {
 }
 
 /**
+ * print relationship fields
+ * @global array $g_filter
+ * @param array $p_filter Filter array
+ * @return void
+ */
+function print_filter_relationship_type( array $p_filter = null ) {
+	global $g_filter;
+	if( null === $p_filter ) {
+		$p_filter = $g_filter;
+	}
+	$c_reltype_value = $p_filter[FILTER_PROPERTY_RELATIONSHIP_TYPE];
+	if( !$c_reltype_value ) {
+		$c_reltype_value = -1;
+	}
+	relationship_list_box( $c_reltype_value, 'relationship_type', true, false, "input-xs" );
+	echo '<input class="input-xs" type="text" name="', FILTER_PROPERTY_RELATIONSHIP_BUG, '" size="5" maxlength="10" value="', $p_filter[FILTER_PROPERTY_RELATIONSHIP_BUG], '" />';
+}
+
+/**
  * Print the current value of this filter field, as visible string, and as a hidden form input.
  * @param array $p_filter	Filter array
  * @return void
@@ -2512,15 +2531,49 @@ function filter_form_draw_inputs_column($p_filter){
 
 	/* render a filter table row */
 	$func_table_row_filter = function($p_text, $p_id, $p_content = '') use ($t_filter){
+		static $t_filter_props = array(
+			'project_id' => FILTER_PROPERTY_PROJECT_ID,
+			'show_priority' => FILTER_PROPERTY_PRIORITY,
+			'show_severity' => FILTER_PROPERTY_SEVERITY,
+			'view_state' => FILTER_PROPERTY_VIEW_STATE,
+			'show_category' => FILTER_PROPERTY_CATEGORY_ID,
+			'show_status' => FILTER_PROPERTY_STATUS,
+			'hide_status' => FILTER_PROPERTY_HIDE_STATUS,
+			'show_resolution' => FILTER_PROPERTY_RESOLUTION,
+			'relationship_type' => FILTER_PROPERTY_RELATIONSHIP_TYPE,
+			'tag_string' => FILTER_PROPERTY_TAG_STRING,
+			'reporter_id' => FILTER_PROPERTY_REPORTER_ID,
+			'handler_id' => FILTER_PROPERTY_HANDLER_ID,
+			'user_monitor' => FILTER_PROPERTY_MONITOR_USER_ID,
+			'note_user_id' => FILTER_PROPERTY_NOTE_USER_ID,
+			'do_filter_by_date' => FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED,
+			'do_filter_by_last_updated_date' => FILTER_PROPERTY_FILTER_BY_LAST_UPDATED_DATE,
+			'show_profile' => FILTER_PROPERTY_PROFILE_ID,
+			'platform' => FILTER_PROPERTY_PLATFORM,
+			'os' => FILTER_PROPERTY_OS,
+			'os_build' => FILTER_PROPERTY_OS_BUILD,
+			'show_build' => FILTER_PROPERTY_BUILD,
+			'show_version' => FILTER_PROPERTY_VERSION,
+			'show_target_version' => FILTER_PROPERTY_TARGET_VERSION,
+			'show_fixed_in_version' => FILTER_PROPERTY_FIXED_IN_VERSION
+		);
+
+
+		$t_filter_prop = $t_filter_props[$p_id];
+		$t_hide_input = true;
+
+		if($t_filter_prop != null)
+			$t_hide_input = ($t_filter[$t_filter_prop] == filter_get_default_property($t_filter_prop));
+
 		table_row(
 			array(
 				$p_text . ':',
-				'<div id="' . $p_id . '_filter_target">' . ($p_content != '' ? $p_content : filter_form_get_input($t_filter, $p_id, false)) . '</div>'
+				'<div id="' . $p_id . '_filter_target">' . ($p_content != '' ? $p_content : filter_form_get_input($t_filter, $p_id, !$t_hide_input)) . '</div>'
 			),
 			'',
 			array(
 				'class="no-border bug-header" width="30%"',
-				'class="no-border dynamic-filter-expander" id="' . $p_id . '_filter"'
+				'class="no-border dynamic-filter-expander" id="' . $p_id . '_filter" hide-input="' . $t_hide_input . '"'
 			)
 		);
 	};

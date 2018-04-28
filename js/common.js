@@ -48,7 +48,6 @@ function dynamic_filter_expander_click_hdlr(event) {
 
 	var trigger_el = this;
 
-	console.log("id: " + this.id);
 	$.ajax({
 		url: 'return_dynamic_filters.php',
 		data: params,
@@ -60,7 +59,6 @@ function dynamic_filter_expander_click_hdlr(event) {
 				enableDateTimePicker(this);
 			});
 
-			console.log("rm " + trigger_el.id);
 			trigger_el.removeEventListener('click', dynamic_filter_expander_click_hdlr);
 		},
 		error: function(obj,status,error) {
@@ -158,8 +156,10 @@ $(document).ready( function() {
 	//      doesn't work if .click() is used
 	var expander = document.getElementsByClassName('dynamic-filter-expander');
 	
-	for(var i=0; i<expander.length; i++)
-		expander[i].addEventListener('click', dynamic_filter_expander_click_hdlr);
+	for(var i=0; i<expander.length; i++){
+		if($(expander[i]).attr('hide-input'))
+			expander[i].addEventListener('click', dynamic_filter_expander_click_hdlr);
+	}
 
 	$('input.autofocus:first, select.autofocus:first, textarea.autofocus:first').focus();
 

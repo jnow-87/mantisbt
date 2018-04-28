@@ -2317,9 +2317,13 @@ function filter_cache_result( array $p_rows, array $p_id_array_lastmod ) {
  * @param integer $p_page_number Page number.
  * @return void
  */
-function filter_draw_selection_area($p_page_number){
+function filter_draw_selection_area($p_page_number, $p_filter = null){
 	/* get current filter data */
-	$t_filter = current_user_get_bug_filter();
+	$t_filter = $p_filter;
+
+	if($p_filter == null)
+		$t_filter = current_user_get_bug_filter();
+
 	$t_filter = filter_ensure_valid_filter($t_filter === false ? array() : $t_filter);
 	$t_view_type = $t_filter['_view_type'];
 	$t_view_filters = config_get('view_filters');
