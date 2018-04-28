@@ -43,6 +43,7 @@ require_api('gpc_api.php');
 require_api('print_api.php');
 require_api('string_api.php');
 require_api('utility_api.php');
+require_api('bug_list_api.php');
 require_api('elements_api.php');
 
 $f_filter_num_total = gpc_get_int('filter_num_total', 0);
@@ -88,7 +89,7 @@ echo '<form method="post" action="bug_actiongroup_ext.php">';
 echo '</form>';
 
 /* list of bugs to apply action on */
-bug_group_action_print_bug_list($f_bug_arr);
+bug_list_print($f_bug_arr, array('status_icon', 'id', 'summary'), 'table-condensed table-hover no-border');
 
 echo '</div>';
 layout_inline_page_end();

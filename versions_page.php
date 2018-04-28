@@ -59,6 +59,7 @@ require_api('string_api.php');
 require_api('user_api.php');
 require_api('utility_api.php');
 require_api('version_api.php');
+require_api('bug_list_api.php');
 require_api('elements_api.php');
 
 
@@ -165,7 +166,7 @@ function tab_project(){
 			table_begin(array());
 			table_row(
 				array(
-					($t_released == 1 ? format_label('Released', 'label-success') : format_label('Unreleased', 'label-danger')) . format_hspace('2px') . ($t_obsolete == 1 ? format_label('Obsolete', 'label-danger') : ''),
+					($t_released == 1 ? format_label('Released', 'label-success') : format_label('Unreleased', 'label-info')) . format_hspace('2px') . ($t_obsolete == 1 ? format_label('Obsolete', 'label-danger') : ''),
 					format_progressbar($t_progress),
 					format_button_link($t_issues_resolved . ' of ' . $t_num_issues . ' issue(s) resolved', 'view_all_set.php', array('type' => 1, 'temporary' => 'y', FILTER_PROPERTY_PROJECT_ID => $t_project_id, FILTER_PROPERTY_TARGET_VERSION => $t_version_name), 'input-xxs')
 				),
@@ -183,26 +184,9 @@ function tab_project(){
 
 			/* print issues */
 			echo '<div class="col-md-6-right">';
-
-			table_begin(array('Status', 'Issue', 'Summary'), 'table-condensed table-hover table-sortable no-border');
-
-			foreach($t_issue_ids as $t_issue_id){
-				$t_bug = bug_get($t_issue_id);
-
-				$t_status_icon = '<i class="fa fa-square fa-status-box ' . html_get_status_css_class($t_bug->status) . '"></i> ';
-				$t_status = get_enum_element('status', $t_bug->status);
-
-				table_row(array(
-						$t_status_icon . $t_status,
-						format_link(bug_format_id($t_issue_id), 'view.php', array('id' => $t_issue_id)),
-						bug_format_summary($t_issue_id, SUMMARY_CAPTION)
-					)
-				);
-			}
-
-			table_end();
-
+			bug_list_print($t_issue_ids, array('status', 'id', 'summary'), 'table-condensed table-hover table-sortable no-border');
 			echo '</div>';
+
 			echo '</div>';
 		section_end();
 
@@ -223,8 +207,19 @@ $f_project_id = gpc_get_int('project_id', helper_get_current_project());
 $f_version_id = gpc_get_int('version_id', -1);
 $f_type = gpc_get_string('type', 'released');
 
-if($f_version_id != -1)
+if($f_version_id != -1){
+	if(!version_exists($f_version_id)){
+		alert_page('danger', 'Unknown version ID ' . $f_version_id, 'Roadmap/Release History');
+		exit();
+	}
+
 	$f_project_id = version_get_field($f_version_id, 'project_id');
+
+	$f_type = 'unreleased';
+
+	if(version_get_field($f_version_id, 'released'))
+		$f_type = 'released';
+}
 
 $t_user_id = auth_get_current_user_id();
 $t_project_ids = array();

@@ -3,6 +3,17 @@
 	border-bottom: 0px;
 }
 
+.nav-tabs{
+	overflow-x: hidden;
+	overflow-y: hidden;
+	display: -webkit-box;
+	display: -moz-box;
+}
+
+.nav-tabs>li{
+	float: none;
+}
+
 /* center div for data tables */
 div.table-center {
 	margin: 0 auto;
@@ -44,4 +55,8 @@ input[type=checkbox].ace{
 
 .progress{
 	margin-bottom: 0;
+}
+
+.label-round{
+	border-radius: 6px;
 }

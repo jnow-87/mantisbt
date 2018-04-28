@@ -1025,19 +1025,26 @@ function tag_stats_related( $p_tag_id, $p_limit = 5 ) {
 
 
 
-function format_tag_list($p_bug_id){
+function format_tag_list($p_bug_id, $p_show_buttons = true, $p_view_empty = true){
 	$t_tags_attached = tag_bug_get_attached($p_bug_id);
 	$t_tags = '';
 
 	foreach($t_tags_attached as $t_tag){
-		$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
-		$t_link = format_link($t_tag['name'], 'tag_view_page.php', array('tag_id' => $t_tag['id']), '', 'margin-right:20px!important');
-		$t_buttons = array(array('icon' => 'fa-trash red', 'href' => format_href('tag_detach.php', array('bug_id' => $p_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
+		$t_tag_name = format_label($t_tag['name'], 'label-round label-info');
 
-		$t_tags .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
+		if($p_show_buttons){
+			$t_link = format_link($t_tag_name, 'view_all_bug_page.php', array('tag_string' => $t_tag['name']), '', 'margin-right:20px!important');
+			$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
+			$t_buttons = array(array('icon' => 'fa-trash red', 'href' => format_href('tag_detach.php', array('bug_id' => $p_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
+
+			$t_tags .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
+		}
+		else{
+			$t_tags .= format_link($t_tag_name, 'view_all_bug_page.php', array('tag_string' => $t_tag['name']), '', '') . format_hspace('2px');
+		}
 	}
 
-	if(count($t_tags_attached) == 0)
+	if(count($t_tags_attached) == 0 && $p_view_empty)
 		$t_tags = 'No tags attached' . format_hspace('20px');
 
 	return $t_tags;

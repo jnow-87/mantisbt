@@ -20,6 +20,10 @@ function hspace($p_space){
 	echo format_hspace($p_space);
 }
 
+function format_strike($p_text){
+	return '<strike>' . $p_text . '</strike>';
+}
+
 /**
  *	print a vertical space
  *
@@ -95,6 +99,30 @@ function format_alert($p_type, $p_msg){
 
 function alert($p_type, $p_msg){
 	echo format_alert($p_type, $p_msg);
+}
+
+
+/**
+ *	print page containing a single alert
+ *
+ *	@param	string	$p_type			alert type according to format_alert()
+ *	@param	string	$p_msg			msg according to format_alert()
+ *	@param	string	$p_page_title	page title
+ */
+function alert_page($p_type, $p_msg, $p_page_title = ''){
+	layout_page_header();
+	layout_page_begin(__FILE__);
+
+	if($p_page_title != '')
+		page_title($p_page_title);
+
+	echo '<div class="col-md-12-left">';
+
+	alert($p_type, $p_msg);
+
+	echo '</div>';
+	layout_page_end();
+	exit();
 }
 
 

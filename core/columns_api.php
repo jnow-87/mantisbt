@@ -111,6 +111,7 @@ function columns_get_standard( $p_enabled_columns_only = true ) {
 	$t_columns['edit'] = null;
 	$t_columns['notes'] = null;
 	$t_columns['tags'] = null;
+	$t_columns['status_icon'] = null;
 
 	# Overdue icon column (icons appears if an issue is beyond due_date)
 	$t_columns['overdue'] = null;
@@ -119,6 +120,9 @@ function columns_get_standard( $p_enabled_columns_only = true ) {
 	unset( $t_columns['_stats'] );
 	unset( $t_columns['profile_id'] );
 	unset( $t_columns['loading'] );
+	unset( $t_columns['notes'] );
+	unset( $t_columns['bugnotes_count'] );
+	unset( $t_columns['attachment_count'] );
 
 	# legacy field
 	unset( $t_columns['duplicate_id'] );

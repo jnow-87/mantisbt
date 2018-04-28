@@ -67,25 +67,6 @@ function bug_group_action_init( $p_action ) {
 }
 
 /**
- * Print the list of selected issues and the legend for the status colors.
- *
- * @param array $p_bug_ids_array An array of issue ids.
- * @return void
- */
-function bug_group_action_print_bug_list(array $p_bug_ids_array){
-	table_begin(array(), 'table-condensed table-hover no-border');
-
-	foreach($p_bug_ids_array as $t_bug_id){
-		$t_status_label = html_get_status_css_class(bug_get_field($t_bug_id, 'status'), auth_get_current_user_id(), bug_get_field($t_bug_id, 'project_id'));
-		$t_lead = '<i class="fa fa-square fa-status-box ' . $t_status_label . '"></i> ' . string_get_bug_view_link($t_bug_id);
-
-		table_row(array($t_lead, bug_format_summary($t_bug_id, SUMMARY_CAPTION)), '', array('width="20%"', ''));
-	}
-
-	table_end();
-}
-
-/**
  * Print the array of issue ids via hidden fields in the form to be passed on to
  * the bug action group action page.
  *

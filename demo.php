@@ -6,6 +6,10 @@ require_api('elements_api.php');
 
 
 # TODO
+#		make columns configurable
+#		make my view filters configurable
+
+
 #	validation
 #		access control
 #			update access_has_bug_level and similar functions to return json data if requested
