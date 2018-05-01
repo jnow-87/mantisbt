@@ -307,7 +307,7 @@ form_security_purge('bug_update');
 
 /* page header */
 layout_page_header(bug_format_summary($f_bug_id, SUMMARY_CAPTION), null, 'view-issue-page');
-layout_page_begin('view_all_bug_page.php');
+layout_page_begin('filter_issues.php');
 
 page_title(bug_format_id($f_bug_id) . ' - ' . bug_format_summary($f_bug_id, SUMMARY_CAPTION));
 

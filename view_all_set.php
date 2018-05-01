@@ -67,7 +67,7 @@ if( $f_temp_filter ) {
 }
 
 if( $f_type < 0 ) {
-	print_header_redirect( 'view_all_bug_page.php' );
+	print_header_redirect( 'filter_issues.php' );
 }
 
 # -1 is a special case stored query: it means we want to reset our filter
@@ -236,7 +236,7 @@ if( !$f_temp_filter ) {
 if( $f_print ) {
 	$t_redirect_url = 'print_all_bug_page.php?';
 } else {
-	$t_redirect_url = 'view_all_bug_page.php?';
+	$t_redirect_url = 'filter_issues.php?';
 }
 
 if( $f_temp_filter ) {

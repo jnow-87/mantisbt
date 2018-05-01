@@ -115,7 +115,7 @@ html_robots_noindex();
 layout_page_header_begin(lang_get('view_bugs_link'));
 
 if(current_user_get_pref('refresh_delay') > 0)
-	html_meta_redirect('view_all_bug_page.php?refresh=true', current_user_get_pref('refresh_delay') * 60);
+	html_meta_redirect('filter_issues.php?refresh=true', current_user_get_pref('refresh_delay') * 60);
 
 layout_page_header_end();
 

@@ -107,7 +107,7 @@ function tab_page1(){
 $t_menu0 = array(
 	array('label' => 'header', 'data' => 'title'),
 	array('label' => 'divider', 'data' => ''),
-	array('label' => 'item0', 'data' => array('link' => 'my_view_page.php', 'icon' => 'fa-android')),
+	array('label' => 'item0', 'data' => array('link' => 'dashboard.php', 'icon' => 'fa-android')),
 	array('label' => 'divider', 'data' => ''),
 	array('label' => 'item1', 'data' => array('link' => 'worklog_summary_page.php', 'icon' => 'fa-user')),
 );

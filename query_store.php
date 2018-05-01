@@ -107,5 +107,5 @@ if( $t_new_row_id == -1 ) {
 		. urlencode( lang_get( 'query_store_error' ) );
 	print_header_redirect( $t_query_redirect_url );
 } else {
-	print_header_redirect( 'view_all_bug_page.php' );
+	print_header_redirect( 'filter_issues.php' );
 }

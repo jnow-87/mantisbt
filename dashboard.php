@@ -78,7 +78,7 @@ html_robots_noindex();
 layout_page_header_begin();
 
 if(current_user_get_pref('refresh_delay') > 0)
-	html_meta_redirect('my_view_page.php?refresh=true', current_user_get_pref('refresh_delay') * 60);
+	html_meta_redirect('dashboard.php?refresh=true', current_user_get_pref('refresh_delay') * 60);
 
 layout_page_header_end();
 

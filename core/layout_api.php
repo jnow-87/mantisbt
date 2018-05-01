@@ -458,8 +458,8 @@ function layout_navbar() {
 	$t_menu = array(
 		array('label' => 'Report Issue', 'data' => array('link' => 'bug_report_page.php', 'icon' => 'fa-edit', 'class' => 'inline-page-link')),
 		array('label' => 'divider', 'data' => ''),
-		array('label' => 'Dashboard', 'data' => array('link' => 'my_view_page.php', 'icon' => 'fa-dashboard')),
-		array('label' => 'Filter', 'data' => array('link' => 'view_all_bug_page.php', 'icon' => 'fa-tasks'))
+		array('label' => 'Dashboard', 'data' => array('link' => 'dashboard.php', 'icon' => 'fa-dashboard')),
+		array('label' => 'Filter', 'data' => array('link' => 'filter_issues.php', 'icon' => 'fa-tasks'))
 	);
 
 	dropdown_menu('Issues', $t_menu, 'grey', 'fa-bug');

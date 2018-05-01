@@ -89,7 +89,7 @@ if( !is_blank( $c_ref ) ) {
 		$t_param = $t_matches[3];
 
 		# if view_all_bug_page, pass on filter
-		if( strcasecmp( 'view_all_bug_page.php', $t_referrer_page ) == 0 ) {
+		if( strcasecmp( 'filter_issues.php', $t_referrer_page ) == 0 ) {
 			$t_source_filter_id = filter_db_get_project_current( $f_project_id );
 			$t_redirect_url = 'view_all_set.php?type=4';
 

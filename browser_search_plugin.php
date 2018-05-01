@@ -39,7 +39,7 @@ $f_type = strtolower( gpc_get_string( 'type', 'text' ) );
 $t_path = config_get_global( 'path' );
 $t_title = config_get( 'search_title' );
 $t_icon = $t_path . config_get( 'favicon_image' );
-$t_searchform = $t_path . 'view_all_bug_page.php';
+$t_searchform = $t_path . 'filter_issues.php';
 
 # Localized ShortName and Description elements
 $t_shortname = sprintf( lang_get( "opensearch_{$f_type}_short" ), $t_title );

@@ -51,7 +51,7 @@ require_api( 'utility_api.php' );
 
 $f_project_id	= gpc_get_int( 'project_id' );
 
-$t_view_issues_url = 'set_project.php?project_id=' . $f_project_id . '&ref=view_all_bug_page.php';
+$t_view_issues_url = 'set_project.php?project_id=' . $f_project_id . '&ref=filter_issues.php';
 
 if( $f_project_id == ALL_PROJECTS ) {
 	print_header_redirect( $t_view_issues_url );

@@ -3164,7 +3164,7 @@ $g_cdn_enabled = OFF;
  * Default page after Login or Set Project
  * @global string $g_default_home_page
  */
-$g_default_home_page = 'my_view_page.php';
+$g_default_home_page = 'dashboard.php';
 
 /**
  * Specify where the user should be sent after logging out.
