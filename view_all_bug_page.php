@@ -62,10 +62,8 @@ require_css('status_config.php');
 
 
 $f_hide_filter = gpc_get_bool('hide_filter', false);
-$t_project_id = gpc_get_int('project_id', helper_get_current_project());
-$f_columns = helper_get_columns_to_view(COLUMNS_TARGET_VIEW_PAGE);
-$f_columns[] = 'tags';
-
+$f_project_id = gpc_get_int('project_id', helper_get_current_project());
+$f_columns = bug_list_columns('filter');
 
 auth_ensure_user_authenticated();
 compress_enable();
@@ -73,8 +71,8 @@ filter_init(current_user_get_bug_filter());
 
 
 /* Get Project Id and set it as current */
-if((ALL_PROJECTS == $t_project_id || project_exists($t_project_id)) && $t_project_id != helper_get_current_project()){
-	helper_set_current_project($t_project_id);
+if((ALL_PROJECTS == $f_project_id || project_exists($f_project_id)) && $f_project_id != helper_get_current_project()){
+	helper_set_current_project($f_project_id);
 	# Reloading the page is required so that the project browser
 	# reflects the new current project
 	print_header_redirect($_SERVER['REQUEST_URI'], true, false, true);
@@ -131,20 +129,22 @@ echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" clas
 
 	actionbar_begin();
 		echo '<div class="pull-left">';
-			/* select all button */
-			button('Select All', 'bug_arr_all', 'button', '', 'check-all');
+			/* bulk operations */
+			if(in_array('selection', $f_columns)){
+				// select all button
+				button('Select All', 'bug_arr_all', 'button', '', 'check-all');
 
-			/* bulk edit action */
-			select('bulk_action', 'bulk_action', $t_cmd_list, '');
-			hspace('2px');
-			button('Apply', 'apply_bulk', 'submit');
+				// operation selection
+				select('bulk_action', 'bulk_action', $t_cmd_list, '');
+				hspace('2px');
+				button('Apply', 'apply_bulk', 'submit');
+			}
+			else
+				// hint if 'selection' column is disabled
+				echo 'enable bulk operations by enabling the \'selection\' ' . format_link('column', 'columns_select_page.php', bug_list_column_input('filter', $f_columns, true), 'inline-page-link');
 		echo '</div>';
 
 		echo '<div class="pull-right">';
-			/* print and export buttons */
-			button_link('Print Report', 'print_all_bug_page.php');
-			button_link('CSV Export', 'csv_export.php');
-
 			/* plugin handling */
 			$t_event_menu_options = event_signal('EVENT_MENU_FILTER');
 
@@ -159,6 +159,17 @@ echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" clas
 					}
 				}
 			}
+
+			/* dropdown: export, print, column selection */
+			$t_menu = array(
+				array('label' => 'Export csv', 'data' => array('link' => 'csv_export.php')),
+				array('label' => 'Print', 'data' => array('link' => 'print_all_bug_page.php')),
+				array('label' => 'divider', 'data' => ''),
+				array('label' => 'Select Filter Columns', 'data' => array('link' => format_href('columns_select_page.php', bug_list_column_input('filter', $f_columns, false, true)), 'class' => 'inline-page-link')),
+				array('label' => 'Select Bulk Columns', 'data' => array('link' => format_href('columns_select_page.php', bug_list_column_input('bulk', array(), true, true)), 'class' => 'inline-page-link')),
+			);
+
+			dropdown_menu('', $t_menu, '', '', 'dropdown-menu-right');
 		echo '</div>';
 	actionbar_end();
 

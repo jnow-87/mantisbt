@@ -957,6 +957,24 @@ $g_priority_significant_threshold = HIGH;
  */
 $g_severity_significant_threshold = MAJOR;
 
+
+/**
+ *	default columns to be shown in bug lists
+ */
+$g_bug_list_columns_all = array(
+	'id', 'project_id', 'reporter_id', 'handler_id', 'priority', 'severity', 
+	'status', 'status_icon', 'resolution', 'category_id', 'date_submitted', 
+	'last_updated', 'os', 'os_build', 'platform', 'version', 'fixed_in_version', 
+	'target_version', 'build', 'view_state', 'summary', 'due_date', 'description', 
+	'time_tracking', 'tags', 'selection', 'edit', 'overdue' 
+);
+$g_bug_list_columns_filter = array('selection', 'id', 'summary', 'category_id', 'status', 'target_version', 'tags');
+$g_bug_list_columns_dashboard = array('id', 'summary', 'status', 'target_version');
+$g_bug_list_columns_versions = array('status', 'id', 'summary');
+$g_bug_list_columns_bulk = array('id', 'status', 'summary');
+$g_bug_list_columns_export = array('id', 'status', 'summary');
+
+
 /**
  * The default columns to be included in the View Issues Page.
  * This can be overriden using Manage -> Manage Configuration -> Manage Columns

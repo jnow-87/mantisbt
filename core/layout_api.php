@@ -379,8 +379,10 @@ function layout_body_javascript() {
 	html_javascript_link('mantis_table.js');
 	html_javascript_link('mantis_hr.js');
 	html_javascript_link('mantis_input.js');
+	html_javascript_link('mantis_dragable.js');
 	html_javascript_link('dataTables.bootstrap.min.js');
 	html_javascript_link('jquery.dataTables.min.js');
+	html_javascript_link('jquery-ui.js');
 }
 
 

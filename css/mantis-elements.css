@@ -144,3 +144,9 @@ div.inline-page-frame{
 .dynamic-filter-expander{
 	cursor: pointer;
 }
+
+.dragable{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}

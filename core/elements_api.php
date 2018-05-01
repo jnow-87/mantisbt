@@ -583,10 +583,11 @@ function tabs($p_tabs){
  *
  *	@param	string	$p_color	dropdown menu color class
  *	@param	string	$p_icon		an optional item shown in front of the menu name
+ *	@param	string	$p_class	dropdown menu class additions
  *
  *	@return	nothing
  */
-function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = ''){
+function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = '', $p_class = ''){
 	$t_padding_button = '0px';
 	$t_padding_icon_left = '0px';
 	$t_padding_icon_right = '10px';
@@ -616,7 +617,7 @@ function dropdown_menu($p_title, $p_items, $p_color = '', $p_icon = ''){
 	echo '</a>';
 
 	# menu items
-	echo '<ul class="dropdown-menu scrollable-menu">';
+	echo '<ul class="dropdown-menu scrollable-menu ' . $p_class . '">';
 
 	foreach($p_items as $t_item){
 		$t_label = $t_item['label'];
@@ -950,6 +951,23 @@ function format_input_hover_date($p_id, $p_value, $p_width = '', $p_submit_actio
 
 function input_hover_date($p_id, $p_value, $p_width = '', $p_submit_action = ''){
 	echo format_input_hover_date($p_id, $p_value, $p_width, $p_submit_action);
+}
+
+function format_dragable($p_list){
+	echo '<ul class="dragable">';
+
+	foreach($p_list as $t_el){
+  		echo '<li class="ui-state-default">';
+		icon('fa-sort');
+		echo $t_el;
+		echo '</li>';
+	}
+
+	echo '</ul>';
+}
+
+function dragable($p_list){
+	echo format_dragable($p_list);
 }
 
 

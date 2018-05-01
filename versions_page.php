@@ -121,6 +121,9 @@ function tab_project(){
 	global $t_version_type;
 	static $i = 0;
 
+
+	$f_columns = bug_list_columns('versions');
+
 	$t_project_id = $t_project_ids[$i];
 	$i++;
 
@@ -184,7 +187,17 @@ function tab_project(){
 
 			/* print issues */
 			echo '<div class="col-md-6-right">';
-			bug_list_print($t_issue_ids, array('status', 'id', 'summary'), 'table-condensed table-hover table-sortable no-border');
+			actionbar_begin();
+				echo '<div class="pull-right">';
+					$t_menu = array(
+						array('label' => 'Select Columns', 'data' => array('link' => format_href('columns_select_page.php', bug_list_column_input('versions', $f_columns, false, true)), 'class' => 'inline-page-link')),
+					);
+
+					dropdown_menu('', $t_menu, '', '', 'dropdown-menu-right');
+				echo '</div>';
+			actionbar_end();
+
+			bug_list_print($t_issue_ids, $f_columns, 'table-condensed table-hover table-sortable no-border');
 			echo '</div>';
 
 			echo '</div>';

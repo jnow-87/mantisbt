@@ -1,6 +1,7 @@
 <?php
 
 require_api('config_api.php');
+require_api('gpc_api.php');
 require_api('access_api.php');
 require_api('database_api.php');
 require_api('project_api.php');
@@ -136,7 +137,7 @@ function format_content_tags($p_bug){
 }
 
 function format_content_selection($p_bug){
-	if(access_has_any_project(config_get('reporp_bug_threshold', null, null, $p_bug->project_id)) ||
+	if(access_has_any_project(config_get('report_bug_threshold', null, null, $p_bug->project_id)) ||
 		# !TODO: check if any other projects actually exist for the bug to be moved to
 		access_has_project_level(config_get('move_bug_threshold', null, null, $p_bug->project_id), $p_bug->project_id) ||
 		# !TODO: factor in $g_auto_set_status_to_assigned == ON
@@ -173,15 +174,16 @@ function format_content_notlinked($p_bug){
 	return format_label('field not linked to project', 'label-danger');
 }
 
-
 /**
- *	print a table with bugs according to $p_bug_ids and columns according to $p_columns
+ *	return the column title for the given name
  *
- *	@param	array	$p_bug_ids		list of bug ids to display
- *	@param	array	$p_columns		list of columns to display, see helper_get_columns_to_view() for valid fields
- *	@param	string	$p_table_class	table classes
+ *	@param	string	$p_column_name	column name to retrieve the title for
+ *	@param	boolean	$p_table_header	if the title is intended to be shown in a table
+ *									head or not
+ *
+ *	@return	the corresponding column title or false for unknown columns
  */
-function bug_list_print($p_bug_ids, $p_columns, $p_table_class = ''){
+function bug_list_column_title($p_column_name, $p_table_header = true){
 	/* mapping column -> title */
 	static $t_titles = array(
 		'id' => 'Issue',
@@ -209,12 +211,107 @@ function bug_list_print($p_bug_ids, $p_columns, $p_table_class = ''){
 		'description' => 'Description',
 		'time_tracking' => 'Work Log',
 		'tags' => 'Tags',
-		'selection' => ' ',
-		'edit' => 'Edit',
+		'selection' => '',
+		'edit' => 'Editable',
 		'overdue' => 'Overdue',
 		'invalid' => 'Invalid',
 	);
 
+	$t_title = $t_titles[$p_column_name];
+
+	if($t_title !== null){
+		if($t_title == '' && !$p_table_header)
+			return $p_column_name;
+
+		return $t_title;
+	}
+
+	$t_title = column_get_custom_field_name($p_column_name);
+
+	if(custom_field_get_id_from_name($t_title) === false)
+		return false;
+
+	return $t_title;
+}
+
+/**
+ *	@return array with all available columns
+ */
+function bug_list_columns_all(){
+	$t_columns = config_get('bug_list_columns_all');
+
+	/* add custom fields */
+	$t_project_id = helper_get_current_project();
+	$t_related_custom_field_ids = custom_field_get_linked_ids($t_project_id);
+
+	foreach($t_related_custom_field_ids as $t_id){
+		if(!custom_field_has_read_access_by_project_id($t_id, $t_project_id)) 
+			continue;
+
+		$t_def = custom_field_get_definition($t_id);
+		$t_columns[] = 'custom_' . $t_def['name'];
+	}
+
+	return $t_columns;
+}
+
+/**
+ *	return an array with the currently selected columns
+ *
+ *	@param	string	$p_usage				string to identify the intended use of the columns
+ *											it is used to identify the correct config option
+ *
+ *	@param	boolean	$p_ignore_form_input	ignore column configuration supplied through form
+ *											arguments
+ *
+ *	@return	array containing the columns
+ */
+function bug_list_columns($p_usage, $p_ignore_form_input = false){
+	$t_default = array();
+
+	if($p_usage != '')
+		$t_default = config_get('bug_list_columns_' . $p_usage);
+
+	if($p_ignore_form_input)
+		return $t_default;
+
+	$t_col_str = gpc_get_string('columns_str', '');
+
+	if($t_col_str != '')
+		return explode('|', $t_col_str);
+
+	return gpc_get_string_array('columns_arr', $t_default);
+}
+
+/**
+ *	prepare input for column selection
+ *
+ *	@param	string	$p_usage			string to identify the intended use of the columns
+ *										it is used to identify the correct config option
+ *
+ *	@param	array	$p_columns			the columns that shall be posted
+ *	@param	boolean	$p_hide_apply_btn	hide the apply button on the colum selection page
+ *	@param	boolean	$p_format_url		return the result as string that can be used to form urls
+ *
+ *	@return	url string if $p_format_url is set to true, nothing otherwise
+ */
+function bug_list_column_input($p_usage, $p_columns, $p_hide_apply_btn = false, $p_format_url = false){
+	if($p_format_url)
+		return array('usage' => $p_usage, 'columns_str' => implode('|', $p_columns), 'hide_apply' => $p_hide_apply_btn);
+
+	input_hidden('usage', $p_usage);
+	input_hidden('hide_apply', $p_hide_apply_btn);
+	input_hidden('columns_str', implode('|', $p_columns));
+}
+
+/**
+ *	print a table with bugs according to $p_bug_ids and columns according to $p_columns
+ *
+ *	@param	array	$p_bug_ids		list of bug ids to display
+ *	@param	array	$p_columns		list of columns to display, see helper_get_columns_to_view() for valid fields
+ *	@param	string	$p_table_class	table classes
+ */
+function bug_list_print($p_bug_ids, $p_columns, $p_table_class = ''){
 	/* cache bugs */
 	bug_cache_array_rows($p_bug_ids);
 
@@ -222,16 +319,12 @@ function bug_list_print($p_bug_ids, $p_columns, $p_table_class = ''){
 	$t_header = array();
 
 	for($i=0; $i<count($p_columns); $i++){
-		if(!isset($t_titles[$p_columns[$i]])){
-			$t_title = column_get_custom_field_name($p_columns[$i]);
+		$t_title = bug_list_column_title($p_columns[$i]);
 
-			if(custom_field_get_id_from_name($t_title) === false){
-				$t_title = '[invalid \'' . $p_columns[$i] . '\']';
-				$p_columns[$i] = 'invalid';
-			}
+		if($t_title === false){
+			$t_title = '[invalid \'' . $p_columns[$i] . '\']';
+			$p_columns[$i] = 'invalid';
 		}
-		else
-			$t_title = $t_titles[$p_columns[$i]];
 
 		$t_header[] = $t_title;
 	}
@@ -244,10 +337,10 @@ function bug_list_print($p_bug_ids, $p_columns, $p_table_class = ''){
 		$t_row = array();
 
 		foreach($p_columns as $t_col){
-			if(!isset($t_titles[$t_col])){
-				$t_cf_name = column_get_custom_field_name($t_col);
-				$t_cf_id = custom_field_get_id_from_name($t_cf_name);
+			$t_title = bug_list_column_title($t_col);
+			$t_cf_id = custom_field_get_id_from_name($t_title);
 
+			if($t_cf_id != null){
 				if(custom_field_is_linked($t_cf_id, $t_bug->project_id)){
 					$t_def = custom_field_get_definition($t_cf_id);
 					$t_row[] = string_custom_field_value($t_def, $t_cf_id, $t_bug_id);

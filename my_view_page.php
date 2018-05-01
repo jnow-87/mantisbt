@@ -204,6 +204,8 @@ $c_filter['my_comments'] = array(
 $t_url_link_parameters['my_comments'] = FILTER_PROPERTY_NOTE_USER_ID. '=' . META_FILTER_MYSELF . '&' . FILTER_PROPERTY_HIDE_STATUS . '=' . $t_hide_status_default;
 
 
+$f_columns = bug_list_columns('dashboard');
+
 
 /* page content */
 page_title('Dashboard');
@@ -236,8 +238,18 @@ foreach($t_boxes as $t_box_title => $t_box_display){
 
 		section_begin($t_secion_titles[$t_box_title]);
 
+		actionbar_begin();
+			echo '<div class="pull-right">';
+				$t_menu = array(
+					array('label' => 'Select Columns', 'data' => array('link' => format_href('columns_select_page.php', bug_list_column_input('dashboard', $f_columns, false, true)), 'class' => 'inline-page-link')),
+				);
+
+				dropdown_menu('', $t_menu, '', '', 'dropdown-menu-right');
+			echo '</div>';
+		actionbar_end();
+
 		/* filter content */
-		bug_list_print($t_bug_ids, array('id', 'summary', 'category_id', 'status', 'tags'), 'table-condensed table-hover table-sortable no-border');
+		bug_list_print($t_bug_ids, $f_columns, 'table-condensed table-hover table-sortable no-border');
 
 		unset($t_rows);
 
