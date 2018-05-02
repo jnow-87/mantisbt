@@ -505,7 +505,7 @@ function layout_navbar() {
 		array('label' => 'Roadmap', 'data' => array('link' => 'versions_page.php?type=unreleased', 'icon' => 'fa-road')),
 		array('label' => 'Releases', 'data' => array('link' => 'versions_page.php?type=released', 'icon' => 'fa-retweet')),
 		array('label' => 'divider', 'data' => ''),
-		array('label' => 'Summary', 'data' => array('link' => 'summary_page.php', 'icon' => 'fa-bar-chart-o'))
+		array('label' => 'Statistics', 'data' => array('link' => 'summary_page.php', 'icon' => 'fa-bar-chart-o'))
 	);
 
 	dropdown_menu('Reports', $t_menu, 'grey', 'fa-heartbeat');

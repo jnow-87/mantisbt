@@ -22,7 +22,7 @@ function format_content_id($p_bug){
 }
 
 function format_content_project_id($p_bug){
-	return project_get_name($p_bug->project_id, false);
+	return format_link(project_get_name($p_bug->project_id, false), 'manage_proj_edit_page.php', array('project_id' => $p_bug->project_id));
 }
 
 function format_content_reporter_id($p_bug){

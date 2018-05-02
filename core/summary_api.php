@@ -793,7 +793,7 @@ function summary_print_by_project( array $p_projects = array(), $p_level = 0, ar
 	}
 
 	foreach( $p_projects as $t_project ) {
-		$t_name = str_repeat( '&raquo; ', $p_level ) . project_get_name( $t_project );
+		$t_name = format_link(project_get_name($t_project, false), 'manage_proj_edit_page.php', array('project_id' => $t_project));
 
 		$t_pdata = isset( $p_cache[$t_project] ) ? $p_cache[$t_project] : array( 'open' => 0, 'resolved' => 0, 'closed' => 0 );
 
@@ -802,7 +802,7 @@ function summary_print_by_project( array $p_projects = array(), $p_level = 0, ar
 		$t_bugs_closed = isset( $t_pdata['closed'] ) ? $t_pdata['closed'] : 0;
 		$t_bugs_total = $t_bugs_open + $t_bugs_resolved + $t_bugs_closed;
 
-		summary_helper_print_row( string_display_line( $t_name ), $t_bugs_open, $t_bugs_resolved, $t_bugs_closed, $t_bugs_total );
+		summary_helper_print_row( $t_name, $t_bugs_open, $t_bugs_resolved, $t_bugs_closed, $t_bugs_total );
 
 		if( count( project_hierarchy_get_subprojects( $t_project ) ) > 0 ) {
 			$t_subprojects = current_user_get_accessible_subprojects( $t_project );
