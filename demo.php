@@ -6,10 +6,6 @@ require_api('elements_api.php');
 
 
 # TODO
-#		make columns configurable
-#		make my view filters configurable
-
-
 #	validation
 #		access control
 #			update access_has_bug_level and similar functions to return json data if requested
@@ -28,7 +24,13 @@ require_api('elements_api.php');
 #		add persistent error message -> they need to be removed by the user
 #		allow showing statusbar messages when loading a page (php-based)
 #		handle markup for description, cf. plugins/BBCodePlus/files/markitup-init.js
-#		use user-defined filters for my_view.php
+#		use user-defined filters for dashboard
+#			one button to open an inline page that allows to
+#				- add dashboard columns
+#				- elements to each column
+#				- define ordering of columns
+#				- button to define columns for filter elements
+#
 #		remove distinction between simple and advanced filters
 #		maybe remove platform/os/os version, replacing them with custom fields
 #			add 'category' custom fields to define their location on the bug view page

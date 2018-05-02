@@ -1,6 +1,7 @@
 <?php
 
 require_once('core.php');
+require_api('authentication_api.php');
 require_api('gpc_api.php');
 require_api('layout_api.php');
 require_api('bug_list_api.php');
@@ -38,7 +39,7 @@ $t_columns_cur = bug_list_columns($f_usage, $f_ignore_gpc);
 switch($f_cmd){
 case 'update_config':
 	// update config and reload page
-	config_set('bug_list_columns_' . $f_usage, $t_columns_cur);
+	config_set('bug_list_columns_' . $f_usage, $t_columns_cur, auth_get_current_user_id());
 	print_header_redirect($f_page, true, false, true);
 	break;
 }
