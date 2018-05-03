@@ -1,5 +1,5 @@
 <?php
-require_once('core.php');
+require_once('../core.php');
 require_api('error_api.php');
 require_api('gpc_api.php');
 
@@ -20,7 +20,6 @@ $t_res .= $f_select . ' ';
 $t_res .= ($f_checkbox ? 'true' : 'false');
 
 json_prepare();
-json_warning('test_post1: this is a warning: ' . $t_res);
-//json_error('test_post1: this is an error');
-json_commit();
+//json_warning('test_post: this is a warning');
+json_success('test_post: ' . $t_res);
 ?>

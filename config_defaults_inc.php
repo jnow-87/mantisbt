@@ -217,28 +217,23 @@ if( isset ( $_SERVER['SCRIPT_NAME'] ) ) {
 	}
 	$t_self = filter_var( $_SERVER['SCRIPT_NAME'], FILTER_SANITIZE_STRING );
 	$t_path = str_replace( basename( $t_self ), '', $t_self );
-	switch( basename( $t_path ) ) {
-		case 'admin':
-			$t_path = rtrim( dirname( $t_path ), '/\\' ) . '/';
-			break;
-		case 'check':		# admin checks dir
-		case 'soap':
-		case 'rest':
-			$t_path = rtrim( dirname( dirname( $t_path ) ), '/\\' ) . '/';
-			break;
-		case 'swagger':
-			$t_path = rtrim( dirname( dirname( dirname( $t_path ) ) ), '/\\' ) . '/';
-			break;
-		case '':
-			$t_path = '/';
-			break;
+
+	# strip all but the mantis root directory
+	$t_root = $t_path;
+
+	while($t_path != '/'){
+		$t_root = $t_path;
+		$t_path = dirname($t_path);
 	}
-	if( strpos( $t_path, '&#' ) ) {
+
+	$t_root = rtrim($t_root, '/\\') . '/';
+
+	if( strpos( $t_root, '&#' ) ) {
 		echo 'Can not safely determine $g_path. Please set $g_path manually in ' . $g_config_path . 'config_inc.php';
 		die;
 	}
 } else {
-	$t_path = 'mantisbt/';
+	$t_root = 'mantisbt/';
 }
 
 /**
@@ -246,14 +241,14 @@ if( isset ( $_SERVER['SCRIPT_NAME'] ) ) {
  * requires trailing /
  * @global string $g_path
  */
-$g_path	= $t_protocol . '://' . $t_host . $t_path;
+$g_path	= $t_protocol . '://' . $t_host . $t_root;
 
 /**
  * Short web path without the domain name
  * requires trailing /
  * @global string $g_short_path
  */
-$g_short_path = $t_path;
+$g_short_path = $t_root;
 
 /**
  * Used to link to manual for User Documentation.
@@ -4412,7 +4407,7 @@ $g_public_config_names = array(
 );
 
 # Temporary variables should not remain defined in global scope
-unset( $t_protocol, $t_host, $t_hosts, $t_port, $t_self, $t_path );
+unset( $t_protocol, $t_host, $t_hosts, $t_port, $t_self, $t_path, $t_root );
 
 
 ############################

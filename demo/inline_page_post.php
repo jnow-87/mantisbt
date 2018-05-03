@@ -1,5 +1,5 @@
 <?php
-require_once('core.php');
+require_once('../core.php');
 require_api('error_api.php');
 require_api('gpc_api.php');
 

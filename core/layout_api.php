@@ -456,10 +456,10 @@ function layout_navbar() {
 	/* menus */
 	// issues
 	$t_menu = array(
-		array('label' => 'Report Issue', 'data' => array('link' => 'bug_report_page.php', 'icon' => 'fa-edit', 'class' => 'inline-page-link')),
+		array('label' => 'Report Issue', 'data' => array('link' => helper_mantis_url('bug_report_page.php'), 'icon' => 'fa-edit', 'class' => 'inline-page-link')),
 		array('label' => 'divider', 'data' => ''),
-		array('label' => 'Dashboard', 'data' => array('link' => 'dashboard.php', 'icon' => 'fa-dashboard')),
-		array('label' => 'Filter', 'data' => array('link' => 'filter_issues.php', 'icon' => 'fa-tasks'))
+		array('label' => 'Dashboard', 'data' => array('link' => helper_mantis_url('dashboard.php'), 'icon' => 'fa-dashboard')),
+		array('label' => 'Filter', 'data' => array('link' => helper_mantis_url('filter_issues.php'), 'icon' => 'fa-tasks'))
 	);
 
 	dropdown_menu('Issues', $t_menu, 'grey', 'fa-bug');
@@ -501,22 +501,22 @@ function layout_navbar() {
 
 	// reports
 	$t_menu = array(
-		array('label' => 'Work Log', 'data' => array('link' => 'worklog_summary_page.php', 'icon' => 'fa-clock-o')),
-		array('label' => 'Roadmap', 'data' => array('link' => 'versions_page.php?type=unreleased', 'icon' => 'fa-road')),
-		array('label' => 'Releases', 'data' => array('link' => 'versions_page.php?type=released', 'icon' => 'fa-retweet')),
+		array('label' => 'Work Log', 'data' => array('link' => helper_mantis_url('worklog_summary_page.php'), 'icon' => 'fa-clock-o')),
+		array('label' => 'Roadmap', 'data' => array('link' => helper_mantis_url('versions_page.php?type=unreleased'), 'icon' => 'fa-road')),
+		array('label' => 'Releases', 'data' => array('link' => helper_mantis_url('versions_page.php?type=released'), 'icon' => 'fa-retweet')),
 		array('label' => 'divider', 'data' => ''),
-		array('label' => 'Statistics', 'data' => array('link' => 'summary_page.php', 'icon' => 'fa-bar-chart-o'))
+		array('label' => 'Statistics', 'data' => array('link' => helper_mantis_url('summary_page.php'), 'icon' => 'fa-bar-chart-o'))
 	);
 
 	dropdown_menu('Reports', $t_menu, 'grey', 'fa-heartbeat');
 
 	// settings
 	$t_menu = array(
-		array('label' => 'My Account', 'data' => array('link' => 'account_page.php', 'icon' => 'fa-user')),
-		array('label' => 'Filters', 'data' => array('link' => 'manage_filter_page.php', 'icon' => 'fa-filter')),
-		array('label' => 'Settings', 'data' => array('link' => 'manage_overview_page.php', 'icon' => 'fa-gears')),
+		array('label' => 'My Account', 'data' => array('link' => helper_mantis_url('account_page.php'), 'icon' => 'fa-user')),
+		array('label' => 'Filters', 'data' => array('link' => helper_mantis_url('manage_filter_page.php'), 'icon' => 'fa-filter')),
+		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('manage_overview_page.php'), 'icon' => 'fa-gears')),
 		array('label' => 'divider', 'data' => ''),
-		array('label' => 'Logout', 'data' => array('link' => 'logout_page.php', 'icon' => 'fa-sign-out')),
+		array('label' => 'Logout', 'data' => array('link' => helper_mantis_url('logout_page.php'), 'icon' => 'fa-sign-out')),
 	);
 
 	dropdown_menu('Manage', $t_menu, 'grey', 'fa-sliders');

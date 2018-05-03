@@ -1,5 +1,5 @@
 <?php
-require_once('core.php');
+require_once('../core.php');
 require_api('gpc_api.php');
 require_api('layout_api.php');
 require_api('elements_api.php');
@@ -8,7 +8,7 @@ layout_inline_page_begin();
 page_title('inline page');
 
 echo '<div class="col-md-12">';
-echo '<form method="post" action="demo_inline_page_post.php" class="input-hover-form inline-page-form">'
+echo '<form method="post" action="inline_page_post.php" class="input-hover-form inline-page-form">'
 ;
 	table_begin(array('hover text'), 'table-bordered table-condensed table-striped');
 	echo '<tr>';

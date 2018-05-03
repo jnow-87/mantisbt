@@ -1,7 +1,8 @@
 <?php
-require_once('core.php');
+require_once('../core.php');
 require_api('gpc_api.php');
 require_api('layout_api.php');
+require_api('helper_api.php');
 require_api('elements_api.php');
 
 
@@ -109,9 +110,9 @@ function tab_page1(){
 $t_menu0 = array(
 	array('label' => 'header', 'data' => 'title'),
 	array('label' => 'divider', 'data' => ''),
-	array('label' => 'item0', 'data' => array('link' => 'dashboard.php', 'icon' => 'fa-android')),
+	array('label' => 'item0', 'data' => array('link' => helper_mantis_url('dashboard.php'), 'icon' => 'fa-android')),
 	array('label' => 'divider', 'data' => ''),
-	array('label' => 'item1', 'data' => array('link' => 'worklog_summary_page.php', 'icon' => 'fa-user')),
+	array('label' => 'item1', 'data' => array('link' => helper_mantis_url('worklog_summary_page.php'), 'icon' => 'fa-user')),
 );
 
 $t_page_title = 'Layout elements demos';
@@ -130,7 +131,7 @@ page_title($t_page_title);
 	section_begin('action bar');
 		actionbar_begin();
 
-		button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs');
+		button_link('view issue 92', helper_mantis_url('view.php'), array('id' => '92'), 'btn-xs');
 
 		echo '<div class="pull-right">';
 			echo '<div class="pull-left">';
@@ -142,14 +143,14 @@ page_title($t_page_title);
 			hspace('15px');
 
 			echo '<div class="pull-right">';
-				button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs');
+				button_link('view issue 92', helper_mantis_url('view.php'), array('id' => '92'), 'btn-xs');
 			echo '</div>';
 		echo '</div>';
 
 		actionbar_end();
 		actionbar_begin();
 
-		button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs');
+		button_link('view issue 92', helper_mantis_url('view.php'), array('id' => '92'), 'btn-xs');
 
 		echo '<div class="pull-right">';
 			echo '<div class="pull-left">';
@@ -161,7 +162,7 @@ page_title($t_page_title);
 			hspace('15px');
 
 			echo '<div class="pull-right">';
-				button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs');
+				button_link('view issue 92', helper_mantis_url('view.php'), array('id' => '92'), 'btn-xs');
 			echo '</div>';
 		echo '</div>';
 
@@ -196,15 +197,15 @@ page_title($t_page_title);
 	<?php label('link button input:'); echo $f_link_button_input . '<br>' ?>
 
 	<div>
-		<?php button_link('view issue 92', 'view.php', array('id' => '92'), ''); ?>
-		<?php button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-white'); ?>
+		<?php button_link('view issue 92', helper_mantis_url('view.php'), array('id' => '92'), ''); ?>
+		<?php button_link('view issue 92', helper_mantis_url('view.php'), array('id' => '92'), 'btn-white'); ?>
 	</div>
 
 	<div>
-		<?php button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-xs'); ?>
-		<?php button_link('view issue 92', 'view.php', array('id' => '92'), 'btn-sm'); ?>
-		<?php button_link('view issue 82', 'view.php', array('id' => '82'), 'btn-round btn-sm'); ?>
-		<?php button_link('view issue 82', 'view.php', array('id' => '82'), 'btn-round btn-xs'); ?>
+		<?php button_link('view issue 92', helper_mantis_url('view.php'), array('id' => '92'), 'btn-xs'); ?>
+		<?php button_link('view issue 92', helper_mantis_url('view.php'), array('id' => '92'), 'btn-sm'); ?>
+		<?php button_link('view issue 82', helper_mantis_url('view.php'), array('id' => '82'), 'btn-round btn-sm'); ?>
+		<?php button_link('view issue 82', helper_mantis_url('view.php'), array('id' => '82'), 'btn-round btn-xs'); ?>
 	</div>
 
 	<div>
@@ -236,7 +237,7 @@ page_title($t_page_title);
 	<!-- input text toggle -->
 	<?php section_begin('input hover demo') ?>
 
-	<form id="input-hover" action="demo_post0.php" class="input-hover-form" method="post">
+	<form id="input-hover" action="post0.php" class="input-hover-form" method="post">
 	<?php
 		actionbar_begin();
 
@@ -251,9 +252,9 @@ page_title($t_page_title);
 
 		<?php table_begin(array('hover ink', 'hover text', 'hover select', 'hover checkbox'), 'table-bordered table-condensed table-striped') ?>
 		<tr>
-		<td><?php input_hover_element('l', format_link('lonk', '#', array(), '', 'margin-right:20px!important'), array(array('icon' => 'fa-times', 'href' => format_href('view.php', array('id' => '89')), 'position' => 'right:4px'))); ?></td>
+		<td><?php input_hover_element('l', format_link('lonk', '#', array(), '', 'margin-right:20px!important'), array(array('icon' => 'fa-times', 'href' => format_href(helper_mantis_url('view.php'), array('id' => '89')), 'position' => 'right:4px'))); ?></td>
 		<td>
-			<?php input_hover_text('text0', 'dummy text 0', '', 'demo_post1.php') ?>
+			<?php input_hover_text('text0', 'dummy text 0', '', 'post1.php') ?>
 			<?php input_hover_text('text1', 'dummy text 1') ?>
 		</td>
 		<td><?php input_hover_select('select', array('bar' => 0, 'foo' => 1, 'foobar' => 2), 'foo'); ?></td>
@@ -270,7 +271,7 @@ page_title($t_page_title);
 	<!-- inline page -->
 	<?php section_begin('inline page demo') ?>
 
-	<form id="inline" method="post" action="demo_post1.php" class="input-hover-form">
+	<form id="inline" method="post" action="post1.php" class="input-hover-form">
 		<?php
 		actionbar_begin();
 
@@ -287,7 +288,7 @@ page_title($t_page_title);
 
 		input_hover_text('text2', 'v3');
 
-		echo format_link('open link in inline-page', 'demo_inline_page.php', array(), 'inline-page-link');
+		echo format_link('open link in inline-page', 'inline_page.php', array(), 'inline-page-link');
 		?>
 	</form>
 
