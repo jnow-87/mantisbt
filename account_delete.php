@@ -15,10 +15,6 @@
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CALLERS
- *	This page is called from:
- *	- account_page.php
- *
  * EXPECTED BEHAVIOUR
  *	- Delete the currently logged in user account
  *	- Logout the current user

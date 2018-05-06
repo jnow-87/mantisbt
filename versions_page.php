@@ -122,7 +122,7 @@ function tab_project(){
 	static $i = 0;
 
 
-	$f_columns = bug_list_columns('versions');
+	$f_columns = bug_list_columns('bug_list_columns_versions');
 
 	$t_project_id = $t_project_ids[$i];
 	$i++;
@@ -159,8 +159,6 @@ function tab_project(){
 	
 		/* print section */
 		section_begin('Version: ' . $t_version_name, !$t_is_first_version);
-			echo '<div class="row">';
-
 			/* print version description and progress */
 			echo '<div class="col-md-6-left">';
 
@@ -190,7 +188,7 @@ function tab_project(){
 			actionbar_begin();
 				echo '<div class="pull-right">';
 					$t_menu = array(
-						array('label' => 'Select Columns', 'data' => array('link' => format_href('columns_select_page.php', bug_list_column_input('versions', $f_columns, false, true)), 'class' => 'inline-page-link')),
+						array('label' => 'Select Columns', 'data' => array('link' => format_href('columns_select_page.php', column_select_input('bug_list_columns_versions', $f_columns, false, true, basename(__FILE__))), 'class' => 'inline-page-link')),
 					);
 
 					dropdown_menu('', $t_menu, '', '', 'dropdown-menu-right');
@@ -198,8 +196,6 @@ function tab_project(){
 			actionbar_end();
 
 			bug_list_print($t_issue_ids, $f_columns, 'table-condensed table-hover table-sortable no-border');
-			echo '</div>';
-
 			echo '</div>';
 		section_end();
 

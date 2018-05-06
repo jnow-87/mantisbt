@@ -903,14 +903,19 @@ function project_format_id( $p_project_id ) {
 /**
  * get list of projects the current user has access to
  *
+ * @param	boolean	$p_list_all		add an entry for 'all projects'
+ *
  * @return array with project names and ids
  */
-function project_list(){
+function project_list($p_list_all = false){
 	$t_user_id = auth_get_current_user_id();
 	$t_project_ids = user_get_accessible_projects($t_user_id);
 	project_cache_array_rows($t_project_ids);
 
 	$t_r = array();
+
+	if($p_list_all)
+		$t_r['All Projects'] = ALL_PROJECTS;
 
 	foreach($t_project_ids as $t_id){
 		$t_report_bug_threshold = config_get('report_bug_threshold', null, $t_user_id, $t_id);

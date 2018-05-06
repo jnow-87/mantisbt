@@ -361,7 +361,7 @@ echo '<div class="col-md-9">';
 			echo '</div>';
 		actionbar_end();
 
-		/* bug info */
+		/* bug details */
 		echo '<div class="row">';
 
 		echo '<div class="col-md-3 no-padding">';
@@ -452,17 +452,14 @@ echo '<div class="col-md-3">';
 
 	/* people */
 	section_begin('People');
-		echo '<div class="row">';
 		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Assignee:', format_input_hover_select('handler_id', user_list($t_project_id, $t_bug->reporter_id, true), user_get_name($t_bug->handler_id)));
 		table_row_bug_info_short('Author:', user_get_name($t_bug->reporter_id));
 		table_end();
-		echo '</div>';
 	section_end();
 
 	/* date and time */
 	section_begin('Date and Time');
-		echo '<div class="row">';
 		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Due Date:', format_input_hover_date('due_date', $t_bug_due_date));
 		table_row_bug_info_short('Last Updated:', date($t_date_format, $t_bug->last_updated));
@@ -471,12 +468,10 @@ echo '<div class="col-md-3">';
 		table_row_bug_info_short(' ', '');
 		table_row_bug_info_short('Time Spent:', db_minutes_to_hhmm(worklog_get_time_bug($f_bug_id)));
 		table_end();
-		echo '</div>';
 	section_end();
 
 	/* version info */
 	section_begin('Version Info');
-		echo '<div class="row">';
 		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Fixed in Version:', format_input_hover_select('fixed_in_version', $t_versions_unreleased, $t_bug->fixed_in_version));
 		table_row_bug_info_short('Target Version:', format_input_hover_select('target_version', $t_versions_unreleased, $t_bug->target_version));
@@ -488,7 +483,6 @@ echo '<div class="col-md-3">';
 		table_row_bug_info_short('OS:', format_input_hover_text('os', $t_bug->os));
 		table_row_bug_info_short('OS Version:', format_input_hover_text('os_build', $t_bug->os_build));
 		table_end();
-		echo '</div>';
 	section_end();
 
 	echo '</form>';

@@ -779,3 +779,16 @@ function status_list(){
 
 	return $t_state_names;
 }
+
+/**
+ *	map ordering string to a name
+ *
+ *	@param	string	$p_order	either 'ASC' or 'DESC'
+ *
+ *	@param	name based on $p_order
+ */
+function helper_ordering_name($p_order){
+	if($p_order === 'ASC')			return 'Ascending';
+	else if($p_order === 'DESC')	return 'Descending';
+	else							return 'Invalid';
+}

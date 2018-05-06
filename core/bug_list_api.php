@@ -175,66 +175,6 @@ function format_content_notlinked($p_bug){
 }
 
 /**
- *	return the column title for the given name
- *
- *	@param	string	$p_column_name	column name to retrieve the title for
- *	@param	boolean	$p_table_header	if the title is intended to be shown in a table
- *									head or not
- *
- *	@return	the corresponding column title or false for unknown columns
- */
-function bug_list_column_title($p_column_name, $p_table_header = true){
-	/* mapping column -> title */
-	static $t_titles = array(
-		'id' => 'Issue',
-		'project_id' => 'Project',
-		'reporter_id' => 'Author',
-		'handler_id' => 'Assignee',
-		'priority' => 'Priority',
-		'severity' => 'Severity',
-		'status' => 'Status',
-		'status_icon' => '',
-		'resolution' => 'Resolution',
-		'category_id' => 'Type',
-		'date_submitted' => 'Due Date',
-		'last_updated' => 'Last Updated',
-		'os' => 'OS',
-		'os_build' => 'OS Version',
-		'platform' => 'Platform',
-		'version' => 'Affected Version',
-		'fixed_in_version' => 'Fixed in Version',
-		'target_version' => 'Target Version',
-		'build' => 'Product Build',
-		'view_state' => 'Visibility',
-		'summary' => 'Summary',
-		'due_date' => 'Due Date',
-		'description' => 'Description',
-		'time_tracking' => 'Work Log',
-		'tags' => 'Tags',
-		'selection' => '',
-		'edit' => 'Editable',
-		'overdue' => 'Overdue',
-		'invalid' => 'Invalid',
-	);
-
-	$t_title = $t_titles[$p_column_name];
-
-	if($t_title !== null){
-		if($t_title == '' && !$p_table_header)
-			return $p_column_name;
-
-		return $t_title;
-	}
-
-	$t_title = column_get_custom_field_name($p_column_name);
-
-	if(custom_field_get_id_from_name($t_title) === false)
-		return false;
-
-	return $t_title;
-}
-
-/**
  *	@return array with all available columns
  */
 function bug_list_columns_all(){
@@ -258,19 +198,17 @@ function bug_list_columns_all(){
 /**
  *	return an array with the currently selected columns
  *
- *	@param	string	$p_usage				string to identify the intended use of the columns
- *											it is used to identify the correct config option
- *
+ *	@param	string	$p_config_opt		config option name, e.g. bug_list_columns_filter *
  *	@param	boolean	$p_ignore_form_input	ignore column configuration supplied through form
  *											arguments
  *
  *	@return	array containing the columns
  */
-function bug_list_columns($p_usage, $p_ignore_form_input = false){
+function bug_list_columns($p_config_opt, $p_ignore_form_input = false){
 	$t_default = array();
 
-	if($p_usage != '')
-		$t_default = config_get('bug_list_columns_' . $p_usage);
+	if($p_config_opt != '')
+		$t_default = config_get($p_config_opt);
 
 	if($p_ignore_form_input)
 		return $t_default;
@@ -281,27 +219,6 @@ function bug_list_columns($p_usage, $p_ignore_form_input = false){
 		return explode('|', $t_col_str);
 
 	return gpc_get_string_array('columns_arr', $t_default);
-}
-
-/**
- *	prepare input for column selection
- *
- *	@param	string	$p_usage			string to identify the intended use of the columns
- *										it is used to identify the correct config option
- *
- *	@param	array	$p_columns			the columns that shall be posted
- *	@param	boolean	$p_hide_apply_btn	hide the apply button on the colum selection page
- *	@param	boolean	$p_format_url		return the result as string that can be used to form urls
- *
- *	@return	url string if $p_format_url is set to true, nothing otherwise
- */
-function bug_list_column_input($p_usage, $p_columns, $p_hide_apply_btn = false, $p_format_url = false){
-	if($p_format_url)
-		return array('usage' => $p_usage, 'columns_str' => implode('|', $p_columns), 'hide_apply' => $p_hide_apply_btn);
-
-	input_hidden('usage', $p_usage);
-	input_hidden('hide_apply', $p_hide_apply_btn);
-	input_hidden('columns_str', implode('|', $p_columns));
 }
 
 /**
@@ -319,7 +236,7 @@ function bug_list_print($p_bug_ids, $p_columns, $p_table_class = ''){
 	$t_header = array();
 
 	for($i=0; $i<count($p_columns); $i++){
-		$t_title = bug_list_column_title($p_columns[$i]);
+		$t_title = column_title($p_columns[$i]);
 
 		if($t_title === false){
 			$t_title = '[invalid \'' . $p_columns[$i] . '\']';
@@ -337,7 +254,7 @@ function bug_list_print($p_bug_ids, $p_columns, $p_table_class = ''){
 		$t_row = array();
 
 		foreach($p_columns as $t_col){
-			$t_title = bug_list_column_title($t_col);
+			$t_title = column_title($t_col);
 			$t_cf_id = custom_field_get_id_from_name($t_title);
 
 			if($t_cf_id != null){

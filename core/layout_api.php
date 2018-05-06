@@ -523,13 +523,13 @@ function layout_navbar() {
 
 	/* issue search */
 	echo '<div class="input-xs">';
-	echo '<form method="post" action="jump_to_bug.php" class="form-inline">';
+	echo '<form method="post" action="' . helper_mantis_url('jump_to_bug.php') . '" class="form-inline">';
 	text('bug_id', 'bug_id', '', 'Issue ID', 'input-xs', '', 'size="7"');
 	echo '</form>';
 
 	hspace('5px');
 
-	echo '<form method="post" action="view_all_set.php" class="form-inline">';
+	echo '<form method="post" action="' . helper_mantis_url('view_all_set.php') . '" class="form-inline">';
 	input_hidden('type', 42);
 	text('filter-search-txt', FILTER_PROPERTY_SEARCH, '', 'Search', 'input-xs', '', 'size="13"');
 	echo '</form>';

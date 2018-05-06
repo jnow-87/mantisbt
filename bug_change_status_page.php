@@ -169,7 +169,6 @@ page_title(lang_get($t_status_label . '_bug_title'));
 
 echo '<div class="col-md-12">';
 echo '<form method="post" action="bug_update.php" class="input-hover-form inline-page-form input-hover-form-reload">';
-
 	echo form_security_field('bug_update');
 
 	input_hidden('status_change_enabled', '1');
@@ -181,6 +180,12 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 	input_hidden('status', $f_new_status);
 	input_hidden('last_updated', $t_bug->last_updated);
 	input_hidden('action_type', string_attribute($f_change_type));
+
+	actionbar_begin();
+		echo '<div class="pull-left">';
+		button(lang_get($t_status_label . '_bug_button'), 'state-change-submit', 'submit');
+		echo '</div>';
+	actionbar_end();
 
 	table_begin(array(), 'no-border');
 		// priority
@@ -286,15 +291,6 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 
 	event_signal('EVENT_UPDATE_BUG_STATUS_FORM', array($f_bug_id, $f_new_status));
 	event_signal('EVENT_BUGNOTE_ADD_FORM', array($f_bug_id));
-
-	actionbar_begin();
-
-	echo '<div class="pull-right">';
-	button(lang_get($t_status_label . '_bug_button'), 'state-change-submit', 'submit');
-	echo '</div>';
-
-	actionbar_end();
-
 echo '</form>';
 echo '</div>';
 

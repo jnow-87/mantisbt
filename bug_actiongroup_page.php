@@ -279,7 +279,7 @@ echo '<form method="post" action="bug_actiongroup.php">';
 echo '</form>';
 
 /* list of bugs to apply action on */
-bug_list_print($f_bug_arr, bug_list_columns('bulk', true), 'table-condensed table-hover no-border');
+bug_list_print($f_bug_arr, bug_list_columns('bug_list_columns_bulk', true), 'table-condensed table-hover no-border');
 
 echo '</div>';
 

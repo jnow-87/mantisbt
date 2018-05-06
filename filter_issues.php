@@ -63,7 +63,7 @@ require_css('status_config.php');
 
 $f_hide_filter = gpc_get_bool('hide_filter', false);
 $f_project_id = gpc_get_int('project_id', helper_get_current_project());
-$f_columns = bug_list_columns('filter');
+$f_columns = bug_list_columns('bug_list_columns_filter');
 
 auth_ensure_user_authenticated();
 compress_enable();
@@ -141,7 +141,7 @@ echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" clas
 			}
 			else
 				// hint if 'selection' column is disabled
-				echo 'enable bulk operations by enabling the \'selection\' ' . format_link('column', 'columns_select_page.php', bug_list_column_input('filter', $f_columns, true), 'inline-page-link');
+				echo 'enable bulk operations by enabling the \'selection\' ' . format_link('column', 'columns_select_page.php', column_select_input('bug_list_columns_filter', $f_columns, true, false, basename(__FILE__)), 'inline-page-link');
 		echo '</div>';
 
 		echo '<div class="pull-right">';
@@ -165,8 +165,9 @@ echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" clas
 				array('label' => 'Export csv', 'data' => array('link' => 'csv_export.php')),
 				array('label' => 'Print', 'data' => array('link' => 'print_all_bug_page.php')),
 				array('label' => 'divider', 'data' => ''),
-				array('label' => 'Select Filter Columns', 'data' => array('link' => format_href('columns_select_page.php', bug_list_column_input('filter', $f_columns, false, true)), 'class' => 'inline-page-link')),
-				array('label' => 'Select Bulk Columns', 'data' => array('link' => format_href('columns_select_page.php', bug_list_column_input('bulk', array(), true, true)), 'class' => 'inline-page-link')),
+				array('label' => 'Select Filter Columns', 'data' => array('link' => format_href('columns_select_page.php', column_select_input('bug_list_columns_filter', $f_columns, false, true, basename(__FILE__))), 'class' => 'inline-page-link')),
+				array('label' => 'Select Bulk Columns', 'data' => array('link' => format_href('columns_select_page.php', column_select_input('bug_list_columns_bulk', array(), true, true, basename(__FILE__))), 'class' => 'inline-page-link')),
+				array('label' => 'Select Print/Export Columns', 'data' => array('link' => format_href('columns_select_page.php', column_select_input('bug_list_columns_export', array(), true, true, basename(__FILE__))), 'class' => 'inline-page-link')),
 			);
 
 			dropdown_menu('', $t_menu, '', '', 'dropdown-menu-right');

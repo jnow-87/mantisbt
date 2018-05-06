@@ -971,56 +971,6 @@ $g_bug_list_columns_export = array('id', 'status', 'summary');
 
 
 /**
- * The default columns to be included in the View Issues Page.
- * This can be overriden using Manage -> Manage Configuration -> Manage Columns
- * Also each user can configure their own columns using My Account -> Manage
- * Columns. Some of the columns specified here can be removed automatically if
- * they conflict with other configuration. Or if the current user doesn't have
- * the necessary access level to view them. To include custom field 'xyz',
- * include the column name as 'custom_xyz'.
- *
- * Standard Column Names (i.e. names to choose from):
- * id, project_id, reporter_id, handler_id, duplicate_id, priority, severity,
- * status, resolution, category_id, date_submitted, last_updated,
- * os, os_build, platform, version, fixed_in_version, target_version, view_state,
- * summary, due_date, description,
- * attachment_count, bugnotes_count, selection, edit,
- * overdue
- *
- * @global array $g_view_issues_page_columns
- */
-$g_view_issues_page_columns = array(
-	'selection', 'edit', 'priority', 'id',
-	'bugnotes_count', 'attachment_count', 'category_id', 'severity', 'status',
-	'last_updated', 'summary'
-);
-
-/**
- * The default columns to be included in the Print Issues Page. This can be
- * overridden using Manage -> Manage Configuration -> Manage Columns. Also each
- * user can configure their own columns using My Account -> Manage Columns.
- * @global array $g_print_issues_page_columns
- */
-$g_print_issues_page_columns = array(
-	'selection', 'priority', 'id', 'bugnotes_count',
-	'attachment_count', 'category_id', 'severity', 'status', 'last_updated',
-	'summary'
-);
-
-/**
- * The default columns to be included in the CSV export. This can be overridden
- * using Manage -> Manage Configuration -> Manage Columns. Also each user can
- * configure their own columns using My Account -> Manage Columns.
- * @global array $g_csv_columns
- */
-$g_csv_columns = array(
-	'id', 'project_id', 'reporter_id', 'handler_id', 'priority',
-	'severity', 'version', 'category_id',
-	'date_submitted', 'os', 'os_build', 'platform', 'view_state',
-	'last_updated', 'summary', 'status', 'resolution', 'fixed_in_version'
-);
-
-/**
  * show projects when in All Projects mode
  * @global integer $g_show_bug_project_links
  */
@@ -4121,7 +4071,6 @@ $g_public_config_names = array(
 	'create_short_url',
 	'css_include_file',
 	'css_rtl_include_file',
-	'csv_columns',
 	'csv_separator',
 	'custom_field_edit_after_create',
 	'custom_field_link_threshold',
@@ -4268,7 +4217,6 @@ $g_public_config_names = array(
 	'preview_max_height',
 	'preview_max_width',
 	'preview_text_extensions',
-	'print_issues_page_columns',
 	'priority_enum_string',
 	'priority_significant_threshold',
 	'private_bug_threshold',
@@ -4381,7 +4329,6 @@ $g_public_config_names = array(
 	'view_filters',
 	'view_handler_threshold',
 	'view_history_threshold',
-	'view_issues_page_columns',
 	'view_proj_doc_threshold',
 	'view_state_enum_string',
 	'view_summary_threshold',

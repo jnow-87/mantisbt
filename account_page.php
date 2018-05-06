@@ -1,340 +1,226 @@
 <?php
-# MantisBT - A PHP based bugtracking system
+require_once('core.php');
+require_api('api_token_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('form_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
+require_api('user_api.php');
+require_api('utility_api.php');
+require_api('timezone_api.php');
+require_api('bug_list_api.php');
+require_api('project_api.php');
+require_api('layout_api.php');
+require_api('elements_api.php');
 
-# MantisBT is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# MantisBT is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * CALLERS
- * This page is called from:
- * - print_menu()
- * - print_account_menu()
- * - header redirects from account_*.php
- * - included by verify.php to allow user to change their password
- *
- * EXPECTED BEHAVIOUR
- * - Display the user's current settings
- * - Allow the user to edit their settings
- * - Allow the user to save their changes
- * - Allow the user to delete their account if account deletion is enabled
- *
- * CALLS
- * This page calls the following pages:
- * - account_update.php  (to save changes)
- * - account_delete.php  (to delete the user's account)
- *
- * RESTRICTIONS & PERMISSIONS
- * - User must be authenticated
- * - The user's account must not be protected
- *
- * @package MantisBT
- * @copyright Copyright 2000 - 2002  Kenzaburo Ito - kenito@300baud.org
- * @copyright Copyright 2002  MantisBT Team - mantisbt-dev@lists.sourceforge.net
- * @link http://www.mantisbt.org
- *
- * @uses core.php
- * @uses authentication_api.php
- * @uses config_api.php
- * @uses constant_inc.php
- * @uses current_user_api.php
- * @uses form_api.php
- * @uses helper_api.php
- * @uses html_api.php
- * @uses lang_api.php
- * @uses ldap_api.php
- * @uses print_api.php
- * @uses string_api.php
- * @uses user_api.php
- * @uses utility_api.php
- */
-
-require_once( 'core.php' );
-require_api( 'api_token_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'form_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'ldap_api.php' );
-require_api( 'print_api.php' );
-require_api( 'string_api.php' );
-require_api( 'user_api.php' );
-require_api( 'utility_api.php' );
-
-$t_account_verification = defined( 'ACCOUNT_VERIFICATION_INC' );
-
-#============ Permissions ============
 auth_ensure_user_authenticated();
-
-if( !$t_account_verification ) {
-	auth_reauthenticate();
-}
-
 current_user_ensure_unprotected();
 
-layout_page_header( lang_get( 'account_link' ) );
 
+$t_user_id = auth_get_current_user_id();
+$t_user_name = user_get_name($t_user_id);
+$t_pref = user_pref_get($t_user_id);
+$t_email_full_issue = (int)config_get('email_notifications_verbose', null, $t_user_id, ALL_PROJECTS);
+$t_date_format = config_get('normal_date_format');
+
+form_security_purge('user_update');
+
+
+layout_page_header(__FILE__);
 layout_page_begin();
 
-# extracts the user information for the currently logged in user
-# and prefixes it with u_
-$t_row = user_get_row( auth_get_current_user_id() );
+page_title('User Settings: ' . $t_user_name);
 
-extract( $t_row, EXTR_PREFIX_ALL, 'u' );
-
-$t_ldap = ( LDAP == config_get( 'login_method' ) );
-
-# In case we're using LDAP to get the email address... this will pull out
-#  that version instead of the one in the DB
-$u_email = user_get_email( $u_id );
-
-# If the password is the default password, then prompt user to change it.
-$t_reset_password = $u_username == 'administrator' && auth_does_password_match( $u_id, 'root' );
-
-$t_can_change_password = helper_call_custom_function( 'auth_can_change_password', array() );
-$t_force_pw_reset = false;
-
-# Only show the update button if there is something to update.
-$t_show_update_button = false;
-
-if( $t_reset_password && $t_can_change_password ) {
-	?>
-	<div class="alert alert-danger">
-		<ul>
-			<li><?php echo lang_get( 'warning_default_administrator_account_present' ) ?></li>
-		</ul>
-	</div>
-	<?php
-	$t_force_pw_reset = true;
-}
-
-print_account_menu( 'account_page.php' );
-
-?>
-
-<div class="col-md-6-left col-xs-12">
-	<div class="space-10"></div>
-
-<div id="account-update-div" class="form-container">
-	<form id="account-update-form" method="post" action="account_update.php">
-
-<div class="widget-box widget-color-blue2">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<i class="ace-icon fa fa-user"></i>
-			<?php echo lang_get( 'edit_account_title' ) ?>
-		</h4>
-	</div>
-	<div class="widget-body">
-		<div class="widget-main no-padding">
-			<div class="table-responsive">
-				<table class="table table-bordered table-condensed table-striped">
-
-		<fieldset>
-			<?php echo form_security_field( 'account_update' );
-
-			if( !$t_can_change_password ) {
-				# With LDAP -->
-			?>
-			<tr>
-				<td class="category">
-					<?php echo lang_get( 'username' ) ?>
-				</td>
-				<td>
-					<?php echo string_display_line( $u_username ) ?>
-				</td>
-			</tr>
-			<tr>
-				<td class="category">
-					<?php echo lang_get( 'password' ) ?>
-				</td>
-				<td>
-					<?php echo lang_get( 'no_password_change' ) ?>
-				</td>
-			</tr><?php
-			} else {
-				# Without LDAP
-				$t_show_update_button = true;
-			?>
-			<tr>
-				<td class="category">
-					<?php echo lang_get( 'username' ) ?>
-				</td>
-				<td>
-					<?php echo string_display_line( $u_username ) ?>
-				</td>
-			</tr><?php
-			# When verifying account, set a token and don't display current password
-			if( $t_account_verification ) {
-				token_set( TOKEN_ACCOUNT_VERIFY, true, TOKEN_EXPIRY_AUTHENTICATED, $u_id );
-			} else {
-			?>
-			<tr>
-				<td class="category">
-					<span class="required"><?php if( $t_force_pw_reset ) { ?> * <?php } ?></span> <?php echo lang_get( 'current_password' ) ?>
-				</td>
-				<td>
-					<input class="input-sm" id="password-current" type="password" name="password_current" size="32" maxlength="<?php echo auth_get_password_max_size(); ?>" />
-				</td>
-			</tr>
-			<?php
-			} ?>
-			<tr>
-				<td class="category">
-					<span class="required"><?php if( $t_force_pw_reset ) { ?> * <?php } ?></span> <?php echo lang_get( 'new_password' ) ?>
-				</td>
-				<td>
-					<input class="input-sm" id="password" type="password" name="password" size="32" maxlength="<?php echo auth_get_password_max_size(); ?>" />
-				</td>
-			</tr>
-			<tr>
-				<td class="category">
-					<span class="required"><?php if( $t_force_pw_reset ) { ?> * <?php } ?></span> <?php echo lang_get( 'confirm_password' ) ?>
-				</td>
-				<td>
-					<input class="input-sm" id="password-confirm" type="password" name="password_confirm" size="32" maxlength="<?php echo auth_get_password_max_size(); ?>" />
-				</td>
-			</tr>
-			<?php
-			} ?>
-			<tr>
-				<td class="category">
-					<?php echo lang_get( 'email' ) ?>
-				</td>
-				<td>
-				<?php
-				if( $t_ldap && ON == config_get( 'use_ldap_email' ) ) {
-					# With LDAP
-					echo string_display_line( $u_email );
-				} else {
-					# Without LDAP
-					$t_show_update_button = true;
-					print_email_input( 'email', $u_email );
-				} ?>
-				</td>
-			</tr>
-			<tr><?php
-				if( $t_ldap && ON == config_get( 'use_ldap_realname' ) ) {
-					# With LDAP
-					echo '<td class="category">' . lang_get( 'realname' ) . '</td>';
-					echo '<td>';
-					echo string_display_line( ldap_realname_from_username( $u_username ) );
-					echo '</td>';
-				} else {
-					# Without LDAP
-					$t_show_update_button = true;
-					echo '<td class="category">' . lang_get( 'realname' ) . '</td>';
-					echo '<td>';
-					echo '<input class="input-sm" id="realname" type="text" size="32" maxlength="' . DB_FIELD_SIZE_REALNAME . '" name="realname" value="' . string_attribute( $u_realname ) . '" />';
-					echo '</td>';
-				} ?>
-			</tr>
-			<tr>
-				<td class="category">
-					<?php echo lang_get( 'access_level' ) ?>
-				</td>
-				<td>
-					<?php echo get_enum_element( 'access_levels', $u_access_level ); ?>
-				</td>
-			</tr>
-			<tr>
-				<td class="category">
-					<?php echo lang_get( 'access_level_project' ) ?>
-				</td>
-				<td>
-					<?php echo get_enum_element( 'access_levels', current_user_get_access_level() ); ?>
-				</td>
-			</tr>
-				</fieldset>
-			</table>
-		</div>
-	</div>
-	<?php if( $t_show_update_button ) { ?>
-		<div class="widget-toolbox padding-8 clearfix">
-			<?php if ($t_force_pw_reset) { ?>
-				<span class="required pull-right"> * <?php echo lang_get( 'required' ); ?></span>
-			<?php } ?>
-			<input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get( 'update_user_button' ) ?>" />
-		</div>
-	<?php } ?>
-	</div>
-</div>
-
-<?php
-$t_projects = user_get_assigned_projects( auth_get_current_user_id() );
-if( !empty( $t_projects ) ) {
-?>
-	<div class="space-10"></div>
-
-	<div class="widget-box widget-color-blue2">
-		<div class="widget-header widget-header-small">
-			<h4 class="widget-title lighter">
-				<i class="ace-icon fa fa-puzzle-piece"></i>
-				<?php echo lang_get( 'assigned_projects' ) ?>
-			</h4>
-		</div>
-		<div class="widget-body">
-			<div class="widget-main no-padding">
-				<div class="table-responsive">
-					<table class="table table-striped table-bordered table-condensed table-hover">
-						<thead>
-							<tr>
-								<th><?php echo lang_get( 'name' ) ?></th>
-								<th><?php echo lang_get( 'access_level' ) ?></th>
-								<th><?php echo lang_get( 'view_status' ) ?></th>
-								<th><?php echo lang_get( 'description' ) ?></th>
-							</tr>
-						</thead>
-						<?php
-						foreach( $t_projects as $t_project_id => $t_project ) {
-							$t_project_name = string_attribute( $t_project['name'] );
-							$t_access_level = get_enum_element( 'access_levels', $t_project['access_level'] );
-							$t_view_state = get_enum_element( 'project_view_state', $t_project['view_state'] );
-							$t_description = string_display_links( project_get_field( $t_project_id, 'description' ) );
-							echo '<tr>';
-							echo '<td>' . $t_project_name . '</td>';
-							echo '<td>' . $t_access_level . '</td>';
-							echo '<td>' . $t_view_state . '</td>';
-							echo '<td>' . $t_description . '</td>';
-							echo '</tr>';
-						}
-						?>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-<?php } ?>
-
-	</form>
-</div>
-
-<?php # check if users can't delete their own accounts
-if( ON == config_get( 'allow_account_delete' ) ) { ?>
-
-<!-- Delete Button -->
-<div class="form-container">
-	<form method="post" action="account_delete.php">
-		<fieldset>
-			<?php echo form_security_field( 'account_delete' ) ?>
-			<input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get( 'delete_account_button' ) ?>" />
-		</fieldset>
-	</form>
-</div>
-<?php
-}
+/* actionbar */
+echo '<div class="col-md-12">';
+actionbar_begin();
+	echo '<div class="pull-left">';
+		button_link('Change Password', 'settings/set_password.php', array('user_id' => $t_user_id), 'inline-page-link');
+		button_link('Reset Preferences', 'settings/user_update.php',
+			array('user_id' => $t_user_id, 'cmd' => 'reset_prefs', 'redirect' => 'account_page.php', 'user_update_token' => form_security_token('user_update')),
+			'inline-page-link',
+			false,
+			true,
+			'inline-page-reload'
+		);
+	echo '</div>';
+actionbar_end();
+vspace('10px');
 echo '</div>';
+
+/* left column */
+echo '<div class="col-md-8">';
+
+/* user details */
+section_begin('Details');
+	echo '<form action="settings/user_update.php" method="post" class="input-hover-form">';
+	input_hidden('user_id', $t_user_id);
+	input_hidden('cmd', 'set_details');
+	echo form_security_field('user_update');
+
+	echo '<div class="col-md-3 no-padding">';
+	table_begin(array(), 'no-border');
+	table_row_bug_info_short('Username:', $t_user_name);
+	table_row_bug_info_short('Realname:', user_get_realname($t_user_id));
+	table_row_bug_info_short('eMail:', format_input_hover_text('email', user_get_email($t_user_id)));
+	table_end();
+	echo '</div>';
+
+	echo '</form>';
+section_end();
+
+/* access levels */
+section_begin('Access Rights');
+	echo '<div class="col-md-3 no-padding">';
+	table_begin(array(), 'no-border');
+	table_row_bug_info_short('General Access Level:', get_enum_element('access_levels', user_get_access_level($t_user_id)));
+	table_end();
+	echo '</div>';
+
+	if(user_get_access_level($t_user_id) == ACC_ADMIN)
+		$t_projects = project_list();
+	else
+		$t_projects = user_get_assigned_projects($t_user_id, true);
+
+	echo '<div class="col-md-12 no-padding">';
+	table_begin(array('Project', 'Access Level', 'Visibility', 'Description'), 'table-condensed table-hover no-border');
+
+	foreach($t_projects as $t_id){
+		table_row(array(
+				format_link(project_get_name($t_id, false), helper_mantis_url('manage_proj_edit_page.php'), array('project_id' => $t_id)),
+				get_enum_element('access_levels', user_get_access_level($t_user_id, $t_id)),
+				get_enum_element('project_view_state', project_get_field($t_id, 'view_state')),
+				project_get_field($t_id, 'description')
+			)
+		);
+	}
+
+	table_end();
+	echo '</div>';
+section_end();
+
+/* API tokens */
+section_begin('API Tokens');
+	actionbar_begin();
+		echo '<form action="settings/api_token.php" method="post" class="form-inline input-hover-form input-hover-form-reload">';
+		echo form_security_field('api_token');
+		input_hidden('cmd', 'create');
+
+		text('token_name', 'token_name', '', 'Token Name', 'input-xs', '', 'maxlength="' . DB_FIELD_SIZE_API_TOKEN_NAME . '"');
+		hspace('5px');
+		button('Create', 'create-btn', 'submit');
+		echo '</form>';
+	actionbar_end();
+
+	table_begin(array('', 'Token', 'Date Created', 'Last Used'), 'table-condensed table-hover table-sortable no-border');
+
+	$t_tokens = api_token_get_all($t_user_id);
+
+	/* access level per assigned project */
+	foreach($t_tokens as $t_token){
+		extract($t_token, EXTR_PREFIX_ALL, 'u');
+
+		$t_btn_delete = format_link(format_icon('fa-trash', 'red'), 'settings/api_token.php', array('cmd' => 'revoke', 'token_id' => $u_id, 'token_name' => $u_name, 'api_token_token' => form_security_token('api_token')), 'inline-page-link', '', 'inline-page-reload');
+		$t_date_created = date($t_date_format, $u_date_created);
+
+		$t_date_used = 'Never used';
+
+		if(api_token_is_used($t_token))
+			$t_date_used = date($t_date_format, $u_date_used);
+
+		table_row(array($t_btn_delete, $u_name, $t_date_created, $t_date_used), '', array('width="20px"'));
+	}
+	table_end();
+section_end();
+
+echo '</div>';
+
+/* right column */
+echo '<div class="col-md-4">';
+echo '<form action="settings/user_update.php" method="post" class="input-hover-form">';
+
+input_hidden('user_id', $t_user_id);
+input_hidden('cmd', 'set_prefs');
+echo form_security_field('user_update');
+
+/* interface settings */
+section_begin('Interface Settings');
+	table_begin(array(), 'no-border');
+	table_row_bug_info_short('Time Zone:', format_input_hover_select('timezone', timezone_list(), $t_pref->timezone));
+	table_row_bug_info_short('Language:', format_input_hover_select('language', language_list(), $t_pref->language));
+	table_row_bug_info_short('Default Project:', format_input_hover_select('default_project', project_list(true), project_get_name($t_pref->default_project)));
+	table_row_bug_info_short('Redirect Delay:', format_input_hover_text('redirect_delay', $t_pref->redirect_delay, '50px') . ' seconds');
+	table_row_bug_info_short('Refresh Delay:', format_input_hover_text('refresh_delay', $t_pref->refresh_delay, '50px') . ' minutes');
+	table_row_bug_info_short('Bug Note Order:', format_input_hover_select('bugnote_order', array('Ascending' => 'ASC', 'Descending' => 'DESC'), helper_ordering_name($t_pref->bugnote_order)));
+	table_end();
+section_end();
+
+/* column config */
+section_begin('Columns');
+	$t_config_opt = array(
+		'Filter' => 'bug_list_columns_filter',
+		'Dashboard' => 'bug_list_columns_dashboard',
+		'Versions' => 'bug_list_columns_versions',
+		'Bulk Edit' => 'bug_list_columns_bulk',
+		'Print/Export' => 'bug_list_columns_export',
+	);
+
+	table_begin(array(), 'no-border');
+
+	foreach($t_config_opt as $t_name => $t_value){
+		$t_columns = config_get($t_value, $t_user_id);
+		$t_column_names = array();
+
+		foreach($t_columns as $t_col)
+			$t_column_names[] = column_title($t_col, false);
+
+		$t_buttons = array(
+			array(
+				'icon' => 'fa-pencil',
+				'href' => format_href(helper_mantis_url('columns_select_page.php'), column_select_input($t_value, $t_columns, true, true, basename(__FILE__))),
+				'position' => 'right:4px',
+				'class' => 'inline-page-link',
+				'properties' => 'inline-page-reload'
+			)
+		);
+
+		$t_key_name = '<span style="margin-right:20px!important">' . $t_name . ':</span>';
+		$t_column_key = format_input_hover_element('id_' . $t_value, $t_key_name, $t_buttons);
+
+		table_row(array($t_column_key, implode('<br>', $t_column_names)), '', array('class="no-border bug-header" width="30%" valign="top"', 'class="no-border"'));
+	}
+
+	table_end();
+section_end();
+
+/* email notification settings */
+if(config_get('enable_email_notification') == ON){
+	section_begin('eMail Settings');
+		table_begin(array(), 'no-border');
+
+		table_row_bug_info_short('Notes Limit:', format_input_hover_text('email_notes_limit', $t_pref->email_bugnote_limit));
+		table_row_bug_info_short('Full Issue Details:', format_input_hover_checkbox('email_full_issue', $t_email_full_issue));
+
+		foreach(email_events() as $t_type){
+			$t_check_id = 'email_on_' . $t_type;
+			$t_sev_id = 'email_on_' . $t_type . '_min_severity';
+
+			table_row_bug_info_short('eMail on ' . $t_type . ':', format_input_hover_checkbox($t_check_id, $t_pref->$t_check_id));
+			table_row_bug_info_short('', 'min severity:' . format_hspace('15px') . format_input_hover_select($t_sev_id, severity_list(), get_enum_element('severity', $t_pref->$t_sev_id)));
+		}
+
+		table_end();
+	section_end();
+}
+
+echo '</form>';
+echo '</div>';
+
 layout_page_end();

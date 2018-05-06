@@ -148,6 +148,26 @@ function text($p_id, $p_name, $p_value, $p_placeholder = '', $p_class = 'input-x
 }
 
 /**
+ *	format a password input html element
+ *
+ *	@param	string	$p_id			string used as the elements id properties
+ *	@param	string	$p_name			string used as the elements name properties
+ *	@param	string	$p_class		html class property
+ *	@param	string	$p_style		css stle
+ *	@param	string	$p_prop			any additionally required html properties
+ *
+ *	@return	a string containing the html element
+ */
+function format_password($p_id, $p_name, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	return '<input type="password" id="' . $p_id . '" name="' . $p_name . '" class="' . $p_class . '" style="' . $p_style . '" ' . $p_prop . '/>';
+}
+
+function password($p_id, $p_name, $p_class = 'input-xs', $p_style = '', $p_prop = ''){
+	echo format_password($p_id, $p_name, $p_class, $p_style, $p_prop);
+}
+
+
+/**
  *	format a textarea input html element
  *
  *	@param	string	$p_id		string used as the elements id properties
@@ -300,6 +320,7 @@ function section_begin($p_heading, $p_collapsed = false){
 
 	echo '<hr id="' . $t_label . '" class="hr-text ' . ($p_collapsed ? 'collapsed' : '') . '" data-content="' . $p_heading . '" data-toggle="collapse" data-target="#' . $t_label . '_target">';
 	echo '<div id="' . $t_label . '_target" class="section collapse ' . (!$p_collapsed ? 'in' : '') . '">';
+	echo '<div class="row">';
 }
 
 /**
@@ -308,6 +329,7 @@ function section_begin($p_heading, $p_collapsed = false){
  *	@return	nothing
  */
 function section_end(){
+	echo '</div>';
 	echo '</div>';
 }
 
@@ -720,17 +742,17 @@ function input_hover_end(){
  *
  *	@return	formated string
  */
-function format_input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', $p_position = ''){
+function format_input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', $p_class = '', $p_position = '', $p_prop = ''){
 	$t_s = '';
 
 	if($p_type == 'link'){
-		$t_s .= '<a id="' . $p_id . '" class="input-hover-button" href="' . $p_action . '" ';
+		$t_s .= '<a id="' . $p_id . '" class="input-hover-button ' . $p_class . '" href="' . $p_action . '" ';
 	}
 	else{
 		if($p_action != '')
 			$p_type = 'submit';
 
-		$t_s .= '<button type="' . $p_type . '" id="' . $p_id . '" class="input-hover-button" ';
+		$t_s .= '<button type="' . $p_type . '" id="' . $p_id . '" class="input-hover-button ' . $p_class . '" ';
 
 		if($p_action != '')
 			$t_s .= 'formaction="' . $p_action . '" ';
@@ -738,6 +760,8 @@ function format_input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action
 
 	if($p_position != '')
 		$t_s .= 'style="position:absolute;' . $p_position . '" ';
+
+	$t_s .= $p_prop;
 
 	$t_s .= '><i class="fa ' . $p_icon . '"></i>';
 
@@ -749,8 +773,8 @@ function format_input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action
 	return $t_s;
 }
 
-function input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', $p_position = ''){
-	echo format_input_hover_button($p_id, $p_icon, $p_type, $p_action, $p_position);
+function input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', $p_class = '', $p_position = '', $p_prop = ''){
+	echo format_input_hover_button($p_id, $p_icon, $p_type, $p_action, $p_class, $p_position, $p_prop);
 }
 
 /**
@@ -763,7 +787,9 @@ function input_hover_button($p_id, $p_icon, $p_type = 'button', $p_action = '', 
  *									'icon' => string containing an icon
  *									'href' => string with the link that shall be
  *											  triggered when clicking the button
+ *									'class' => string with additional button class
  *									'position' => string with css positions
+ *									'properties' => string with further html properties
  *
  *	@return	formated string
  */
@@ -776,7 +802,7 @@ function format_input_hover_element($p_id, $p_element, $p_buttons){
 	$t_i = 0;
 
 	foreach($p_buttons as $t_button){
-		$t_s .= format_input_hover_button($p_id . '-action-' . $t_i, $t_button['icon'], 'link', $t_button['href'], $t_button['position']);
+		$t_s .= format_input_hover_button($p_id . '-action-' . $t_i, $t_button['icon'], 'link', $t_button['href'], $t_button['class'], $t_button['position'], $t_button['properties']);
 		$t_i++;
 	}
 
@@ -814,8 +840,8 @@ function format_input_hover_submit_reset($p_id, $p_input, $p_overlay, $p_commit_
 	$t_s .= $p_input;
 	$t_s .= $p_overlay;
 
-	$t_s .= format_input_hover_button($p_id . '-action-0', 'fa-check', 'submit', $p_submit_action, $p_commit_pos);
-	$t_s .= format_input_hover_button($p_id . '-reset', 'fa-times', 'button', '', $p_reset_pos);
+	$t_s .= format_input_hover_button($p_id . '-action-0', 'fa-check', 'submit', $p_submit_action, '', $p_commit_pos);
+	$t_s .= format_input_hover_button($p_id . '-reset', 'fa-times', 'button', '', '', $p_reset_pos);
 
 	$t_s .= format_input_hover_end();
 

@@ -1438,3 +1438,86 @@ function print_column_overdue( BugData $p_bug, $p_columns_target = COLUMNS_TARGE
 
 	echo '</td>';
 }
+
+
+
+/**
+ *	return the column title for the given name
+ *
+ *	@param	string	$p_column_name	column name to retrieve the title for
+ *	@param	boolean	$p_table_header	if the title is intended to be shown in a table
+ *									head or not
+ *
+ *	@return	the corresponding column title or false for unknown columns
+ */
+function column_title($p_column_name, $p_table_header = true){
+	/* mapping column -> title */
+	static $t_titles = array(
+		'id' => 'Issue',
+		'project_id' => 'Project',
+		'reporter_id' => 'Author',
+		'handler_id' => 'Assignee',
+		'priority' => 'Priority',
+		'severity' => 'Severity',
+		'status' => 'Status',
+		'status_icon' => '',
+		'resolution' => 'Resolution',
+		'category_id' => 'Type',
+		'date_submitted' => 'Due Date',
+		'last_updated' => 'Last Updated',
+		'os' => 'OS',
+		'os_build' => 'OS Version',
+		'platform' => 'Platform',
+		'version' => 'Affected Version',
+		'fixed_in_version' => 'Fixed in Version',
+		'target_version' => 'Target Version',
+		'build' => 'Product Build',
+		'view_state' => 'Visibility',
+		'summary' => 'Summary',
+		'due_date' => 'Due Date',
+		'description' => 'Description',
+		'time_tracking' => 'Work Log',
+		'tags' => 'Tags',
+		'selection' => '',
+		'edit' => 'Editable',
+		'overdue' => 'Overdue',
+		'invalid' => 'Invalid',
+	);
+
+	$t_title = $t_titles[$p_column_name];
+
+	if($t_title !== null){
+		if($t_title == '' && !$p_table_header)
+			return $p_column_name;
+
+		return $t_title;
+	}
+
+	$t_title = column_get_custom_field_name($p_column_name);
+
+	if(custom_field_get_id_from_name($t_title) === false)
+		return false;
+
+	return $t_title;
+}
+
+
+/**
+ *	prepare input for columns_select_page.php
+ *
+ *	@param	string	$p_config_opt		config option name, e.g. bug_list_columns_filter *
+ *	@param	array	$p_columns			the columns that shall be posted
+ *	@param	boolean	$p_hide_apply_btn	hide the apply button on the colum selection page
+ *	@param	boolean	$p_format_url		return the result as string that can be used to form urls
+ *
+ *	@return	url string if $p_format_url is set to true, nothing otherwise
+ */
+function column_select_input($p_config_opt, $p_columns, $p_hide_apply_btn = false, $p_format_url = false, $p_redirect_url){
+	if($p_format_url)
+		return array('config_opt' => $p_config_opt, 'columns_str' => implode('|', $p_columns), 'hide_apply' => $p_hide_apply_btn, 'redirect_url' => $p_redirect_url);
+
+	input_hidden('config_opt', $p_config_opt);
+	input_hidden('hide_apply', $p_hide_apply_btn);
+	input_hidden('redirect_url', $f_redirect_url);
+	input_hidden('columns_str', implode('|', $p_columns));
+}

@@ -1218,10 +1218,11 @@ function user_get_all_accessible_projects( $p_user_id = null, $p_project_id = AL
 /**
  * Get a list of projects the specified user is assigned to.
  * @param integer $p_user_id A valid user identifier.
+ * @param boolean $p_ids_only return array of project ids instead of project data
  * @return array An array of projects by project id the specified user is assigned to.
  *		The array contains the id, name, view state, and project access level for the user.
  */
-function user_get_assigned_projects( $p_user_id ) {
+function user_get_assigned_projects( $p_user_id,  $p_ids_only = false ) {
 	db_param_push();
 	$t_query = 'SELECT DISTINCT p.id, p.name, p.view_state, u.access_level
 				FROM {project} p
@@ -1233,8 +1234,12 @@ function user_get_assigned_projects( $p_user_id ) {
 	$t_result = db_query( $t_query, array( $p_user_id ) );
 	$t_projects = array();
 	while( $t_row = db_fetch_array( $t_result ) ) {
-		$t_project_id = $t_row['id'];
-		$t_projects[$t_project_id] = $t_row;
+		if(!$p_ids_only){
+			$t_project_id = $t_row['id'];
+			$t_projects[$t_project_id] = $t_row;
+		}
+		else
+			$t_projects[] = $t_row['id'];
 	}
 	return $t_projects;
 }

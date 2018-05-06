@@ -73,14 +73,27 @@ function inline_page_open_link(e){
 		url: action,
 		success: function(msg, status, data){
 			/* display status message */
+			var render_html = false;
+
 			try{
 				var resp = JSON.parse(msg);
 
-				for(var i=0; i<resp.length; i++)
+				for(var i=0; i<resp.length; i++){
+					if(resp[i].type == 'html')
+						render_html = true;
+					
 					statusbar_print(resp[i].type, resp[i].msg);
+				}
 			}
 			catch(e){
+				render_html = true;
 				statusbar_print('html', msg);
+			}
+
+			/* reload page immediately if no html content has been returned and reload is set */
+			if(inline_page_reload == true && !render_html){
+				inline_page_reload = false;
+				location.reload();
 			}
 	 	},
 		error: function(xhr, desc, err){

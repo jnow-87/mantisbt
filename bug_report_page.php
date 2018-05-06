@@ -142,12 +142,11 @@ echo form_security_field('bug_report');
 echo '<div class="col-md-12">';
 	/* actionbar */
 	actionbar_begin();
-		echo '<div class="pull-right">';
+		echo '<div class="pull-left">';
 		button('Create', 'create', 'submit');
 		echo '</div>';
 	actionbar_end();
 
-	echo '<div class="row">';
 	table_begin(array(), 'no-border');
 	table_row_bug_info_long('Project:', project_get_name($t_project_id), '7%');
 	table_row_bug_info_long(format_required_indicator('category_id', $t_required_fields) . 'Type:', format_select('category_id', 'category_id', category_list($t_project_id), ''), '7%');
@@ -156,7 +155,6 @@ echo '<div class="col-md-12">';
 
 	table_row_bug_info_long(' ', '<span class="required pull-right"> * required</span>', '10%');
 	table_end();
-	echo '</div>';
 echo '</div>';
 
 event_signal('EVENT_REPORT_BUG_FORM', array());
