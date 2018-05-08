@@ -470,7 +470,7 @@ function layout_navbar() {
 		. '<input class="search form-control input-xs" placeholder="Search" />'
 		. '<ul class="list dropdown-green no-margin">';
 
-	$t_project_search_ftr = '</ul></div>';
+	$t_project_search_footer = '</ul></div>';
 
 	$t_menu = array();
 	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_hdr);
@@ -497,6 +497,8 @@ function layout_navbar() {
 		}
 	}
 
+	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_footer);
+
 	dropdown_menu('Projects', $t_menu, 'grey', 'fa-book');
 
 	// reports
@@ -522,18 +524,12 @@ function layout_navbar() {
 	dropdown_menu('Manage', $t_menu, 'grey', 'fa-sliders');
 
 	/* issue search */
-	echo '<div class="input-xs">';
-	echo '<form method="post" action="' . helper_mantis_url('jump_to_bug.php') . '" class="form-inline">';
-	text('bug_id', 'bug_id', '', 'Issue ID', 'input-xs', '', 'size="7"');
-	echo '</form>';
-
-	hspace('5px');
-
+	echo '<div class="inline">';
 	echo '<form method="post" action="' . helper_mantis_url('view_all_set.php') . '" class="form-inline">';
 	input_hidden('type', 42);
+	input_hidden('is_search_bar_request', 1);
 	text('filter-search-txt', FILTER_PROPERTY_SEARCH, '', 'Search', 'input-xs', '', 'size="13"');
 	echo '</form>';
-
 	echo '</div>';
 
 	echo '<div class="pull-right" style="padding-top:7px;padding-right:10px;">';

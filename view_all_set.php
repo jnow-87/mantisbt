@@ -54,6 +54,8 @@ require_api( 'logging_api.php' );
 require_api( 'print_api.php' );
 require_api( 'tokens_api.php' );
 require_api( 'utility_api.php' );
+require_api( 'bug_api.php' );
+require_api( 'project_api.php' );
 
 auth_ensure_user_authenticated();
 
@@ -73,6 +75,35 @@ if( $f_type < 0 ) {
 # -1 is a special case stored query: it means we want to reset our filter
 if( ( $f_type == 3 ) && ( $f_source_query_id == -1 ) ) {
 	$f_type = 0;
+}
+
+
+/**
+ * handle navbar search bar inputs
+ */
+$t_is_search_bar_request = gpc_get_bool('is_search_bar_request', false);
+
+/* check if script is called through the search bar */
+if($t_is_search_bar_request){
+	/* get input */
+	$t_text = trim(gpc_get_string(FILTER_PROPERTY_SEARCH, ''), ' ');
+
+	/* check if input is either
+	 *		- a valid bug_id
+	 *		- a valid project-bug_id string
+	 *
+	 * redirect to respective bug if true
+	 */
+	if(preg_match('/^[a-zA-Z]+-[0-9]+$/', $t_text)){
+		list($t_project, $t_bug_id) = explode('-', $t_text);
+
+		if(project_get_id_by_name($t_project) != 0 && bug_exists($t_bug_id))
+			print_header_redirect_view($t_bug_id);
+	}
+	elseif(preg_match('/^[0-9]+$/', $t_text)){
+		if(bug_exists($t_text))
+			print_header_redirect_view($t_text);
+	}
 }
 
 #   array contents
