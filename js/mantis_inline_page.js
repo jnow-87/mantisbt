@@ -66,6 +66,9 @@ function inline_page_open_link(e){
 	var action = $(this).attr('href');
 	var reload = $(this).attr('inline-page-reload');
 
+	if(action == null || action == '')
+		action = $(this).data('href');
+
 	if(reload != null)
 		inline_page_reload = true;
 

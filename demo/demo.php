@@ -14,10 +14,16 @@ require_api('elements_api.php');
 #
 #		check resolution in bug::check_builtin (if resolution is required it shall not be 'open')
 #		view.php: only make field editable if the respective access level is available (update_bug_threshold)
+#		check if worklog is deleted with its bugnote
 #		logwork if timetracking is disabled
 #
 #
 #	features
+#		consistent error reporting
+#			init error reaction once per page instead of using parameter for report_error etc
+#			show error in inline pages if inline-page is present
+#			allow closing inline-pages on success but show error in case of an error
+#
 #		why does bug_report::clone not use bug_copy()
 #		check if bulk operations that change state perform required field checks
 #		add page titles
@@ -299,7 +305,7 @@ page_title($t_page_title);
 	<?php
 		section_begin('collapsed section', true);
 
-		table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', 'colspan=3');
+		table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', array('colspan=3'));
 		table_row(array('c00', 'c01', 'c02'));
 		table_row(array('c10', 'c11', 'c12'));
 		table_end();
@@ -311,7 +317,7 @@ page_title($t_page_title);
 		section_begin('right column');
 
 		echo '<div class="overflow-scroll" style="height:50px">';
-		table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', 'colspan=3');
+		table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', array('colspan=3'));
 		table_row(array('c00', 'c01', 'c02'), 'class="tr-url" data-url="dummy-url"');
 		table_row(array('c10', 'c11', 'c12'), 'class="tr-url" data-url="dummy-url"');
 		table_end();

@@ -307,7 +307,7 @@ form_security_purge('bug_update');
 
 /* page header */
 layout_page_header(bug_format_summary($f_bug_id, SUMMARY_CAPTION), null, 'view-issue-page');
-layout_page_begin('filter_issues.php');
+layout_page_begin();
 
 page_title(bug_format_id($f_bug_id) . ' - ' . bug_format_summary($f_bug_id, SUMMARY_CAPTION));
 
@@ -356,7 +356,7 @@ echo '<div class="col-md-9">';
 
 			// delete button
 			if(!bug_is_readonly($f_bug_id) && config_get('view_issue_button_delete'))
-				button_confirm('Delete', 'bug-delete', format_href('bug_actiongroup.php', array('bulk_action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_DELETE_token' => form_security_token('bug_actiongroup_DELETE'))), 'Delete bug?', 'confirm-err');
+				button_confirm('Delete', 'bug_actiongroup.php', array('bulk_action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_DELETE_token' => form_security_token('bug_actiongroup_DELETE')), 'Delete bug?', 'confirm-err');
 
 			echo '</div>';
 		actionbar_end();

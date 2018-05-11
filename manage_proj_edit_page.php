@@ -86,7 +86,7 @@ $t_can_manage_users = access_has_project_level( config_get( 'project_user_thresh
 
 layout_page_header( project_get_field( $f_project_id, 'name' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_proj_edit_page.php' );
 ?>
@@ -762,9 +762,7 @@ event_signal( 'EVENT_MANAGE_PROJECT_PAGE', array( $f_project_id ) );
 ?>
 			<tr>
 				<td>
-					<a href="manage_user_edit_page.php?user_id=<?php echo $t_user['id'] ?>">
 						<?php echo $t_display[$i] ?>
-					</a>
 				</td>
 				<td>
 				<?php

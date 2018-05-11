@@ -62,7 +62,7 @@ echo '<div class="col-md-8">';
 section_begin('Details');
 	echo '<form action="settings/user_update.php" method="post" class="input-hover-form">';
 	input_hidden('user_id', $t_user_id);
-	input_hidden('cmd', 'set_details');
+	input_hidden('cmd', 'set_email');
 	echo form_security_field('user_update');
 
 	echo '<div class="col-md-3 no-padding">';

@@ -890,6 +890,20 @@ function user_get_row( $p_user_id ) {
 }
 
 /**
+ * return an empty user array
+ */
+function user_get_row_empty(){
+	return array(
+		'username' => '',
+		'realname' => '',
+		'email' => '',
+		'enabled' => false,
+		'protected' => false,
+		'access_level' => '',
+	);
+}
+
+/**
  * return the specified user field for the user id
  *
  * @param integer $p_user_id    A valid user identifier.
@@ -1234,13 +1248,33 @@ function user_get_assigned_projects( $p_user_id,  $p_ids_only = false ) {
 	$t_result = db_query( $t_query, array( $p_user_id ) );
 	$t_projects = array();
 	while( $t_row = db_fetch_array( $t_result ) ) {
-		if(!$p_ids_only){
-			$t_project_id = $t_row['id'];
-			$t_projects[$t_project_id] = $t_row;
-		}
+		if(!$p_ids_only)
+			$t_projects[$t_row['id']] = $t_row;
 		else
 			$t_projects[] = $t_row['id'];
 	}
+	return $t_projects;
+}
+
+function user_get_unassigned_projects($p_user_id, $p_ids_only = false){
+	db_param_push();
+	$t_query = 'SELECT DISTINCT p.id, p.name
+				FROM {project} p
+				LEFT JOIN {project_user_list} u
+				ON p.id=u.project_id AND u.user_id=' . db_param() . '
+				WHERE p.enabled = ' . db_param() . ' AND
+					u.user_id IS NULL
+				ORDER BY p.name';
+	$t_result = db_query( $t_query, array( (int)$p_user_id, true ) );
+	$t_projects = array();
+
+	while( $t_row = db_fetch_array( $t_result ) ) {
+		if(!$p_ids_only)
+			$t_projects[$t_row['id']] = $t_row;
+		else
+			$t_projects[] = $t_row['id'];
+	}
+
 	return $t_projects;
 }
 

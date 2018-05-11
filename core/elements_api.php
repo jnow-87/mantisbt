@@ -77,11 +77,11 @@ function label($p_name, $p_class = '', $p_style = ''){
  *
  *	@return	a string containing the html element
  */
-function format_icon($p_icon, $p_color = 'grey', $p_space_right = '5px'){
+function format_icon($p_icon, $p_color = '', $p_space_right = '5px'){
 	return '<i class="ace-icon fa ' . $p_icon . ' ' . $p_color . '"></i>' . format_hspace($p_space_right);
 }
 
-function icon($p_icon, $p_color = 'grey', $p_space_right = '5px'){
+function icon($p_icon, $p_color = '', $p_space_right = '5px'){
 	echo format_icon($p_icon, $p_color, $p_space_right);
 }
 
@@ -111,7 +111,7 @@ function alert($p_type, $p_msg){
  */
 function alert_page($p_type, $p_msg, $p_page_title = ''){
 	layout_page_header();
-	layout_page_begin(__FILE__);
+	layout_page_begin();
 
 	if($p_page_title != '')
 		page_title($p_page_title);
@@ -453,37 +453,33 @@ function button($p_text, $p_id, $p_type = 'button', $p_action = '',  $p_class = 
  *	format a button that triggers a confirm inline-page
  *
  *	@param	string	$p_text			text displayed as the button
- *	@param	string	$p_id			button id
  *	@param	string	$p_action		action to trigger if it is confirmed
+ *	@param	array	$p_args			arguments to pass when triggering the button
  *	@param	string	$p_msg			message to display at the inline page
  *	@param	string	$p_msg_class	class to be used for message div
- *	@param	boolean	$p_in_form		if true the button is assumed to be part of form and thus no
- *									new one is created
- *									if false the button is embedded into a form
  *
  *	@return	a string containing the html element
  */
-function format_button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class = '', $p_in_form = true){
+function format_button_confirm($p_text, $p_action, $p_args, $p_msg, $p_msg_class = '', $p_icon = ''){
 	$t_r = '';
 
-	if(!$p_in_form)
-		$t_r .= '<form method="post" class="input-hover-form">';
+	$t_args['confirm_btn'] = $p_text;
+	$t_args['confirm_redirect'] = $p_action;
+	$t_args['confirm_arg_keys'] = implode('|', array_keys($p_args));
+	$t_args['confirm_arg_values'] = implode('|', array_values($p_args));
+	$t_args['confirm_msg'] = $p_msg;
+	$t_args['confirm_msg_class'] = $p_msg_class;
 
-	$t_r .= format_input_hidden('confirm_btn', $p_text);
-	$t_r .= format_input_hidden('confirm_redirect', $p_action);
-	$t_r .= format_input_hidden('confirm_msg', $p_msg);
-	$t_r .= format_input_hidden('confirm_msg_class', $p_msg_class);
-
-	$t_r .= format_button($p_text, $p_id, 'submit', 'confirm.php');
-
-	if(!$p_in_form)
-		$t_r .= '</form>';
+	if($p_icon != '')
+		$t_r .= format_link($p_icon, 'confirm.php', $t_args, 'inline-page-link');
+	else
+		$t_r .= format_button_link($p_text, 'confirm.php', $t_args, 'inline-page-link');
 
 	return $t_r;
 }
 
-function button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class = '', $p_in_form = true){
-	echo format_button_confirm($p_text, $p_id, $p_action, $p_msg, $p_msg_class, $p_in_form);
+function button_confirm($p_text, $p_action, $p_args, $p_msg, $p_msg_class = ''){
+	echo format_button_confirm($p_text, $p_action, $p_args, $p_msg, $p_msg_class);
 }
 
 /**
@@ -1003,17 +999,17 @@ function dragable($p_list){
  *	@param	array	$p_headrow	simple array with one entry per column
  *	@param	string	$p_class	additional table class attributes
  *	@param	string	$p_tr_attr	tr attributes
- *	@param	string	$p_th_attr	th attributes
+ *	@param	array	$p_th_attr	th attributes per column
  *
  *	@return nothing
  */
-function table_begin($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = ''){
+function table_begin($p_headrow, $p_class = '', $p_tr_attr = '', $p_th_attr = array()){
 	echo '<table class="table ' . $p_class . '">';
 	echo '<thead>';
 	echo '<tr ' . $p_tr_attr . '>';
 	
-	foreach($p_headrow as $t_td)
-		echo '<th ' . $p_th_attr . '>' . $t_td . '</th>';
+	for($t_i=0; $t_i<count($p_headrow); $t_i++)
+		echo '<th ' . (isset($p_th_attr[$t_i]) ? $p_th_attr[$t_i] : '') . '>' . $p_headrow[$t_i] . '</th>';
 
 	echo '</tr>';
 	echo '</thead>';

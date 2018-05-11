@@ -55,5 +55,5 @@ case 'revoke':
 	break;
 
 default:
-	json_error('Invalid cmd \'' . $f_cmd . '\'');
+	json_error('Invalid cmd \'' . $f_cmd . '\' to ' . basename(__FILE__));
 }

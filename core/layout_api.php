@@ -448,7 +448,7 @@ function layout_navbar() {
 
 	/* mantis logo */
 	echo '<div class="pull-left">';
-	echo '<a href="' . config_get('logo_url') . '">' .
+	echo '<a href="about_page.php">' .
 		 '<img src="' . helper_mantis_url( 'images/mantis_logo_title.png' ) . '"height="30" style="margin-right:20px"/>' .
 		 '</a>';
 	echo '</div>';
@@ -515,13 +515,16 @@ function layout_navbar() {
 	// settings
 	$t_menu = array(
 		array('label' => 'My Account', 'data' => array('link' => helper_mantis_url('account_page.php'), 'icon' => 'fa-user')),
-		array('label' => 'Filters', 'data' => array('link' => helper_mantis_url('manage_filter_page.php'), 'icon' => 'fa-filter')),
-		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('manage_overview_page.php'), 'icon' => 'fa-gears')),
+		array('label' => 'Filters', 'data' => array('link' => helper_mantis_url('filters_page.php'), 'icon' => 'fa-filter')),
+		array('label' => 'Users', 'data' => array('link' => helper_mantis_url('users_page.php'), 'icon' => 'fa-users')),
+		array('label' => 'Projects', 'data' => array('link' => helper_mantis_url('projects_page.php'), 'icon' => 'fa-book')),
+		array('label' => 'System', 'data' => array('link' => helper_mantis_url('system_page.php'), 'icon' => 'fa-gears')),
+		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('manage_proj_page.php'), 'icon' => 'fa-gears')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Logout', 'data' => array('link' => helper_mantis_url('logout_page.php'), 'icon' => 'fa-sign-out')),
 	);
 
-	dropdown_menu('Manage', $t_menu, 'grey', 'fa-sliders');
+	dropdown_menu('Settings', $t_menu, 'grey', 'fa-sliders');
 
 	/* issue search */
 	echo '<div class="inline">';

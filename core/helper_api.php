@@ -781,6 +781,21 @@ function status_list(){
 }
 
 /**
+ *	get list of states
+ *
+ *	@return	array of state names
+ */
+function access_level_list(){
+	$t_lvls = MantisEnum::getValues(config_get('access_levels_enum_string'));
+	$t_lvl_names = array();
+
+	foreach($t_lvls as $t_id)
+		$t_lvl_names[get_enum_element('access_levels', $t_id)] = $t_id;
+
+	return $t_lvl_names;
+}
+
+/**
  *	map ordering string to a name
  *
  *	@param	string	$p_order	either 'ASC' or 'DESC'

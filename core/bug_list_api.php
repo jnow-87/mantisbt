@@ -26,11 +26,11 @@ function format_content_project_id($p_bug){
 }
 
 function format_content_reporter_id($p_bug){
-	return user_get_name($p_bug->reporter_id);
+	return format_link(user_get_name($p_bug->reporter_id), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
 }
 
 function format_content_handler_id($p_bug){
-	return user_get_name($p_bug->handler_id);
+	return format_link(user_get_name($p_bug->handler_id), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
 }
 
 function format_content_priority($p_bug){

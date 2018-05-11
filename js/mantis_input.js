@@ -346,7 +346,7 @@ function input_hover_submit(e){
 				action = $(active).attr('formaction');
 		}
 	}
-	
+
 	/* check if the form shall trigger a reload on submit */
 	var reload = false;
 
@@ -379,6 +379,7 @@ function input_hover_submit(e){
 		data : $(this).serialize(),
 		success: function(msg, status, data){
 			var had_error = false;
+			var had_html = false;
 
 			/* display status message */
 			try{
@@ -393,17 +394,15 @@ function input_hover_submit(e){
 			}
 			catch(e){
 				statusbar_print('html', msg);
-				had_error = true;
-			}
-
-			if(reload && !had_error){
-				location.reload();
-				return;
+				had_html = true;
 			}
 
 			/* prevent input-hover value updates */
 			if(had_error)
 				return;
+
+			if(reload && !had_html)
+				location.reload();
 
 			/* update all value if all elements have been active */
 			if(input_hover_active_all){
@@ -427,6 +426,8 @@ function input_hover_submit(e){
 
 			/* hide the input-hover element */
 			input_hover_hide(input_hover_active.parentNode);
+
+			input_hover_active = null;
 	 	},
 		error: function(xhr, desc, err){
 			statusbar_print('error', err);
