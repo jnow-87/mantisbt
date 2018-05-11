@@ -2746,15 +2746,6 @@ $g_bug_count_hyperlink_prefix = 'view_all_set.php?type=1&amp;temporary=y';
 $g_user_login_valid_regex = '/^([a-z\d\-.+_ ]+(@[a-z\d\-.]+\.[a-z]{2,4})?)$/i';
 
 /**
- * Default tag prefix used to filter the list of tags in
- * manage_tags_page.php.  Change this to 'A' (or any other
- * letter) if you have a lot of tags in the system and loading
- * the manage tags page takes a long time.
- * @global string $g_default_manage_tag_prefix
- */
-$g_default_manage_tag_prefix = 'ALL';
-
-/**
  * CSV Export
  * Set the csv separator
  * @global string $g_csv_separator
@@ -4101,7 +4092,6 @@ $g_public_config_names = array(
 	'default_home_page',
 	'default_language',
 	'default_limit_view',
-	'default_manage_tag_prefix',
 	'default_new_account_access_level',
 	'default_notify_flags',
 	'default_project_view_status',

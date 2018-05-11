@@ -61,7 +61,7 @@ class IssueTagTimelineEvent extends TimelineEvent {
 				$t_string,
 				user_get_name( $this->user_id ),
 				string_get_bug_view_link( $this->issue_id ),
-				$t_tag_row ? tag_get_link( $t_tag_row ) : $this->tag_name
+				$t_tag_row ? $t_tag_row['name'] : $this->tag_name
 			)
 			. '</div>';
 		$t_html .= $this->html_end();
