@@ -62,7 +62,7 @@ require_js( 'manage_custom_field_edit_page.js' );
 
 layout_page_header();
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_custom_field_page.php' );
 

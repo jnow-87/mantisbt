@@ -94,7 +94,7 @@ $t_access = current_user_get_access_level();
 
 layout_page_header( lang_get( 'manage_workflow_config' ), $t_redirect_url );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 # process the changes to threshold values
 $t_valid_thresholds = array(

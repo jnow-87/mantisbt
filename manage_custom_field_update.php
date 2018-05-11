@@ -68,7 +68,7 @@ form_security_purge( 'manage_custom_field_update' );
 
 layout_page_header( null, $f_return );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 html_operation_successful( $f_return );
 

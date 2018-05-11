@@ -74,7 +74,7 @@ $t_max_file_size = (int)min( ini_get_number( 'upload_max_filesize' ), ini_get_nu
 
 layout_page_header();
 
-layout_page_begin( 'proj_doc_page.php' );
+layout_page_begin();
 
 print_doc_menu();
 

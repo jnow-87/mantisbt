@@ -63,7 +63,7 @@ access_ensure_project_level( config_get( 'manage_project_threshold' ), $t_projec
 
 layout_page_header();
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_proj_cat_edit_page.php' );
 ?>

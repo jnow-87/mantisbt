@@ -51,7 +51,7 @@ access_ensure_project_level( config_get( 'manage_news_threshold' ) );
 
 layout_page_header( lang_get( 'edit_news_link' ) );
 
-layout_page_begin( 'main_page.php' );
+layout_page_begin();
 ?>
 
 <div class="col-md-6-left col-xs-12">

@@ -260,7 +260,7 @@ version_cache_array_rows( $t_project_ids );
 
 /* page content */
 layout_page_header();
-layout_page_begin(__FILE__);
+layout_page_begin();
 
 page_title($t_page_title);
 

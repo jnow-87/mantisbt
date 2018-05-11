@@ -51,7 +51,7 @@ access_ensure_global_level( config_get( 'manage_custom_fields_threshold' ) );
 
 layout_page_header( lang_get( 'manage_custom_field_link' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_custom_field_page.php' );
 ?>

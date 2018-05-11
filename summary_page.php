@@ -343,7 +343,7 @@ foreach ($t_orct_arr as $t_orct_s){
 }
 
 layout_page_header(lang_get('summary_link'));
-layout_page_begin(__FILE__);
+layout_page_begin();
 
 page_title('Statistics');
 

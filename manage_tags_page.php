@@ -103,7 +103,7 @@ $t_result = tag_get_all( $t_name_filter, $t_per_page, $t_offset ) ;
 
 layout_page_header( lang_get( 'manage_tags_link' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_tags_page.php' );
 ?>

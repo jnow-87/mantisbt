@@ -279,7 +279,7 @@ function get_section_end_for_email() {
 
 layout_page_header( lang_get( 'manage_email_config' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'adm_config_report.php' );
 

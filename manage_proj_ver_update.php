@@ -88,7 +88,7 @@ $t_redirect_url = 'manage_proj_edit_page.php?project_id=' . $t_version->project_
 
 layout_page_header( null, $t_redirect_url );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 html_operation_successful( $t_redirect_url );
 

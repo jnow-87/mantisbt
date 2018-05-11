@@ -66,7 +66,7 @@ $t_news_row = news_get_row( $t_news_id );
 
 layout_page_header();
 
-layout_page_begin( 'main_page.php' );
+layout_page_begin();
 
 echo '<div class="space-10"></div>';
 html_operation_successful( 'main_page.php' );

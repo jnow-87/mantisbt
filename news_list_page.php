@@ -51,7 +51,7 @@ access_ensure_project_level( config_get( 'view_bug_threshold' ) );
 
 layout_page_header();
 
-layout_page_begin( 'main_page.php' );
+layout_page_begin();
 ?>
 
 <div class="col-md-12 col-xs-12">

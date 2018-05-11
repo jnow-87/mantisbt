@@ -74,7 +74,7 @@ if( 'ASC' == $f_dir ) {
 
 layout_page_header( lang_get( 'manage_projects_link' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_proj_page.php' );
 

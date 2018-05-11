@@ -45,7 +45,7 @@ access_ensure_project_level( config_get( 'manage_configuration_threshold' ) );
 
 layout_page_header( lang_get( 'permissions_summary_report' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'adm_config_report.php' );
 

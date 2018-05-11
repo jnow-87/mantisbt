@@ -82,7 +82,7 @@ if(current_user_get_pref('refresh_delay') > 0)
 
 layout_page_header_end();
 
-layout_page_begin(__FILE__);
+layout_page_begin();
 
 $t_secion_titles = array(
 	'unassigned' => 'Unassigned',

@@ -53,7 +53,7 @@ access_ensure_global_level( config_get( 'manage_plugin_threshold' ) );
 
 layout_page_header( lang_get( 'manage_plugin_link' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_plugin_page.php' );
 

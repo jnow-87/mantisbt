@@ -119,7 +119,7 @@ if(current_user_get_pref('refresh_delay') > 0)
 
 layout_page_header_end();
 
-layout_page_begin(__FILE__);
+layout_page_begin();
 page_title('Filter Issues');
 
 /* filter result */

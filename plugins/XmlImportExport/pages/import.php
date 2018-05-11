@@ -28,7 +28,7 @@ auth_reauthenticate( );
 
 layout_page_header( plugin_lang_get( 'import' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 $t_this_page = plugin_page( 'import' ); # FIXME with plugins this does not work...
 print_manage_menu( $t_this_page );

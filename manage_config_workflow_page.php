@@ -55,7 +55,7 @@ auth_reauthenticate();
 
 layout_page_header( lang_get( 'manage_workflow_config' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'adm_config_report.php' );
 

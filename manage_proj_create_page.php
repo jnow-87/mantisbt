@@ -53,7 +53,7 @@ access_ensure_global_level( config_get( 'create_project_threshold' ) );
 
 layout_page_header();
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_proj_page.php' );
 
