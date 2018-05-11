@@ -593,9 +593,6 @@ function print_manage_menu( $p_page = '' ) {
 	if( access_has_global_level( config_get( 'manage_custom_fields_threshold' ) ) ) {
 		$t_pages['manage_custom_field_page.php'] = array( 'url'   => 'manage_custom_field_page.php', 'label' => 'manage_custom_field_link' );
 	}
-	if( access_has_global_level( config_get( 'manage_plugin_threshold' ) ) ) {
-		$t_pages['manage_plugin_page.php'] = array( 'url'   => 'manage_plugin_page.php', 'label' => 'manage_plugin_link' );
-	}
 
 	if( access_has_project_level( config_get( 'manage_configuration_threshold' ) ) ) {
 		$t_pages['adm_permissions_report.php'] = array(

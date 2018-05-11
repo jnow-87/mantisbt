@@ -10,6 +10,7 @@ require_api('elements_api.php');
 auth_reauthenticate();
 access_ensure_global_level(config_get('manage_user_threshold'));
 
+form_security_purge('user_update');
 
 $t_date_format = config_get('normal_date_format');
 
@@ -34,7 +35,7 @@ page_title('User Management');
 	while($t_row = db_fetch_array($t_result)){
 		$t_edit_btn = format_link(format_icon('fa-pencil'), 'settings/user_edit_page.php', array('cmd' => 'edit', 'user_id' => $t_row['id']), 'inline-page-link', '', 'inline-page-reload');
 		$t_reset_pw_btn = format_link(format_icon('fa-key'), 'settings/user_edit_page.php', array('cmd' => 'reset_pw', 'user_id' => $t_row['id']), 'inline-page-link', '', 'inline-page-reload');
-		$t_delete_btn = format_button_confirm('Delete', 'settings/user_update.php', array('cmd' => 'delete', 'user_id' => $t_row['id'], 'redirect' => 'users_page.php', 'user_update_token' => $t_update_token), 'Delete user?', 'confirm-err', format_icon('fa-trash', 'red'));
+		$t_delete_btn = format_button_confirm('Delete', 'settings/user_update.php', array('cmd' => 'delete', 'user_id' => $t_row['id'], 'redirect' => 'manage_users_page.php', 'user_update_token' => $t_update_token), 'Delete user?', 'confirm-err', format_icon('fa-trash', 'red'));
 
 		table_row(array(
 			$t_edit_btn

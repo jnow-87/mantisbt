@@ -75,7 +75,7 @@ page_title('Edit User: ' . $t_user['username']);
 echo '<form action="" method="post" class="">';
 	echo form_security_field('user_update');
 	input_hidden('user_id', $f_user_id);
-	input_hidden('redirect', 'users_page.php');
+	input_hidden('redirect', 'manage_users_page.php');
 
 	actionbar_begin();
 		button($t_btn_text, 'submit-btn', 'submit', $t_btn_action);

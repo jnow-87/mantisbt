@@ -61,7 +61,7 @@ require_api( 'elements_api.php' );
 
 /**
  * @internal The following functions each print out filter field inputs.
- *      They are derived from view_filters_page.php
+ *      They are derived from view_manage_filters_page.php
  *      The functions follow a strict naming convention:
  *
  * 		print_filter_[filter_name]
@@ -74,7 +74,7 @@ require_api( 'elements_api.php' );
  *      are virtually identical except for the property name.
  *      Perhaps this code could be made simpler by refactoring into a
  *      class so as to avoid all those calls to global(which are pretty ugly)
- *      These functions could also be shared by view_filters_page.php
+ *      These functions could also be shared by view_manage_filters_page.php
  */
 
 /**

@@ -40,7 +40,7 @@ case 'create':
 	alert('success', string_display_line($t_token));
 
 	echo '<div class="center">';
-	button_link('Proceed', helper_mantis_url('account_page.php'));
+	button_link('Proceed', helper_mantis_url('manage_account_page.php'));
 	echo '</div>';
 
 	layout_inline_page_end();

@@ -18,7 +18,7 @@ require_api('elements_api.php');
 
 
 function format_content_id($p_bug){
-	return format_link(bug_format_id($p_bug->id), 'view.php', array('id' => $p_bug->id));
+	return format_link(bug_format_id($p_bug->id), 'view.php', array('id' => $p_bug->id, '#tab_0' => ''));
 }
 
 function format_content_project_id($p_bug){

@@ -127,7 +127,7 @@ $t_filter = filter_ensure_valid_filter( $t_filter );
 						</a>
 						<ul class="dropdown-menu dropdown-menu-right dropdown-yellow dropdown-caret dropdown-closer">
 							<?php
-								$t_url = 'view_filters_page.php?static=' . (int)$f_static;
+								$t_url = 'view_manage_filters_page.php?static=' . (int)$f_static;
 								if( $t_named_filter ) {
 									$t_url .= '&filter_id=' . $f_filter_id;
 								}

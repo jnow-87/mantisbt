@@ -35,6 +35,9 @@
  * @uses utility_api.php
  */
 
+ if(!defined('INCLUDE_PLUGIN'))
+ 	return;
+
 require_once('core.php');
 require_api('access_api.php');
 require_api('authentication_api.php');
@@ -50,6 +53,9 @@ require_api('utility_api.php');
 require_api('elements_api.php');
 
 
+/**
+ *	form header for plugin_update.php
+ */
 function form_header($p_plugin, $p_cmd){
 	return '<form action="settings/plugin_update.php" method="post" class="input-hover-form input-hover-form-reload">'
 		  . form_security_field('plugin_update')
@@ -57,6 +63,9 @@ function form_header($p_plugin, $p_cmd){
 		  . format_input_hidden('cmd', $p_cmd);
 }
 
+/**
+ *	return info on dependency
+ */
 function dependency_string($p_type){
 	switch($p_type){
 	case 'met':
@@ -90,6 +99,7 @@ access_ensure_global_level(config_get('manage_plugin_threshold'));
 form_security_purge('plugin_update');
 
 
+/* get plugin data */
 $t_plugins = plugin_find_all();
 uasort($t_plugins,
 	function ($p_p1, $p_p2){
@@ -101,17 +111,13 @@ $t_plugins_installed = array();
 $t_plugins_available = array();
 
 foreach($t_plugins as $t_basename => $t_plugin){
-	if(plugin_is_registered($t_basename)){
+	if(plugin_is_registered($t_basename))
 		$t_plugins_installed[$t_basename] = $t_plugin;
-	} else{
+	else
 		$t_plugins_available[$t_basename] = $t_plugin;
-	}
 }
 
-
-layout_page_header(lang_get('manage_plugin_link'));
-layout_page_begin();
-
+/* installed plugins */
 section_begin('Installed Plugins');
 	table_begin(array('', 'Plugin', 'Description', 'Dependencies', 'Priority', 'Protected'), 'table-condensed table-hover no-border', '', array('width="10px"'));
 
@@ -191,13 +197,27 @@ section_begin('Installed Plugins');
 
 		$t_upgrade_btn = '';
 
-		if($t_upgrade)
-			$t_upgrade_btn = format_button_confirm('Upgrade', 'settings/plugin_update.php', array('plugin' => $t_basename, 'cmd' => 'upgrade', 'plugin_update_token' => form_security_token('plugin_update')), 'Upgrade ' . $t_basename . '?', 'confirm-warn', format_icon('fa-angle-double-up'));
+		if($t_upgrade){
+			$t_upgrade_btn =
+				format_button_confirm(
+					'Upgrade', 'settings/plugin_update.php',
+					array('plugin' => $t_basename, 'cmd' => 'upgrade', 'plugin_update_token' => form_security_token('plugin_update')),
+					'Upgrade ' . $t_basename . '?', 'confirm-warn',
+					format_icon('fa-angle-double-up')
+				);
+		}
 
 		$t_uninstall_btn = '';
 
-		if(!$t_protected)
-			$t_uninstall_btn = format_button_confirm('Uninstall', 'settings/plugin_update.php', array('plugin' => $t_basename, 'cmd' => 'uninstall', 'plugin_update_token' => form_security_token('plugin_update')), 'Uninstall ' . $t_basename . '?', 'confirm-err', format_icon('fa-trash', 'red'));
+		if(!$t_protected){
+			$t_uninstall_btn =
+				format_button_confirm(
+					'Uninstall', 'settings/plugin_update.php',
+					array('plugin' => $t_basename, 'cmd' => 'uninstall', 'plugin_update_token' => form_security_token('plugin_update')),
+					'Uninstall ' . $t_basename . '?', 'confirm-err',
+					format_icon('fa-trash', 'red')
+				);
+		}
 
 		table_row(array(
 				$t_upgrade_btn . $t_uninstall_btn,
@@ -215,6 +235,7 @@ section_begin('Installed Plugins');
 	echo '</form>';
 section_end();
 
+/* not installed plugins */
 section_begin('Available Plugins');
 	table_begin(array('', 'Plugin', 'Description', 'Dependencies'), 'table-condensed table-hover no-border', '', array('width="10px"'));
 
@@ -280,6 +301,3 @@ section_begin('Available Plugins');
 
 	table_end();
 section_end();
-
-layout_page_end();
-

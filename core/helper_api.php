@@ -795,6 +795,16 @@ function access_level_list(){
 	return $t_lvl_names;
 }
 
+
+function plugin_priority_list(){
+	$t_prios = array();
+
+	for($i = 5; $i>=1; $i--)
+		$t_prios[$i] = $i;
+
+	return $t_prios;
+}
+
 /**
  *	map ordering string to a name
  *

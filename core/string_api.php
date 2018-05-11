@@ -697,7 +697,7 @@ function string_get_bugnote_view_link( $p_bug_id, $p_bugnote_id, $p_detail_info 
  * @return string
  */
 function string_get_bug_view_url( $p_bug_id ) {
-	return 'view.php?id=' . $p_bug_id;
+	return 'view.php?id=' . $p_bug_id . '#tab_0';
 }
 
 /**

@@ -543,7 +543,7 @@ function tabs($p_tabs){
 		$t_label = 'tab_' . $g_tab_label_cnt;
 		$g_tab_label_cnt++;
 
-		echo '<li ' . $t_active . '><a data-toggle="tab" href="#' . $t_label . '">' . $t_name . '</a></li>';
+		echo '<li ' . $t_active . '><a id="' . $t_label . '" data-toggle="tab" href="#' . $t_label . '_ref">' . $t_name . '</a></li>';
 		$t_active = '';
 	}
 
@@ -559,7 +559,7 @@ function tabs($p_tabs){
 		$t_label = 'tab_' . ($g_tab_label_cnt - $t_ntabs);
 		$t_ntabs--;
 
-		echo '<div id="' . $t_label . '" class="tab-pane fade ' . $t_active . '">';
+		echo '<div id="' . $t_label . '_ref" class="tab-pane fade ' . $t_active . '">';
 		$t_active = '';
 		echo $t_content();
 		echo '</div>';

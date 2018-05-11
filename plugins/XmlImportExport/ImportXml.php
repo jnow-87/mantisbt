@@ -56,7 +56,7 @@ class SourceData {
 	 * @return string
 	 */
 	public function get_issue_url( $p_issue_id ) {
-		return $this->urlbase . 'view.php?id=' . $p_issue_id;
+		return $this->urlbase . 'view.php?id=' . $p_issue_id . '#tab_0';
 	}
 
 	/**

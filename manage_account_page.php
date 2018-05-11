@@ -44,7 +44,7 @@ actionbar_begin();
 	echo '<div class="pull-left">';
 		button_link('Change Password', 'settings/set_password.php', array('user_id' => $t_user_id), 'inline-page-link');
 		button_link('Reset Preferences', 'settings/user_update.php',
-			array('user_id' => $t_user_id, 'cmd' => 'reset_prefs', 'redirect' => 'account_page.php', 'user_update_token' => form_security_token('user_update')),
+			array('user_id' => $t_user_id, 'cmd' => 'reset_prefs', 'redirect' => 'manage_account_page.php', 'user_update_token' => form_security_token('user_update')),
 			'inline-page-link',
 			false,
 			true,

@@ -29,8 +29,6 @@ layout_page_header( lang_get( 'plugin_format_title' ) );
 
 layout_page_begin();
 
-print_manage_menu( 'manage_plugin_page.php' );
-
 ?>
 
 <div class="col-md-6-left col-xs-12">

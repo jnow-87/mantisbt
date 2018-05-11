@@ -162,7 +162,7 @@ function tab_links(){
 		if(bug_exists($t_tgt_id)){
 			if(access_has_bug_level(config_get('view_bug_threshold', null, null, $t_tgt_id), $t_tgt_id)){
 				$t_tgt_bug = bug_get($t_tgt_id);
-				$t_tgt_link = format_link(bug_format_id($t_tgt_id), 'view.php', array('id' => $t_tgt_id));
+				$t_tgt_link = format_link(bug_format_id($t_tgt_id), 'view.php', array('id' => $t_tgt_id, '#tab_0' => ''));
 				$t_tgt_status_icon = '<i class="fa fa-square fa-status-box ' . html_get_status_css_class($t_tgt_bug->status) . '"></i> ';
 				$t_tgt_status = get_enum_element('status', $t_tgt_bug->status);
 

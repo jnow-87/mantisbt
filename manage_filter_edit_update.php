@@ -95,7 +95,7 @@ form_security_purge( 'manage_filter_edit_update' );
 
 if( empty( $t_errors ) ) {
 	filter_db_update_filter( $f_filter_id, filter_serialize( $t_filter ), $f_project_id, $f_is_public, $f_filter_name );
-	print_header_redirect( 'filters_page.php' );
+	print_header_redirect( 'manage_filters_page.php' );
 }
 
 # If there is any error message:

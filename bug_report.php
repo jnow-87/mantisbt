@@ -304,8 +304,8 @@ email_bug_added($t_bug_id);
 if($f_resp_type != RESP_JSON)
 	form_security_purge('bug_report');
 
-$t_bug_link = format_link(bug_format_id($t_bug_id), 'view.php', array('id' => $t_bug_id));
-$t_reload_link = ($f_master_bug_id > 0 ? format_link('Reload', 'view.php', array('id' => $f_master_bug_id)) : '');
+$t_bug_link = format_link(bug_format_id($t_bug_id), 'view.php', array('id' => $t_bug_id, '#tab_0' => ''));
+$t_reload_link = ($f_master_bug_id > 0 ? format_link('Reload', 'view.php', array('id' => $f_master_bug_id, '#tab_0' => '')) : '');
 
 report_success('Created issue ' . $t_bug_link	. format_hspace('15px') . $t_reload_link, '', $f_resp_type);
 

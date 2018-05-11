@@ -69,7 +69,7 @@ current_user_ensure_unprotected();
 # the user has permission to manage user accounts.
 if( OFF == config_get( 'allow_account_delete' ) &&
 	 !access_has_global_level( config_get( 'manage_user_threshold' ) ) ) {
-	print_header_redirect( 'account_page.php' );
+	print_header_redirect( 'manage_account_page.php' );
 }
 
 # check that we are not deleting the last administrator account

@@ -2371,7 +2371,7 @@ function filter_draw_selection_area($p_page_number, $p_filter = null){
 
 		/* simple/advanced filter toggle */
 		if($t_view_filters != SIMPLE_ONLY && $t_view_filters != ADVANCED_ONLY){
-			$t_action = config_get('use_dynamic_filters') ? 'view_all_set.php' : 'view_filters_page.php';
+			$t_action = config_get('use_dynamic_filters') ? 'view_all_set.php' : 'view_manage_filters_page.php';
 
 			if($t_view_type == FILTER_VIEW_TYPE_SIMPLE)	button_link('Advanced Filter', $t_action, array('type' => 6, 'view_type' => FILTER_VIEW_TYPE_ADVANCED));
 			else										button_link('Simple Filter', $t_action, array('type' => 6, 'view_type' => FILTER_VIEW_TYPE_SIMPLE));

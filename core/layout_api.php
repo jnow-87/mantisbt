@@ -379,6 +379,7 @@ function layout_body_javascript() {
 	html_javascript_link('mantis_table.js');
 	html_javascript_link('mantis_hr.js');
 	html_javascript_link('mantis_input.js');
+	html_javascript_link('mantis_tab.js');
 	html_javascript_link('mantis_dragable.js');
 	html_javascript_link('dataTables.bootstrap.min.js');
 	html_javascript_link('jquery.dataTables.min.js');
@@ -503,22 +504,22 @@ function layout_navbar() {
 
 	// reports
 	$t_menu = array(
-		array('label' => 'Work Log', 'data' => array('link' => helper_mantis_url('worklog_summary_page.php'), 'icon' => 'fa-clock-o')),
-		array('label' => 'Roadmap', 'data' => array('link' => helper_mantis_url('versions_page.php?type=unreleased'), 'icon' => 'fa-road')),
-		array('label' => 'Releases', 'data' => array('link' => helper_mantis_url('versions_page.php?type=released'), 'icon' => 'fa-retweet')),
+		array('label' => 'Work Log', 'data' => array('link' => helper_mantis_url('worklog_summary_page.php#tab_0'), 'icon' => 'fa-clock-o')),
+		array('label' => 'Roadmap', 'data' => array('link' => helper_mantis_url('versions_page.php?type=unreleased#tab_0'), 'icon' => 'fa-road')),
+		array('label' => 'Releases', 'data' => array('link' => helper_mantis_url('versions_page.php?type=released#tab_0'), 'icon' => 'fa-retweet')),
 		array('label' => 'divider', 'data' => ''),
-		array('label' => 'Statistics', 'data' => array('link' => helper_mantis_url('summary_page.php'), 'icon' => 'fa-bar-chart-o'))
+		array('label' => 'Statistics', 'data' => array('link' => helper_mantis_url('summary_page.php#tab_0'), 'icon' => 'fa-bar-chart-o'))
 	);
 
 	dropdown_menu('Reports', $t_menu, 'grey', 'fa-heartbeat');
 
 	// settings
 	$t_menu = array(
-		array('label' => 'My Account', 'data' => array('link' => helper_mantis_url('account_page.php'), 'icon' => 'fa-user')),
-		array('label' => 'Filters', 'data' => array('link' => helper_mantis_url('filters_page.php'), 'icon' => 'fa-filter')),
-		array('label' => 'Users', 'data' => array('link' => helper_mantis_url('users_page.php'), 'icon' => 'fa-users')),
-		array('label' => 'Projects', 'data' => array('link' => helper_mantis_url('projects_page.php'), 'icon' => 'fa-book')),
-		array('label' => 'System', 'data' => array('link' => helper_mantis_url('system_page.php'), 'icon' => 'fa-gears')),
+		array('label' => 'My Account', 'data' => array('link' => helper_mantis_url('manage_account_page.php'), 'icon' => 'fa-user')),
+		array('label' => 'Filters', 'data' => array('link' => helper_mantis_url('manage_filters_page.php'), 'icon' => 'fa-filter')),
+		array('label' => 'Users', 'data' => array('link' => helper_mantis_url('manage_users_page.php'), 'icon' => 'fa-users')),
+		array('label' => 'Projects', 'data' => array('link' => helper_mantis_url('manage_projects_page.php'), 'icon' => 'fa-book')),
+		array('label' => 'System', 'data' => array('link' => helper_mantis_url('manage_system_page.php#tab_0'), 'icon' => 'fa-gears')),
 		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('manage_proj_page.php'), 'icon' => 'fa-gears')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Logout', 'data' => array('link' => helper_mantis_url('logout_page.php'), 'icon' => 'fa-sign-out')),
