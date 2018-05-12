@@ -588,6 +588,7 @@ function json_error($p_msg){
 function json_success($p_msg){
 	json_add('success', $p_msg);
 	json_commit();
+	exit();
 }
 
 function json_warning($p_msg){

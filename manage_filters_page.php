@@ -47,136 +47,88 @@ require_api( 'print_api.php' );
 require_api( 'rss_api.php' );
 require_api( 'elements_api.php' );
 
+
 auth_ensure_user_authenticated();
+form_security_purge('filter_update');
 
-layout_page_header( lang_get('manage_filter_page_title' ) );
-
-layout_page_begin();
 
 $t_project_id = helper_get_current_project();
 $t_user_id = auth_get_current_user_id();
 
-if( !access_has_project_level( config_get( 'stored_query_use_threshold' ) ) ) {
-	access_denied();
-}
+$t_rss_enabled = config_get('rss_enabled');
 
-$t_filter_ids_available =
-		filter_db_get_queries( ALL_PROJECTS, $t_user_id, false ) +
-		filter_db_get_queries( ALL_PROJECTS, null, true ) +
-		filter_db_get_queries( $t_project_id, $t_user_id, false ) +
-		filter_db_get_queries( $t_project_id, null, true )
-		;
+if(!access_has_project_level(config_get('stored_query_use_threshold')))
+	access_denied();
+
+if($t_project_id != ALL_PROJECTS){
+	$t_filter_ids_available =
+			filter_db_get_queries( ALL_PROJECTS, $t_user_id, false ) +
+			filter_db_get_queries( ALL_PROJECTS, null, true ) +
+			filter_db_get_queries( $t_project_id, $t_user_id, false ) +
+			filter_db_get_queries( $t_project_id, null, true )
+			;
+}
+else
+	$t_filter_ids_available = filter_db_get_queries();
+
 filter_cache_rows( $t_filter_ids_available );
 
-$t_rss_enabled = config_get( 'rss_enabled' );
 
-function table_print_filter_headers() {
-	global $t_rss_enabled;
-?>
-	<thead>
-		<tr>
-			<th><?php echo lang_get( 'query_name' ) ?></td>
-			<?php if( $t_rss_enabled ) { ?>
-				<th><?php echo lang_get( 'rss' ) ?></td>
-			<?php } ?>
-			<th><?php echo lang_get( 'email_project' ) ?></td>
-			<th><?php echo lang_get( 'public' ) ?></td>
-			<th><?php echo lang_get( 'owner' ) ?></td>
-			<th><?php echo lang_get( 'actions' ) ?></td>
-		</tr>
-	</thead>
-<?php
-}
+/* page content */
+layout_page_header( lang_get('manage_filter_page_title' ) );
+layout_page_begin();
 
-function table_print_filter_row( $p_filter_id ) {
-	global $t_rss_enabled;
-	$t_editable = filter_db_can_delete_filter( $p_filter_id );
-	echo '<tr>';
-	# Filter name
-	echo '<td>';
-	$t_name = string_display( filter_get_field( $p_filter_id, 'name' ) );
-	print_link( 'view_filters_page.php?filter_id=' . $p_filter_id, $t_name );
-	echo '</td>';
-	# RSS
-	if( $t_rss_enabled ) {
-		echo '<td class="center">';
-		print_rss( rss_get_issues_feed_url( null, null, $p_filter_id ), lang_get( 'rss' ) );
-		echo '</td>';
+page_title('Filter Settings');
+
+table_begin(array('', 'Filter', 'Project', 'Visibility', 'Owner'), 'table-condensed table-sortable table-hover no-border', '', array('width="40px"'));
+	foreach($t_filter_ids_available as $t_id => $t_name){
+		if($t_name == '')
+			continue;
+
+		/* edit, delete button */
+		$t_edit_btn = '';
+		$t_delete_btn = '';
+
+		if(filter_db_can_delete_filter($t_id)){
+			$t_edit_btn = format_link(format_icon('fa-pencil'), 'settings/filter_edit_page.php', array('filter_id' => $t_id, 'filter_name' => $t_name), 'inline-page-link', '', 'inline-page-reload');
+			$t_delete_btn = format_link(format_icon('fa-trash', 'red'), 'settings/filter_update.php',
+							array('filter_id' => $t_id, 'cmd' => 'delete', 'filter_update_token' => form_security_token('filter_update')),
+							'inline-page-link', '', 'inline-page-reload'
+			);
+		}
+
+		/* RSS button */
+		$t_rss_btn = format_link(format_icon('fa-rss', 'orange'), rss_get_issues_feed_url(null, null, $t_id));
+
+		/* perma link button */
+		$t_perma_link_btn = '';
+
+		if(access_has_project_level(config_get('create_permalink_threshold'))){
+			$t_filter = filter_deserialize(filter_db_get_filter($t_id));
+			$t_perma_link_btn = format_link(format_icon('fa-link', 'grey'), 'permalink_page.php', array('url' => urlencode(filter_get_url($t_filter))));
+		}
+
+		/* filter name input */
+		$t_name_input = format_link($t_name, 'view_all_set.php', array('type' => 3, 'source_query_id' => $t_id));
+
+		/* project input */
+		$t_project_input = project_get_name(filter_get_field($t_id, 'project_id'));
+
+		/* visibility input */
+		$t_public_input = filter_get_field($t_id, 'is_public') ? 'public' : 'private';
+
+		/* owner */
+		$t_owner = 	format_link(user_get_name(filter_get_field($t_id, 'user_id')), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
+
+		table_row(array(
+			$t_edit_btn . $t_rss_btn . $t_perma_link_btn . $t_delete_btn,
+			$t_name_input,
+			$t_project_input,
+			$t_public_input,
+			$t_owner
+			)
+		);
 	}
-	# Project
-	echo '<td>' . project_get_name( filter_get_field( $p_filter_id, 'project_id' )) . '</td>';
-	# Public
-	echo '<td class="center">' . trans_bool( filter_get_field( $p_filter_id, 'is_public' ) ) . '</td>';
-	# Owner
-	echo '<td>' . user_get_name( filter_get_field( $p_filter_id, 'user_id' ) ) . '</td>';
-	# Actions
-	echo '<td>';
-	echo '<div class="pull-left">';
-	print_form_button( 'view_all_set.php', lang_get( 'apply_filter_button' ), array( 'type' => 3, 'source_query_id' =>  $p_filter_id ), /* security token */ OFF );
-
-	echo '</div>';
-	if( $t_editable ) {
-		echo '<div class="pull-left">';
-		print_form_button( 'manage_filter_edit_page.php', lang_get( 'edit_link' ), array( 'filter_id' =>  $p_filter_id ) );
-		echo '</div>';
-		echo '<div class="pull-left">';
-		print_form_button( 'manage_filter_delete.php', lang_get( 'delete_filter_button' ), array( 'filter_id' =>  $p_filter_id ) );
-		echo '</div>';
-	}
-	echo '</div>';
-
-	# Permalink
-	if(access_has_project_level(config_get('create_permalink_threshold'))){
-		$t_filter = filter_deserialize(filter_db_get_filter($p_filter_id));
-
-		button_link('Create Perma Link', 'permalink_page.php', array('url' => urlencode(filter_get_url($t_filter))));
-	}
-
-	echo '</td>';
-	echo '</tr>';
-}
-
-function table_print_filters( array $p_filter_array ) {
-	?>
-	<table class="table table-striped table-bordered table-condensed table-hover">
-		<?php table_print_filter_headers() ?>
-		<tbody>
-		<?php
-			foreach( $p_filter_array as $t_id => $t_name ) {
-				if( !is_blank( $t_name ) ) {
-					table_print_filter_row( $t_id );
-				}
-			}
-		?>
-		</tbody>
-	</table>
-	<?php
-}
-
-?>
-
-<div class="col-md-6-left col-xs-12">
-	<div class="space-10"></div>
-
-	<div class="widget-box widget-color-blue2">
-		<div class="widget-header widget-header-small">
-			<h4 class="widget-title lighter">
-				<i class="ace-icon fa fa-filter"></i>
-				<?php echo lang_get('available_filter_for_project') . ': ' . project_get_name( $t_project_id ) ?>
-			</h4>
-		</div>
-
-		<div class="widget-main no-padding">
-			<div class="table-responsive">
-			<?php
-			if( count( $t_filter_ids_available ) > 0 ) {
-				table_print_filters( $t_filter_ids_available );
-			}
-			?>
-			</div>
-		</div>
-	</div>
-</div>
-<?php
+table_end();
 
 layout_page_end();

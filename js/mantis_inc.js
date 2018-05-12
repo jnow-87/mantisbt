@@ -63,9 +63,8 @@ function statusbar_print(type, msg){
 		var statusbar = document.getElementById('statusbar-warn');
 	}
 	else if(type == 'html'){
-		var statusbar = document.getElementById('statusbar-warn');
+		var statusbar = null;
 		var html = msg;
-		msg = 'Rendering result in container';
 	}
 	else
 		throw 'unexpected response type \'' + type + '\', msg: "' + msg + '"';
@@ -81,9 +80,11 @@ function statusbar_print(type, msg){
 
 	/* show timeout */
 	setTimeout(function(){
-			statusbar.style.display = 'block';
-			statusbar.style.visibility = 'visible';
-			statusbar.innerHTML = msg;
+			if(statusbar != null){
+				statusbar.style.display = 'block';
+				statusbar.style.visibility = 'visible';
+				statusbar.innerHTML = msg;
+			}
 
 			if(typeof html !== 'undefined')
 				inline_page_create(html);
@@ -92,10 +93,12 @@ function statusbar_print(type, msg){
 	);
 
 	/* hide timeout */
-	setTimeout(function(){
-			statusbar.style.visibility = 'hidden';
-			statusbar.style.display = 'none';
-		},
-		show_time + show_delay
-	);
+	if(statusbar != null){
+		setTimeout(function(){
+				statusbar.style.visibility = 'hidden';
+				statusbar.style.display = 'none';
+			},
+			show_time + show_delay
+		);
+	}
 }

@@ -1510,7 +1510,7 @@ function column_title($p_column_name, $p_table_header = true){
  *	@param	boolean	$p_hide_apply_btn	hide the apply button on the colum selection page
  *	@param	boolean	$p_format_url		return the result as string that can be used to form urls
  *
- *	@return	url string if $p_format_url is set to true, nothing otherwise
+ *	@return	array with url arguments if $p_format_url is set to true, nothing otherwise
  */
 function column_select_input($p_config_opt, $p_columns, $p_hide_apply_btn = false, $p_format_url = false, $p_redirect_url){
 	if($p_format_url)

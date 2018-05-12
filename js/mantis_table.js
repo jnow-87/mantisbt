@@ -1,8 +1,17 @@
 /* configure DataTables and assign it all tables with class table-sortable */
 $(document).ready(function(){
-	$('table.table-datatable').DataTable({
+	$('table.table-paging').DataTable({
 		'dom': '<"pull-left"il><"pull-right"f><"table-center"p><t><"pull-left"il><"pull-right"f><"table-center"p>',
 		'lengthMenu': [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
+		'searching': false,
+		'paging': true,
+		'ordering': false,
+	});
+
+	$('table.table-searchable').DataTable({
+		'dom': '<"pull-left"il><"pull-right"f><"table-center"p><t><"pull-left"il><"pull-right"f><"table-center"p>',
+		'lengthMenu': [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
+		'searching': true,
 		'paging': true,
 		'ordering': false,
 	});

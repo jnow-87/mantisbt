@@ -270,6 +270,11 @@ if( $f_print ) {
 	$t_redirect_url = 'filter_issues.php?';
 }
 
+$f_filter_selected = gpc_get_string('filter_selected', '');
+
+if($f_filter_selected != '')
+	$t_redirect_url .= 'filter_selected=' . $f_filter_selected;
+
 if( $f_temp_filter ) {
 	$t_token_id = token_set( TOKEN_FILTER, json_encode( $t_setting_arr ) );
 	$t_redirect_url = $t_redirect_url . 'filter=' . $t_token_id;

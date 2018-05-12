@@ -264,7 +264,7 @@ function tab_history(){
 
 	$t_history = history_get_events_array($f_bug_id, null, ($f_load_full_history ? -1 : 10));
 
-	table_begin(array('', ''), 'table-condensed table-hover table-datatable no-border', 'style="background:transparent"');
+	table_begin(array('', ''), 'table-condensed table-hover table-searchable no-border', 'style="background:transparent"');
 
 	foreach($t_history as $t_item){
 		$t_user = '<span class="username">' . format_icon('fa-user') . prepare_user_name($t_item['userid']) . '</span>';

@@ -460,7 +460,7 @@ function layout_navbar() {
 		array('label' => 'Report Issue', 'data' => array('link' => helper_mantis_url('bug_report_page.php'), 'icon' => 'fa-edit', 'class' => 'inline-page-link')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Dashboard', 'data' => array('link' => helper_mantis_url('dashboard.php'), 'icon' => 'fa-dashboard')),
-		array('label' => 'Filter', 'data' => array('link' => helper_mantis_url('filter_issues.php'), 'icon' => 'fa-tasks'))
+		array('label' => 'Search Issues', 'data' => array('link' => helper_mantis_url('filter_issues.php'), 'icon' => 'fa-tasks'))
 	);
 
 	dropdown_menu('Issues', $t_menu, 'grey', 'fa-bug');

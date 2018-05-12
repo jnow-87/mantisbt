@@ -2310,97 +2310,6 @@ function filter_cache_result( array $p_rows, array $p_id_array_lastmod ) {
 	return $t_rows;
 }
 
-/**
- * Prints the filter selection area for both the bug list view screen and
- * the bug list print screen. This function was an attempt to make it easier to
- * add new filters and rearrange them on screen for both pages.
- * @param integer $p_page_number Page number.
- * @return void
- */
-function filter_draw_selection_area($p_page_number, $p_filter = null){
-	/* get current filter data */
-	$t_filter = $p_filter;
-
-	if($p_filter == null)
-		$t_filter = current_user_get_bug_filter();
-
-	$t_filter = filter_ensure_valid_filter($t_filter === false ? array() : $t_filter);
-	$t_view_type = $t_filter['_view_type'];
-	$t_view_filters = config_get('view_filters');
-
-	/* get available filters */
-	$t_stored_queries_arr = filter_db_get_available_queries();
-	$t_source_query_id = isset($t_filter['_source_query_id']) ? (int)$t_filter['_source_query_id'] : -1;
-
-	$t_filter_names = array('' => -1);
-	$t_filter_selected = '';
-
-	foreach($t_stored_queries_arr as $t_query_id => $t_query_name){
-		$t_filter_names[$t_query_name] = $t_query_id;
-
-		if($t_query_id == $t_source_query_id)
-			$t_filter_selected = $t_query_name;
-	}
-
-	/* actionbar */
-	actionbar_begin();
-		echo '<div class="pull-left">';
-
-		/* apply button */
-		// NOTE triggers the form with id 'filters_form_open' through javascript
-		button('Apply', 'filter-apply-btn', 'button');
-
-		/* reset button */
-		echo '<form class="form-inline" method="get" name="reset_query" action="view_all_set.php">';
-		input_hidden('type', 3);
-		input_hidden('source_query_id', -1);
-		button('Reset Filter', 'reset_query_button', 'submit');
-		echo '</form>';
-
-		/* available filter selection */
-		if(count($t_stored_queries_arr) > 0){
-			echo '<form id="filter-queries-form" class="form-inline"  method="get" name="list_queries_open" action="view_all_set.php">';
-			input_hidden('type', 3);
-			select('source_query_id', 'source_query_id', $t_filter_names, $t_filter_selected);
-			echo '</form>';
-		}
-
-		echo '</div>';
-
-		echo '<div class="pull-right">';
-
-		/* simple/advanced filter toggle */
-		if($t_view_filters != SIMPLE_ONLY && $t_view_filters != ADVANCED_ONLY){
-			$t_action = config_get('use_dynamic_filters') ? 'view_all_set.php' : 'view_manage_filters_page.php';
-
-			if($t_view_type == FILTER_VIEW_TYPE_SIMPLE)	button_link('Advanced Filter', $t_action, array('type' => 6, 'view_type' => FILTER_VIEW_TYPE_ADVANCED));
-			else										button_link('Simple Filter', $t_action, array('type' => 6, 'view_type' => FILTER_VIEW_TYPE_SIMPLE));
-		}
-
-		/* save filter button */
-		if(access_has_project_level(config_get('stored_query_create_threshold'))){
-			echo '<form class="form-inline" method="post" name="save_query" action="query_store_page.php">';
-			button('Save Filter', 'save_query_button', 'submit');
-			echo '</form>';
-		}
-
-		echo '</div>';
-
-	actionbar_end();
-
-	/* filter form */
-	echo '<form method="post" name="filters_open" id="filters_form_open" action="view_all_set.php?f=3">';
-	input_hidden('type', 1);
-	input_hidden('page_number', $p_page_number);
-	input_hidden('view_type', $t_view_type);
-
-	text('filter-search-txt', FILTER_PROPERTY_SEARCH, string_attribute($t_filter[FILTER_PROPERTY_SEARCH]), 'Search', 'input-xs', 'width:100%!important');
-	vspace('5px');
-	filter_form_draw_inputs_column($t_filter);
-
-	echo '</form>';
-}
-
 
 # ==========================================================================
 # CACHING
@@ -2787,15 +2696,26 @@ function filter_db_get_available_queries( $p_project_id = null, $p_user_id = nul
 	# Get the list of available queries. By sorting such that public queries are
 	# first, we can override any query that has the same name as a private query
 	# with that private one
+	$t_param = array();
+
+	$t_where = '';
+
+	if($t_project_id != ALL_PROJECTS){
+		$t_where = '(project_id=' . db_param() . ' OR project_id=0) AND';
+		$t_param[] = $t_project_id;
+	}
+
+	$t_param[] = true;
+	$t_param[] = $t_user_id;
+
 	db_param_push();
 	$t_query = 'SELECT * FROM {filters}
-					WHERE (project_id=' . db_param() . '
-						OR project_id=0)
-					AND name!=\'\'
+					WHERE ' . $t_where . ' 
+					name!=\'\'
 					AND (is_public = ' . db_param() . '
 						OR user_id = ' . db_param() . ')
 					ORDER BY is_public DESC, name ASC';
-	$t_result = db_query( $t_query, array( $t_project_id, true, $t_user_id ) );
+	$t_result = db_query( $t_query, $t_param);
 
 	while( $t_row = db_fetch_array( $t_result ) ) {
 		$t_overall_query_arr[$t_row['id']] = $t_row['name'];
@@ -3301,4 +3221,15 @@ function filter_print_view_type_toggle( $p_url, $p_view_type ) {
 		lang_get( $t_lang_string )
 	);
 	echo '</li>';
+}
+
+function filter_get_list(){
+	$t_stored_queries_arr = filter_db_get_available_queries();
+
+	$t_filter_names = array('' => -1);
+
+	foreach($t_stored_queries_arr as $t_query_id => $t_query_name)
+		$t_filter_names[$t_query_name] = $t_query_id;
+
+	return $t_filter_names;
 }

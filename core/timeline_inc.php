@@ -71,7 +71,7 @@ actionbar_begin();
 	echo '</div>';
 actionbar_end();
 
-table_begin(array(''), 'table-condensed table-datatable no-border', 'style="background:transparent"');
+table_begin(array(''), 'table-condensed table-searchable no-border', 'style="background:transparent"');
 
 if(empty($t_events))
 	echo '<tr><td class="center">No activity within time range</td></tr>';

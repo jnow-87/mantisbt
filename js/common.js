@@ -327,6 +327,14 @@ $(document).ready( function() {
 		$(this).val(0);
 	});
 
+	$(document).on('change', '#filter_select', function() {
+		var filter_id = $(this).val();
+		var filter_name = $('#filter_select option[value=' + filter_id + ']').text();
+
+		$('#filter_name').val(filter_name);
+	});
+
+
 	$(document).on('change', '#user_select', function() {
 		var tagSeparator = $('#user_separator').val();
 		var currentTagString = $('#user_string').val();
