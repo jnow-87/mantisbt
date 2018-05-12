@@ -384,15 +384,15 @@ if ( config_get( 'subprojects_enabled') == ON ) {
 			</h4>
 		</div>
 		<div class="widget-toolbox padding-8 clearfix">
-	<form id="manage-project-category-copy-form" method="post" action="manage_proj_cat_copy.php" class="form-inline">
+	<form id="manage-project-category-copy-form" method="post" action="settings/category_update.php" class="form-inline">
 		<fieldset>
-			<?php echo form_security_field( 'manage_proj_cat_copy' ) ?>
+			<?php echo form_security_field( 'category_update' ) ?>
+			<input type="hidden" name="cmd" value="copy" />
 			<input type="hidden" name="project_id" value="<?php echo $f_project_id ?>" />
-			<select name="other_project_id" class="input-sm">
+			<select name="copy_from_project_id" class="input-sm">
 				<?php print_project_option_list( null, false, $f_project_id ); ?>
 			</select>
 			<input type="submit" name="copy_from" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get( 'copy_categories_from' ) ?>" />
-			<input type="submit" name="copy_to" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get( 'copy_categories_to' ) ?>" />
 		</fieldset>
 	</form>
 	</div>
@@ -424,14 +424,10 @@ if ( config_get( 'subprojects_enabled') == ON ) {
 					<?php if( !$t_inherited ) {
 						$t_id = urlencode( $t_id );
 						$t_project_id = urlencode( $f_project_id );
-						echo '<div class="pull-left">';
-						print_form_button( 'manage_proj_cat_edit_page.php?id=' . $t_id . '&project_id=' . $t_project_id, lang_get( 'edit_link' ),
-							null, null );
-						echo '</div>';
 					} ?>
 					<?php if( !$t_inherited ) {
 						echo '<div class="pull-left">';
-						print_form_button( 'manage_proj_cat_delete.php?id=' . $t_id . '&project_id=' . $t_project_id, lang_get( 'delete_link' ),
+						print_form_button( 'settings/category_update.php?id=' . $t_id . '&project_id=' . $t_project_id . '&cmd=delete&category_update_token=' . form_security_token('category_update') . '&redirect=manage_proj_edit_page.php', lang_get( 'delete_link' ),
 							null, null );
 						echo '</div>';
 					} ?>
@@ -445,17 +441,6 @@ if ( config_get( 'subprojects_enabled') == ON ) {
 	</table></div><?php
 	} ?>
 </div>
-</div>
-<div class="widget-toolbox padding-8 clearfix">
-	<form id="project-add-category-form" method="post" action="manage_proj_cat_add.php" class="form-inline">
-		<fieldset>
-			<?php echo form_security_field( 'manage_proj_cat_add' ) ?>
-			<input type="hidden" name="project_id" value="<?php echo $f_project_id ?>" />
-			<input type="text" name="name" size="32" maxlength="128" class="input-sm" />
-			<input type="submit" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get( 'add_category_button' ) ?>" />
-			<input type="submit" name="add_and_edit_category" class="btn btn-xs btn-primary btn-white btn-round" value="<?php echo lang_get( 'add_and_edit_category_button' ) ?>" />
-		</fieldset>
-	</form>
 </div>
 </div>
 </div>

@@ -31,8 +31,12 @@ function format_strike($p_text){
  *
  *	@return	nothing
  */
+function format_vspace($p_space){
+	return '<div style="margin-top:' . $p_space . '"></div>';
+}
+
 function vspace($p_space){
-	echo '<div style="margin-top:' . $p_space . '"></div>';
+	echo format_vspace($p_space);
 }
 
 /**
