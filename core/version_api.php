@@ -665,6 +665,10 @@ function version_get( $p_version_id ) {
 	return new VersionData( $t_row );
 }
 
+function version_get_empty(){
+	return new VersionData();
+}
+
 /**
  * Gets the where clause to use for retrieving versions.
  *

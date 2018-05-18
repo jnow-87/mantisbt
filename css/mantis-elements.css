@@ -99,22 +99,6 @@ div.inline-page-frame{
 	max-height: 100%;
 }
 
-/* confirm popup */
-.confirm-err{
-	background: #f2dede !important;
-	color: #a94442 !important;
-}
-
-.confirm-ok{
-	background: #cae8bf !important;
-	color: #1d520a !important;
-}
-
-.confirm-warn{
-	background: #f7ecb5 !important;
-	color: #8a6d3b !important;
-}
-
 /* dropdown intermediate header and colors */
 .dropdown-header {
 	color: #1d520a;

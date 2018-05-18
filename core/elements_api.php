@@ -475,9 +475,9 @@ function format_button_confirm($p_text, $p_action, $p_args, $p_msg, $p_msg_class
 	$t_args['confirm_msg_class'] = $p_msg_class;
 
 	if($p_icon != '')
-		$t_r .= format_link($p_icon, 'confirm.php', $t_args, 'inline-page-link');
+		$t_r .= format_link($p_icon, helper_mantis_url('confirm.php'), $t_args, 'inline-page-link');
 	else
-		$t_r .= format_button_link($p_text, 'confirm.php', $t_args, 'inline-page-link');
+		$t_r .= format_button_link($p_text, helper_mantis_url('confirm.php'), $t_args, 'inline-page-link');
 
 	return $t_r;
 }

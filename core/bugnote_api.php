@@ -898,16 +898,16 @@ function bugnote_view($p_bug_id){
 			else
 				$t_time_tracking_hhmm = '';
 
-			$t_user = format_icon('fa-user') . prepare_user_name($t_activity['user_id']);
-			$t_date = format_icon('fa-clock-o') . 'Created: ' . date($t_normal_date_format, $t_activity['timestamp']);
+			$t_user = format_icon('fa-user', 'grey') . prepare_user_name($t_activity['user_id']);
+			$t_date = format_icon('fa-clock-o', 'grey') . 'Created: ' . date($t_normal_date_format, $t_activity['timestamp']);
 
 			if($t_activity['type'] == ENTRY_TYPE_NOTE)
-				$t_note_link = format_icon('fa-link') . format_link(htmlentities(config_get_global('bugnote_link_tag')) . $t_activity['id_formatted'], string_get_bugnote_view_url($t_activity['note']->bug_id, $t_activity['note']->id));
+				$t_note_link = format_icon('fa-link', 'grey') . format_link(htmlentities(config_get_global('bugnote_link_tag')) . $t_activity['id_formatted'], string_get_bugnote_view_url($t_activity['note']->bug_id, $t_activity['note']->id));
 
 			$t_last_update = '';
 
 			if($t_activity['modified'])
-				$t_last_update = format_icon('fa-retweet') . 'Last Updated: ' . date($t_normal_date_format, $t_activity['last_modified']);
+				$t_last_update = format_icon('fa-retweet', 'grey') . 'Last Updated: ' . date($t_normal_date_format, $t_activity['last_modified']);
 
 			$t_time_spent = '';
 
@@ -917,9 +917,9 @@ function bugnote_view($p_bug_id){
 			$t_delete_btn = '';
 			if($t_activity['can_delete']){
 				if($t_activity['type'] == ENTRY_TYPE_NOTE)
-					$t_delete_btn = format_icon_confirm('fa-trash', 'Delete', 'bn-delete', format_href('bugnote_delete.php', array('bugnote_id' => $t_id, 'bugnote_delete_token' => form_security_token('bugnote_delete'))), 'Delete bug note?', 'confirm-err', 'red', false);
+					$t_delete_btn = format_icon_confirm('fa-trash', 'Delete', 'bn-delete', format_href('bugnote_delete.php', array('bugnote_id' => $t_id, 'bugnote_delete_token' => form_security_token('bugnote_delete'))), 'Delete bug note?', 'danger', 'red', false);
 				else if($t_activity['can_delete'])
-					$t_delete_btn = format_icon_confirm('fa-trash', 'Delete', 'bn-delete', format_href('bug_file_delete.php', array('file_id' => $t_id, 'bug_file_delete_token' => $t_security_token_attachments_delete)), 'Delete attachment?', 'confirm-err', 'red', false);
+					$t_delete_btn = format_icon_confirm('fa-trash', 'Delete', 'bn-delete', format_href('bug_file_delete.php', array('file_id' => $t_id, 'bug_file_delete_token' => $t_security_token_attachments_delete)), 'Delete attachment?', 'danger', 'red', false);
 			}
 
 			echo '<tr id="c' . $t_id . '">';
@@ -930,7 +930,7 @@ function bugnote_view($p_bug_id){
 						array(
 							  (isset($t_note_link) ? $t_note_link . format_hspace('10px') : '')
 							. $t_user . format_hspace('10px')
-							. ($t_private ? format_icon('fa-eye-slash', 'red') : format_icon('fa-eye'))
+							. ($t_private ? format_icon('fa-eye-slash', 'red') : format_icon('fa-eye', 'grey'))
 							. format_link(($t_private ? 'private' : 'public'), 'bugnote_set_view_state.php', array('private' => ($t_private ? '0' : '1'), 'bugnote_id' => $t_id, 'bugnote_set_view_state_token' => form_security_token('bugnote_set_view_state')))
 							. '<div class="pull-right">' . $t_delete_btn . '</div>'
 						),
@@ -1034,7 +1034,7 @@ function bugnote_add_form($p_bug_id){
 				echo '<tr id="bugnote-attach-files" style="' . $t_attach_style . '"><td>';
 					input_hidden('max_file_size', $t_max_file_size);
 					echo '<div class="dropzone center">';
-					icon('fa-cloud-upload');
+					icon('fa-cloud-upload', 'grey');
 					echo 'File Upload<br>';
 					echo '<span class="small">Max File Size: ' . get_filesize_info($t_max_file_size / 1000, 'kB') . '</span>';
 					echo '<div id="dropzone-previews-box" class="dz dropzone-previews dz-max-files-reached"></div>';

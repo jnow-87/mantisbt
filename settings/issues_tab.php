@@ -35,13 +35,13 @@ section_begin('Issue Types');
 		echo '</form>';
 	actionbar_end();
 
-	table_begin(array('', 'Name'), 'no-border', '', array('width="1px"'));
+	table_begin(array('', 'Name'), 'table-condensed table-hover no-border', '', array('width="1px"'));
 
 	foreach($t_categories as $t_category){
 		$t_id = $t_category['id'];
 		$t_delete_btn = format_button_confirm('Delete', 'settings/category_update.php',
 						array('cmd' => 'delete', 'id' => $t_id, 'project_id' => ALL_PROJECTS, 'name' => '-', 'redirect' => 'manage_system_page.php', 'category_update_token' => form_security_token('category_update')),
-						'Delete category?',	'confirm-err', format_icon('fa-trash', 'red')
+						'Delete category?',	'danger', format_icon('fa-trash', 'red')
 		);
 
 		$t_name_input = category_form_header($t_id, 'update', true)

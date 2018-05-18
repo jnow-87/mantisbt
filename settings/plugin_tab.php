@@ -202,7 +202,7 @@ section_begin('Installed Plugins');
 				format_button_confirm(
 					'Upgrade', 'settings/plugin_update.php',
 					array('plugin' => $t_basename, 'cmd' => 'upgrade', 'plugin_update_token' => form_security_token('plugin_update')),
-					'Upgrade ' . $t_basename . '?', 'confirm-warn',
+					'Upgrade ' . $t_basename . '?', 'warning',
 					format_icon('fa-angle-double-up')
 				);
 		}
@@ -214,7 +214,7 @@ section_begin('Installed Plugins');
 				format_button_confirm(
 					'Uninstall', 'settings/plugin_update.php',
 					array('plugin' => $t_basename, 'cmd' => 'uninstall', 'plugin_update_token' => form_security_token('plugin_update')),
-					'Uninstall ' . $t_basename . '?', 'confirm-err',
+					'Uninstall ' . $t_basename . '?', 'danger',
 					format_icon('fa-trash', 'red')
 				);
 		}

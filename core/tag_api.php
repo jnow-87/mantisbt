@@ -962,7 +962,7 @@ function format_tag_list($p_bug_id, $p_show_buttons = true, $p_view_empty = true
 		$t_tag_name = format_label($t_tag['name'], 'label-round label-info');
 
 		if($p_show_buttons){
-			$t_link = format_link($t_tag_name, 'filter_issues.php', array('tag_string' => $t_tag['name']), '', 'margin-right:16px!important');
+			$t_link = format_link($t_tag_name, 'filter_page.php', array('tag_string' => $t_tag['name']), '', 'margin-right:16px!important');
 			$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
 			$t_buttons = array(array('icon' => 'fa-trash red', 'href' => format_href('tag_detach.php', array('bug_id' => $p_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
 
@@ -970,7 +970,7 @@ function format_tag_list($p_bug_id, $p_show_buttons = true, $p_view_empty = true
 			$t_tags .= format_hspace('2px');
 		}
 		else{
-			$t_tags .= format_link($t_tag_name, 'filter_issues.php', array('tag_string' => $t_tag['name']), '', '') . format_hspace('2px');
+			$t_tags .= format_link($t_tag_name, 'filter_page.php', array('tag_string' => $t_tag['name']), '', '') . format_hspace('2px');
 		}
 	}
 

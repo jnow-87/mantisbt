@@ -192,7 +192,7 @@ $t_issues_count = count( $t_issues );
 for( $i = 0; $i < $t_issues_count; $i++ ) {
 	$t_bug = $t_issues[$i];
 
-	$t_about = $t_link = $t_path . 'view.php?id=' . $t_bug->id;
+	$t_about = $t_link = $t_path . 'bug_page.php?id=' . $t_bug->id;
 	$t_title = bug_format_id( $t_bug->id ) . ': ' . $t_bug->summary;
 
 	if( $t_bug->view_state == VS_PRIVATE ) {
@@ -223,7 +223,7 @@ for( $i = 0; $i < $t_issues_count; $i++ ) {
 	}
 
 	# $comments = 'http://www.example.com/sometext.php?somevariable=somevalue&comments=1';	# url to comment page rss 2.0 value
-	$t_comments = $t_path . 'view.php?id=' . $t_bug->id . '#bugnotes';
+	$t_comments = $t_path . 'bug_page.php?id=' . $t_bug->id . '#bugnotes';
 
 	# optional mod_im value for dispaying a different pic for every item
 	$t_image = '';

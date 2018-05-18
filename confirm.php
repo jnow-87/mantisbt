@@ -23,7 +23,7 @@ layout_inline_page_begin();
 page_title('Confirmation');
 
 echo '<div class="center">';
-echo '<div class="' . $f_msg_class . '">' . $f_msg . '</div><br>';
+alert($f_msg_class, $f_msg);
 
 button('Cancel', 'cancel-confirm', 'button', '',  'inline-page-close');
 button_link($f_btn_text, $f_redirect, $f_args);

@@ -56,7 +56,7 @@ vspace('10px');
 echo '</div>';
 
 /* left column */
-echo '<div class="col-md-8">';
+echo '<div class="col-md-9">';
 
 /* user details */
 section_begin('Details');
@@ -67,7 +67,7 @@ section_begin('Details');
 
 	echo '<div class="col-md-3 no-padding">';
 	table_begin(array(), 'no-border');
-	table_row_bug_info_short('Username:', $t_user_name);
+	table_row_bug_info_short('Username:', user_format_name($t_user_id));
 	table_row_bug_info_short('Realname:', user_get_realname($t_user_id));
 	table_row_bug_info_short('eMail:', format_input_hover_text('email', user_get_email($t_user_id)));
 	table_end();
@@ -94,7 +94,7 @@ section_begin('Access Rights');
 
 	foreach($t_projects as $t_id){
 		table_row(array(
-				format_link(project_get_name($t_id, false), helper_mantis_url('manage_proj_edit_page.php'), array('project_id' => $t_id)),
+				format_link(project_get_name($t_id, false), helper_mantis_url('settings/project_page.php'), array('project_id' => $t_id)),
 				get_enum_element('access_levels', user_get_access_level($t_user_id, $t_id)),
 				get_enum_element('project_view_state', project_get_field($t_id, 'view_state')),
 				project_get_field($t_id, 'description')
@@ -119,7 +119,7 @@ section_begin('API Tokens');
 		echo '</form>';
 	actionbar_end();
 
-	table_begin(array('', 'Token', 'Date Created', 'Last Used'), 'table-condensed table-hover table-sortable no-border');
+	table_begin(array('', 'Token', 'Date Created', 'Last Used'), 'table-condensed table-hover table-datatable no-border');
 
 	$t_tokens = api_token_get_all($t_user_id);
 
@@ -143,7 +143,7 @@ section_end();
 echo '</div>';
 
 /* right column */
-echo '<div class="col-md-4">';
+echo '<div class="col-md-3">';
 echo '<form action="settings/user_update.php" method="post" class="input-hover-form">';
 
 input_hidden('user_id', $t_user_id);

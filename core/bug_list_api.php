@@ -18,19 +18,21 @@ require_api('elements_api.php');
 
 
 function format_content_id($p_bug){
-	return format_link(bug_format_id($p_bug->id), 'view.php', array('id' => $p_bug->id, '#tab_0' => ''));
+	return format_link(bug_format_id($p_bug->id), 'bug_page.php', array('id' => $p_bug->id, '#tab_0' => ''));
 }
 
 function format_content_project_id($p_bug){
-	return format_link(project_get_name($p_bug->project_id, false), 'manage_proj_edit_page.php', array('project_id' => $p_bug->project_id));
+	return format_link(project_get_name($p_bug->project_id, false), 'project_page.php', array('project_id' => $p_bug->project_id));
 }
 
 function format_content_reporter_id($p_bug){
-	return format_link(user_get_name($p_bug->reporter_id), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
+	return user_format_name($p_bug->reporter_id);
 }
 
 function format_content_handler_id($p_bug){
-	return format_link(user_get_name($p_bug->handler_id), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
+	if($p_bug->handler_id == 0)
+		return '';
+	return user_format_name($p_bug->handler_id);
 }
 
 function format_content_priority($p_bug){

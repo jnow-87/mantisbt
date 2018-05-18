@@ -460,7 +460,7 @@ function layout_navbar() {
 		array('label' => 'Report Issue', 'data' => array('link' => helper_mantis_url('bug_report_page.php'), 'icon' => 'fa-edit', 'class' => 'inline-page-link')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Dashboard', 'data' => array('link' => helper_mantis_url('dashboard.php'), 'icon' => 'fa-dashboard')),
-		array('label' => 'Search Issues', 'data' => array('link' => helper_mantis_url('filter_issues.php'), 'icon' => 'fa-tasks'))
+		array('label' => 'Search Issues', 'data' => array('link' => helper_mantis_url('filter_page.php'), 'icon' => 'fa-tasks'))
 	);
 
 	dropdown_menu('Issues', $t_menu, 'grey', 'fa-bug');
@@ -520,7 +520,7 @@ function layout_navbar() {
 		array('label' => 'Users', 'data' => array('link' => helper_mantis_url('manage_users_page.php'), 'icon' => 'fa-users')),
 		array('label' => 'Projects', 'data' => array('link' => helper_mantis_url('manage_projects_page.php'), 'icon' => 'fa-book')),
 		array('label' => 'System', 'data' => array('link' => helper_mantis_url('manage_system_page.php#tab_0'), 'icon' => 'fa-gears')),
-		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('manage_proj_page.php'), 'icon' => 'fa-gears')),
+		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('manage_custom_field_page.php'), 'icon' => 'fa-gears')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Logout', 'data' => array('link' => helper_mantis_url('logout_page.php'), 'icon' => 'fa-sign-out')),
 	);
@@ -529,7 +529,7 @@ function layout_navbar() {
 
 	/* issue search */
 	echo '<div class="inline">';
-	echo '<form method="post" action="' . helper_mantis_url('view_all_set.php') . '" class="form-inline">';
+	echo '<form method="post" action="' . helper_mantis_url('filter_apply.php') . '" class="form-inline">';
 	input_hidden('type', 42);
 	input_hidden('is_search_bar_request', 1);
 	text('filter-search-txt', FILTER_PROPERTY_SEARCH, '', 'Search', 'input-xs', '', 'size="13"');

@@ -80,7 +80,7 @@ layout_page_begin();
 
 page_title('Filter Settings');
 
-table_begin(array('', 'Filter', 'Project', 'Visibility', 'Owner'), 'table-condensed table-sortable table-hover no-border', '', array('width="40px"'));
+table_begin(array('', 'Filter', 'Project', 'Visibility', 'Owner'), 'table-condensed table-datatable table-hover no-border', '', array('width="40px"'));
 	foreach($t_filter_ids_available as $t_id => $t_name){
 		if($t_name == '')
 			continue;
@@ -109,7 +109,7 @@ table_begin(array('', 'Filter', 'Project', 'Visibility', 'Owner'), 'table-conden
 		}
 
 		/* filter name input */
-		$t_name_input = format_link($t_name, 'view_all_set.php', array('type' => 3, 'source_query_id' => $t_id));
+		$t_name_input = format_link($t_name, 'filter_apply.php', array('type' => 3, 'source_query_id' => $t_id));
 
 		/* project input */
 		$t_project_input = project_get_name(filter_get_field($t_id, 'project_id'));
@@ -118,7 +118,7 @@ table_begin(array('', 'Filter', 'Project', 'Visibility', 'Owner'), 'table-conden
 		$t_public_input = filter_get_field($t_id, 'is_public') ? 'public' : 'private';
 
 		/* owner */
-		$t_owner = 	format_link(user_get_name(filter_get_field($t_id, 'user_id')), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
+		$t_owner = user_format_name(filter_get_field($t_id, 'user_id'));
 
 		table_row(array(
 			$t_edit_btn . $t_rss_btn . $t_perma_link_btn . $t_delete_btn,

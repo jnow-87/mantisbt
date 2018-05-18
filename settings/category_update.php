@@ -29,8 +29,12 @@ $t_succ_msg = '';
 
 switch($f_cmd){
 case 'create':
-	if($f_name == '')
-		json_error('Empty issue type name');
+	if($f_name == ''){
+		if($f_id == -1)
+			json_error('Empty issue type name');
+
+		$f_name = category_get_name($f_id);
+	}
 
 	if(!category_is_unique($f_project_id, $f_name))
 		json_error('Issue type already exists');
@@ -51,24 +55,6 @@ case 'delete':
 
 	category_remove($f_id);
 	$t_succ_msg = 'Issue type removed';
-	break;
-
-case 'copy':
-	access_ensure_project_level(config_get('manage_project_threshold'), $f_copy_from_project_id);
-
-	$t_rows = category_get_all_rows($f_copy_from_project_id);
-
-	foreach ($t_rows as $t_row){
-		$t_name = $t_row['name'];
-
-		if(!category_is_unique($f_project_id, $t_name))
-			json_error('Issue type ' . $t_name . ' already exists for project');
-	}
-
-	foreach ($t_rows as $t_row)
-		category_add($f_project_id, $t_row['name']);
-
-	$t_succ_msg = 'Issues types copied';
 	break;
 
 case 'update':

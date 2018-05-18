@@ -142,7 +142,7 @@ function tab_project(){
 		$t_obsolete = $t_version_row['obsolete'];
 
 		/* only show either released or unreleased versions */
-		if(($t_version_type == 'target_version' && $t_released == 1) || ($t_version_type != 'target_version' && $t_released == 0))
+		if(($t_version_type == 'target_version' && ($t_released || $t_obsolete)) || ($t_version_type != 'target_version' && !$t_released && !$t_obsolete))
 			continue;
 
 		/* Skip all versions except the specified one (if any) */
@@ -153,23 +153,33 @@ function tab_project(){
 		$t_issues_resolved = 0;
 		$t_issue_ids = db_query_roadmap_info($t_project_id, $t_version_name, $t_version_type, $t_issues_resolved);
 		$t_num_issues = count($t_issue_ids);
-
-		if($t_num_issues == 0)
-			continue;
 	
 		/* print section */
 		section_begin('Version: ' . $t_version_name, !$t_is_first_version);
 			/* print version description and progress */
 			echo '<div class="col-md-6-left">';
 
-			$t_progress = (int)($t_issues_resolved * 100 / $t_num_issues);
+			$t_progress = 0;
+
+			if($t_num_issues > 0)
+				$t_progress = (int)($t_issues_resolved * 100 / $t_num_issues);
+
+			$t_release_date = date(config_get('short_date_format'), $t_version_row['date_order']);
+
+			if(!$t_obsolete){
+				if($t_released)	$t_release_state = format_label('Released (' . $t_release_date . ')', 'label-success');
+				else			$t_release_state = format_label('Planned Release (' . $t_release_date . ')', 'label-info');
+			}
+			else
+				$t_release_state = format_label('Obsolete (' . $t_release_date . ')', 'label-danger');
+
 
 			table_begin(array());
 			table_row(
 				array(
-					($t_released == 1 ? format_label('Released', 'label-success') : format_label('Unreleased', 'label-info')) . format_hspace('2px') . ($t_obsolete == 1 ? format_label('Obsolete', 'label-danger') : ''),
+					$t_release_state,
 					format_progressbar($t_progress),
-					format_button_link($t_issues_resolved . ' of ' . $t_num_issues . ' issue(s) resolved', 'view_all_set.php', array('type' => 1, 'temporary' => 'y', FILTER_PROPERTY_PROJECT_ID => $t_project_id, FILTER_PROPERTY_TARGET_VERSION => $t_version_name), 'input-xxs')
+					format_button_link($t_issues_resolved . ' of ' . $t_num_issues . ' issue(s) resolved', 'filter_apply.php', array('type' => 1, 'temporary' => 'y', FILTER_PROPERTY_PROJECT_ID => $t_project_id, FILTER_PROPERTY_TARGET_VERSION => $t_version_name), 'input-xxs')
 				),
 				'',
 				array('', 'width="100%"', '')
@@ -195,7 +205,7 @@ function tab_project(){
 				echo '</div>';
 			actionbar_end();
 
-			bug_list_print($t_issue_ids, $f_columns, 'table-condensed table-hover table-sortable no-border');
+			bug_list_print($t_issue_ids, $f_columns, 'table-condensed table-hover table-datatable no-border');
 			echo '</div>';
 		section_end();
 

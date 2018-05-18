@@ -69,7 +69,7 @@ if( $f_temp_filter ) {
 }
 
 if( $f_type < 0 ) {
-	print_header_redirect( 'filter_issues.php' );
+	print_header_redirect( 'filter_page.php' );
 }
 
 # -1 is a special case stored query: it means we want to reset our filter
@@ -148,7 +148,7 @@ if( !is_blank( $t_view_all_cookie ) ) {
 		# for ftype = 0, 1, or 3, we are going to re-write the filter anyways
 		if( !in_array( $f_type, array( 0, 1, 3 ) ) ) {
 			gpc_clear_cookie( 'view_all_cookie' );
-			error_proceed_url( 'view_all_set.php?type=0' );
+			error_proceed_url( 'filter_apply.php?type=0' );
 			trigger_error( ERROR_FILTER_TOO_OLD, ERROR );
 			exit; # stop here
 		}
@@ -167,7 +167,7 @@ $t_setting_arr['_source_query_id'] = '';
 switch( $f_type ) {
 	# New cookie
 	case '0':
-		log_event( LOG_FILTERING, 'view_all_set.php: New cookie' );
+		log_event( LOG_FILTERING, 'filter_apply.php: New cookie' );
 		$t_setting_arr = array();
 		break;
 	# Update filters. (filter_gpc_get reads a new set of parameters)
@@ -176,14 +176,14 @@ switch( $f_type ) {
 		break;
 	# Set the sort order and direction (filter_gpc_get is called over current filter)
 	case '2':
-		log_event( LOG_FILTERING, 'view_all_set.php: Set the sort order and direction.' );
+		log_event( LOG_FILTERING, 'filter_apply.php: Set the sort order and direction.' );
 		$t_setting_arr = filter_gpc_get( $t_setting_arr );
 
 		break;
 	# This is when we want to copy another query from the
 	# database over the top of our current one
 	case '3':
-		log_event( LOG_FILTERING, 'view_all_set.php: Copy another query from database' );
+		log_event( LOG_FILTERING, 'filter_apply.php: Copy another query from database' );
 
 		$t_filter_string = filter_db_get_filter( $f_source_query_id );
 		# If we can use the query that we've requested,
@@ -193,7 +193,7 @@ switch( $f_type ) {
 		if( false === $t_setting_arr ) {
 			# couldn't deserialize, if we were trying to use the filter, clear it and reload
 			gpc_clear_cookie( 'view_all_cookie' );
-			error_proceed_url( 'view_all_set.php?type=0' );
+			error_proceed_url( 'filter_apply.php?type=0' );
 			trigger_error( ERROR_FILTER_TOO_OLD, ERROR );
 			exit; # stop here
 		} else {
@@ -204,7 +204,7 @@ switch( $f_type ) {
 		break;
 	case '4':
 		# Generalise the filter
-		log_event( LOG_FILTERING, 'view_all_set.php: Generalise the filter' );
+		log_event( LOG_FILTERING, 'filter_apply.php: Generalise the filter' );
 
 		$t_setting_arr[FILTER_PROPERTY_CATEGORY_ID]			= array( META_FILTER_ANY );
 		$t_setting_arr[FILTER_PROPERTY_REPORTER_ID] 		= array( META_FILTER_ANY );
@@ -232,19 +232,19 @@ switch( $f_type ) {
 	case '5':
 	case '42':
 		# Just set the search string value (filter_gpc_get is called over current filter)
-		log_event( LOG_FILTERING, 'view_all_set.php: Search Text' );
+		log_event( LOG_FILTERING, 'filter_apply.php: Search Text' );
 		$t_setting_arr = filter_gpc_get( $t_setting_arr );
 		$t_hide_filter = '&hide_filter=1';
 		break;
 	case '6':
 		# Just set the view_state (simple / advanced) value. (filter_gpc_get is called over current filter)
-		log_event( LOG_FILTERING, 'view_all_set.php: View state (simple/advanced)' );
+		log_event( LOG_FILTERING, 'filter_apply.php: View state (simple/advanced)' );
 		$t_setting_arr = filter_gpc_get( $t_setting_arr );
 
 		break;
 	default:
 		# does nothing. catch all case
-		log_event( LOG_FILTERING, 'view_all_set.php: default - do nothing' );
+		log_event( LOG_FILTERING, 'filter_apply.php: default - do nothing' );
 		break;
 }
 
@@ -267,7 +267,7 @@ if( !$f_temp_filter ) {
 if( $f_print ) {
 	$t_redirect_url = 'print_all_bug_page.php?';
 } else {
-	$t_redirect_url = 'filter_issues.php?';
+	$t_redirect_url = 'filter_page.php?';
 }
 
 $f_filter_selected = gpc_get_string('filter_selected', '');

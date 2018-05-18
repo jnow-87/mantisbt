@@ -161,7 +161,7 @@ function show_flag( $p_from_status_id, $p_to_status_id ) {
  * @param string $p_section_name Section name.
  * @return void
  */
-function section_begin( $p_section_name ) {
+function workflow_section_begin( $p_section_name ) {
 	$t_enum_statuses = MantisEnum::getValues( config_get( 'status_enum_string' ) );
 	echo '<div class="space-10"></div>';
 	echo '<div class="widget-box widget-color-blue2">';
@@ -231,7 +231,7 @@ function capability_row( $p_from_status ) {
  * section footer
  * @return void
  */
-function section_end() {
+function workflow_section_end() {
 	global $g_can_change_workflow;
 	echo '</tbody></table></div>' . "\n";
 	echo '</div></div></div>' . "\n";
@@ -543,11 +543,11 @@ $t_reopen_status = config_get( 'bug_reopen_status' );
 $t_reopen_label = MantisEnum::getLabel( lang_get( 'resolution_enum_string' ), config_get( 'bug_reopen_resolution' ) );
 
 # display the graph as a matrix
-section_begin( lang_get( 'workflow' ) );
+workflow_section_begin( lang_get( 'workflow' ) );
 foreach ( $t_status_arr as $t_from_status => $t_from_label ) {
 	capability_row( $t_from_status );
 }
-section_end();
+workflow_section_end();
 
 # display the access levels required to move an issue
 echo "\n\n";

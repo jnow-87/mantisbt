@@ -155,7 +155,7 @@ gpc_set_cookie( config_get( 'view_all_cookie' ), $t_row_id, time()+config_get( '
 if( $f_print ) {
 	$t_redirect_url = 'print_all_bug_page.php';
 } else {
-	$t_redirect_url = 'filter_issues.php';
+	$t_redirect_url = 'filter_page.php';
 }
 
 print_header_redirect( $t_redirect_url );

@@ -82,7 +82,7 @@ function summary_helper_print_row( $p_label, $p_open, $p_resolved, $p_closed, $p
 function summary_helper_get_developer_label ( $p_user_id ) {
 	$t_user = string_display_line( user_get_name( $p_user_id ) );
 
-	return '<a class="subtle" href="view_all_set.php?type=1&amp;temporary=y
+	return '<a class="subtle" href="filter_apply.php?type=1&amp;temporary=y
 			&amp;' . FILTER_PROPERTY_REPORTER_ID . '=' . $p_user_id . '
 			&amp;' . FILTER_PROPERTY_HANDLER_ID . '=' . $p_user_id . '
 			&amp;' . FILTER_PROPERTY_NOTE_USER_ID . '=' . $p_user_id . '
@@ -793,7 +793,7 @@ function summary_print_by_project( array $p_projects = array(), $p_level = 0, ar
 	}
 
 	foreach( $p_projects as $t_project ) {
-		$t_name = format_link(project_get_name($t_project, false), 'manage_proj_edit_page.php', array('project_id' => $t_project));
+		$t_name = format_link(project_get_name($t_project, false), 'project_page.php', array('project_id' => $t_project));
 
 		$t_pdata = isset( $p_cache[$t_project] ) ? $p_cache[$t_project] : array( 'open' => 0, 'resolved' => 0, 'closed' => 0 );
 

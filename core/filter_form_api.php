@@ -2585,10 +2585,10 @@ function filter_form_draw_inputs_column($p_filter){
 		if($t_view_type == FILTER_VIEW_TYPE_ADVANCED)
 			$func_table_row_filter('Project', 'project_id');
 
+		$func_table_row_filter('Issue Type', 'show_category');
 		$func_table_row_filter('Priority', 'show_priority');
 		$func_table_row_filter('Severity', 'show_severity');
 		$func_table_row_filter('Visibility', 'view_state');
-		$func_table_row_filter('Category', 'show_category');
 		$func_table_row_filter('Status', 'show_status');
 
 		if($t_view_type == FILTER_VIEW_TYPE_SIMPLE)

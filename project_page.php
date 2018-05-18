@@ -36,100 +36,94 @@
  * @uses utility_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'project_api.php' );
-require_api( 'string_api.php' );
-require_api( 'utility_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('project_api.php');
+require_api('string_api.php');
+require_api('utility_api.php');
+require_api('elements_api.php');
 
-$f_project_id	= gpc_get_int( 'project_id' );
+$f_project_id = gpc_get_int('project_id');
+$t_project = project_get_row($f_project_id);
 
-$t_view_issues_url = 'set_project.php?project_id=' . $f_project_id . '&ref=filter_issues.php';
-
-if( $f_project_id == ALL_PROJECTS ) {
-	print_header_redirect( $t_view_issues_url );
+if($f_project_id == ALL_PROJECTS){
+	print_header_redirect('set_project.php?project_id=' . $f_project_id . '&ref=filter_page.php');
 	exit;
 }
 
-# Override the current page to make sure we get the appropriate project-specific configuration
-$g_project_override = $f_project_id;
 
-layout_page_header( project_get_field( $f_project_id, 'name' ) );
-
+/* page content */
+layout_page_header($t_project['name']);
 layout_page_begin();
 
-echo '<h1>', string_display( project_get_field( $f_project_id, 'name' ) ), '</h1>';
+page_title('Project: ' . $t_project['name']);
 
-echo '<p>';
 
-# View Issues
-print_link_button( $t_view_issues_url, lang_get( 'view_bugs_link' ) );
+/* left column */
+echo '<div class="col-md-9">';
+section_begin('Description');
+	echo $t_project['description'];
+section_end();
 
-# Changelog
-print_link_button( 'versions_page.php?type=released&project_id=' . $f_project_id, lang_get( 'changelog_link' ) );
+section_begin('Versions');
+	$t_versions = version_get_all_rows($f_project_id, null, null);
 
-# Roadmap
-print_link_button( 'versions_page.php?type=unreleased&project_id=' . $f_project_id, lang_get( 'roadmap_link' ) );
+	table_begin(array('Version', 'Release State'), 'table-condensed table-hover no-border');
 
-# Documentation
-if( config_get( 'enable_project_documentation' ) == ON ) {
-	print_link_button( 'proj_doc_page.php?project_id=' . $f_project_id, lang_get( 'docs_link' ) );
-}
+	foreach($t_versions as $t_version){
+		$t_release_date = date(config_get('short_date_format'), $t_version_row['date_order']);
 
-# Wiki
-if( config_get( 'wiki_enable' ) == ON ) {
-	print_link_button( 'wiki.php?type=project&id=' . $f_project_id, lang_get( 'wiki' ) );
-}
-
-# Summary Page for Project
-if( access_has_project_level( config_get( 'view_summary_threshold' ), $f_project_id ) ) {
-	print_link_button( 'summary_page.php?project_id=' . $f_project_id, lang_get( 'summary_link' ) );
-}
-
-# Manage Project Page
-if( access_has_project_level( config_get( 'manage_project_threshold' ), $f_project_id ) ) {
-	print_link_button( 'manage_proj_edit_page.php?project_id=' . $f_project_id, lang_get( 'manage_link' ) );
-}
-
-echo '</p>';
-
-# @todo Add status, view state, versions, sub-projects, parent projects, and news.
-# @todo Schema change: add home page, license,
-
-$t_description = project_get_field( $f_project_id, 'description' );
-
-if( !is_blank( $t_description ) ) {
-	echo '<h2>', lang_get( 'description' ), '</h2>';
-	echo '<p>', string_display( $t_description ), '</p>';
-}
-
-$t_access_level_for_dev_team = config_get( 'development_team_threshold' );
-
-$t_users = project_get_all_user_rows( $f_project_id, $t_access_level_for_dev_team );
-$t_show_real_names = config_get( 'show_realname' ) == ON;
-
-if( count( $t_users ) > 0 ) {
-	echo '<h2>', lang_get( 'development_team' ), '</h2>';
-
-	# @todo sort users in DESC order by access level, then ASC by username/realname.
-	foreach ( $t_users as $t_user_data ) {
-		$t_user_id = $t_user_data['id'];
-
-		if( $t_show_real_names && !is_blank( $t_user_data['realname'] ) ) {
-			$t_user_name = $t_user_data['realname'];
-		} else {
-			$t_user_name = $t_user_data['username'];
+		if(!$t_version['obsolete']){
+			if($t_version['released'])	$t_release_state = format_label('Released (' . $t_release_date . ')', 'label-success');
+			else						$t_release_state = format_label('Planned Release (' . $t_release_date . ')', 'label-info');
 		}
+		else
+			$t_release_state = format_label('Obsolete (' . $t_release_date . ')', 'label-danger');
 
-		echo $t_user_name, ' (', get_enum_element( 'access_levels', $t_user_data['access_level'] ), ')<br />';
+		table_row(array(
+			version_full_name($t_version['id'], false, $f_project_id),
+			$t_release_state
+			)
+		);
 	}
-}
+
+	table_end();
+section_end();
+echo '</div>';
+
+/* right column */
+echo '<div class="col-md-3">';
+section_begin('Development Team');
+	$t_users_all = project_get_all_user_rows($f_project_id, ANYBODY, true);
+
+	foreach($t_users_all as $t_user)
+		echo user_format_name($t_user['id']) . ' (' . get_enum_element('access_levels', $t_user['access_level']) . ')<br>';
+section_end();
+
+section_begin('Links');
+	echo format_link('Project Issues', 'set_project.php', array('project_id' => $f_project_id, 'ref' => 'filter_page.php')) . '<br>';
+	echo format_link('Releases', 'versions_page.php', array('type' => 'released', 'project_id' => $f_project_id)) . '<br>';
+	echo format_link('Roadmap', 'versions_page.php', array('type' => 'unreleased', 'project_id' => $f_project_id)) . '<br>';
+
+	if(config_get('enable_project_documentation') == ON)
+		echo format_link('Documentation', 'proj_doc_page.php', array('project_id' => $f_project_id)) . '<br>';
+
+	if(config_get('wiki_enable') == ON)
+		echo format_link('Wiki', 'wiki.php?', array('type' => 'project', 'id' => $f_project_id)) . '<br>';
+
+	if(access_has_project_level(config_get('view_summary_threshold'), $f_project_id))
+		echo format_link('Summary', 'summary_page.php', array('project_id' => $f_project_id)) . '<br>';
+
+	if(access_has_project_level(config_get('manage_project_threshold'), $f_project_id))
+		echo format_link('Settings', 'settings/project_page.php', array('project_id' => $f_project_id)) . '<br>';
+section_end();
+echo '</div>';
 
 layout_page_end();

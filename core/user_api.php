@@ -1768,19 +1768,19 @@ function user_reset_password( $p_user_id, $p_send_email = true ) {
  *	get list of users
  *
  *	@param	string	$p_project_id	project to get versions for
- *	@param	string	$p_reported_id	user id that shall be used as author
+ *	@param	string	$p_reporter_id	user id that shall be used as author
  *	@param	boolean	$p_meta_user	if true meta users such as 'author' are added
  *									to the list. if false only existing users are
  *									added to the list
  *
  *	@return	array of user names
  */
-function user_list($p_project_id, $p_reported_id = '', $p_meta_user = false){
+function user_list($p_project_id, $p_reporter_id = '', $p_meta_user = false){
 	$t_users = project_get_all_user_rows($p_project_id);
 	$t_user_names = array();
 
 	if($p_meta_user){
-		$t_user_names['[author]'] = $p_reported_id;
+		$t_user_names['[author]'] = $p_reporter_id;
 		$t_user_names['[me]'] = auth_get_current_user_id();
 		$t_user_names['[unassigned]'] = 0;
 	}
@@ -1793,4 +1793,10 @@ function user_list($p_project_id, $p_reported_id = '', $p_meta_user = false){
 	ksort($t_user_names);
 
 	return $t_user_names;
+}
+
+function user_format_name($p_user_id){
+	if($p_user_id == 0)
+		return user_get_name($p_user_id);
+	return format_link(user_get_name($p_user_id), 'user_page.php', array('id' => $p_user_id));
 }

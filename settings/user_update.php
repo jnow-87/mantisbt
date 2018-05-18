@@ -106,7 +106,6 @@ case 'create':
 	user_create($t_user['username'], $t_pw, $t_user['email'], $t_user['access_level'], $t_user['protected'], $t_user['enabled'], $t_user['realname']);
 	lang_pop();
 
-	form_security_purge('user_update');
 	break;
 
 case 'delete':
@@ -121,7 +120,6 @@ case 'delete':
 		trigger_error(ERROR_USER_CHANGE_LAST_ADMIN, ERROR);
 
 	user_delete($f_user_id);
-	form_security_purge('user_update');
 
 	$t_succ_msg = 'User deleted';
 	break;
@@ -223,7 +221,9 @@ default:
 }
 
 
-if($f_redirect != '')
+if($f_redirect != ''){
+	form_security_purge('user_update');
 	print_header_redirect($f_redirect);
+}
 
 json_success($t_succ_msg);

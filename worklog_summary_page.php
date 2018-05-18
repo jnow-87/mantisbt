@@ -64,7 +64,7 @@ require_api('elements_api.php');
  *	@return	none
  */
 function format_project_link($p_project_id){
-	return format_link(project_get_name($p_project_id), 'manage_proj_edit_page.php', array('project_id' => $p_project_id));
+	return format_link(project_get_name($p_project_id), 'project_page.php', array('project_id' => $p_project_id));
 }
 
 
@@ -101,7 +101,7 @@ function worklog_table($p_users, $p_row_label, $p_rows, $p_row_name_func, $p_row
 	
 	$t_users[] = 'Total';
 
-	table_begin($t_users, 'table-bordered table-condensed table-hover table-sortable');
+	table_begin($t_users, 'table-bordered table-condensed table-hover table-datatable');
 		$t_col_total = array();
 
 		foreach ($t_row_names as $t_row_id){

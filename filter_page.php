@@ -94,7 +94,7 @@ $t_rows = filter_get_bug_rows($t_page, $t_per_page, $t_page_count, $t_bug_count,
 	
 
 if($t_rows === false)
-	print_header_redirect('view_all_set.php?type=0');
+	print_header_redirect('filter_apply.php?type=0');
 
 $t_bug_ids = array();
 
@@ -116,7 +116,7 @@ html_robots_noindex();
 layout_page_header_begin(lang_get('view_bugs_link'));
 
 if(current_user_get_pref('refresh_delay') > 0)
-	html_meta_redirect('filter_issues.php?refresh=true', current_user_get_pref('refresh_delay') * 60);
+	html_meta_redirect('filter_page.php?refresh=true', current_user_get_pref('refresh_delay') * 60);
 
 layout_page_header_end();
 
@@ -175,7 +175,7 @@ echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" clas
 		echo '</div>';
 	actionbar_end();
 
-	bug_list_print($t_bug_ids, $f_columns, 'table-condensed table-hover table-sortable no-border');
+	bug_list_print($t_bug_ids, $f_columns, 'table-condensed table-hover table-datatable no-border');
 echo '</form>';
 echo '</div>';
 
@@ -208,7 +208,7 @@ if(!$f_hide_filter){
 		button('Apply', 'filter-apply-btn', 'button');
 
 		/* reset button */
-		echo '<form class="form-inline" method="get" name="reset_query" action="view_all_set.php">';
+		echo '<form class="form-inline" method="get" name="reset_query" action="filter_apply.php">';
 		input_hidden('type', 3);
 		input_hidden('source_query_id', -1);
 		button('Reset Filter', 'reset_query_button', 'submit');
@@ -216,7 +216,7 @@ if(!$f_hide_filter){
 
 		/* available filter selection */
 		if(count($t_filter_names) > 0){
-			echo '<form id="filter-queries-form" class="form-inline"  method="get" name="list_queries_open" action="view_all_set.php">';
+			echo '<form id="filter-queries-form" class="form-inline"  method="get" name="list_queries_open" action="filter_apply.php">';
 			input_hidden('type', 3);
 			select('source_query_id', 'source_query_id', $t_filter_names, $t_filter_selected);
 			echo '</form>';
@@ -236,7 +236,7 @@ if(!$f_hide_filter){
 		}
 
 		if($t_view_filters != SIMPLE_ONLY && $t_view_filters != ADVANCED_ONLY){
-			$t_action = config_get('use_dynamic_filters') ? 'view_all_set.php' : 'view_manage_filters_page.php';
+			$t_action = config_get('use_dynamic_filters') ? 'filter_apply.php' : 'view_manage_filters_page.php';
 
 			if($t_view_type == FILTER_VIEW_TYPE_SIMPLE)	$t_menu[] = array('label' => 'Advanced Filter', 'data' => array('link' => format_href($t_action, array('type' => 6, 'view_type' => FILTER_VIEW_TYPE_ADVANCED))));
 			else										$t_menu[] = array('label' => 'Simple Filter', 'data' => array('link' => format_href($t_action, array('type' => 6, 'view_type' => FILTER_VIEW_TYPE_SIMPLE))));
@@ -249,7 +249,7 @@ if(!$f_hide_filter){
 	actionbar_end();
 
 	/* filter form */
-	echo '<form method="post" name="filters_open" id="filters_form_open" action="view_all_set.php?f=3">';
+	echo '<form method="post" name="filters_open" id="filters_form_open" action="filter_apply.php?f=3">';
 		input_hidden('type', 1);
 		input_hidden('view_type', $t_view_type);
 		input_hidden('filter_selected', $t_filter_selected);

@@ -249,7 +249,7 @@ foreach($t_boxes as $t_box_title => $t_box_display){
 		actionbar_end();
 
 		/* filter content */
-		bug_list_print($t_bug_ids, $f_columns, 'table-condensed table-hover table-sortable no-border');
+		bug_list_print($t_bug_ids, $f_columns, 'table-condensed table-hover table-datatable no-border');
 
 		unset($t_rows);
 

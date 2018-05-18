@@ -136,9 +136,9 @@ function tab_links(){
 		echo form_security_field('bug_relationship_add');
 		input_hidden('src_bug_id', $t_bug->id);
 		text('dest_bug_id', 'dest_bug_id', '', 'Issue ID');
-		hspace('5px');
+		hspace('2px');
 		select('rel_type', 'rel_type', Relationship_list(), relationship_default());
-		hspace('10px');
+		hspace('5px');
 		button('Add', 'rel_attach_div-action-0', 'submit');
 		echo '</span>';
 		actionbar_end();
@@ -148,7 +148,7 @@ function tab_links(){
 	$t_show_project = false;
 	$t_relationships = relationship_get_all($t_bug->id, $t_show_project);
 
-	table_begin(array('', 'Link Type', 'Link Target', 'Target Status', 'Target Summary'), 'table-condensed table-hover table-sortable no-border');
+	table_begin(array('', 'Link Type', 'Link Target', 'Target Status', 'Target Summary'), 'table-condensed table-hover table-datatable no-border');
 
 	foreach($t_relationships as $t_rel){
 		$t_tgt_id = $t_rel->src_bug_id;
@@ -162,7 +162,7 @@ function tab_links(){
 		if(bug_exists($t_tgt_id)){
 			if(access_has_bug_level(config_get('view_bug_threshold', null, null, $t_tgt_id), $t_tgt_id)){
 				$t_tgt_bug = bug_get($t_tgt_id);
-				$t_tgt_link = format_link(bug_format_id($t_tgt_id), 'view.php', array('id' => $t_tgt_id, '#tab_0' => ''));
+				$t_tgt_link = format_link(bug_format_id($t_tgt_id), 'bug_page.php', array('id' => $t_tgt_id, '#tab_0' => ''));
 				$t_tgt_status_icon = '<i class="fa fa-square fa-status-box ' . html_get_status_css_class($t_tgt_bug->status) . '"></i> ';
 				$t_tgt_status = get_enum_element('status', $t_tgt_bug->status);
 
@@ -197,7 +197,7 @@ function tab_monitored(){
 	echo '<form action="bug_monitor_add.php" method="post" class="input-hover-form input-hover-form-reload">';
 
 	foreach($t_user_ids as $t_id){
-		$t_link = format_link(user_get_name($t_id), 'view_user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
+		$t_link = format_link(user_get_name($t_id), 'user_page.php', array('id' => $t_id), '', 'margin-right:20px!important');
 		$t_sec_token = htmlspecialchars(form_security_param('bug_monitor_delete'));
 
 		if($t_id != auth_get_current_user_id() && !$t_can_delete_others){
@@ -306,7 +306,7 @@ $t_show_tags = in_array('tags', $t_fields) && access_has_global_level(config_get
 form_security_purge('bug_update');
 
 /* page header */
-layout_page_header(bug_format_summary($f_bug_id, SUMMARY_CAPTION), null, 'view-issue-page');
+layout_page_header(bug_format_id($f_bug_id));
 layout_page_begin();
 
 page_title(bug_format_id($f_bug_id) . ' - ' . bug_format_summary($f_bug_id, SUMMARY_CAPTION));
@@ -356,7 +356,7 @@ echo '<div class="col-md-9">';
 
 			// delete button
 			if(!bug_is_readonly($f_bug_id) && config_get('view_issue_button_delete'))
-				button_confirm('Delete', 'bug_actiongroup.php', array('bulk_action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_DELETE_token' => form_security_token('bug_actiongroup_DELETE')), 'Delete bug?', 'confirm-err');
+				button_confirm('Delete', 'bug_actiongroup.php', array('bulk_action' => 'DELETE', 'bug_arr[]' => $f_bug_id, 'bug_actiongroup_DELETE_token' => form_security_token('bug_actiongroup_DELETE')), 'Delete bug?', 'danger');
 
 			echo '</div>';
 		actionbar_end();

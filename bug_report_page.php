@@ -130,7 +130,7 @@ html_robots_noindex();
 layout_inline_page_begin();
 page_title('Report Issue');
 
-echo '<form action="bug_report.php?posted=1" method="post" class="input-hover-form input-hover-form-noreload">';
+echo '<form action="' . helper_mantis_url('bug_report.php') . '?posted=1" method="post" class="input-hover-form input-hover-form-noreload">';
 
 input_hidden('project_id', $t_project_id);
 input_hidden('resp_type', RESP_HTML);

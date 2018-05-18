@@ -24,7 +24,7 @@ auth_ensure_user_authenticated();
 current_user_ensure_unprotected();
 
 
-$t_user_id = auth_get_current_user_id();
+$t_user_id = gpc_get_int('id', auth_get_current_user_id());
 $t_user_name = user_get_name($t_user_id);
 $t_pref = user_pref_get($t_user_id);
 $t_email_full_issue = (int)config_get('email_notifications_verbose', null, $t_user_id, ALL_PROJECTS);
@@ -48,11 +48,14 @@ section_begin('Details');
 	input_hidden('cmd', 'set_email');
 	echo form_security_field('user_update');
 
+	$t_email = user_get_email($t_user_id);
+	$t_email = get_email_link($t_email, $t_email);
+
 	echo '<div class="col-md-3 no-padding">';
 	table_begin(array(), 'no-border');
 	table_row_bug_info_short('Username:', $t_user_name);
 	table_row_bug_info_short('Realname:', user_get_realname($t_user_id));
-	table_row_bug_info_short('eMail:', user_get_email($t_user_id));
+	table_row_bug_info_short('eMail:', $t_email);
 	table_end();
 	echo '</div>';
 

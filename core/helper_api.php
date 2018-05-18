@@ -781,6 +781,21 @@ function status_list(){
 }
 
 /**
+ *	get list of project states
+ *
+ *	@return	array of project state names
+ */
+function project_status_list(){
+	$t_states = MantisEnum::getValues(config_get('project_status_enum_string'));
+	$t_state_names = array();
+
+	foreach($t_states as $t_id)
+		$t_state_names[get_enum_element('project_status', $t_id)] = $t_id;
+
+	return $t_state_names;
+}
+
+/**
  *	get list of states
  *
  *	@return	array of state names

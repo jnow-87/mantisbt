@@ -2726,11 +2726,11 @@ $g_bugnote_link_tag = '~';
  * this is the prefix to use when creating links to bug views from bug counts
  * (eg. on the main page and the summary page).
  * Default is a temporary filter
- * only change the filter this time - 'view_all_set.php?type=1&amp;temporary=y'
- * permanently change the filter - 'view_all_set.php?type=1';
+ * only change the filter this time - 'filter_apply.php?type=1&amp;temporary=y'
+ * permanently change the filter - 'filter_apply.php?type=1';
  * @global string $g_bug_count_hyperlink_prefix
  */
-$g_bug_count_hyperlink_prefix = 'view_all_set.php?type=1&amp;temporary=y';
+$g_bug_count_hyperlink_prefix = 'filter_apply.php?type=1&amp;temporary=y';
 
 /**
  * The regular expression to use when validating new user login names
