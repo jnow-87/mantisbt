@@ -810,7 +810,11 @@ function access_level_list(){
 	return $t_lvl_names;
 }
 
-
+/**
+ *	get list of plugin priorities
+ *
+ *	@return array of priorities
+ */
 function plugin_priority_list(){
 	$t_prios = array();
 
@@ -818,6 +822,21 @@ function plugin_priority_list(){
 		$t_prios[$i] = $i;
 
 	return $t_prios;
+}
+
+/**
+ *	get list of custom field types
+ *
+ *	@return	array of type names
+ */
+function custom_field_type_list(){
+	$t_types = MantisEnum::getValues(config_get('custom_field_type_enum_string'));
+	$t_type_names = array();
+
+	foreach($t_types as $t_id)
+		$t_type_names[get_enum_element('custom_field_type', $t_id)] = $t_id;
+
+	return $t_type_names;
 }
 
 /**

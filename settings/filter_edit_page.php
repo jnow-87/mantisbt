@@ -13,10 +13,9 @@ $f_filter_name = gpc_get_string('filter_name');
 layout_inline_page_begin();
 page_title('Edit Filter: ' . $f_filter_name);
 
-echo '<form action="settings/filter_update.php" method="post" class="">';
+echo '<form action="settings/filter_update.php" method="post" class="input-hover-form input-hover-form-reload">';
 	input_hidden('cmd', 'set_pref');
 	input_hidden('filter_id', $f_filter_id);
-	input_hidden('redirect', 'manage_filters_page.php');
 	echo form_security_field('filter_update');
 
 	actionbar_begin();

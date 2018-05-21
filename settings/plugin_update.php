@@ -43,7 +43,7 @@ require_api('form_api.php');
 require_api('gpc_api.php');
 require_api('print_api.php');
 require_api('error_api.php');
-require_api( 'plugin_api.php' );
+require_api('plugin_api.php');
 
 
 json_prepare();
@@ -55,10 +55,10 @@ access_ensure_global_level(config_get('manage_plugin_threshold'));
 
 $f_plugin_name = gpc_get_string('plugin');
 $f_cmd = gpc_get_string('cmd');
+$f_redirect = gpc_get_string('redirect', '');
 
 
 $t_succ_msg = '';
-$t_redirect = '';
 
 switch($f_cmd){
 case 'set_priority':
@@ -84,8 +84,6 @@ case 'install':
 
 	if(!is_null($t_plugin))
 		plugin_install($t_plugin);
-
-	$t_redirect = 'manage_system_page.php';
 	break;
 
 case 'uninstall':
@@ -95,8 +93,6 @@ case 'uninstall':
 
 	if(!is_null($t_plugin))
 		plugin_uninstall($t_plugin);
-
-	$t_redirect = 'manage_system_page.php';
 	break;
 
 case 'upgrade':
@@ -104,15 +100,13 @@ case 'upgrade':
 
 	if(!is_null($t_plugin))
 		plugin_upgrade($t_plugin);
-
-	$t_redirect = 'manage_system_page.php';
 	break;
 
 default:
 	json_error('Invalid cmd \'' . $f_cmd . '\' to '. basename(__FILE__));
 }
 
-if($t_redirect != '')
-	print_header_redirect($t_redirect);
+if($f_redirect != '')
+	print_header_redirect($f_redirect);
 
 json_success($t_basename . ': ' . $t_succ_msg);

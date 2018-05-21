@@ -63,7 +63,7 @@ function hidden_custom_fields(){
 	global $t_bug;
 
 	$t_related_custom_field_ids = custom_field_get_linked_ids($t_bug->project_id);
-	$custom_fields_show = config_get('bug_custom_fields_show')['view'];
+	$t_custom_fields_show = config_get('bug_custom_fields_show')['view'];
 
 	custom_field_cache_values(array($t_bug->id) , $t_related_custom_field_ids);
 
@@ -74,10 +74,10 @@ function hidden_custom_fields(){
 		$t_def = custom_field_get_definition($t_id);
 
 		# ignore field if it shall not be shown
-		if(!in_array($t_def['name'], $custom_fields_show))
+		if(in_array($t_def['name'], $t_custom_fields_show) || in_array('__all', $t_custom_fields_show))
 			continue;
 
-		input_hidden('custom_field_' . $t_id, custom_field_get_value($t_def, $f_bug_id));
+		input_hidden('custom_field_' . $t_id, custom_field_get_value($t_id, $f_bug_id));
 		input_hidden('custom_field_' . $t_id . '_presence', 0);
 	}
 }
@@ -88,7 +88,7 @@ function tab_custom_fields(){
 	global $t_bug;
 
 	$t_related_custom_field_ids = custom_field_get_linked_ids($t_bug->project_id);
-	$custom_fields_show = config_get('bug_custom_fields_show')['view'];
+	$t_custom_fields_show = config_get('bug_custom_fields_show')['view'];
 
 	custom_field_cache_values(array($t_bug->id) , $t_related_custom_field_ids);
 
@@ -109,10 +109,10 @@ function tab_custom_fields(){
 		$t_def = custom_field_get_definition($t_id);
 
 		# ignore field if it shall not be shown
-		if(!in_array($t_def['name'], $custom_fields_show))
+		if(!in_array($t_def['name'], $t_custom_fields_show) && !in_array('__all', $t_custom_fields_show))
 			continue;
 
-		$t_value = custom_field_get_value($t_def, $f_bug_id);
+		$t_value = custom_field_get_value($t_id, $f_bug_id);
 		// TODO use print_custom_field_input() for displaying custom fields
 		table_row_bug_info_long($t_def['name'] . ':', format_input_hover_textarea('custom_field_' . $t_id, $t_value), '10%');
 		input_hidden('custom_field_' . $t_id . '_presence', 0);

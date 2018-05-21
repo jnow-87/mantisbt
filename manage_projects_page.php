@@ -30,7 +30,7 @@ function project_row($p_project_id, $p_is_subproject){
 
 	$t_edit_btn = format_link(format_icon('fa-pencil'), 'settings/project_edit_page.php', array('cmd' => 'edit', 'project_id' => $p_project_id), 'inline-page-link', '', 'inline-page-reload');
 	$t_delete_btn = format_button_confirm('Delete', 'settings/project_update.php',
-					array('cmd' => 'delete', 'project_id' => $p_project_id, 'redirect' => 'manage_projects_page.php', 'project_update_token' => form_security_token('project_update')),
+					array('cmd' => 'delete', 'project_id' => $p_project_id, 'project_update_token' => form_security_token('project_update')),
 					'Delete project?', 'danger', format_icon('fa-trash', 'red')
 	);
 

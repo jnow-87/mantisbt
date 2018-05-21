@@ -1,6 +1,7 @@
 /* global variables */
 var input_hover_active = null;
 var input_hover_active_all = false;
+var input_hover_remote_trigger = null;
 
 
 /* input-hover functions */
@@ -320,13 +321,21 @@ function input_hover_reset_click_hdlr(e){
 }
 
 /* callbacls for form submission */
-function input_hover_submit(e){
-	e.preventDefault();
+function input_hover_submit(){
+	event.preventDefault();
+
+	/* overwrite this allowing to handle 'remote-trigger' forms */
+	_this = this;
+
+	if(input_hover_remote_trigger != null){
+		_this = input_hover_remote_trigger;
+		input_hover_remote_trigger = null;
+	}
 
 	/* identify the submit action to trigger */
 	// default is the form action
-	var theform = this;
-	var action = this.action;
+	var theform = _this;
+	var action = _this.action;
 
 	// check the currently focused element
 	var active = document.activeElement;
@@ -351,10 +360,10 @@ function input_hover_submit(e){
 	var reload = false;
 
 	// check form class
-	if($(this).hasClass('input-hover-form-reload'))
+	if($(_this).hasClass('input-hover-form-reload'))
 		reload = true;
 
-	if($(this).hasClass('input-hover-form-noreload'))
+	if($(_this).hasClass('input-hover-form-noreload'))
 		reload = false;
 
 	// check parent class
@@ -376,7 +385,7 @@ function input_hover_submit(e){
 		method: 'post',
 		url: action,
 		dataType: "text",
-		data : $(this).serialize(),
+		data : $(_this).serialize(),
 		success: function(msg, status, data){
 			var had_error = false;
 			var had_html = false;
@@ -435,6 +444,30 @@ function input_hover_submit(e){
 	});
 }
 
+/* callback for remote-trigger buttons */
+function form_remote_trigger_hdlr(){
+	event.preventDefault();
+
+	/* get form to trigger */
+	var form_id = $(this).attr('data-form-id');
+
+	if(form_id == null)
+		return;
+
+	var form = document.getElementById(form_id);
+
+	if(form == null)
+		return;
+
+	/* check if to use input-hover or default submit */
+	if($(form).hasClass('input-hover-form')){
+		input_hover_remote_trigger = form;
+		input_hover_submit();
+	}
+	else
+		form.submit();
+}
+
 /**
  * \brief	register callbacks required for input-hover elements
  */
@@ -483,6 +516,12 @@ function input_hover_init(){
 
 		forms[i].addEventListener('submit', input_hover_submit);
 	}
+
+	/* register remote trigger buttons */
+	buttons = document.getElementsByClassName('form-remote-trigger');
+
+	for(var i=0; i<buttons.length; i++)
+		buttons[i].addEventListener('click', form_remote_trigger_hdlr);
 }
 
 

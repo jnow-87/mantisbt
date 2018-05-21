@@ -52,7 +52,6 @@ actionbar_begin();
 		);
 	echo '</div>';
 actionbar_end();
-vspace('10px');
 echo '</div>';
 
 /* left column */

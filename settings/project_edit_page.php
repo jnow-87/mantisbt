@@ -57,11 +57,10 @@ default:
 layout_inline_page_begin();
 page_title($t_page_title);
 
-echo '<form action="' . $t_form_action . '" method="post" class="">';
+echo '<form action="' . $t_form_action . '" method="post" class="input-hover-form input-hover-form-reload">';
 	echo form_security_field('project_update');
 	input_hidden('project_id', $f_project_id);
 	input_hidden('parent_id', $f_parent_id);
-	input_hidden('redirect', ($f_redirect != '' ? $f_redirect : 'manage_projects_page.php'));
 
 	actionbar_begin();
 		button($t_btn_text, 'submit-btn', 'submit');

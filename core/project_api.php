@@ -939,10 +939,8 @@ function project_list($p_list_all = false, $p_exclude_ids = array()){
 		if(!access_has_project_level($t_report_bug_threshold, $t_id, $t_user_id))
 			continue;
 
-		if(in_array($t_id, $p_exclude_ids))
-			continue;
-
-		$t_r[project_get_field($t_id, 'name')] = $t_id;
+		if(!in_array($t_id, $p_exclude_ids))
+			$t_r[project_get_field($t_id, 'name')] = $t_id;
 
 		$t_sub_projects = user_get_accessible_subprojects($t_user_id, $t_id);
 
@@ -950,7 +948,8 @@ function project_list($p_list_all = false, $p_exclude_ids = array()){
 			if(!access_has_project_level($t_report_bug_threshold, $t_sub_id, $t_user_id))
 				continue;
 
-			$t_r[project_get_field($t_sub_id, 'name')] = $t_sub_id;
+			if(!in_array($t_sub_id, $p_exclude_ids))
+				$t_r[project_get_field($t_sub_id, 'name')] = $t_sub_id;
 		}
 	}
 

@@ -200,7 +200,7 @@ echo '<div class="col-md-9">';
 			}
 
 			$t_delete_btn = format_button_confirm('Delete', 'version_update.php',
-					array('cmd' => 'delete', 'version_id' => $t_version['id'], 'redirect' => 'settings/project_page.php?project_id=' . $f_project_id, 'version_update_token' => form_security_token('version_update')),
+					array('cmd' => 'delete', 'version_id' => $t_version['id'], 'version_update_token' => form_security_token('version_update')),
 					'Delete version?', 'danger', format_icon('fa-trash', 'red')
 				);
 
@@ -257,7 +257,7 @@ echo '<div class="col-md-9">';
 				);
 
 				$t_delete_btn = format_button_confirm('Delete', 'project_update.php',
-								array('cmd' => 'delete', 'project_id' => $t_project_id, 'redirect' => 'settings/project_page.php?project_id=' . $f_project_id, 'project_update_token' => form_security_token('project_update')),
+								array('cmd' => 'delete', 'project_id' => $t_project_id, 'project_update_token' => form_security_token('project_update')),
 								'Delete project?', 'danger', format_icon('fa-trash', 'red')
 				);
 
@@ -395,7 +395,7 @@ echo '<div class="col-md-3">';
 		foreach($t_custom_fields_assigned as $t_field_id){
 			$t_field = custom_field_get_definition($t_field_id);
 
-			$t_name = format_link(custom_field_get_display_name($t_field['name']), helper_mantis_url('manage_custom_field_edit_page.php'), array('field_id' => $t_field_id));
+			$t_name = format_link(custom_field_get_display_name($t_field['name']), helper_mantis_url('manage_system_page.php#tab_0'), array('field_id' => $t_field_id));
 			$t_sequ = project_update_form_header('custom_field_update', false)
 					. format_input_hidden('custom_field_id', $t_field_id)
 					. format_input_hover_text('custom_field_sequence_' . $t_field_id, custom_field_get_sequence($t_field_id, $f_project_id))

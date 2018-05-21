@@ -73,10 +73,11 @@ function statusbar_print(type, msg){
 	var now = (new Date).getTime();
 	var show_delay  = next - now;
 
-	if(show_delay < 0)
+	if(show_delay < 0 || statusbar == null)
 		show_delay = 0;
 
-	next = now + show_time + show_delay;
+	if(statusbar != null)
+		next = now + show_time + show_delay;
 
 	/* show timeout */
 	setTimeout(function(){

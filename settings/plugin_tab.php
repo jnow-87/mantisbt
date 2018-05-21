@@ -288,7 +288,7 @@ section_begin('Available Plugins');
 		$t_install_btn = '';
 
 		if($t_ready)
-			$t_install_btn = format_link(format_icon('fa-wrench'), 'settings/plugin_update.php', array('plugin' => $t_basename, 'cmd' => 'install', 'plugin_update_token' => form_security_token('plugin_update')));
+			$t_install_btn = format_link(format_icon('fa-wrench'), 'settings/plugin_update.php', array('plugin' => $t_basename, 'cmd' => 'install', 'redirect' => 'manage_system_page.php', 'plugin_update_token' => form_security_token('plugin_update')));
 
 		table_row(array(
 				$t_install_btn,

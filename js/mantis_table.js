@@ -1,6 +1,7 @@
 /* configure DataTables and assign it all tables with class table-sortable */
-$(document).ready(function(){
+function mantis_table_init(){
 	$('table.table-datatable').DataTable({
+		'retrieve': true,
 		'dom': '<"pull-left"il><"pull-right"f><"table-center"p><t><"pull-left"il><"pull-right"f><"table-center"p>',
 		'lengthMenu': [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
 		'paging': true,
@@ -12,6 +13,7 @@ $(document).ready(function(){
 	});
 
 	$('table.table-paging').DataTable({
+		'retrieve': true,
 		'dom': '<"pull-left"il><"pull-right"f><"table-center"p><t><"pull-left"il><"pull-right"f><"table-center"p>',
 		'lengthMenu': [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
 		'searching': false,
@@ -20,6 +22,7 @@ $(document).ready(function(){
 	});
 
 	$('table.table-searchable').DataTable({
+		'retrieve': true,
 		'dom': '<"pull-left"il><"pull-right"f><"table-center"p><t><"pull-left"il><"pull-right"f><"table-center"p>',
 		'lengthMenu': [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
 		'searching': true,
@@ -28,6 +31,7 @@ $(document).ready(function(){
 	});
 
 	$('table.table-sortable').DataTable({
+		'retrieve': true,
 		'dom': '',
 		'lengthMenu': [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
 		'paging': false,
@@ -38,7 +42,12 @@ $(document).ready(function(){
 			'orderable': false,
 		}],
 	});
-});
+}
+
+/* document change handler */
+$(document).ready(mantis_table_init);
+$('body').on('user_event_body_changed', mantis_table_init);
+
 
 /* onclick handler for table rows, calling the given url */
 $('tr.tr-url').click(function(e){

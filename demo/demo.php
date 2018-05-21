@@ -43,6 +43,7 @@ require_api('elements_api.php');
 #			add 'category' custom fields to define their location on the bug view page
 #
 #		check if a configuration for which custom fields shall be shown in bug_page.php is meaningful
+#			-> may allow the configuration to be changed through pages instead of the config file
 #
 #
 #	bugs
@@ -65,8 +66,6 @@ require_api('elements_api.php');
 #
 #		css of checkbox
 #			checkboxes sometimes look odd, compare view_all_bug_page and bugnote_add
-#
-#		if multiple custom fields are linked to a project, only the value of one in shown in bug_page.php
 #
 #	misc
 #		remove lang_get()

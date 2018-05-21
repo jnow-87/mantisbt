@@ -26,10 +26,12 @@
 
 /* status bar */
 .statusbar {
+	position: relative;
 	font-size: 12px;
 	height: 25px;
 	margin: 2px 0 2px 0 !important;
 	width: 100%;
+	z-index: 5001;
 }
 
 p.statusbar{

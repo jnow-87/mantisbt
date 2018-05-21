@@ -73,10 +73,9 @@ default:
 layout_inline_page_begin();
 page_title($t_page_title);
 
-echo '<form action="' . $t_form_action . '" method="post" class="">';
+echo '<form action="' . $t_form_action . '" method="post" class="input-hover-form input-hover-form-reload">';
 	echo form_security_field('user_update');
 	input_hidden('user_id', $f_user_id);
-	input_hidden('redirect', 'manage_users_page.php');
 
 	actionbar_begin();
 		button($t_btn_text, 'submit-btn', 'submit');

@@ -25,8 +25,14 @@ page_title('Confirmation');
 echo '<div class="center">';
 alert($f_msg_class, $f_msg);
 
+echo '<form action="' . $f_redirect . '" method="post" class="input-hover-form input-hover-form-reload">';
+	for($i=0; $i<count($f_arg_keys); $i++)
+		input_hidden($f_arg_keys[$i], $f_arg_values[$i]);
+
 button('Cancel', 'cancel-confirm', 'button', '',  'inline-page-close');
-button_link($f_btn_text, $f_redirect, $f_args);
+button($f_btn_text, 'submit', 'submit');
+//button_link($f_btn_text, $f_redirect, $f_args);
+echo '</form>';
 echo '</div>';
 
 layout_inline_page_end();
