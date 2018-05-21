@@ -520,7 +520,7 @@ function layout_navbar() {
 		array('label' => 'Users', 'data' => array('link' => helper_mantis_url('manage_users_page.php'), 'icon' => 'fa-users')),
 		array('label' => 'Projects', 'data' => array('link' => helper_mantis_url('manage_projects_page.php'), 'icon' => 'fa-book')),
 		array('label' => 'System', 'data' => array('link' => helper_mantis_url('manage_system_page.php#tab_0'), 'icon' => 'fa-gears')),
-		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('adm_permissions_report.php'), 'icon' => 'fa-gears')),
+		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('adm_config_report.php'), 'icon' => 'fa-gears')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Logout', 'data' => array('link' => helper_mantis_url('logout_page.php'), 'icon' => 'fa-sign-out')),
 	);
