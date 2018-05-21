@@ -639,9 +639,6 @@ function print_manage_config_menu( $p_page = '' ) {
 		                                           'label' => 'configuration_report' );
 	}
 
-	$t_pages['manage_config_work_threshold_page.php'] = array( 'url'   => 'manage_config_work_threshold_page.php',
-	                                                           'label' => 'manage_threshold_config' );
-
 	$t_pages['manage_config_workflow_page.php'] = array( 'url'   => 'manage_config_workflow_page.php',
 	                                                     'label' => 'manage_workflow_config' );
 
