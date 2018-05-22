@@ -98,6 +98,13 @@ td{
 	white-space: nowrap;
 }
 
+td.thead{
+	background: #edf3f4;
+	color: #707070;
+	font-weight: bold;
+	padding: 5px 5px 5px 5px !important;
+}
+
 td.no-margin{
 	padding: 0 !important;
 	margin: 0 !important;

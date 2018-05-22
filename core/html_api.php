@@ -639,15 +639,7 @@ function print_manage_config_menu( $p_page = '' ) {
 		                                           'label' => 'configuration_report' );
 	}
 
-	$t_pages['manage_config_workflow_page.php'] = array( 'url'   => 'manage_config_workflow_page.php',
-	                                                     'label' => 'manage_workflow_config' );
-
-	if( config_get( 'relationship_graph_enable' ) ) {
-		$t_pages['manage_config_workflow_graph_page.php'] = array( 'url'   => 'manage_config_workflow_graph_page.php',
-		                                                           'label' => 'manage_workflow_graph' );
-	}
-
-	if( config_get( 'enable_email_notification' ) == ON ) {
+	if( true || config_get( 'enable_email_notification' ) == ON ) {
 		$t_pages['manage_config_email_page.php'] = array( 'url'   => 'manage_config_email_page.php',
 		                                                  'label' => 'manage_email_config' );
 	}
