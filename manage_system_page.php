@@ -27,6 +27,8 @@ function tab_permissions(){
 }
 
 function tab_config(){
+	define('INCLUDE_DBCONFIG', 1);
+	include('settings/dbconfig_tab.php');
 }
 
 
@@ -38,10 +40,10 @@ page_title('Mantis Settings');
 
 tabs(array(
 		'Issues' => 'tab_issues',
-		'Plugins' => 'tab_plugins',
 		'Workflow' => 'tab_workflows',
 		'Permissions' => 'tab_permissions',
 		'Configuration' => 'tab_config',
+		'Plugins' => 'tab_plugins',
 	)
 );
 

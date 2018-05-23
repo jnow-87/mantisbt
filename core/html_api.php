@@ -623,59 +623,6 @@ function print_manage_menu( $p_page = '' ) {
 }
 
 /**
- * Print the menu for the manage configuration section
- * @param string $p_page Specifies the current page name so it's link can be disabled.
- * @return void
- */
-function print_manage_config_menu( $p_page = '' ) {
-	if( !access_has_project_level( config_get( 'manage_configuration_threshold' ) ) ) {
-		return;
-	}
-
-	$t_pages = array();
-
-	if( access_has_global_level( config_get( 'view_configuration_threshold' ) ) ) {
-		$t_pages['adm_config_report.php'] = array( 'url'   => 'adm_config_report.php',
-		                                           'label' => 'configuration_report' );
-	}
-
-	# Plugin / Event added options
-	$t_event_menu_options = event_signal( 'EVENT_MENU_MANAGE_CONFIG' );
-	$t_menu_options = array();
-	foreach ( $t_event_menu_options as $t_plugin => $t_plugin_menu_options ) {
-		foreach ( $t_plugin_menu_options as $t_callback => $t_callback_menu_options ) {
-			if( is_array( $t_callback_menu_options ) ) {
-				$t_menu_options = array_merge( $t_menu_options, $t_callback_menu_options );
-			} else {
-				if( !is_null( $t_callback_menu_options ) ) {
-					$t_menu_options[] = $t_callback_menu_options;
-				}
-			}
-		}
-	}
-
-	echo '<div class="space-10"></div>' . "\n";
-	echo '<div class="center">' . "\n";
-	echo '<div class="btn-toolbar inline">' . "\n";
-	echo '<div class="btn-group">' . "\n";
-
-	foreach ( $t_pages as $t_page ) {
-		$t_active =  $t_page['url'] == $p_page ? 'active' : '';
-		echo '<a class="btn btn-xs btn-white btn-primary ' . $t_active . '" href="'. helper_mantis_url( $t_page['url'] ) .'">' . "\n";
-		echo lang_get_defaulted( $t_page['label'] );
-		echo '</a>' . "\n";
-	}
-
-	foreach ( $t_menu_options as $t_menu_item ) {
-		echo $t_menu_item;
-	}
-
-	echo '</div>' . "\n";
-	echo '</div>' . "\n";
-	echo '</div>' . "\n";
-}
-
-/**
  * Print the menu for the documentation section
  * @param string $p_page Specifies the current page name so it's link can be disabled.
  * @return void

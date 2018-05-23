@@ -89,7 +89,7 @@ section_begin('Access Rights');
 		$t_projects = user_get_assigned_projects($t_user_id, true);
 
 	echo '<div class="col-md-12 no-padding">';
-	table_begin(array('Project', 'Access Level', 'Visibility', 'Description'), 'table-condensed table-hover no-border');
+	table_begin(array('Project', 'Access Level', 'Visibility', 'Description'), 'table-condensed table-hover table-datatable no-border');
 
 	foreach($t_projects as $t_id){
 		table_row(array(
@@ -118,7 +118,7 @@ section_begin('API Tokens');
 		echo '</form>';
 	actionbar_end();
 
-	table_begin(array('', 'Token', 'Date Created', 'Last Used'), 'table-condensed table-hover table-datatable no-border');
+	table_begin(array('', 'Token', 'Date Created', 'Last Used'), 'table-condensed table-hover table-sortable no-border');
 
 	$t_tokens = api_token_get_all($t_user_id);
 

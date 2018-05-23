@@ -468,7 +468,7 @@ function layout_navbar() {
 	// projects
 	$t_project_search_hdr =
 		'<div id="projects-list">'
-		. '<input class="search form-control input-xs" placeholder="Search" />'
+		. '<input class="search form-control input-xs" placeholder="Search" style="width:100%!important" />'
 		. '<ul class="list dropdown-green no-margin">';
 
 	$t_project_search_footer = '</ul></div>';
@@ -520,7 +520,6 @@ function layout_navbar() {
 		array('label' => 'Users', 'data' => array('link' => helper_mantis_url('manage_users_page.php'), 'icon' => 'fa-users')),
 		array('label' => 'Projects', 'data' => array('link' => helper_mantis_url('manage_projects_page.php'), 'icon' => 'fa-book')),
 		array('label' => 'System', 'data' => array('link' => helper_mantis_url('manage_system_page.php#tab_0'), 'icon' => 'fa-gears')),
-		array('label' => 'Settings', 'data' => array('link' => helper_mantis_url('adm_config_report.php'), 'icon' => 'fa-gears')),
 		array('label' => 'divider', 'data' => ''),
 		array('label' => 'Logout', 'data' => array('link' => helper_mantis_url('logout_page.php'), 'icon' => 'fa-sign-out')),
 	);

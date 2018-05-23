@@ -1796,7 +1796,10 @@ function user_list($p_project_id, $p_reporter_id = '', $p_meta_user = false){
 }
 
 function user_format_name($p_user_id){
-	if($p_user_id == 0)
-		return user_get_name($p_user_id);
-	return format_link(user_get_name($p_user_id), 'user_page.php', array('id' => $p_user_id));
+	$t_name = user_get_name($p_user_id);
+
+	if($p_user_id == 0 || !user_exists($p_user_id))
+		return $t_name;
+
+	return format_link($t_name, 'user_page.php', array('id' => $p_user_id));
 }
