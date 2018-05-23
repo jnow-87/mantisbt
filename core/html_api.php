@@ -639,11 +639,6 @@ function print_manage_config_menu( $p_page = '' ) {
 		                                           'label' => 'configuration_report' );
 	}
 
-	if( true || config_get( 'enable_email_notification' ) == ON ) {
-		$t_pages['manage_config_email_page.php'] = array( 'url'   => 'manage_config_email_page.php',
-		                                                  'label' => 'manage_email_config' );
-	}
-
 	# Plugin / Event added options
 	$t_event_menu_options = event_signal( 'EVENT_MENU_MANAGE_CONFIG' );
 	$t_menu_options = array();
