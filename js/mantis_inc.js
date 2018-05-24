@@ -84,6 +84,7 @@ function statusbar_print(type, msg){
 			if(statusbar != null){
 				statusbar.style.display = 'block';
 				statusbar.style.visibility = 'visible';
+				statusbar.style.zIndex = '10000';
 				statusbar.innerHTML = msg;
 			}
 
@@ -98,6 +99,7 @@ function statusbar_print(type, msg){
 		setTimeout(function(){
 				statusbar.style.visibility = 'hidden';
 				statusbar.style.display = 'none';
+				statusbar.style.zIndex = '1';
 			},
 			show_time + show_delay
 		);
