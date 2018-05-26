@@ -180,7 +180,7 @@ worklog_ensure_reporting_access();
 $t_stats = worklog_get_for_project($f_project_id, $f_date_from, $f_date_to);
 
 
-echo '<div class="col-md-12-left">';
+column_begin('12');
 	actionbar_begin();
 		echo '<form method="post" action="">';
 			input_hidden('id', 0);
@@ -196,6 +196,6 @@ echo '<div class="col-md-12-left">';
 if(isset($t_stats['users']))
 	tabs(array('Projects' => 'tab_per_project', 'Issues' => 'tab_per_issue'));
 
-echo '</div>';
+column_end();
 
 layout_page_end();

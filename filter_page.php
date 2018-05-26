@@ -124,7 +124,7 @@ layout_page_begin();
 page_title('Filter Issues');
 
 /* filter result */
-echo '<div class="col-md-9">';
+column_begin('9');
 echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" class="input-hover-form">';
 	input_hidden('filter_num_total', count($t_rows));
 
@@ -177,11 +177,11 @@ echo '<form id="bug_action" method="post" action="bug_actiongroup_page.php" clas
 
 	bug_list_print($t_bug_ids, $f_columns, 'table-condensed table-hover table-datatable no-border');
 echo '</form>';
-echo '</div>';
+column_end();
 
 
 /* filter */
-echo '<div class="col-md-3">';
+column_begin('3');
 
 if(!$f_hide_filter){
 	/* get current filter data */
@@ -260,6 +260,6 @@ if(!$f_hide_filter){
 	echo '</form>';
 }
 
-echo '</div>';
+column_end();
 
 layout_page_end();

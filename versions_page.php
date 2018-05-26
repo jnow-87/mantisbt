@@ -157,7 +157,7 @@ function tab_project(){
 		/* print section */
 		section_begin('Version: ' . $t_version_name, !$t_is_first_version);
 			/* print version description and progress */
-			echo '<div class="col-md-6-left">';
+			column_begin('6-left');
 
 			$t_progress = 0;
 
@@ -191,10 +191,10 @@ function tab_project(){
 			if(!is_blank($t_description))
 				alert('warning', string_display($t_description));
 
-			echo '</div>';
+			column_end();
 
 			/* print issues */
-			echo '<div class="col-md-6-right">';
+			column_begin('6-right');
 			actionbar_begin();
 				echo '<div class="pull-right">';
 					$t_menu = array(
@@ -206,7 +206,7 @@ function tab_project(){
 			actionbar_end();
 
 			bug_list_print($t_issue_ids, $f_columns, 'table-condensed table-hover table-datatable no-border');
-			echo '</div>';
+			column_end();
 		section_end();
 
 		$t_is_first_version = false;
@@ -274,7 +274,7 @@ layout_page_begin();
 
 page_title($t_page_title);
 
-echo '<div class="col-md-12-left">';
+column_begin('12');
 
 $t_tabs = array();
 
@@ -283,5 +283,5 @@ foreach($t_project_ids as $t_project_id)
 
 tabs($t_tabs);
 
-echo '</div>';
+column_end();
 layout_page_end();

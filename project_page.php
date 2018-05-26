@@ -67,7 +67,7 @@ page_title('Project: ' . $t_project['name']);
 
 
 /* left column */
-echo '<div class="col-md-9">';
+column_begin('9');
 section_begin('Description');
 	echo $t_project['description'];
 section_end();
@@ -96,10 +96,10 @@ section_begin('Versions');
 
 	table_end();
 section_end();
-echo '</div>';
+column_end();
 
 /* right column */
-echo '<div class="col-md-3">';
+column_begin('3');
 section_begin('Development Team');
 	$t_users_all = project_get_all_user_rows($f_project_id, ANYBODY, true);
 
@@ -124,6 +124,6 @@ section_begin('Links');
 	if(access_has_project_level(config_get('manage_project_threshold'), $f_project_id))
 		echo format_link('Settings', 'settings/project_page.php', array('project_id' => $f_project_id)) . '<br>';
 section_end();
-echo '</div>';
+column_end();
 
 layout_page_end();

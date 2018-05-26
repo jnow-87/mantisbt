@@ -66,7 +66,7 @@ case 'config_update':
 layout_inline_page_begin();
 page_title('Columns Selection');
 
-echo '<div class="col-md-12">';
+column_begin('12');
 echo '<form method="post" action="" class="">';
 	input_hidden('config_opt', $f_config_opt);
 	input_hidden('hide_apply', $f_hide_apply);
@@ -109,6 +109,6 @@ echo '<form method="post" action="" class="">';
 	/* print dragable items */
 	dragable($t_items);
 echo '</form>';
-echo '</div>';
+column_end();
 
 layout_inline_page_end();

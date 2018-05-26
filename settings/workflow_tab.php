@@ -9,7 +9,7 @@ require_api('elements_api.php');
 
 
 section_begin('Configuration');
-	echo '<div class="col-md-3">';
+	column_begin('3');
 		table_begin(array(), 'no-border');
 		table_row_bug_info_long('New issue status:', get_enum_element('status', config_get('bug_submit_status')), '40%');
 		table_row_bug_info_long('Reopen issue status:', get_enum_element('status', config_get('bug_reopen_status')), '40%');
@@ -18,16 +18,16 @@ section_begin('Configuration');
 		table_row_bug_info_long('Readonly issue status:', get_enum_element('status', config_get('bug_readonly_status_threshold')), '40%');
 		table_row_bug_info_long('Assigned issue status:', get_enum_element('status', config_get('bug_assigned_status')), '40%');
 		table_end();
-	echo '</div>';
+	column_end();
 
-	echo '<div class="col-md-3">';
+	column_begin('3');
 		table_begin(array(), 'no-border');
 		table_row_bug_info_long('Reporter can close:', config_get('allow_reporter_close') ? 'yes' : 'no', '50%');
 		table_row_bug_info_long('Reporter can reopen:', config_get('allow_reporter_reopen') ? 'yes' : 'no', '50%');
 		table_row_bug_info_long('Update status when assigning:', config_get('auto_set_status_to_assigned') ? 'yes' : 'no', '50%');
 		table_row_bug_info_long('Reporter can access others\' issues:', config_get('limit_reporters') ? 'no' : 'yes', '50%');
 		table_end();
-	echo '</div>';
+	column_end();
 section_end();
 
 section_begin('Transistions');

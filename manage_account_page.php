@@ -39,7 +39,7 @@ layout_page_begin();
 page_title('User Settings: ' . $t_user_name);
 
 /* actionbar */
-echo '<div class="col-md-12">';
+column_begin('12');
 actionbar_begin();
 	echo '<div class="pull-left">';
 		button_link('Change Password', 'settings/set_password.php', array('user_id' => $t_user_id), 'inline-page-link');
@@ -52,10 +52,10 @@ actionbar_begin();
 		);
 	echo '</div>';
 actionbar_end();
-echo '</div>';
+column_end();
 
 /* left column */
-echo '<div class="col-md-9">';
+column_begin('9');
 
 /* user details */
 section_begin('Details');
@@ -64,31 +64,31 @@ section_begin('Details');
 	input_hidden('cmd', 'set_email');
 	echo form_security_field('user_update');
 
-	echo '<div class="col-md-3 no-padding">';
+	column_begin('3');
 	table_begin(array(), 'no-border');
 	table_row_bug_info_short('Username:', user_format_name($t_user_id));
 	table_row_bug_info_short('Realname:', user_get_realname($t_user_id));
 	table_row_bug_info_short('eMail:', format_input_hover_text('email', user_get_email($t_user_id)));
 	table_end();
-	echo '</div>';
+	column_end();
 
 	echo '</form>';
 section_end();
 
 /* access levels */
 section_begin('Access Rights');
-	echo '<div class="col-md-3 no-padding">';
+	column_begin('3');
 	table_begin(array(), 'no-border');
 	table_row_bug_info_short('General Access Level:', get_enum_element('access_levels', user_get_access_level($t_user_id)));
 	table_end();
-	echo '</div>';
+	column_end();
 
 	if(user_get_access_level($t_user_id) == ACC_ADMIN)
 		$t_projects = project_list();
 	else
 		$t_projects = user_get_assigned_projects($t_user_id, true);
 
-	echo '<div class="col-md-12 no-padding">';
+	column_begin('12');
 	table_begin(array('Project', 'Access Level', 'Visibility', 'Description'), 'table-condensed table-hover table-datatable no-border');
 
 	foreach($t_projects as $t_id){
@@ -102,7 +102,7 @@ section_begin('Access Rights');
 	}
 
 	table_end();
-	echo '</div>';
+	column_end();
 section_end();
 
 /* API tokens */
@@ -139,10 +139,10 @@ section_begin('API Tokens');
 	table_end();
 section_end();
 
-echo '</div>';
+column_end();
 
 /* right column */
-echo '<div class="col-md-3">';
+column_begin('3');
 echo '<form action="settings/user_update.php" method="post" class="input-hover-form">';
 
 input_hidden('user_id', $t_user_id);
@@ -220,6 +220,6 @@ if(config_get('enable_email_notification') == ON){
 }
 
 echo '</form>';
-echo '</div>';
+column_end();
 
 layout_page_end();

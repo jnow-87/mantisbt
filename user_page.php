@@ -39,7 +39,7 @@ layout_page_begin();
 page_title('User Info: ' . $t_user_name);
 
 /* left column */
-echo '<div class="col-md-7">';
+column_begin('7');
 
 /* user details */
 section_begin('Details');
@@ -51,22 +51,22 @@ section_begin('Details');
 	$t_email = user_get_email($t_user_id);
 	$t_email = get_email_link($t_email, $t_email);
 
-	echo '<div class="col-md-3 no-padding">';
+	column_begin('3');
 	table_begin(array(), 'no-border');
 	table_row_bug_info_short('Username:', $t_user_name);
 	table_row_bug_info_short('Realname:', user_get_realname($t_user_id));
 	table_row_bug_info_short('eMail:', $t_email);
 	table_end();
-	echo '</div>';
+	column_end();
 
 	echo '</form>';
 section_end();
 
-echo '</div>';
+column_end();
 
 /* right column */
 if(access_has_project_level(config_get('timeline_view_threshold'))){
-	echo '<div class="col-md-5">';
+	column_begin('5');
 	section_begin('Timeline');
 
 	# Build a simple filter that gets all bugs for current project
@@ -76,7 +76,7 @@ if(access_has_project_level(config_get('timeline_view_threshold'))){
 	include($g_core_path . 'timeline_inc.php');
 
 	section_end();
-	echo '</div>';
+	column_end();
 }
 
 layout_page_end();

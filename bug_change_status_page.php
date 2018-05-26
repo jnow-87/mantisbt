@@ -167,7 +167,7 @@ else if($f_new_status == STATUS_OPEN){
 layout_inline_page_begin();
 page_title(lang_get($t_status_label . '_bug_title'));
 
-echo '<div class="col-md-12">';
+column_begin('12');
 echo '<form method="post" action="bug_update.php" class="input-hover-form inline-page-form input-hover-form-reload">';
 	echo form_security_field('bug_update');
 
@@ -292,7 +292,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 	event_signal('EVENT_UPDATE_BUG_STATUS_FORM', array($f_bug_id, $f_new_status));
 	event_signal('EVENT_BUGNOTE_ADD_FORM', array($f_bug_id));
 echo '</form>';
-echo '</div>';
+column_end();
 
 
 layout_inline_page_end();

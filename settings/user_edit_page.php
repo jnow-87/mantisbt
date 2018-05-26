@@ -83,8 +83,7 @@ echo '<form action="' . $t_form_action . '" method="post" class="input-hover-for
 
 	/* account details */
 	section_begin('Details');
-		echo '<div class="col-md-6-left">';
-
+		column_begin('6-left');
 		table_begin(array(), 'no-border');
 
 		if($t_show_user_input){
@@ -99,11 +98,9 @@ echo '<form action="' . $t_form_action . '" method="post" class="input-hover-for
 		}
 
 		table_end();
+		column_end();
 
-		echo '</div>';
-
-		echo '<div class="col-md-6-right">';
-
+		column_begin('6-right');
 		table_begin(array(), 'no-border');
 
 		if($t_show_user_input){
@@ -113,8 +110,7 @@ echo '<form action="' . $t_form_action . '" method="post" class="input-hover-for
 		}
 
 		table_end();
-
-		echo '</div>';
+		column_end();
 	section_end();
 echo '</form>';
 

@@ -66,7 +66,7 @@ echo '<form action="' . $t_form_action . '" method="post" class="input-hover-for
 		button($t_btn_text, 'submit-btn', 'submit');
 	actionbar_end();
 
-	echo '<div class="col-md-4">';
+	column_begin('4');
 	table_begin(array(), 'no-border');
 
 	table_row_bug_info_short('Name:', format_text('name', 'name', $t_project['name']));
@@ -86,15 +86,15 @@ echo '<form action="' . $t_form_action . '" method="post" class="input-hover-for
 	}
 
 	table_end();
-	echo '</div>';
+	column_end();
 
-	echo '<div class="col-md-8">';
+	column_begin('8');
 	table_begin(array(), 'no-border');
 
 	table_row_bug_info_long('Description:', format_textarea('description', 'description', $t_project['description'], 'input-xs', 'width:100%!important;height:100px'), '15%');
 
 	table_end();
-	echo '</div>';
+	column_end();
 echo '</form>';
 
 event_signal('EVENT_MANAGE_PROJECT_CREATE_FORM');

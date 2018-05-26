@@ -22,7 +22,7 @@ page_title('About Mantis');
 
 section_begin('Details');
 
-echo '<div class="col-md-3">';
+column_begin('3');
 
 table_begin(array(), 'no-border');
 
@@ -30,12 +30,11 @@ table_row_bug_info_short('Mantis Version:', MANTIS_VERSION . config_get_global('
 table_row_bug_info_short('Database Scheme:', config_get('database_version'));
 
 table_end();
-echo '</div>';
+column_end();
 
 
 if(current_user_is_administrator()){
-	echo '<div class="col-md-3">';
-
+	column_begin('3');
 	table_begin(array(), 'no-border');
 
 		table_row_bug_info_short('Site Path:', config_get('absolute_path'));
@@ -43,8 +42,7 @@ if(current_user_is_administrator()){
 		table_row_bug_info_short('Plugin Path:', config_get('plugin_path'));
 
 	table_end();
-
-	echo '</div>';
+	column_end();
 }
 
 section_end();

@@ -7,7 +7,7 @@ require_api('elements_api.php');
 layout_inline_page_begin();
 page_title('inline page');
 
-echo '<div class="col-md-12">';
+column_begin('12');
 echo '<form method="post" action="inline_page_post.php" class="input-hover-form inline-page-form">'
 ;
 	table_begin(array('hover text'), 'table-bordered table-condensed table-striped');
@@ -22,7 +22,7 @@ echo '<form method="post" action="inline_page_post.php" class="input-hover-form 
 
 	button('submit inline', 'submit_inline_page', 'submit');
 echo '</form>';
-echo '</div>';
+column_end();
 
 layout_inline_page_end();
 

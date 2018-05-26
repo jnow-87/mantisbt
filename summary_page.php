@@ -347,7 +347,7 @@ layout_page_begin();
 
 page_title('Statistics');
 
-echo '<div class="col-md-12 col-xs-12">';
+column_begin('12');
 
 tabs(array(
 	'Project' => 'tab_by_project',
@@ -356,6 +356,6 @@ tabs(array(
 	'Time' => 'tab_by_time',
 ));
 
-echo '</div>';
+column_end();
 
 layout_page_end();

@@ -139,7 +139,7 @@ event_signal('EVENT_REPORT_BUG_FORM_TOP', array());
 
 echo form_security_field('bug_report');
 
-echo '<div class="col-md-12">';
+column_begin('9');
 	/* actionbar */
 	actionbar_begin();
 		echo '<div class="pull-left">';
@@ -155,7 +155,7 @@ echo '<div class="col-md-12">';
 
 	table_row_bug_info_long(' ', '<span class="required pull-right"> * required</span>', '10%');
 	table_end();
-echo '</div>';
+column_end();
 
 event_signal('EVENT_REPORT_BUG_FORM', array());
 

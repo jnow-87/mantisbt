@@ -210,7 +210,7 @@ $f_columns = bug_list_columns('bug_list_columns_dashboard');
 /* page content */
 page_title('Dashboard');
 
-echo '<div class="col-md-7">';
+column_begin('7');
 
 /* filter */
 foreach($t_boxes as $t_box_title => $t_box_display){
@@ -256,12 +256,11 @@ foreach($t_boxes as $t_box_title => $t_box_display){
 		section_end();
 	}
 }
-
-echo '</div>';
+column_end();
 
 /* timeline */
 if($t_timeline_view_threshold_access){
-	echo '<div class="col-md-5">';
+	column_begin('5');
 	section_begin('Timeline');
 
 	# Build a simple filter that gets all bugs for current project
@@ -271,7 +270,7 @@ if($t_timeline_view_threshold_access){
 	include($g_core_path . 'timeline_inc.php');
 
 	section_end();
-	echo '</div>';
+	column_end();
 }
 
 layout_page_end();

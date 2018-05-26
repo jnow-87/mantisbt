@@ -107,7 +107,7 @@ layout_page_begin();
 page_title('Project Settings: ' . $t_name);
 
 /* left column */
-echo '<div class="col-md-9">';
+column_begin('9');
 	/* details */
 	section_begin('Details');
 		actionbar_begin();
@@ -135,7 +135,7 @@ echo '<div class="col-md-9">';
 			input_hidden('enabled', $t_project['enabled']);
 
 
-			echo '<div class="col-md-3">';
+			column_begin('3');
 			table_begin(array(), 'no-border');
 
 			table_row_bug_info_long('Name:', format_input_hover_text('name', $t_project['name']), '25%');
@@ -154,15 +154,15 @@ echo '<div class="col-md-9">';
 			}
 
 			table_end();
-			echo '</div>';
+			column_end();
 
-			echo '<div class="col-md-9">';
+			column_begin('9');
 			table_begin(array(), 'no-border');
 
 			table_row_bug_info_long('Description:', format_input_hover_textarea('description', $t_project['description'], '100%', '100px'), '10%');
 
 			table_end();
-			echo '</div>';
+			column_end();
 		echo '</form>';
 	section_end();
 
@@ -274,10 +274,10 @@ echo '<div class="col-md-9">';
 			}
 		table_end();
 	section_end();
-echo '</div>';
+column_end();
 
 /* right column */
-echo '<div class="col-md-3">';
+column_begin('3');
 	/* users */
 	section_begin('Users');
 		actionbar_begin();
@@ -419,9 +419,8 @@ echo '<div class="col-md-3">';
 
 		table_end();
 	section_end();
-echo '</div>';
+column_end();
 
 event_signal('EVENT_MANAGE_PROJECT_PAGE', array($f_project_id));
 
 layout_page_end();
-

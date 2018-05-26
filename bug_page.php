@@ -312,7 +312,7 @@ layout_page_begin();
 page_title(bug_format_id($f_bug_id) . ' - ' . bug_format_summary($f_bug_id, SUMMARY_CAPTION));
 
 /* left column */
-echo '<div class="col-md-9">';
+column_begin('9');
 	/* bug data */
 	section_begin('Details');
 		echo '<form action="bug_update.php" method="post" class="input-hover-form input-hover-form-noreload">';
@@ -364,26 +364,26 @@ echo '<div class="col-md-9">';
 		/* bug details */
 		echo '<div class="row">';
 
-		echo '<div class="col-md-3 no-padding">';
+		column_begin('3');
 		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Type:', format_input_hover_select('category_id', category_list($t_project_id), category_get_name($t_bug->category_id)));
 		table_row_bug_info_short('Status:', '<span>' . $t_status_icon . format_hspace('10px') . format_input_hover_select('new_status', bug_status_list($t_project_id, $t_bug->status), get_enum_element('status', $t_bug->status), 'bug_change_status_page.php') . '</span>');
 		table_row_bug_info_short('Resolution:', format_input_hover_select('resolution', resolution_list(), get_enum_element('resolution', $t_bug->resolution)));
 		table_end();
-		echo '</div>';
+		column_end();
 
-		echo '<div class="col-md-3 no-padding">';
+		column_begin('3');
 		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Priority:', format_input_hover_select('priority', priority_list(), get_enum_element('priority', $t_bug->priority)));
 		table_row_bug_info_short('Severity:', format_input_hover_select('severity', severity_list(), get_enum_element('severity', $t_bug->severity)));
 		table_end();
-		echo '</div>';
+		column_end();
 
-		echo '<div class="col-md-3 no-padding">';
+		column_begin('3');
 		table_begin(array(), 'no-border');
 		table_row_bug_info_short('Visibility:', format_input_hover_select('view_state', view_status_list(), get_enum_element('view_state', $t_bug->view_state)));
 		table_end();
-		echo '</div>';
+		column_end();
 
 		echo '</div>';
 		echo '<hr>';
@@ -436,11 +436,11 @@ echo '<div class="col-md-9">';
 
 		tabs($t_tabs);
 	section_end();
-echo '</div>';
+column_end();
 
 
 /* right column */
-echo '<div class="col-md-3">';
+column_begin('3');
 	echo '<form action="bug_update.php" method="post" class="input-hover-form input-hover-form-noreload">';
 
 	input_hidden('id', $f_bug_id);
@@ -486,7 +486,7 @@ echo '<div class="col-md-3">';
 	section_end();
 
 	echo '</form>';
-echo '</div>';
+column_end();
 
 
 /* page footer */

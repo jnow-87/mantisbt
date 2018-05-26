@@ -81,7 +81,7 @@ echo '<form id="custom_field_update_form" action="settings/custom_field_update.p
 	button('hidden-submit', 'submit-btn', 'submit', '', '', false, 'style="visibility:hidden"');
 	echo form_security_field('custom_field_update');
 
-	echo '<div class="col-md-6-left">';
+	column_begin('6-left');
 	table_begin(array(), 'no-border');
 
 	table_row_bug_info_short('Name:', format_text('name', 'name', string_attribute($t_field['name'])));
@@ -90,9 +90,9 @@ echo '<form id="custom_field_update_form" action="settings/custom_field_update.p
 	table_row_bug_info_short('Default Value:', format_textarea('default_value', 'default_value', string_attribute($t_field['default_value']), 'input-xs', 'width:100%!important;height:100px'));
 
 	table_end();
-	echo '</div>';
+	column_end();
 
-	echo '<div class="col-md-6-right">';
+	column_begin('6-right');
 	table_begin(array(), 'no-border');
 
 	table_row_bug_info_short('Read Access:', format_select('access_level_r', 'access_level_r', access_level_list(), get_enum_element('access_levels', $t_field['access_level_r'])));
@@ -102,11 +102,11 @@ echo '<form id="custom_field_update_form" action="settings/custom_field_update.p
 	table_row_bug_info_short('Add to Filter:', format_checkbox('filter_by', 'filter_by', $t_field['filter_by']));
 
 	table_end();
-	echo '</div>';
+	column_end();
 echo '</form>';
 
 /* linked projects */
-echo '<div class="col-md-12">';
+column_begin('12');
 table_begin(array('', 'Project', 'Sequence'), 'table-condensed table-hover table-datatable no-border', '', array('width="1px"'));
 
 foreach($t_project_ids as $t_project_id){
@@ -137,6 +137,6 @@ foreach($t_project_ids as $t_project_id){
 }
 
 table_end();
-echo '</div>';
+column_end();
 
 layout_inline_page_end();

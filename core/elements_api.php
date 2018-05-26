@@ -306,6 +306,14 @@ function page_title($p_title){
 	echo '<hr class="hr-page-title" data-content="' . $p_title . '"></hr>';
 }
 
+function column_begin($p_md, $p_xs = '12'){
+	echo '<div class="col-md-' . $p_md . ' col-xs-' . $p_xs . '">';
+}
+
+function column_end(){
+	echo '</div>';
+}
+
 /**
  *	print a collapsable section header
  *

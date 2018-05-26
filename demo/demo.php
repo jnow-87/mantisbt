@@ -7,8 +7,6 @@ require_api('elements_api.php');
 
 
 # TODO
-#	col-md-12 -> col-xs-12
-#
 #	validation
 #		access control
 #			update access_has_bug_level and similar functions to return json data if requested
@@ -74,7 +72,7 @@ require_api('elements_api.php');
 
 function tab_page0(){
 	echo '<div class="row">';
-	echo '<div class="col-md-6-left">';
+	column_begin('6-left');
 	table_begin(array('col 0', 'col 1', 'col 2'), 'table-bordered table-condensed table-striped table-hover table-datatable');
 	table_row(array('bug-0', 'a01', 'b02'));
 	table_row(array('issue-0', 'b11', 'c12'));
@@ -89,9 +87,9 @@ function tab_page0(){
 	table_row(array('bug-2', 'c01', 'd02'));
 	table_row(array('feature-2', 'd01', 'a02'));
 	table_end();
-	echo '</div>';
+	column_end();
 
-	echo '<div class="col-md-6-right">';
+	column_begin('6-right');
 	table_begin(array('col 0', 'col 1', 'col 2'), 'table-bordered table-condensed table-striped table-hover table-datatable');
 	table_row(array('bug-0', 'a01', 'b02'));
 	table_row(array('issue-0', 'b11', 'c12'));
@@ -106,7 +104,7 @@ function tab_page0(){
 	table_row(array('bug-2', 'c01', 'd02'));
 	table_row(array('feature-2', 'd01', 'a02'));
 	table_end();
-	echo '</div>';
+	column_end();
 	echo '</div>';
 }
 
@@ -134,10 +132,8 @@ layout_page_begin();
 
 page_title($t_page_title);
 
-?>
-<div class="col-md-10">
-	<!-- action bar -->
-	<?php
+/* action bar */
+column_begin('10');
 	section_begin('action bar');
 		actionbar_begin();
 
@@ -302,34 +298,30 @@ page_title($t_page_title);
 		?>
 	</form>
 
-	<?php section_end() ?>
-</div>
+	<?php 
+	section_end() 
+column_end();
 
-<div class="col-md-2">
-	<?php
-		section_begin('collapsed section', true);
+column_begin('12');
+	section_begin('collapsed section', true);
 
-		table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', array('colspan=3'));
-		table_row(array('c00', 'c01', 'c02'));
-		table_row(array('c10', 'c11', 'c12'));
-		table_end();
+	table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', array('colspan=3'));
+	table_row(array('c00', 'c01', 'c02'));
+	table_row(array('c10', 'c11', 'c12'));
+	table_end();
 
-		section_end();
-	?>
+	section_end();
 
-	<?php
-		section_begin('right column');
+	section_begin('right column');
 
-		echo '<div class="overflow-scroll" style="height:50px">';
-		table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', array('colspan=3'));
-		table_row(array('c00', 'c01', 'c02'), 'class="tr-url" data-url="dummy-url"');
-		table_row(array('c10', 'c11', 'c12'), 'class="tr-url" data-url="dummy-url"');
-		table_end();
-		echo '</div>';
+	echo '<div class="overflow-scroll" style="height:50px">';
+	table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', array('colspan=3'));
+	table_row(array('c00', 'c01', 'c02'), 'class="tr-url" data-url="dummy-url"');
+	table_row(array('c10', 'c11', 'c12'), 'class="tr-url" data-url="dummy-url"');
+	table_end();
+	echo '</div>';
 
-		section_end();
-	?>
-</div>
+	section_end();
+column_end();
 
-<?php
 layout_page_end();

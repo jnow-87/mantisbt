@@ -62,7 +62,7 @@ layout_inline_page_begin();
 
 page_title('Bulk Operation: ' . $t_action_name);
 
-echo '<div class="col-md-12">';
+column_begin('12');
 
 /* print alerts */
 // hint on the number of issues compared to the total number of the filter result
@@ -91,5 +91,5 @@ echo '</form>';
 /* list of bugs to apply action on */
 bug_list_print($f_bug_arr, bug_list_columns('bug_list_columns_bulk', true), 'table-condensed table-hover no-border');
 
-echo '</div>';
+column_end();
 layout_inline_page_end();
