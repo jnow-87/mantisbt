@@ -7,6 +7,8 @@ require_api('elements_api.php');
 
 
 # TODO
+#	col-md-12 -> col-xs-12
+#
 #	validation
 #		access control
 #			update access_has_bug_level and similar functions to return json data if requested

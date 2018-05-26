@@ -222,8 +222,6 @@ function layout_inline_page_end(){
  * @return void
  */
 function layout_admin_page_begin() {
-	layout_navbar();
-
 	layout_main_container_begin();
 }
 
