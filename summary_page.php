@@ -31,7 +31,6 @@
  * @uses gpc_api.php
  * @uses helper_api.php
  * @uses html_api.php
- * @uses lang_api.php
  * @uses print_api.php
  * @uses summary_api.php
  * @uses user_api.php
@@ -46,7 +45,6 @@ require_api('database_api.php');
 require_api('gpc_api.php');
 require_api('helper_api.php');
 require_api('html_api.php');
-require_api('lang_api.php');
 require_api('print_api.php');
 require_api('summary_api.php');
 require_api('user_api.php');
@@ -82,7 +80,7 @@ function tab_by_user(){
 					echo '<th class="align-right">', get_enum_element('resolution', $t_resolution), "</th>\n";
 				}
 
-				echo '<th class="align-right">', lang_get('percentage_fixed'), "</th>\n";
+				echo '<th class="align-right">', '% Fixed', "</th>\n";
 			?>
 		</tr>
 	</thead>
@@ -118,7 +116,7 @@ function tab_by_user(){
 					echo '<th class="align-right">', get_enum_element('resolution', $t_resolution), "</th>\n";
 				}
 
-				echo '<th class="align-right">', lang_get('percentage_errors'), "</th>\n";
+				echo '<th class="align-right">', '% False', "</th>\n";
 			?>
 		</tr>
 	</thead>
@@ -130,9 +128,9 @@ function tab_by_user(){
 	<thead>
 		<tr>
 			<th class="width-35">Effectiveness</th>
-			<th class="align-right"><?php echo lang_get('severity'); ?></th>
-			<th class="align-right"><?php echo lang_get('errors'); ?></th>
-			<th class="align-right"><?php echo lang_get('total'); ?></th>
+			<th class="align-right">Severity</th>
+			<th class="align-right">False</th>
+			<th class="align-right">Total</th>
 		</tr>
 	</thead>
 	<?php summary_print_reporter_effectiveness(config_get('severity_enum_string'), config_get('resolution_enum_string')) ?>
@@ -217,9 +215,9 @@ function tab_by_time(){
 	<thead>
 		<tr>
 			<th class="width-35">Days</th>
-			<th class="align-right"><?php echo lang_get('opened'); ?></th>
-			<th class="align-right"><?php echo lang_get('resolved'); ?></th>
-			<th class="align-right"><?php echo lang_get('balance'); ?></th>
+			<th class="align-right">Opened</th>
+			<th class="align-right">Resolved</th>
+			<th class="align-right">Balance</th>
 		</tr>
 	</thead>
 	<?php summary_print_by_date(config_get('date_partitions')) ?>
@@ -230,7 +228,7 @@ function tab_by_time(){
 	<thead>
 		<tr>
 			<th class="width-85">Most Active</th>
-			<th class="align-right"><?php echo lang_get('score'); ?></th>
+			<th class="align-right">Score</th>
 		</tr>
 	</thead>
 	<?php summary_print_by_activity() ?>
@@ -241,7 +239,7 @@ function tab_by_time(){
 	<thead>
 		<tr>
 			<th class="width-85">Longest Open</th>
-			<th class="align-right"><?php echo lang_get('days'); ?></th>
+			<th class="align-right">Days</th>
 		</tr>
 	</thead>
 	<?php summary_print_by_age() ?>
@@ -255,7 +253,7 @@ function tab_by_time(){
 		</tr>
 	</thead>
 	<tr>
-		<td><?php echo lang_get('longest_open_bug') ?></td>
+		<td>Longest open issue</td>
 		<td class="align-right"><?php
 			if($t_bug_id > 0){
 				print_bug_link($t_bug_id);
@@ -263,15 +261,15 @@ function tab_by_time(){
 		?></td>
 	</tr>
 	<tr>
-		<td><?php echo lang_get('longest_open') ?></td>
+		<td>Longest open</td>
 		<td class="align-right"><?php echo $t_largest_diff ?></td>
 	</tr>
 	<tr>
-		<td><?php echo lang_get('average_time') ?></td>
+		<td>Average time</td>
 		<td class="align-right"><?php echo $t_average_time ?></td>
 	</tr>
 	<tr>
-		<td><?php echo lang_get('total_time') ?></td>
+		<td>Total time</td>
 		<td class="align-right"><?php echo $t_total_time ?></td>
 	</tr>
 	</table>
@@ -333,7 +331,7 @@ $f_project_id = gpc_get_int('project_id', helper_get_current_project());
 $g_project_override = $f_project_id;
 access_ensure_project_level(config_get('view_summary_threshold'));
 
-$t_orct_arr = preg_split('/[\)\/\(]/', lang_get('orct'), -1, PREG_SPLIT_NO_EMPTY);
+$t_orct_arr = preg_split('/[\)\/\(]/', '(open/resolved/closed/total)', -1, PREG_SPLIT_NO_EMPTY);
 
 $t_orcttab = '';
 foreach ($t_orct_arr as $t_orct_s){
@@ -342,7 +340,7 @@ foreach ($t_orct_arr as $t_orct_s){
 	$t_orcttab .= '</th>';
 }
 
-layout_page_header(lang_get('summary_link'));
+layout_page_header('Statistics');
 layout_page_begin();
 
 page_title('Statistics');

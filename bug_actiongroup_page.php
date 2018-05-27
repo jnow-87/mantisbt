@@ -33,7 +33,6 @@
  * @uses form_api.php
  * @uses gpc_api.php
  * @uses helper_api.php
- * @uses lang_api.php
  * @uses print_api.php
  * @uses string_api.php
  * @uses utility_api.php
@@ -51,7 +50,6 @@ require_api('custom_field_api.php');
 require_api('form_api.php');
 require_api('gpc_api.php');
 require_api('helper_api.php');
-require_api('lang_api.php');
 require_api('print_api.php');
 require_api('string_api.php');
 require_api('utility_api.php');
@@ -227,7 +225,7 @@ column_begin('12');
 /* print alerts */
 // alert if issues of multiple projects are selected
 if($t_multiple_projects)
-	alert('warning', lang_get('multiple_projects'));
+	alert('warning', 'The issues you have selected are from different projects. The parameters below reflect the settings for all projects. If this is incorrect, please retry your change with a smaller number of issues selected.');
 
 // hint on the number of issues compared to the total number of the filter result
 if(count($f_bug_arr) < $f_filter_num_total)

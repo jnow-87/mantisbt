@@ -30,7 +30,6 @@
  * @uses filter_api.php
  * @uses gpc_api.php
  * @uses html_api.php
- * @uses lang_api.php
  * @uses print_api.php
  * @uses project_api.php
  * @uses user_api.php
@@ -44,7 +43,6 @@ require_api('current_user_api.php');
 require_api('filter_api.php');
 require_api('gpc_api.php');
 require_api('html_api.php');
-require_api('lang_api.php');
 require_api('print_api.php');
 require_api('project_api.php');
 require_api('user_api.php');
@@ -113,7 +111,7 @@ foreach($t_cmds as $t_action_id => $t_action_label)
 # don't index view issues pages
 html_robots_noindex();
 
-layout_page_header_begin(lang_get('view_bugs_link'));
+layout_page_header_begin('Search Issues');
 
 if(current_user_get_pref('refresh_delay') > 0)
 	html_meta_redirect('filter_page.php?refresh=true', current_user_get_pref('refresh_delay') * 60);

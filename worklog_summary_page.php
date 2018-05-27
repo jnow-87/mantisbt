@@ -29,7 +29,6 @@
  * @uses filter_api.php
  * @uses gpc_api.php
  * @uses helper_api.php
- * @uses lang_api.php
  * @uses string_api.php
  * @uses utility_api.php
  * @uses print_api.php
@@ -45,7 +44,6 @@ require_api('database_api.php');
 require_api('filter_api.php');
 require_api('gpc_api.php');
 require_api('helper_api.php');
-require_api('lang_api.php');
 require_api('string_api.php');
 require_api('utility_api.php');
 require_api('print_api.php');
@@ -168,7 +166,7 @@ $f_date_from = gpc_get_string('date_from', date(config_get('normal_date_format')
 $f_date_to = gpc_get_string('date_to', date(config_get('normal_date_format'), time()));
 
 
-layout_page_header(lang_get('worklog_link'));
+layout_page_header('Work Log');
 layout_page_begin();
 
 page_title('Work Log Summary');

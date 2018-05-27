@@ -2660,7 +2660,7 @@ function filter_form_draw_inputs_column($p_filter){
 				print_filter_values_custom_field($t_filter, $t_cfdef['id']);
 				$t_content = ob_get_clean();
 
-				$func_table_row_filter(string_display_line(lang_get_defaulted($t_cfdef['name'])), 'custom_field_' . $t_cfdef['id'], $t_content);
+				$func_table_row_filter(string_display_line($t_cfdef['name']), 'custom_field_' . $t_cfdef['id'], $t_content);
 			}
 
 			table_end();

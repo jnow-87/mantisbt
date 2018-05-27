@@ -79,7 +79,7 @@ function perm_table($p_title, $p_rows){
 	$t_header = array($p_title);
 
 	foreach($t_access_lvls as $t_lvl){
-		$t_header[] = MantisEnum::getLabel(lang_get('access_levels_enum_string'), $t_lvl);
+		$t_header[] = MantisEnum::getLabel(config_get('access_levels_enum_string'), $t_lvl);
 		$t_td_attr[] = 'class="center"';
 	}
 
@@ -226,7 +226,7 @@ section_begin('Mail');
 		$t_access_lvls = MantisEnum::getValues(config_get('access_levels_enum_string'));
 
 		foreach($t_access_lvls as $t_lvl){
-			$t_header[] = MantisEnum::getLabel(lang_get('access_levels_enum_string'), $t_lvl);
+			$t_header[] = MantisEnum::getLabel(config_get('access_levels_enum_string'), $t_lvl);
 			$t_td_attr[] = 'class="center"';
 		}
 

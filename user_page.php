@@ -8,7 +8,6 @@ require_api('current_user_api.php');
 require_api('form_api.php');
 require_api('helper_api.php');
 require_api('html_api.php');
-require_api('lang_api.php');
 require_api('print_api.php');
 require_api('string_api.php');
 require_api('user_api.php');

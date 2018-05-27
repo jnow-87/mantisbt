@@ -29,7 +29,6 @@
  * @uses filter_api.php
  * @uses helper_api.php
  * @uses html_api.php
- * @uses lang_api.php
  * @uses print_api.php
  * @uses rss_api.php
  */
@@ -42,7 +41,6 @@ require_api( 'database_api.php' );
 require_api( 'filter_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'rss_api.php' );
 require_api( 'elements_api.php' );
@@ -75,7 +73,7 @@ filter_cache_rows( $t_filter_ids_available );
 
 
 /* page content */
-layout_page_header( lang_get('manage_filter_page_title' ) );
+layout_page_header('Filters');
 layout_page_begin();
 
 page_title('Filter Settings');

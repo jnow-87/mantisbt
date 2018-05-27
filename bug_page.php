@@ -40,7 +40,6 @@ require_api('gpc_api.php');
 require_api('history_api.php');
 require_api('helper_api.php');
 require_api('html_api.php');
-require_api('lang_api.php');
 require_api('last_visited_api.php');
 require_api('prepare_api.php');
 require_api('print_api.php');

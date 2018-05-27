@@ -68,6 +68,13 @@ function layout_page_header( $p_page_title = null, $p_redirect_url = null, $p_pa
  * @return void
  */
 function layout_page_header_begin( $p_page_title = null ) {
+	static $t_opensearch_desc = array(
+		'id' => '%s: search by Issue Id',
+		'text' => '%s: full-text search',
+
+	);
+
+
 	html_begin();
 	html_head_begin();
 	html_content_type();
@@ -94,7 +101,7 @@ function layout_page_header_begin( $p_page_title = null ) {
 	foreach( $t_searches as $t_type ) {
 		echo "\t",
 			'<link rel="search" type="application/opensearchdescription+xml" ',
-				'title="' . sprintf( lang_get( "opensearch_{$t_type}_description" ), $t_title ) . '" ',
+				'title="' . sprintf( $t_opensearch_desc[$t_type], $t_title ) . '" ',
 				'href="' . string_sanitize_url( 'browser_search_plugin.php?type=' . $t_type, true ) .
 				'"/>',
 			"\n";
@@ -247,9 +254,6 @@ function layout_admin_page_end() {
  * @return bool
  */
 function layout_is_rtl() {
-	if( lang_get( 'directionality' ) == 'rtl' ) {
-		return true;
-	}
 	return false;
 }
 
@@ -565,7 +569,7 @@ function layout_navbar() {
 
 	/* project info */
 	$t_current_project_id = helper_get_current_project();
-	$t_project = string_attribute(($t_current_project_id == ALL_PROJECTS ? lang_get( 'all_projects' ) : project_get_field( $t_current_project_id, 'name' )));
+	$t_project = string_attribute(($t_current_project_id == ALL_PROJECTS ? 'All Projects' : project_get_field( $t_current_project_id, 'name' )));
 
 	echo format_label('Project:') . format_hspace('5px') . $t_project;
 
@@ -668,7 +672,7 @@ function layout_footer() {
 
 	# Show contact information
 	if( !is_page_name( 'login_page' ) ) {
-		$t_webmaster_contact_information = sprintf( lang_get( 'webmaster_contact_information' ), string_html_specialchars( config_get( 'webmaster_email' ) ) );
+		$t_webmaster_contact_information = sprintf('Contact <a href="mailto:%1$s" title="Contact the webmaster via e-mail.">administrator</a> for assistance', string_html_specialchars( config_get( 'webmaster_email' ) ) );
 		echo '<small>' . $t_webmaster_contact_information . '</small>' . '<br>' . "\n";
 	}
 
@@ -701,13 +705,13 @@ function layout_footer() {
 
 	# Print the page execution time
 	if( config_get( 'show_timer' ) ) {
-		$t_page_execution_time = sprintf( lang_get( 'page_execution_time' ), number_format( microtime( true ) - $g_request_time, 4 ) );
+		$t_page_execution_time = sprintf('Page execution time: %1$s seconds', number_format( microtime( true ) - $g_request_time, 4 ) );
 		echo '<small><i class="fa fa-clock-o"></i> ' . $t_page_execution_time . '</small>&#160;&#160;&#160;&#160;' . "\n";
 	}
 
 	# Print the page memory usage
 	if( config_get( 'show_memory_usage' ) ) {
-		$t_page_memory_usage = sprintf( lang_get( 'memory_usage_in_kb' ), number_format( memory_get_peak_usage() / 1024 ) );
+		$t_page_memory_usage = sprintf('Memory usage: %1$s KiB', number_format( memory_get_peak_usage() / 1024 ) );
 		echo '<small><i class="fa fa-bolt"></i> ' . $t_page_memory_usage . '</small>&#160;&#160;&#160;&#160;' . "\n";
 	}
 
@@ -728,13 +732,13 @@ function layout_footer() {
 			$t_total_query_execution_time += $g_queries_array[$i][1];
 		}
 
-		$t_total_queries_executed = sprintf( lang_get( 'total_queries_executed' ), $t_total_queries_count );
+		$t_total_queries_executed = sprintf('Total queries executed: %1$d', $t_total_queries_count );
 		echo '<small><i class="fa fa-database"></i> ' . $t_total_queries_executed . '</small>&#160;&#160;&#160;&#160;' . "\n";
 		if( config_get_global( 'db_log_queries' ) ) {
-			$t_unique_queries_executed = sprintf( lang_get( 'unique_queries_executed' ), $t_unique_queries_count );
+			$t_unique_queries_executed = sprintf('Unique queries executed: %1$d', $t_unique_queries_count );
 			echo '<small><i class="fa fa-database"></i> ' . $t_unique_queries_executed . '</small>&#160;&#160;&#160;&#160;' . "\n";
 		}
-		$t_total_query_time = sprintf( lang_get( 'total_query_execution_time' ), $t_total_query_execution_time );
+		$t_total_query_time = sprintf('Total query execution time: %1$s seconds', $t_total_query_execution_time );
 		echo '<small><i class="fa fa-clock-o"></i> ' . $t_total_query_time . '</small>&#160;&#160;&#160;&#160;' . "\n";
 	}
 

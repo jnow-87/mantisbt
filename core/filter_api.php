@@ -39,7 +39,6 @@
  * @uses filter_constants_inc.php
  * @uses gpc_api.php
  * @uses helper_api.php
- * @uses lang_api.php
  * @uses logging_api.php
  * @uses print_api.php
  * @uses profile_api.php
@@ -69,7 +68,6 @@ require_api( 'event_api.php' );
 require_api( 'filter_constants_inc.php' );
 require_api( 'gpc_api.php' );
 require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
 require_api( 'logging_api.php' );
 require_api( 'print_api.php' );
 require_api( 'profile_api.php' );
@@ -3207,18 +3205,18 @@ function filter_print_view_type_toggle( $p_url, $p_view_type ) {
 	if( $p_view_type == FILTER_VIEW_TYPE_ADVANCED ) {
 		$t_url = $p_url . FILTER_VIEW_TYPE_SIMPLE;
 		$t_icon = 'fa-toggle-off';
-		$t_lang_string = 'simple_filters';
+		$t_lang_string = 'Simple Filters';
 	} else {
 		$t_url = $p_url . FILTER_VIEW_TYPE_ADVANCED;
 		$t_icon = 'fa-toggle-on';
-		$t_lang_string = 'advanced_filters';
+		$t_lang_string = 'Advanced Filters';
 	}
 
 	echo '<li>';
 	printf( '<a href="%s"><i class="ace-icon fa %s"></i>&#160;&#160;%s</a>',
 		$t_url,
 		$t_icon,
-		lang_get( $t_lang_string )
+		$t_lang_string
 	);
 	echo '</li>';
 }

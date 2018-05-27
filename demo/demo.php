@@ -66,9 +66,6 @@ require_api('elements_api.php');
 #
 #		css of checkbox
 #			checkboxes sometimes look odd, compare view_all_bug_page and bugnote_add
-#
-#	misc
-#		remove lang_get()
 
 function tab_page0(){
 	echo '<div class="row">';

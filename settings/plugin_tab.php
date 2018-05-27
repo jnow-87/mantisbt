@@ -28,7 +28,6 @@
  * @uses form_api.php
  * @uses helper_api.php
  * @uses html_api.php
- * @uses lang_api.php
  * @uses plugin_api.php
  * @uses print_api.php
  * @uses string_api.php
@@ -45,7 +44,6 @@ require_api('config_api.php');
 require_api('form_api.php');
 require_api('helper_api.php');
 require_api('html_api.php');
-require_api('lang_api.php');
 require_api('plugin_api.php');
 require_api('print_api.php');
 require_api('string_api.php');
@@ -142,15 +140,15 @@ section_begin('Installed Plugins');
 				$t_author = implode($t_author, ', ');
 
 			if(!is_blank($t_contact)){
-				$t_author = '<br />' . sprintf(lang_get('plugin_author'),
+				$t_author = '<br />' . sprintf('Author: %1$s',
 					'<a href="mailto:' . string_attribute($t_contact) . '">' . string_display_line($t_author) . '</a>');
 			}
 			else
-				$t_author = '<br />' . string_display_line(sprintf(lang_get('plugin_author'), $t_author));
+				$t_author = '<br />' . string_display_line(sprintf('Author: %1$s', $t_author));
 		}
 
 		if(!is_blank($t_url))
-			$t_url = '<br />' . lang_get('plugin_url') . lang_get('word_separator') . '<a href="' . $t_url . '">' . $t_url . '</a>';
+			$t_url = '<br />Website: <a href="' . $t_url . '">' . $t_url . '</a>';
 
 		$t_upgrade = plugin_needs_upgrade($t_plugin);
 
@@ -254,15 +252,15 @@ section_begin('Available Plugins');
 				$t_author = implode($t_author, ', ');
 			}
 			if(!is_blank($t_contact)){
-				$t_author = '<br />' . sprintf(lang_get('plugin_author'),
+				$t_author = '<br />' . sprintf('Author: %1$s',
 					'<a href="mailto:' . string_display_line($t_contact) . '">' . string_display_line($t_author) . '</a>');
 			} else{
-				$t_author = '<br />' . string_display_line(sprintf(lang_get('plugin_author'), $t_author));
+				$t_author = '<br />' . string_display_line(sprintf('Author: %1$s', $t_author));
 			}
 		}
 
 		if(!is_blank($t_url))
-			$t_url = '<br />' . lang_get('plugin_url') . lang_get('word_separator') . '<a href="' . $t_url . '">' . $t_url . '</a>';
+			$t_url = '<br />Website: <a href="' . $t_url . '">' . $t_url . '</a>';
 
 		$t_ready = true;
 		if(is_array($t_requires)){
@@ -283,7 +281,7 @@ section_begin('Available Plugins');
 		if(0 < count($t_depends))
 			$t_depends = implode($t_depends, '<br />');
 		else
-			$t_depends = '<span class="small dependency_met">' . lang_get('plugin_no_depends') . '</span>';
+			$t_depends = '<span class="small dependency_met">No Dependencies</span>';
 
 		$t_install_btn = '';
 

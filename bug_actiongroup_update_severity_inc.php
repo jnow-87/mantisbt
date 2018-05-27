@@ -26,7 +26,6 @@
  * @uses bug_api.php
  * @uses config_api.php
  * @uses gpc_api.php
- * @uses lang_api.php
  * @uses print_api.php
  */
 
@@ -38,7 +37,6 @@ require_api( 'access_api.php' );
 require_api( 'bug_api.php' );
 require_api( 'config_api.php' );
 require_api( 'gpc_api.php' );
-require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'elements_api.php' );
@@ -65,11 +63,11 @@ function action_update_severity_validate( $p_bug_id ) {
 	$t_bug_id = $p_bug_id;
 
 	if( bug_is_readonly( $t_bug_id ) ) {
-		return lang_get( 'actiongroup_error_issue_is_readonly' );
+		return 'Access denied to readonly issue';
 	}
 
 	if( !access_has_bug_level( $t_update_severity_threshold, $t_bug_id ) ) {
-		return lang_get( 'access_denied' );
+		return 'Access denied';
 	}
 
 	return null;

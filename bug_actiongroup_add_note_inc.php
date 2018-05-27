@@ -29,7 +29,6 @@
  * @uses error_api.php
  * @uses gpc_api.php
  * @uses helper_api.php
- * @uses lang_api.php
  * @uses print_api.php
  * @uses utility_api.php
  */
@@ -45,7 +44,6 @@ require_api( 'constant_inc.php' );
 require_api( 'error_api.php' );
 require_api( 'gpc_api.php' );
 require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'utility_api.php' );
 require_api('elements_api.php');
@@ -77,7 +75,7 @@ function action_add_note_validate( $p_bug_id ) {
 	$f_bugnote_text = gpc_get_string( 'bugnote_text' );
 
 	if( is_blank( $f_bugnote_text ) ) {
-		error_parameters( lang_get( 'bugnote' ) );
+		error_parameters('Bugnote');
 		trigger_error( ERROR_EMPTY_FIELD, ERROR );
 	}
 
@@ -85,11 +83,11 @@ function action_add_note_validate( $p_bug_id ) {
 	$t_bug_id = $p_bug_id;
 
 	if( bug_is_readonly( $t_bug_id ) ) {
-		return lang_get( 'actiongroup_error_issue_is_readonly' );
+		return 'Access denied to readonly issue';
 	}
 
 	if( !access_has_bug_level( $t_add_bugnote_threshold, $t_bug_id ) ) {
-		return lang_get( 'access_denied' );
+		return 'Access denied';
 	}
 
 	return null;

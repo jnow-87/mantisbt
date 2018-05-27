@@ -34,7 +34,6 @@
  * @uses gpc_api.php
  * @uses helper_api.php
  * @uses html_api.php
- * @uses lang_api.php
  * @uses print_api.php
  * @uses relationship_api.php
  * @uses version_api.php
@@ -55,7 +54,6 @@ require_api('form_api.php');
 require_api('gpc_api.php');
 require_api('helper_api.php');
 require_api('html_api.php');
-require_api('lang_api.php');
 require_api('print_api.php');
 require_api('relationship_api.php');
 require_api('version_api.php');
@@ -111,7 +109,7 @@ if(config_get('bug_assigned_status') == $f_new_status) {
 	}
 }
 
-$t_status_label = str_replace(' ', '_', MantisEnum::getLabel(config_get('status_enum_string'), $f_new_status));
+$t_status_label = 'Set Issue Status: ' . str_replace(' ', '_', ucfirst(MantisEnum::getLabel(config_get('status_enum_string'), $f_new_status)));
 
 
 if($f_old_status == $f_new_status){
@@ -165,7 +163,7 @@ else if($f_new_status == STATUS_OPEN){
 ####
 
 layout_inline_page_begin();
-page_title(lang_get($t_status_label . '_bug_title'));
+page_title($t_status_label);
 
 column_begin('12');
 echo '<form method="post" action="bug_update.php" class="input-hover-form inline-page-form input-hover-form-reload">';
@@ -183,7 +181,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 
 	actionbar_begin();
 		echo '<div class="pull-left">';
-		button(lang_get($t_status_label . '_bug_button'), 'state-change-submit', 'submit');
+		button('Update Status', 'state-change-submit', 'submit');
 		echo '</div>';
 	actionbar_end();
 
@@ -274,7 +272,7 @@ echo '<form method="post" action="bug_update.php" class="input-hover-form inline
 			$t_value = custom_field_get_value($t_def, $f_bug_id);
 
 			// TODO use print_custom_field_input() for displaying custom fields
-			table_row_bug_info_long($t_required . lang_get_defaulted($t_def['name']), format_textarea('custom_field_' . $t_id, 'custom_field_' . $t_id, $t_value, 'input-xs', 'width:100% !important;height:100px;'), '10%');
+			table_row_bug_info_long($t_required . $t_def['name'], format_textarea('custom_field_' . $t_id, 'custom_field_' . $t_id, $t_value, 'input-xs', 'width:100% !important;height:100px;'), '10%');
 			input_hidden('custom_field_' . $t_id . '_presence', 0);
 		}
 
