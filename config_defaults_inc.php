@@ -217,28 +217,23 @@ if( isset ( $_SERVER['SCRIPT_NAME'] ) ) {
 	}
 	$t_self = filter_var( $_SERVER['SCRIPT_NAME'], FILTER_SANITIZE_STRING );
 	$t_path = str_replace( basename( $t_self ), '', $t_self );
-	switch( basename( $t_path ) ) {
-		case 'admin':
-			$t_path = rtrim( dirname( $t_path ), '/\\' ) . '/';
-			break;
-		case 'check':		# admin checks dir
-		case 'soap':
-		case 'rest':
-			$t_path = rtrim( dirname( dirname( $t_path ) ), '/\\' ) . '/';
-			break;
-		case 'swagger':
-			$t_path = rtrim( dirname( dirname( dirname( $t_path ) ) ), '/\\' ) . '/';
-			break;
-		case '':
-			$t_path = '/';
-			break;
+
+	# strip all but the mantis root directory
+	$t_root = $t_path;
+
+	while($t_path != '/'){
+		$t_root = $t_path;
+		$t_path = dirname($t_path);
 	}
-	if( strpos( $t_path, '&#' ) ) {
+
+	$t_root = rtrim($t_root, '/\\') . '/';
+
+	if( strpos( $t_root, '&#' ) ) {
 		echo 'Can not safely determine $g_path. Please set $g_path manually in ' . $g_config_path . 'config_inc.php';
 		die;
 	}
 } else {
-	$t_path = 'mantisbt/';
+	$t_root = 'mantisbt/';
 }
 
 /**
@@ -246,14 +241,14 @@ if( isset ( $_SERVER['SCRIPT_NAME'] ) ) {
  * requires trailing /
  * @global string $g_path
  */
-$g_path	= $t_protocol . '://' . $t_host . $t_path;
+$g_path	= $t_protocol . '://' . $t_host . $t_root;
 
 /**
  * Short web path without the domain name
  * requires trailing /
  * @global string $g_short_path
  */
-$g_short_path = $t_path;
+$g_short_path = $t_root;
 
 /**
  * Used to link to manual for User Documentation.
@@ -957,55 +952,23 @@ $g_priority_significant_threshold = HIGH;
  */
 $g_severity_significant_threshold = MAJOR;
 
-/**
- * The default columns to be included in the View Issues Page.
- * This can be overriden using Manage -> Manage Configuration -> Manage Columns
- * Also each user can configure their own columns using My Account -> Manage
- * Columns. Some of the columns specified here can be removed automatically if
- * they conflict with other configuration. Or if the current user doesn't have
- * the necessary access level to view them. To include custom field 'xyz',
- * include the column name as 'custom_xyz'.
- *
- * Standard Column Names (i.e. names to choose from):
- * id, project_id, reporter_id, handler_id, duplicate_id, priority, severity,
- * status, resolution, category_id, date_submitted, last_updated,
- * os, os_build, platform, version, fixed_in_version, target_version, view_state,
- * summary, due_date, description,
- * attachment_count, bugnotes_count, selection, edit,
- * overdue
- *
- * @global array $g_view_issues_page_columns
- */
-$g_view_issues_page_columns = array(
-	'selection', 'edit', 'priority', 'id',
-	'bugnotes_count', 'attachment_count', 'category_id', 'severity', 'status',
-	'last_updated', 'summary'
-);
 
 /**
- * The default columns to be included in the Print Issues Page. This can be
- * overridden using Manage -> Manage Configuration -> Manage Columns. Also each
- * user can configure their own columns using My Account -> Manage Columns.
- * @global array $g_print_issues_page_columns
+ *	default columns to be shown in bug lists
  */
-$g_print_issues_page_columns = array(
-	'selection', 'priority', 'id', 'bugnotes_count',
-	'attachment_count', 'category_id', 'severity', 'status', 'last_updated',
-	'summary'
+$g_bug_list_columns_all = array(
+	'id', 'project_id', 'reporter_id', 'handler_id', 'priority', 'severity', 
+	'status', 'status_icon', 'resolution', 'category_id', 'date_submitted', 
+	'last_updated', 'os', 'os_build', 'platform', 'version', 'fixed_in_version', 
+	'target_version', 'build', 'view_state', 'summary', 'due_date', 'description', 
+	'time_tracking', 'tags', 'selection', 'edit', 'overdue' 
 );
+$g_bug_list_columns_filter = array('selection', 'id', 'summary', 'category_id', 'status', 'target_version', 'tags');
+$g_bug_list_columns_dashboard = array('id', 'summary', 'status', 'target_version');
+$g_bug_list_columns_versions = array('status', 'id', 'summary');
+$g_bug_list_columns_bulk = array('id', 'status', 'summary');
+$g_bug_list_columns_export = array('id', 'status', 'summary');
 
-/**
- * The default columns to be included in the CSV export. This can be overridden
- * using Manage -> Manage Configuration -> Manage Columns. Also each user can
- * configure their own columns using My Account -> Manage Columns.
- * @global array $g_csv_columns
- */
-$g_csv_columns = array(
-	'id', 'project_id', 'reporter_id', 'handler_id', 'priority',
-	'severity', 'version', 'category_id',
-	'date_submitted', 'os', 'os_build', 'platform', 'view_state',
-	'last_updated', 'summary', 'status', 'resolution', 'fixed_in_version'
-);
 
 /**
  * show projects when in All Projects mode
@@ -2763,11 +2726,11 @@ $g_bugnote_link_tag = '~';
  * this is the prefix to use when creating links to bug views from bug counts
  * (eg. on the main page and the summary page).
  * Default is a temporary filter
- * only change the filter this time - 'view_all_set.php?type=1&amp;temporary=y'
- * permanently change the filter - 'view_all_set.php?type=1';
+ * only change the filter this time - 'filter_apply.php?type=1&amp;temporary=y'
+ * permanently change the filter - 'filter_apply.php?type=1';
  * @global string $g_bug_count_hyperlink_prefix
  */
-$g_bug_count_hyperlink_prefix = 'view_all_set.php?type=1&amp;temporary=y';
+$g_bug_count_hyperlink_prefix = 'filter_apply.php?type=1&amp;temporary=y';
 
 /**
  * The regular expression to use when validating new user login names
@@ -2781,24 +2744,6 @@ $g_bug_count_hyperlink_prefix = 'view_all_set.php?type=1&amp;temporary=y';
  * @global string $g_user_login_valid_regex
  */
 $g_user_login_valid_regex = '/^([a-z\d\-.+_ ]+(@[a-z\d\-.]+\.[a-z]{2,4})?)$/i';
-
-/**
- * Default user name prefix used to filter the list of users in
- * manage_user_page.php.  Change this to 'A' (or any other
- * letter) if you have a lot of users in the system and loading
- * the manage users page takes a long time.
- * @global string $g_default_manage_user_prefix
- */
-$g_default_manage_user_prefix = 'ALL';
-
-/**
- * Default tag prefix used to filter the list of tags in
- * manage_tags_page.php.  Change this to 'A' (or any other
- * letter) if you have a lot of tags in the system and loading
- * the manage tags page takes a long time.
- * @global string $g_default_manage_tag_prefix
- */
-$g_default_manage_tag_prefix = 'ALL';
 
 /**
  * CSV Export
@@ -3146,7 +3091,7 @@ $g_cdn_enabled = OFF;
  * Default page after Login or Set Project
  * @global string $g_default_home_page
  */
-$g_default_home_page = 'my_view_page.php';
+$g_default_home_page = 'dashboard.php';
 
 /**
  * Specify where the user should be sent after logging out.
@@ -4108,7 +4053,6 @@ $g_public_config_names = array(
 	'create_short_url',
 	'css_include_file',
 	'css_rtl_include_file',
-	'csv_columns',
 	'csv_separator',
 	'custom_field_edit_after_create',
 	'custom_field_link_threshold',
@@ -4148,8 +4092,6 @@ $g_public_config_names = array(
 	'default_home_page',
 	'default_language',
 	'default_limit_view',
-	'default_manage_tag_prefix',
-	'default_manage_user_prefix',
 	'default_new_account_access_level',
 	'default_notify_flags',
 	'default_project_view_status',
@@ -4255,7 +4197,6 @@ $g_public_config_names = array(
 	'preview_max_height',
 	'preview_max_width',
 	'preview_text_extensions',
-	'print_issues_page_columns',
 	'priority_enum_string',
 	'priority_significant_threshold',
 	'private_bug_threshold',
@@ -4368,7 +4309,6 @@ $g_public_config_names = array(
 	'view_filters',
 	'view_handler_threshold',
 	'view_history_threshold',
-	'view_issues_page_columns',
 	'view_proj_doc_threshold',
 	'view_state_enum_string',
 	'view_summary_threshold',
@@ -4394,7 +4334,7 @@ $g_public_config_names = array(
 );
 
 # Temporary variables should not remain defined in global scope
-unset( $t_protocol, $t_host, $t_hosts, $t_port, $t_self, $t_path );
+unset( $t_protocol, $t_host, $t_hosts, $t_port, $t_self, $t_path, $t_root );
 
 
 ############################

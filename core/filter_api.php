@@ -39,7 +39,6 @@
  * @uses filter_constants_inc.php
  * @uses gpc_api.php
  * @uses helper_api.php
- * @uses lang_api.php
  * @uses logging_api.php
  * @uses print_api.php
  * @uses profile_api.php
@@ -69,7 +68,6 @@ require_api( 'event_api.php' );
 require_api( 'filter_constants_inc.php' );
 require_api( 'gpc_api.php' );
 require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
 require_api( 'logging_api.php' );
 require_api( 'print_api.php' );
 require_api( 'profile_api.php' );
@@ -81,6 +79,7 @@ require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'version_api.php' );
 require_api( 'filter_form_api.php' );
+require_api( 'elements_api.php' );
 
 $g_filter = null;
 
@@ -2309,215 +2308,6 @@ function filter_cache_result( array $p_rows, array $p_id_array_lastmod ) {
 	return $t_rows;
 }
 
-/**
- * Mainly based on filter_draw_selection_area2() but adds the support for the collapsible
- * filter display.
- * @param integer $p_page_number Page number.
- * @param boolean $p_for_screen  Whether output is for screen view.
- * @return void
- * @see filter_draw_selection_area2
- */
-function filter_draw_selection_area( $p_page_number, $p_for_screen = true ) {
-	echo '<div class="col-md-6-left col-xs-12">';
-	filter_draw_selection_area2( $p_page_number, $p_for_screen, true );
-	echo '</div>';
-}
-
-/**
- * Prints the filter selection area for both the bug list view screen and
- * the bug list print screen. This function was an attempt to make it easier to
- * add new filters and rearrange them on screen for both pages.
- * @param integer $p_page_number Page number.
- * @param boolean $p_for_screen  Whether output is for screen view.
- * @param boolean $p_expanded    Whether to display expanded.
- * @return void
- */
-function filter_draw_selection_area2( $p_page_number, $p_for_screen = true, $p_expanded = true ) {
-	$t_form_name_suffix = $p_expanded ? '_open' : '_closed';
-
-	$t_filter = current_user_get_bug_filter();
-	$t_filter = filter_ensure_valid_filter( $t_filter === false ? array() : $t_filter );
-	$t_page_number = (int)$p_page_number;
-
-	$t_view_type = $t_filter['_view_type'];
-
-	$t_action = 'view_all_set.php?f=3';
-	if( $p_for_screen == false ) {
-		$t_action = 'view_all_set.php';
-	}
-	if( $p_expanded ) {
-		# in expanded form, all field are sent
-		$t_view_all_set_type = 1;
-	} else {
-		# in condensed form, only the search field is sent, to be added over current filter values.
-		$t_view_all_set_type = 5;
-	}
-	?>
-
-	<div class="filter-box">
-		<form method="post" name="filters<?php echo $t_form_name_suffix?>" id="filters_form<?php echo $t_form_name_suffix?>" action="<?php echo $t_action;?>">
-		<?php # CSRF protection not required here - form does not result in modifications ?>
-		<input type="hidden" name="type" value="<?php echo $t_view_all_set_type ?>" />
-		<?php
-			if( $p_for_screen == false ) {
-		echo '<input type="hidden" name="print" value="1" />';
-		echo '<input type="hidden" name="offset" value="0" />';
-	}
-	?>
-		<input type="hidden" name="page_number" value="<?php echo $t_page_number?>" />
-		<input type="hidden" name="view_type" value="<?php echo $t_view_type?>" />
-	<?php
-	$t_stored_queries_arr = filter_db_get_available_queries();
-	if( $p_expanded ) {
-		$t_collapse_block = is_collapsed( 'filter' );
-		$t_block_css = $t_collapse_block ? 'collapsed' : '';
-		$t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
-		?>
-
-		<div id="filter" class="widget-box widget-color-blue2 <?php echo $t_block_css ?>">
-		<div class="widget-header widget-header-small">
-			<h4 class="widget-title lighter">
-				<i class="ace-icon fa fa-filter"></i>
-				<?php echo lang_get( 'filters' ) ?>
-			</h4>
-			<div class="widget-toolbar">
-				<?php
-					$t_view_filters = config_get('view_filters');
-
-					if( ( ( SIMPLE_ONLY != $t_view_filters ) && ( ADVANCED_ONLY != $t_view_filters ) ) ||
-						access_has_project_level( config_get( 'create_permalink_threshold' ) ) ||
-						count( $t_stored_queries_arr ) > 0 ) { ?>
-					<div class="widget-menu">
-						<a href="#" data-action="settings" data-toggle="dropdown">
-							<i class="ace-icon fa fa-bars bigger-125"></i>
-						</a>
-						<ul class="dropdown-menu dropdown-menu-right dropdown-yellow dropdown-caret dropdown-closer">
-							<?php
-							$t_url = config_get( 'use_dynamic_filters' )
-								? 'view_all_set.php?type=6&amp;view_type='
-								: 'view_filters_page.php?view_type=';
-							filter_print_view_type_toggle( $t_url, $t_filter['_view_type'] );
-
-							if( access_has_project_level( config_get( 'create_permalink_threshold' ) ) ) {
-								echo '<li>';
-								echo '<a href="permalink_page.php?url=' . urlencode( filter_get_url( $t_filter ) ) . '">';
-								echo '<i class="ace-icon fa fa-link"></i>&#160;&#160;' . lang_get( 'create_filter_link' );
-								echo '</a>';
-								echo '</li>';
-							}
-							if( count( $t_stored_queries_arr ) > 0 ) {
-								echo '<li>';
-								echo '<a href="manage_filter_page.php">';
-								echo '<i class="ace-icon fa fa-wrench"></i>&#160;&#160;' . lang_get( 'open_queries' );
-								echo '</a>';
-								echo '</li>';
-							} ?>
-						</ul>
-					</div>
-				<?php } ?>
-				<a id="filter-toggle" data-action="collapse" href="#">
-					<i class="1 ace-icon fa bigger-125 <?php echo $t_block_icon ?>"></i>
-				</a>
-			</div>
-			<?php if( count( $t_stored_queries_arr ) > 0 ) { ?>
-				<div id="filter-bar-queries" class="widget-toolbar hidden-xs" style="display: block">
-					<div class="widget-menu margin-left-8 margin-right-8">
-						<select id="filter-bar-query-id" class="input-xs">
-							<option value="-1"></option>
-							<option value="-1"><?php echo '[' . lang_get( 'reset_query' ) . ']'?></option>
-							<?php
-							$t_source_query_id = isset( $t_filter['_source_query_id'] ) ? (int)$t_filter['_source_query_id'] : -1;
-							foreach( $t_stored_queries_arr as $t_query_id => $t_query_name ) {
-								echo '<option value="' . $t_query_id . '" ';
-								check_selected( $t_query_id, $t_source_query_id );
-								echo '>' . string_display_line( $t_query_name ) . '</option>';
-							}
-							?>
-						</select>
-					</div>
-				</div>
-			<?php } ?>
-		</div>
-
-		<div class="widget-body">
-		<div class="widget-main no-padding">
-
-		<div class="table-responsive">
-
-		<?php
-		filter_form_draw_inputs( $t_filter, $p_for_screen, false, 'view_filters_page.php' );
-		?>
-
-		</div>
-		</div>
-		<?php
-	}
-
-	echo '<div class="widget-toolbox padding-8 clearfix">';
-	echo '<div class="btn-toolbar pull-right">';
-
-	# expanded
-	echo '<div class="form-inline">';
-	echo '<input type="text" id="filter-search-txt" class="input-xs" size="16" name="', FILTER_PROPERTY_SEARCH, '"
-		placeholder="' . lang_get( 'search' ) . '" value="', string_attribute( $t_filter[FILTER_PROPERTY_SEARCH] ), '" />';
-	?>
-	<input type="submit" class="btn btn-primary btn-xs btn-white btn-round no-float" name="filter" value="<?php echo lang_get( 'filter_button' )?>" />
-	</div>
-	<?php
-
-	echo '</form></div>';
-	echo '<div class="btn-toolbar pull-left">';
-	echo '<div class="btn-group">';
-	?>
-
-	<?php
-	if( count( $t_stored_queries_arr ) > 0 ) { ?>
-		<form id="filter-queries-form" class="form-inline pull-left padding-left-8"  method="get" name="list_queries<?php echo $t_form_name_suffix;?>" action="view_all_set.php">
-			<?php # CSRF protection not required here - form does not result in modifications ?>
-			<input type="hidden" name="type" value="3" />
-			<select name="source_query_id" class="input-xs">
-				<option value="-1"></option>
-				<?php
-				$t_source_query_id = isset( $t_filter['_source_query_id'] ) ? (int)$t_filter['_source_query_id'] : -1;
-				foreach( $t_stored_queries_arr as $t_query_id => $t_query_name ) {
-					echo '<option value="' . $t_query_id . '" ';
-					check_selected( $t_query_id, $t_source_query_id );
-					echo '>' . string_display_line( $t_query_name ) . '</option>';
-				}
-				?>
-			</select>
-		</form>
-	<?php
-	} ?>
-
-	<form class="form-inline pull-left" method="get" name="reset_query" action="view_all_set.php">
-		<?php # CSRF protection not required here - form does not result in modifications ?>
-		<input type="hidden" name="type" value="3" />
-		<input type="hidden" name="source_query_id" value="-1" />
-		<input type="submit" name="reset_query_button" class="btn btn-primary btn-white btn-xs btn-round" value="<?php echo lang_get( 'reset_query' )?>" />
-		<span class="lbl"> &nbsp </span>
-	</form>
-
-	<?php
-	if( access_has_project_level( config_get( 'stored_query_create_threshold' ) ) ) { ?>
-		<form class="form-inline pull-left" method="post" name="save_query" action="query_store_page.php">
-			<?php # CSRF protection not required here - form does not result in modifications ?>
-			<input type="submit" name="save_query_button" class="btn btn-primary btn-white btn-xs btn-round"
-				value="<?php echo lang_get( 'save_query' )?>" />
-		</form>
-	<?php
-	}?>
-
-
-	</div>
-	</div>
-	</div>
-	</div>
-	</div>
-	</div>
-<?php
-}
-
 
 # ==========================================================================
 # CACHING
@@ -2904,15 +2694,26 @@ function filter_db_get_available_queries( $p_project_id = null, $p_user_id = nul
 	# Get the list of available queries. By sorting such that public queries are
 	# first, we can override any query that has the same name as a private query
 	# with that private one
+	$t_param = array();
+
+	$t_where = '';
+
+	if($t_project_id != ALL_PROJECTS){
+		$t_where = '(project_id=' . db_param() . ' OR project_id=0) AND';
+		$t_param[] = $t_project_id;
+	}
+
+	$t_param[] = true;
+	$t_param[] = $t_user_id;
+
 	db_param_push();
 	$t_query = 'SELECT * FROM {filters}
-					WHERE (project_id=' . db_param() . '
-						OR project_id=0)
-					AND name!=\'\'
+					WHERE ' . $t_where . ' 
+					name!=\'\'
 					AND (is_public = ' . db_param() . '
 						OR user_id = ' . db_param() . ')
 					ORDER BY is_public DESC, name ASC';
-	$t_result = db_query( $t_query, array( $t_project_id, true, $t_user_id ) );
+	$t_result = db_query( $t_query, $t_param);
 
 	while( $t_row = db_fetch_array( $t_result ) ) {
 		$t_overall_query_arr[$t_row['id']] = $t_row['name'];
@@ -3404,18 +3205,29 @@ function filter_print_view_type_toggle( $p_url, $p_view_type ) {
 	if( $p_view_type == FILTER_VIEW_TYPE_ADVANCED ) {
 		$t_url = $p_url . FILTER_VIEW_TYPE_SIMPLE;
 		$t_icon = 'fa-toggle-off';
-		$t_lang_string = 'simple_filters';
+		$t_lang_string = 'Simple Filters';
 	} else {
 		$t_url = $p_url . FILTER_VIEW_TYPE_ADVANCED;
 		$t_icon = 'fa-toggle-on';
-		$t_lang_string = 'advanced_filters';
+		$t_lang_string = 'Advanced Filters';
 	}
 
 	echo '<li>';
 	printf( '<a href="%s"><i class="ace-icon fa %s"></i>&#160;&#160;%s</a>',
 		$t_url,
 		$t_icon,
-		lang_get( $t_lang_string )
+		$t_lang_string
 	);
 	echo '</li>';
+}
+
+function filter_get_list(){
+	$t_stored_queries_arr = filter_db_get_available_queries();
+
+	$t_filter_names = array('' => -1);
+
+	foreach($t_stored_queries_arr as $t_query_id => $t_query_name)
+		$t_filter_names[$t_query_name] = $t_query_id;
+
+	return $t_filter_names;
 }

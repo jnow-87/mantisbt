@@ -34,6 +34,39 @@ if (a!= -1) {
 }
 style_display = 'block';
 
+function dynamic_filter_expander_click_hdlr(event) {
+	event.preventDefault();
+	var fieldID = $(this).attr('id');
+	var filter_id = $(this).data('filter_id');
+	var targetID = fieldID + '_target';
+	var viewType = $('#filters_form_open input[name=view_type]').val();
+	$('#' + targetID).html('<span class="dynamic-filter-loading">' + translations['loading'] + "</span>");
+	var params = 'view_type=' + viewType + '&filter_target=' + fieldID;
+	if( undefined !== filter_id ) {
+		params += '&filter_id=' + filter_id;
+	}
+
+	var trigger_el = this;
+
+	$.ajax({
+		url: 'return_dynamic_filters.php',
+		data: params,
+		cache: false,
+		context: $('#' + targetID),
+		success: function(html) {
+			$(this).html(html);
+			$(this).find('input[type=text].datetimepicker').each(function(index, element) {
+				enableDateTimePicker(this);
+			});
+
+			trigger_el.removeEventListener('click', dynamic_filter_expander_click_hdlr);
+		},
+		error: function(obj,status,error) {
+			$(this).html('<span class="error-msg">' + status + ': ' + error + '</span>');
+		}
+	});
+}
+
 $(document).ready( function() {
     $('.collapse-open').show();
     $('.collapse-closed').hide();
@@ -118,55 +151,41 @@ $(document).ready( function() {
 		});
 	});
 
-	$('a.dynamic-filter-expander').click(function(event) {
-		event.preventDefault();
-		var fieldID = $(this).attr('id');
-		var filter_id = $(this).data('filter_id');
-		var targetID = fieldID + '_target';
-		var viewType = $('#filters_form_open input[name=view_type]').val();
-		$('#' + targetID).html('<span class="dynamic-filter-loading">' + translations['loading'] + "</span>");
-		var params = 'view_type=' + viewType + '&filter_target=' + fieldID;
-		if( undefined !== filter_id ) {
-			params += '&filter_id=' + filter_id;
-		}
-		$.ajax({
-			url: 'return_dynamic_filters.php',
-			data: params,
-			cache: false,
-			context: $('#' + targetID),
-			success: function(html) {
-				$(this).html(html);
-                $(this).find('input[type=text].datetimepicker').each(function(index, element) {
-                    enableDateTimePicker(this);
-                });
-			},
-			error: function(obj,status,error) {
-				$(this).html('<span class="error-msg">' + status + ': ' + error + '</span>');
-			}
-		});
-	});
+	/* register dynamic-filter-expander click handlers */
+	// NOTE addEventListener() is required to be used, since removeEventListener()
+	//      doesn't work if .click() is used
+	var expander = document.getElementsByClassName('dynamic-filter-expander');
+	
+	for(var i=0; i<expander.length; i++){
+		if($(expander[i]).attr('hide-input'))
+			expander[i].addEventListener('click', dynamic_filter_expander_click_hdlr);
+	}
 
 	$('input.autofocus:first, select.autofocus:first, textarea.autofocus:first').focus();
 
 	var checkAllSelectors = '';
-	$(':checkbox.check_all').each(function() {
+	$('.check-all').each(function() {
 		var baseFieldName = $(this).attr('name').replace(/_all$/, '');
 		if (checkAllSelectors.length > 0) {
 			checkAllSelectors += ', ';
 		}
 		checkAllSelectors += ':checkbox[name="' + baseFieldName + '[]"]';
 	});
+
+	var all_checked = false;
 	if (checkAllSelectors.length > 0) {
 		$(checkAllSelectors).click(function() {
 			var fieldName = $(this).attr('name').replace(/\[\]/g, '');
 			var checkedCount = $(this).closest('form').find(':checkbox[name="' + fieldName + '[]"]:checked').length;
 			var totalCount = $(this).closest('form').find(':checkbox[name="' + fieldName + '[]"]').length;
 			var allSelected = checkedCount == totalCount;
+			all_checked = checkedCount == totalCount;
 			$(this).closest('form').find(':checkbox[name=' + fieldName + '_all]').prop('checked', allSelected);
 		});
-		$(':checkbox.check_all').click(function() {
+		$('.check-all').click(function() {
 			var baseFieldName = $(this).attr('name').replace(/_all$/, '');
-			$(this).closest('form').find(':checkbox[name="' + baseFieldName + '[]"]').prop('checked', $(this).is(':checked'));
+			all_checked = !all_checked;
+			$(this).closest('form').find(':checkbox[name="' + baseFieldName + '[]"]').prop('checked', all_checked);
 		});
 	}
 
@@ -307,6 +326,30 @@ $(document).ready( function() {
 		}
 		$(this).val(0);
 	});
+
+	$(document).on('change', '#filter_select', function() {
+		var filter_id = $(this).val();
+		var filter_name = $('#filter_select option[value=' + filter_id + ']').text();
+
+		$('#filter_name').val(filter_name);
+	});
+
+
+	$(document).on('change', '#user_select', function() {
+		var tagSeparator = $('#user_separator').val();
+		var currentTagString = $('#user_string').val();
+		var newTagOptionID = $(this).val();
+		var newTag = $('#user_select option[value=' + newTagOptionID + ']').text();
+		if (currentTagString.indexOf(newTag) == -1) {
+			if (currentTagString.length > 0) {
+				$('#user_string').val(currentTagString + tagSeparator + newTag);
+			} else {
+				$('#user_string').val(newTag);
+			}
+		}
+		$(this).val(0);
+	});
+
 
 	$('a.click-url').bind("click", function() {
 		$(this).attr("href", $(this).attr("url"));

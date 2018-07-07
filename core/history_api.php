@@ -137,12 +137,13 @@ function history_log_event_special( $p_bug_id, $p_type, $p_old_value = '', $p_ne
  * 'note', 'change'.
  * @param integer $p_bug_id  A valid bug identifier.
  * @param integer $p_user_id A valid user identifier.
+ * @param integer $p_max_events maximum number of events to query, use -1 to get all events
  * @return array
  */
-function history_get_events_array( $p_bug_id, $p_user_id = null ) {
+function history_get_events_array( $p_bug_id, $p_user_id = null, $p_max_events = -1 ) {
 	$t_normal_date_format = config_get( 'normal_date_format' );
 
-	$t_raw_history = history_get_raw_events_array( $p_bug_id, $p_user_id );
+	$t_raw_history = history_get_raw_events_array( $p_bug_id, $p_user_id, null, null, $p_max_events );
 	$t_history = array();
 
 	foreach( $t_raw_history as $k => $t_item ) {
@@ -191,9 +192,10 @@ function history_count_user_recent_events( $p_duration_in_seconds, $p_user_id = 
  * Any option can be omitted.
  *
  * @param array $p_query_options	Array of query options
+ * @param integer $p_limit			maximum number of results to query
  * @return database result to pass into history_get_event_from_row().
  */
-function history_query_result( array $p_query_options ) {
+function history_query_result( array $p_query_options, $p_limit = -1 ) {
 	# check query order by
 	if( isset( $p_query_options['order'] ) ) {
 		$t_history_order = $p_query_options['order'];
@@ -279,6 +281,10 @@ function history_query_result( array $p_query_options ) {
 
 	# Order history lines by date. Use the storing sequence as 2nd order field for lines with the same date.
 	$t_query .= ' ORDER BY {bug_history}.date_modified ' . $t_history_order . ', {bug_history}.id ' . $t_history_order;
+
+	if($p_limit != -1)
+		$t_query .= ' LIMIT ' . $p_limit;
+
 	$t_result = db_query( $t_query, $t_params );
 	return $t_result;
 }
@@ -477,9 +483,10 @@ function history_get_event_from_row( $p_result, $p_user_id = null, $p_check_acce
  * @param integer $p_user_id A valid user identifier.
  * @param integer $p_start_time The start time to filter by, or null for all.
  * @param integer $p_end_time   The end time to filter by, or null for all.
+ * @param integer $p_max_events maximum number of events to query, use -1 to get all events
  * @return array
  */
-function history_get_raw_events_array( $p_bug_id, $p_user_id = null, $p_start_time = null, $p_end_time = null ) {
+function history_get_raw_events_array( $p_bug_id, $p_user_id = null, $p_start_time = null, $p_end_time = null, $p_max_events = -1 ) {
 	$t_user_id = (( null === $p_user_id ) ? auth_get_current_user_id() : $p_user_id );
 
 	$t_query_options = array(
@@ -487,7 +494,7 @@ function history_get_raw_events_array( $p_bug_id, $p_user_id = null, $p_start_ti
 		'start_time' => $p_start_time,
 		'end_time' => $p_end_time
 		);
-	$t_result = history_query_result( $t_query_options );
+	$t_result = history_query_result( $t_query_options, $p_max_events );
 
 	$t_raw_history = array();
 
@@ -671,8 +678,7 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 						} else {
 							$t_bug_revision_view_page_argument = 'rev_id=' . $t_new_value;
 						}
-						$t_change = '<a href="bug_revision_view_page.php?' . $t_bug_revision_view_page_argument . '">' .
-							lang_get( 'view_revisions' ) . '</a>';
+						$t_change = format_link('View Revisions', 'bug_revision_view_page.php?' . $t_bug_revision_view_page_argument, array(), 'inline-page-link', '', '');
 						$t_raw = false;
 					}
 					break;
@@ -683,8 +689,7 @@ function history_localize_item( $p_field_name, $p_type, $p_old_value, $p_new_val
 					$t_note = lang_get( 'description_updated' );
 					$t_old_value = (int)$p_old_value;
 					if( $p_linkify && bug_revision_exists( $t_old_value ) ) {
-						$t_change = '<a href="bug_revision_view_page.php?rev_id=' . $t_old_value . '#r' . $t_old_value . '">' .
-							lang_get( 'view_revisions' ) . '</a>';
+						$t_change = format_link('View Revisions', 'bug_revision_view_page.php', array('rev_id' => $t_old_value . '#r' . $t_old_value), 'inline-page-link', '', '');
 						$t_raw = false;
 					}
 					break;

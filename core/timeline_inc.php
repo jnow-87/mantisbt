@@ -14,10 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once( 'core.php' );
-require_api( 'timeline_api.php' );
-
-define( 'MAX_EVENTS', 50 );
+require_once('core.php');
+require_api('timeline_api.php');
+require_api('elements_api.php');
 
 # Variables that are defined in parent script:
 #
@@ -25,95 +24,59 @@ define( 'MAX_EVENTS', 50 );
 #						If undefined, it's initialized as null.
 # $g_timeline_user		User id to limit timeline scope.
 #						If undefined, it's initialized as null.
-#
 
-if( !isset( $g_timeline_filter ) ) {
+
+if(!isset($g_timeline_filter))
 	$g_timeline_filter = null;
-}
-if( !isset( $g_timeline_user ) ) {
+
+if(!isset($g_timeline_user))
 	$g_timeline_user = null;
-}
 
-$f_days = gpc_get_int( 'days', 0 );
-$f_all = gpc_get_int( 'all', 0 );
-$t_max_events = $f_all ? 0 : MAX_EVENTS + 1;
 
-$t_end_time = time() - ( $f_days * SECONDS_PER_DAY );
-$t_start_time = $t_end_time - ( 7 * SECONDS_PER_DAY );
-$t_events = timeline_events( $t_start_time, $t_end_time, $t_max_events, $g_timeline_filter, $g_timeline_user );
+/* prepare */
+$f_days = gpc_get_int('days', 0);
 
-$t_collapse_block = is_collapsed( 'timeline' );
-$t_block_css = $t_collapse_block ? 'collapsed' : '';
-$t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
+$t_end_time = time() - ($f_days * SECONDS_PER_DAY);
+$t_start_time = $t_end_time - (7 * SECONDS_PER_DAY);
+$t_events = timeline_events($t_start_time, $t_end_time, 0, $g_timeline_filter, $g_timeline_user);
 
 $t_url_page = $_SERVER["PHP_SELF"];
 $t_url_params = $_GET;
-if( isset( $t_url_params['all'] ) ) {
-	unset( $t_url_params['all'] );
-}
-?>
+if(isset($t_url_params['all']))
+	unset($t_url_params['all']);
 
-<div id="timeline" class="widget-box widget-color-blue2 <?php echo $t_block_css ?>">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<i class="ace-icon fa fa-clock-o"></i>
-			<?php echo lang_get( 'timeline_title' ) ?>
-		</h4>
-		<div class="widget-toolbar">
-			<a data-action="collapse" href="#">
-				<i class="1 ace-icon fa <?php echo $t_block_icon ?> bigger-125"></i>
-			</a>
-		</div>
-	</div>
+$t_short_date_format = config_get('short_date_format');
+$t_url_params['days'] = $f_days + 7;
+$t_next_days = ($f_days - 7) > 0 ? $f_days - 7 : 0;
 
-	<div class="widget-body">
-		<div class="widget-toolbox">
-			<div class="btn-toolbar">
-<?php
-				$t_short_date_format = config_get( 'short_date_format' );
-				echo '&#160;&#160;';
-				echo '<span class="label label-grey"> ' . date( $t_short_date_format, $t_start_time ) . ' </span>';
-				echo  ' .. ';
-				echo '<span class="label label-grey"> ' . date( $t_short_date_format, $t_end_time ) . ' </span>';
-				echo '&#160;&#160;';
 
-				echo '<div class="btn-group">';
-				$t_url_params['days'] = $f_days + 7;
-				$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-				echo ' <a class="btn btn-primary btn-xs btn-white btn-round" href="' . $t_href . '">' . lang_get( 'prev' ) . '</a>';
+/* main */
+actionbar_begin();
+	echo '<div class="pull-right">';
+	label(date($t_short_date_format, $t_start_time), 'label-grey');
+	echo ' - ';
+	label(date($t_short_date_format, $t_end_time), 'label-grey');
+	hspace('10px');
 
-				$t_next_days = ( $f_days - 7 ) > 0 ? $f_days - 7 : 0;
+	$t_href = $t_url_page . '?' . http_build_query($t_url_params);
 
-				if( $t_next_days != $f_days ) {
-					$t_url_params['days'] = $t_next_days;
-					$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-					echo ' <a class="btn btn-primary btn-xs btn-white btn-round" href="' . $t_href . '">' . lang_get( 'next' ) . '</a>';
-				}
-				echo '</div>';
-?>
-			</div>
-		</div>
+	button_link('Prev', $t_href);
+	hspace('1px');
 
-		<div class="widget-main no-padding">
-			<div class="profile-feed">
-			</div>
-		</div>
-
-<?php
-	if( !$f_all && count( $t_events ) > MAX_EVENTS ) {
-		$t_events = array_slice( $t_events, 0, MAX_EVENTS );
-		timeline_print_events( $t_events );
-		echo '<div class="widget-toolbox">';
-		echo '<div class="btn-toolbar">';
-		$t_url_params['all'] = 1;
-		$t_href = $t_url_page . '?' . http_build_query( $t_url_params );
-		echo '<a class="btn btn-primary btn-xs btn-white btn-round" href="' . $t_href . '">' . lang_get( 'timeline_more' ) . '</a>';
-		echo '</div>';
-		echo '</div>';
-	} else {
-		timeline_print_events( $t_events );
+	if($t_next_days != $f_days){
+		$t_url_params['days'] = $t_next_days;
+		$t_href = $t_url_page . '?' . http_build_query($t_url_params);
+		button_link('Next', $t_href);
 	}
-?>
+	echo '</div>';
+actionbar_end();
 
-	</div>
-</div>
+table_begin(array(''), 'table-condensed table-searchable no-border', 'style="background:transparent"');
+
+if(empty($t_events))
+	echo '<tr><td class="center">No activity within time range</td></tr>';
+
+foreach($t_events as $t_event)
+	echo '<tr><td>' . $t_event->html() . '</td></tr>';
+
+table_end();

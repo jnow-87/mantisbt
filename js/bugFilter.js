@@ -23,6 +23,10 @@ $(document).ready(function(){
 		$('#filter-queries-form').submit();
 	});
 
+	$('#filter-apply-btn').on('click', function(e){
+		$('#filters_form_open').submit();
+	});
+
 	var i = 0;
 	$('[name=filters_open]').find('input').each(function() {
 		var formname = $(this).parent('form').attr('name');

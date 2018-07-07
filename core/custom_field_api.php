@@ -623,6 +623,19 @@ function custom_field_link( $p_field_id, $p_project_id ) {
 }
 
 /**
+ *	return the number of issues that have a none-empty value for the given custom field
+ *
+ *	@param	integer	$p_field_id	field id
+ *
+ *	@return	number of issues
+ */
+function custom_field_set_in($p_field_id){
+	db_param_push();
+	$t_query = 'SELECT COUNT(bug_id) FROM {custom_field_string} WHERE (text!="" OR value!="") AND field_id=' . db_param();
+	return db_result(db_query($t_query, array($p_field_id)));
+}
+
+/**
  * Remove a custom field from a project
  * return true on success, false on failure
  *
@@ -880,6 +893,20 @@ function custom_field_get_project_ids( $p_field_id ) {
  */
 function custom_field_get_definition( $p_field_id ) {
 	return custom_field_cache_row( $p_field_id );
+}
+
+function custom_field_get_definition_empty(){
+	return array(
+		'name' => '',
+		'type' => 0,
+		'possible_values' => '',
+		'default_value' => '',
+		'access_level_r' => 0,
+		'access_level_rw' => 0,
+		'length_min' => 0,
+		'length_max' => 0,
+		'filter_by' => true,
+	);
 }
 
 /**

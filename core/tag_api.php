@@ -865,77 +865,6 @@ function tag_bug_detach_all( $p_bug_id, $p_add_history = true, $p_user_id = null
 }
 
 /**
- * Builds a hyperlink to the Tag Detail page
- * @param array $p_tag_row Tag row.
- * @return string
- */
-function tag_get_link( array $p_tag_row ) {
-	return sprintf(
-		'<a class="btn btn-xs btn-primary btn-white btn-round" href="tag_view_page.php?tag_id=%s" title="%s">%s</a>',
-		$p_tag_row['id'],
-		string_display_line( $p_tag_row['description'] ),
-		string_display_line( $p_tag_row['name'] )
-	);
-}
-
-/**
- * Display a tag hyperlink.
- * If a bug ID is passed, the tag link will include a detach link if the
- * user has appropriate privileges.
- * @param array   $p_tag_row Tag row.
- * @param integer $p_bug_id  The bug ID to display.
- * @return boolean
- */
-function tag_display_link( array $p_tag_row, $p_bug_id = 0 ) {
-	static $s_security_token = null;
-	if( is_null( $s_security_token ) ) {
-		$s_security_token = htmlspecialchars( form_security_param( 'tag_detach' ) );
-	}
-
-	echo tag_get_link( $p_tag_row );
-
-	if( isset( $p_tag_row['user_attached'] ) && auth_get_current_user_id() == $p_tag_row['user_attached']
-	 || auth_get_current_user_id() == $p_tag_row['user_id']
-	) {
-		$t_detach = config_get( 'tag_detach_own_threshold' );
-	} else {
-		$t_detach = config_get( 'tag_detach_threshold' );
-	}
-
-	if( $p_bug_id > 0 && access_has_bug_level( $t_detach, $p_bug_id ) ) {
-		$t_tooltip = string_html_specialchars( sprintf( lang_get( 'tag_detach' ), string_display_line( $p_tag_row['name'] ) ) );
-		$t_href = 'tag_detach.php?bug_id=' . $p_bug_id . '&amp;tag_id=' . $p_tag_row['id'] . $s_security_token;
-		echo ' <a class="btn btn-xs btn-primary btn-white btn-round" title="' . $t_tooltip . '" href="' . $t_href . '">';
-		echo '<i class="fa fa-times"></i>';
-		echo '</a>';
-	}
-
-	return true;
-}
-
-/**
- * Display a list of attached tag hyperlinks separated by the configured hyperlinks.
- * @param integer $p_bug_id The bug ID to display.
- * @return boolean
- */
-function tag_display_attached( $p_bug_id ) {
-	$t_tag_rows = tag_bug_get_attached( $p_bug_id );
-
-	if( count( $t_tag_rows ) == 0 ) {
-		echo lang_get( 'tag_none_attached' );
-	} else {
-		$i = 0;
-		foreach( $t_tag_rows as $t_tag ) {
-			echo( $i > 0 ? config_get( 'tag_separator' ) . ' ' : '' );
-			tag_display_link( $t_tag, $p_bug_id );
-			$i++;
-		}
-	}
-
-	return true;
-}
-
-/**
  * Get all attached tags separated by the Tag Separator.
  * @param integer $p_bug_id The bug ID to display.
  * @return string tags separated by the configured Tag Separator
@@ -1023,3 +952,52 @@ function tag_stats_related( $p_tag_id, $p_limit = 5 ) {
 	return $t_tags;
 }
 
+
+
+function format_tag_list($p_bug_id, $p_show_buttons = true, $p_view_empty = true){
+	$t_tags_attached = tag_bug_get_attached($p_bug_id);
+	$t_tags = '';
+
+	foreach($t_tags_attached as $t_tag){
+		$t_tag_name = format_label($t_tag['name'], 'label-round label-info');
+
+		if($p_show_buttons){
+			$t_link = format_link($t_tag_name, 'filter_page.php', array('tag_string' => $t_tag['name']), '', 'margin-right:16px!important');
+			$t_sec_token = htmlspecialchars(form_security_param('tag_detach'));
+			$t_buttons = array(array('icon' => 'fa-trash red', 'href' => format_href('tag_detach.php', array('bug_id' => $p_bug_id, 'tag_id' => $t_tag['id'], $t_sec_token => '')), 'position' => 'right:4px'));
+
+			$t_tags .= format_input_hover_element('tag_' . $t_tag['id'], $t_link, $t_buttons);
+			$t_tags .= format_hspace('2px');
+		}
+		else{
+			$t_tags .= format_link($t_tag_name, 'filter_page.php', array('tag_string' => $t_tag['name']), '', '') . format_hspace('2px');
+		}
+	}
+
+	if(count($t_tags_attached) == 0 && $p_view_empty)
+		$t_tags = 'No tags attached' . format_hspace('20px');
+
+	return $t_tags;
+}
+
+function format_tag_attach($p_bug_id){
+	$t_tags_attachable = tag_get_candidates_for_bug($p_bug_id);
+	$t_tag_names = array('' => 0);
+
+	foreach($t_tags_attachable as $t_tag)
+		$t_tag_names[$t_tag['name']] = $t_tag['id'];
+
+	return 
+		'<form action="tag_attach.php" method="post" class="form-inline input-hover-form input-hover-form-reload">'
+		. format_input_hidden('bug_id', $p_bug_id)
+		. '<span id="tag_attach_div">'
+		. form_security_field('tag_attach')
+		. format_input_hidden('tag_separator', config_get('tag_separator'))
+		. format_text('tag_string', 'tag_string', '', 'tags separated by \'' . config_get('tag_separator') . '\'')
+		. format_hspace('5px')
+		. format_select('tag_select', 'tag_select', $t_tag_names, '')
+		. format_hspace('10px')
+		. format_button('Add', 'tag_attach_div-action-0', 'submit')
+		. '</span>'
+		. '</form>';
+}

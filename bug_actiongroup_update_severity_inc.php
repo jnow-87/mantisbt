@@ -26,7 +26,6 @@
  * @uses bug_api.php
  * @uses config_api.php
  * @uses gpc_api.php
- * @uses lang_api.php
  * @uses print_api.php
  */
 
@@ -38,16 +37,9 @@ require_api( 'access_api.php' );
 require_api( 'bug_api.php' );
 require_api( 'config_api.php' );
 require_api( 'gpc_api.php' );
-require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
-
-/**
- * Prints the title for the custom action page.
- * @return void
- */
-function action_update_severity_print_title() {
-	echo lang_get( 'update_severity_title' );
-}
+require_api( 'helper_api.php' );
+require_api( 'elements_api.php' );
 
 /**
  * Prints the field within the custom action form.  This has an entry for
@@ -57,18 +49,7 @@ function action_update_severity_print_title() {
  * @return void
  */
 function action_update_severity_print_fields() {
-?>
-	<tr>
-		<th class="category">
-			<?php echo lang_get( 'update_severity_msg' ); ?>
-		</th>
-		<td>
-			<select name="severity" class="input-sm">';
-				<?php print_enum_string_option_list( 'severity' ); ?>
-			</select>
-		</td>
-	</tr>
-<?php
+	table_row_bug_info_long('Severity:', format_select('severity', 'severity', severity_list(), ''), '10%');
 }
 
 /**
@@ -82,11 +63,11 @@ function action_update_severity_validate( $p_bug_id ) {
 	$t_bug_id = $p_bug_id;
 
 	if( bug_is_readonly( $t_bug_id ) ) {
-		return lang_get( 'actiongroup_error_issue_is_readonly' );
+		return 'Access denied to readonly issue';
 	}
 
 	if( !access_has_bug_level( $t_update_severity_threshold, $t_bug_id ) ) {
-		return lang_get( 'access_denied' );
+		return 'Access denied';
 	}
 
 	return null;

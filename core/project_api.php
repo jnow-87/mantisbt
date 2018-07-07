@@ -521,6 +521,21 @@ function project_get_row( $p_project_id, $p_trigger_errors = true ) {
 }
 
 /**
+ * return an empty project array
+ */
+function project_get_row_empty(){
+	return array(
+		'name' => '',
+		'status' => 0,
+		'enabled' => true,
+		'view_state' => VS_PUBLIC,
+		'file_path' => '',
+		'description' => '',
+		'inherit_global' => true,
+	);
+}
+
+/**
  * Return all rows describing all projects
  * @return array
  */
@@ -898,4 +913,45 @@ function project_delete_all_files( $p_project_id ) {
 function project_format_id( $p_project_id ) {
 	$t_padding = config_get( 'display_project_padding' );
 	return( utf8_str_pad( $p_project_id, $t_padding, '0', STR_PAD_LEFT ) );
+}
+
+/**
+ * get list of projects the current user has access to
+ *
+ * @param	boolean	$p_list_all		add an entry for 'all projects'
+ * @param	array	$p_exclude_ids	ids to exclude from list
+ *
+ * @return array with project names and ids
+ */
+function project_list($p_list_all = false, $p_exclude_ids = array()){
+	$t_user_id = auth_get_current_user_id();
+	$t_project_ids = user_get_accessible_projects($t_user_id);
+	project_cache_array_rows($t_project_ids);
+
+	$t_r = array();
+
+	if($p_list_all)
+		$t_r['All Projects'] = ALL_PROJECTS;
+
+	foreach($t_project_ids as $t_id){
+		$t_report_bug_threshold = config_get('report_bug_threshold', null, $t_user_id, $t_id);
+		
+		if(!access_has_project_level($t_report_bug_threshold, $t_id, $t_user_id))
+			continue;
+
+		if(!in_array($t_id, $p_exclude_ids))
+			$t_r[project_get_field($t_id, 'name')] = $t_id;
+
+		$t_sub_projects = user_get_accessible_subprojects($t_user_id, $t_id);
+
+		foreach($t_sub_projects as $t_sub_id){
+			if(!access_has_project_level($t_report_bug_threshold, $t_sub_id, $t_user_id))
+				continue;
+
+			if(!in_array($t_sub_id, $p_exclude_ids))
+				$t_r[project_get_field($t_sub_id, 'name')] = $t_sub_id;
+		}
+	}
+
+	return $t_r;
 }

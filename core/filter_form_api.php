@@ -56,11 +56,12 @@ require_api( 'print_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'string_api.php' );
 require_api( 'user_api.php' );
+require_api( 'elements_api.php' );
 
 
 /**
  * @internal The following functions each print out filter field inputs.
- *      They are derived from view_filters_page.php
+ *      They are derived from view_manage_filters_page.php
  *      The functions follow a strict naming convention:
  *
  * 		print_filter_[filter_name]
@@ -73,7 +74,7 @@ require_api( 'user_api.php' );
  *      are virtually identical except for the property name.
  *      Perhaps this code could be made simpler by refactoring into a
  *      class so as to avoid all those calls to global(which are pretty ugly)
- *      These functions could also be shared by view_filters_page.php
+ *      These functions could also be shared by view_manage_filters_page.php
  */
 
 /**
@@ -126,7 +127,7 @@ function filter_form_get_input( array $p_filter, $p_filter_target, $p_show_input
  */
 function filter_select_modifier( array $p_filter ) {
 	if( FILTER_VIEW_TYPE_ADVANCED == $p_filter['_view_type'] ) {
-		return ' multiple="multiple" size="10"';
+		return ' multiple="multiple"';
 	} else {
 		return '';
 	}
@@ -2171,8 +2172,7 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 		: FILTER_VIEW_TYPE_SIMPLE;
 	$t_filters_url .= '?' . http_build_query( $t_get_params );
 
-	$t_show_product_version =  version_should_show_product_version( $t_project_id );
-	$t_show_build = $t_show_product_version && ( config_get( 'enable_product_build' ) == ON );
+	$t_show_build = ( config_get( 'enable_product_build' ) == ON );
 
 	# overload handler_id setting if user isn't supposed to see them (ref #6189)
 	if( !access_has_any_project( config_get( 'view_handler_threshold' ) ) ) {
@@ -2358,29 +2358,28 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 				'show_build_filter_target' /* content id */
 				));
 	}
-	if( $t_show_product_version ) {
-		$t_row3->add_item( new TableFieldsItem(
-				$get_field_header( 'show_version_filter', lang_get( 'product_version' ) ),
-				filter_form_get_input( $t_filter, 'show_version', $t_show_inputs ),
-				1 /* colspan */,
-				null /* class */,
-				'show_version_filter_target' /* content id */
-				));
-		$t_row3->add_item( new TableFieldsItem(
-				$get_field_header( 'show_fixed_in_version_filter', lang_get( 'fixed_in_version' ) ),
-				filter_form_get_input( $t_filter, 'show_fixed_in_version', $t_show_inputs ),
-				1 /* colspan */,
-				null /* class */,
-				'show_fixed_in_version_filter_target' /* content id */
-				));
-		$t_row3->add_item( new TableFieldsItem(
-				$get_field_header( 'show_target_version_filter', lang_get( 'target_version' ) ),
-				filter_form_get_input( $t_filter, 'show_target_version', $t_show_inputs ),
-				1 /* colspan */,
-				null /* class */,
-				'show_target_version_filter_target' /* content id */
-				));
-	}
+
+	$t_row3->add_item( new TableFieldsItem(
+			$get_field_header( 'show_version_filter', lang_get( 'product_version' ) ),
+			filter_form_get_input( $t_filter, 'show_version', $t_show_inputs ),
+			1 /* colspan */,
+			null /* class */,
+			'show_version_filter_target' /* content id */
+			));
+	$t_row3->add_item( new TableFieldsItem(
+			$get_field_header( 'show_fixed_in_version_filter', lang_get( 'fixed_in_version' ) ),
+			filter_form_get_input( $t_filter, 'show_fixed_in_version', $t_show_inputs ),
+			1 /* colspan */,
+			null /* class */,
+			'show_fixed_in_version_filter_target' /* content id */
+			));
+	$t_row3->add_item( new TableFieldsItem(
+			$get_field_header( 'show_target_version_filter', lang_get( 'target_version' ) ),
+			filter_form_get_input( $t_filter, 'show_target_version', $t_show_inputs ),
+			1 /* colspan */,
+			null /* class */,
+			'show_target_version_filter_target' /* content id */
+			));
 	$t_row3->add_item( new TableFieldsItem(
 			$get_field_header( 'relationship_type_filter', lang_get( 'bug_relationships' ) ),
 			filter_form_get_input( $t_filter, 'relationship_type', $t_show_inputs ),
@@ -2500,6 +2499,193 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 	<?php
 }
 
+function filter_form_draw_inputs_column($p_filter){
+	/* prepare input */
+	$t_filter = filter_ensure_valid_filter($p_filter);
+	$t_view_type = $t_filter['_view_type'];
+	$t_source_query_id = isset($t_filter['_source_query_id']) ? (int)$t_filter['_source_query_id'] : -1;
+
+	// If it's a stored filter, linked to a secific project, use that project_id to render available fields
+	if($t_source_query_id > 0){
+		$t_project_id = (int)filter_get_field($t_source_query_id, 'project_id');
+
+		if(ALL_PROJECTS == $t_project_id){
+			// If all_projects, the filter can be used at any project, select the current project id
+			$t_project_id = helper_get_current_project();
+		} else if($t_project_id < 0){
+			// If filter is an unnamed filter, project id is stored as negative value.
+			$t_project_id = -1 * $t_project_id;
+		}
+	}
+	else
+		$t_project_id = helper_get_current_project();
+
+	// overload handler_id setting if user isn't supposed to see them (ref #6189)
+	if(!access_has_any_project(config_get('view_handler_threshold')))
+		$t_filter[FILTER_PROPERTY_HANDLER_ID] = array(META_FILTER_ANY,);
+
+	$t_dynamic_filter_expander_class = '';
+
+	if(config_get('use_dynamic_filters'))
+		$t_dynamic_filter_expander_class = ' class="dynamic-filter-expander"';
+
+	/* render a filter table row */
+	$func_table_row_filter = function($p_text, $p_id, $p_content = '') use ($t_filter){
+		static $t_filter_props = array(
+			'project_id' => FILTER_PROPERTY_PROJECT_ID,
+			'show_priority' => FILTER_PROPERTY_PRIORITY,
+			'show_severity' => FILTER_PROPERTY_SEVERITY,
+			'view_state' => FILTER_PROPERTY_VIEW_STATE,
+			'show_category' => FILTER_PROPERTY_CATEGORY_ID,
+			'show_status' => FILTER_PROPERTY_STATUS,
+			'hide_status' => FILTER_PROPERTY_HIDE_STATUS,
+			'show_resolution' => FILTER_PROPERTY_RESOLUTION,
+			'relationship_type' => FILTER_PROPERTY_RELATIONSHIP_TYPE,
+			'tag_string' => FILTER_PROPERTY_TAG_STRING,
+			'reporter_id' => FILTER_PROPERTY_REPORTER_ID,
+			'handler_id' => FILTER_PROPERTY_HANDLER_ID,
+			'user_monitor' => FILTER_PROPERTY_MONITOR_USER_ID,
+			'note_user_id' => FILTER_PROPERTY_NOTE_USER_ID,
+			'do_filter_by_date' => FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED,
+			'do_filter_by_last_updated_date' => FILTER_PROPERTY_FILTER_BY_LAST_UPDATED_DATE,
+			'show_profile' => FILTER_PROPERTY_PROFILE_ID,
+			'platform' => FILTER_PROPERTY_PLATFORM,
+			'os' => FILTER_PROPERTY_OS,
+			'os_build' => FILTER_PROPERTY_OS_BUILD,
+			'show_build' => FILTER_PROPERTY_BUILD,
+			'show_version' => FILTER_PROPERTY_VERSION,
+			'show_target_version' => FILTER_PROPERTY_TARGET_VERSION,
+			'show_fixed_in_version' => FILTER_PROPERTY_FIXED_IN_VERSION
+		);
+
+
+		$t_filter_prop = $t_filter_props[$p_id];
+		$t_hide_input = true;
+
+		if($t_filter_prop != null)
+			$t_hide_input = ($t_filter[$t_filter_prop] == filter_get_default_property($t_filter_prop));
+
+		table_row(
+			array(
+				$p_text . ':',
+				'<div id="' . $p_id . '_filter_target">' . ($p_content != '' ? $p_content : filter_form_get_input($t_filter, $p_id, !$t_hide_input)) . '</div>'
+			),
+			'',
+			array(
+				'class="no-border bug-header" width="30%"',
+				'class="no-border dynamic-filter-expander" id="' . $p_id . '_filter" hide-input="' . $t_hide_input . '"'
+			)
+		);
+	};
+
+	/* print filter for builtin fields */
+	section_begin('Details');
+		table_begin(array(), 'table-condensed no-border');
+
+		if($t_view_type == FILTER_VIEW_TYPE_ADVANCED)
+			$func_table_row_filter('Project', 'project_id');
+
+		$func_table_row_filter('Issue Type', 'show_category');
+		$func_table_row_filter('Priority', 'show_priority');
+		$func_table_row_filter('Severity', 'show_severity');
+		$func_table_row_filter('Visibility', 'view_state');
+		$func_table_row_filter('Status', 'show_status');
+
+		if($t_view_type == FILTER_VIEW_TYPE_SIMPLE)
+			$func_table_row_filter('Hide Status', 'hide_status');
+
+		$func_table_row_filter('Resolution', 'show_resolution');
+		$func_table_row_filter('Links', 'relationship_type');
+
+		if(access_has_global_level(config_get('tag_view_threshold')))
+			$func_table_row_filter('Tags', 'tag_string');
+
+		table_end();
+	section_end();
+
+	section_begin('People');
+		table_begin(array(), 'table-condensed no-border');
+
+		$func_table_row_filter('Author', 'reporter_id');
+		$func_table_row_filter('Assignee', 'handler_id');
+		$func_table_row_filter('Monitored by', 'user_monitor');
+		$func_table_row_filter('Note from', 'note_user_id');
+
+		table_end();
+	section_end();
+
+	section_begin('Date and Time');
+		table_begin(array(), 'table-condensed no-border');
+
+		$func_table_row_filter('Date Submitted', 'do_filter_by_date');
+		$func_table_row_filter('Last Updated', 'do_filter_by_last_updated_date');
+
+		table_end();
+	section_end();
+
+	section_begin('Version Info');
+		table_begin(array(), 'table-condensed no-border');
+
+		if(config_get('enable_profiles') == ON)
+			$func_table_row_filter('Profile', 'show_profile');
+
+		$func_table_row_filter('Platform', 'platform');
+		$func_table_row_filter('OS', 'os');
+		$func_table_row_filter('OS Version', 'os_build');
+		$func_table_row_filter('Product Build', 'show_build');
+		$func_table_row_filter('Affected Version', 'show_version');
+		$func_table_row_filter('Target Version', 'show_target_version');
+		$func_table_row_filter('Fixed in Version', 'show_fixed_in_version');
+
+		table_end();
+	section_end();
+
+	/* print filter for custom fields */
+	$t_custom_fields = custom_field_get_linked_ids($t_project_id);
+	$t_accessible_custom_fields = array();
+
+	foreach($t_custom_fields as $t_cfid){
+		$t_cfdef = custom_field_get_definition($t_cfid);
+
+		if($t_cfdef['access_level_r'] <= current_user_get_access_level() && $t_cfdef['filter_by'])
+			$t_accessible_custom_fields[] = $t_cfdef;
+	}
+
+	if(config_get('filter_by_custom_fields') == ON && count($t_accessible_custom_fields) > 0){
+		section_begin('Custom Fields');
+			table_begin(array(), 'table-condensed no-border');
+
+			foreach($t_accessible_custom_fields as $t_cfdef){
+				ob_start();
+				print_filter_values_custom_field($t_filter, $t_cfdef['id']);
+				$t_content = ob_get_clean();
+
+				$func_table_row_filter(string_display_line($t_cfdef['name']), 'custom_field_' . $t_cfdef['id'], $t_content);
+			}
+
+			table_end();
+		section_end();
+	}
+
+	/* print filter for plugin fields */
+	$t_plugin_filters = filter_get_plugin_filters();
+
+	if(count($t_plugin_filters) > 0){
+		section_begin('Plugin Fields');
+			table_begin(array(), 'table-condensed no-border');
+
+			foreach($t_plugin_filters as $t_field_name => $t_filter_object){
+				ob_start();
+				print_filter_values_plugin_field($t_filter, $t_field_name, $t_filter_object);
+				$t_content = ob_get_clean();
+
+				$func_table_row_filter(string_display_line($t_filter_object->title), string_attribute($t_field_name), $t_content);
+			}
+
+			table_end();
+		section_end();
+	}
+}
 
 /**
  * Class that extends TableGridLayout and implements the specific HTML output needed for the

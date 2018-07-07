@@ -53,7 +53,7 @@ auth_ensure_user_authenticated();
 
 helper_begin_long_process();
 
-$f_action = gpc_get_string( 'action' );
+$f_action = gpc_get_string( 'bulk_action' );
 $f_bug_arr	= gpc_get_int_array( 'bug_arr', array() );
 
 $t_form_name = 'bug_actiongroup_' . $f_action;
@@ -108,10 +108,10 @@ if( count( $t_failed_ids ) > 0 ) {
 		printf( "<p>%s%s</p>\n", $t_label, $t_reason );
 	}
 
-	print_link_button( 'view_all_bug_page.php', lang_get( 'proceed' ) );
+	print_link_button( 'filter_page.php', lang_get( 'proceed' ) );
 	echo '</div>';
 
 	layout_page_end();
 } else {
-	print_header_redirect( 'view_all_bug_page.php' );
+	print_header_redirect( 'filter_page.php' );
 }

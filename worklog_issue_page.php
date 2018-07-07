@@ -53,21 +53,45 @@ require_api('worklog_api.php');
 
 
 ####
+## helper functions
+####
+function form_header($p_cmd, $p_bugnote_id, $p_worklog_id = 0, $p_from = '', $p_to = ''){
+	$t_r = '<form method="post" action="worklog_issue_page.php" class="form-inline input-hover-form">'
+		 . format_input_hidden('worklog_update_token', form_security_token('worklog_update'))
+		 . format_input_hidden('bugnote_id', $p_bugnote_id)
+		 . format_input_hidden('cmd', $p_cmd);
+
+	if($p_worklog_id != 0)
+		$t_r .= format_input_hidden('worklog_id', $p_worklog_id);
+
+	if($p_from != '')
+		$t_r .= format_input_hidden('date_from', $p_from);
+
+	if($p_to != '')
+		$t_r .= format_input_hidden('date_to', $p_to);
+
+	return $t_r;
+}
+
+
+####
 ## input
 ####
 
 # config variables
-$t_normal_date_format = config_get('normal_date_format');
+$t_date_format = config_get('normal_date_format');
 
 # form inputs
 $f_bugnote_id = gpc_get_int('bugnote_id', 0);
-$f_date_from = gpc_get_string(FILTER_PROPERTY_START_DATE_SUBMITTED, '');
-$f_date_to = gpc_get_string(FILTER_PROPERTY_END_DATE_SUBMITTED, '');
+$f_date_from = gpc_get_string('date_from', '');
+$f_date_to = gpc_get_string('date_to', '');
 
 
 ####
 ## access validation
 #####
+
+json_prepare();
 
 # get bug note
 $t_bug_id = bugnote_get_field($f_bugnote_id, 'bug_id');
@@ -80,10 +104,8 @@ if($t_bug->project_id != helper_get_current_project()) {
 }
 
 # Check if the bug is readonly
-if(bug_is_readonly($t_bug_id)) {
-	error_parameters($t_bug_id);
-	trigger_error(ERROR_BUG_READ_ONLY_ACTION_DENIED, ERROR);
-}
+if(bug_is_readonly($t_bug_id))
+	json_error('Access denied to readonly issue');
 
 # Check if the current user is allowed to change the view state of this bugnote
 $t_user_id = bugnote_get_field($f_bugnote_id, 'reporter_id');
@@ -97,118 +119,138 @@ if($t_user_id == auth_get_current_user_id()) {
 
 
 ####
+## handle worklog update
+####
+
+# XXX including worklog_update.php rather than using it as the form action is required
+#	  in order to be able to display this page and its updates as inline page
+include('worklog_update.php');
+
+
+####
 ## main form
 ####
 
-$c_from = 0;
-$c_to = 0;
+$t_from = 0;
+$t_to = time();
 
 if($f_date_from != '')
-	$c_from = strtotime( $f_date_from );
+	$t_from = strtotime($f_date_from);
 
 if($f_date_to != '')
-	$c_to = strtotime( $f_date_to ) + SECONDS_PER_DAY - 1;
+	$t_to = strtotime($f_date_to) + SECONDS_PER_DAY - 1;
 
-$t_work_log = worklog_get($f_bugnote_id, $c_from, $c_to);
+$t_work_log = worklog_get($f_bugnote_id, $t_from, $t_to);
 
-layout_page_header(bug_format_summary($t_bug_id, SUMMARY_CAPTION));
-layout_page_begin();
+# get earliest and latest worklog date
+$t_from = time();
+$t_to = 0;
 
-?>
+foreach($t_work_log as $t_entry){
+	if($t_entry->date < $t_from)
+		$t_from = $t_entry->date;
 
-<div class="col-md-6-left col-xs-12">
-<div class="widget-box widget-color-blue2">
-	<!-- header -->
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<i class="ace-icon fa fa-history"></i>
-			<?php echo lang_get('view_worklog') . ' ' . lang_get('for') . ' ' . lang_get('bugnote') . ': ' . $f_bugnote_id ?>
-		</h4>
-	</div>
+	if($t_entry->date > $t_to)
+		$t_to = $t_entry->date;
+}
 
-	<!-- body -->
-	<div class="widget-body">
-		<!-- toolbar -->
-		<div class="widget-toolbox">
-			<div class="btn-toolbar">
-				<form method="post" action="">
-					<input type="hidden" name="id" value="<?php echo isset( $f_bug_id ) ? $f_bug_id : 0 ?>" />
-					<?php
-						$t_filter = array();
-						$t_filter[FILTER_PROPERTY_FILTER_BY_DATE_SUBMITTED] = 'on';
-						$t_filter[FILTER_PROPERTY_START_DATE_SUBMITTED] = $f_date_from;
-						$t_filter[FILTER_PROPERTY_END_DATE_SUBMITTED] = $f_date_to;
-						filter_init( $t_filter );
-						print_filter_do_filter_by_date();
-					?>
+if($f_date_from == ''){
+	if($t_from != time())	$f_date_from = date(config_get('short_date_format'), $t_from);
+	else					$f_date_from = date(config_get('short_date_format'), 0);
+}
 
-					<!-- back to issue button -->
-					<?php print_link_button('view.php?id=' . $t_bug_id, lang_get('back_to_issue'), 'pull-right'); ?>
+if($f_date_to == ''){
+	if($t_to != 0)	$f_date_to = date(config_get('short_date_format'), $t_to);
+	else			$f_date_to = date(config_get('short_date_format'));
+}
 
-					<!-- get work log button -->
-					<input name="get_bugnote_stats_button" class="btn btn-primary btn-xs btn-white btn-round pull-right "
-						   value="<?php echo lang_get( 'time_tracking_get_info_button' ) ?>" type="submit">
-				</form>
 
-			</div>
-		</div>
+layout_inline_page_begin();
+page_title('Note Worklog Summary');
 
-		<!-- list of worklog entries -->
-		<div class="widget-main no-padding">
-			<div class="table-responsive">
-				<table class="table table-bordered table-condensed">
 
-				<?php
-					$t_total = 0;
+report_warning('Invalid command \'' . 'pp' . '\'', false);
 
-				foreach ($t_work_log as $t_entry){
-					$t_worklog_id = $t_entry->id;
-					$t_date = date($t_normal_date_format, $t_entry->date);
-					$t_user = prepare_user_name($t_entry->user_id);
-					$t_time = db_minutes_to_hhmm($t_entry->time);
+actionbar_begin();
+	echo '<div class="pull-left">';
+	
+	# log work
+	echo form_header('add', $f_bugnote_id);
+	echo '<span id="log_work_div">';
+	text('time_tracking_' . $t_id, 'time_tracking_0', '', 'hh:mm', 'input-xs', '','size=6');
+	hspace('2px');
+	button('Log Work', 'log_work_div-action-0', 'submit', '', '');
+	echo '</span>';
+	echo '</form>';
+	echo '</div>';
 
-					$t_total += $t_entry->time;
-				?>
-					<tr>
-						<!-- info column -->
-						<th class="category" width="10%"><?php echo $t_date . ' ' . lang_get('by') . ' ' . $t_user ?></th>
+	echo '<div class="pull-right">';
 
-						<!-- update column -->
-						<td width="10%">
-							<form id="worklog" method="post" action="worklog_update.php">
-								<input type="hidden" name="bugnote_id" value="<?php echo $f_bugnote_id ?>"/>
-								<input type="hidden" name="worklog_id" value="<?php echo $t_worklog_id ?>"/>
-								<input type="text" name="time_tracking" class="input-xs pull-left" size="5" value="<?php echo $t_time ?>" />
-								<input type="hidden" name="action" value="update"/>
+	# period select
+	echo form_header('undefined', $f_bugnote_id);
+	echo format_label('From: ') . format_hspace('2px');
+	echo format_date('date_from', 'date_from', $f_date_from, '7em', true);
+	echo format_hspace('5px');
+	echo format_label('To: ') . format_hspace('2px');
+	echo format_date('date_to', 'date_to', $f_date_to, '7em', true);
+	echo format_hspace('5px');
+	button('Apply', 'get_bugnote_stats_button','submit');
+	echo '</form>';
 
-								<input type="submit" class="btn btn-primary btn-xs btn-white btn-round" value="<?php echo lang_get('update') ?>" />
-							</form>
-						</td>
+	# show all
+	echo form_header('undefined', $f_bugnote_id);
+	button('Reset', 'get_bugnote_stats_button','submit');
+	echo '</form>';
+	echo '</div>';
+actionbar_end();
 
-						<!-- delete column -->
-						<td width="5%">
-							<?php print_link_button('worklog_update.php?bugnote_id=' . $f_bugnote_id . '&action=delete&worklog_id=' . $t_worklog_id, lang_get('delete_link'));	?>
-						</td>
-					</tr>
-				<?php
-				} ?>
+table_begin(array(), 'table-condensed no-border');
+	$t_total = 0;
 
-					<!-- worklog total -->
-					<tr class="spacer"><td colspan=6></td></tr>
-					<tr>
-						<th class="category"> <?php echo lang_get('total_time_for_issue') ?></th>
-						<td><?php echo db_minutes_to_hhmm($t_total) ?></td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
-</div>
-</div>
+	foreach ($t_work_log as $t_entry){
+		$t_worklog_id = $t_entry->id;
+		$t_date = date($t_date_format, $t_entry->date);
+		$t_user = prepare_user_name($t_entry->user_id);
+		$t_time = db_minutes_to_hhmm($t_entry->time);
 
-<?php
+		$t_total += $t_entry->time;
+
+		table_row(
+			array(
+				# delete button
+				form_header('delete', $f_bugnote_id, $t_worklog_id, $f_date_from, $f_date_to)
+				. format_button('<i class="fa fa-trash red"></i>', 'delete_' . $t_worklog_id, 'submit', '', 'btn-icon', true)
+				. '</form>',
+
+				# user name
+				$t_user,
+
+				# date
+				form_header('update', $f_bugnote_id, $t_worklog_id, $f_date_from, $f_date_to)
+				. format_input_hidden('time_tracking_' . $t_worklog_id, $t_time)
+				. format_input_hover_date('date_' . $t_worklog_id, $t_date)
+				. '</form>',
+
+				# time spent
+				form_header('update', $f_bugnote_id, $t_worklog_id, $f_date_from, $f_date_to)
+				. format_input_hover_text('time_tracking_' . $t_worklog_id, $t_time)
+				. '</form>'
+			),
+			'',
+			array(
+				'',
+				'',
+				'width="30%"',
+				'width="60%"'
+			)
+		);
+	}
+table_end();
+
+echo '<div class="time-tracking-total pull-right">' . format_icon('fa-clock-o', 'red') . 'Time Spent During Period: ' . db_minutes_to_hhmm($t_total) . '</div>';
+
 
 # free worklog data
 unset($t_work_log);
 
-layout_page_end();
+layout_inline_page_end();

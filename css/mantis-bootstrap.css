@@ -1,0 +1,63 @@
+/* remove border from timeline events */
+.profile-activity {
+	border-bottom: 0px;
+}
+
+.nav-tabs{
+	overflow-x: hidden;
+	overflow-y: hidden;
+	display: -webkit-box;
+	display: -moz-box;
+}
+
+.nav-tabs>li{
+	float: none;
+}
+
+/* center div for data tables */
+div.table-center {
+	margin: 0 auto;
+	width: 100px;
+}
+
+input{
+	font-size: 12px !important;
+}
+
+.page-content{
+	padding-top: 0 !important;
+}
+
+.form-inline{
+	display: inline-block;
+}
+
+.input-xxs{
+	font-size: 11px !important;
+    width: auto !important;
+    vertical-align: middle !important;
+	padding: 0px 1px !important;
+}
+
+.btn-xxs{
+	font-size: 11px !important;
+    width: auto !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+	padding: 0px 2px !important;
+	border: 0 !important;
+}
+
+input[type=checkbox].ace{
+	opacity: 1 !important;
+	margin: 0 !important;
+	position: static;
+}
+
+.progress{
+	margin-bottom: 0;
+}
+
+.label-round{
+	border-radius: 6px;
+}

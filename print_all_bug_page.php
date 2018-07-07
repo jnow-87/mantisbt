@@ -78,7 +78,7 @@ if( is_blank( $t_cookie_value ) ) {
 } else {
 	# check to see if new cookie is needed
 	if( !filter_is_cookie_valid() ) {
-		print_header_redirect( 'view_all_set.php?type=0&print=1' );
+		print_header_redirect( 'filter_apply.php?type=0&print=1' );
 	}
 	$t_setting_arr = explode( '#', $t_cookie_value, 2 );
 	$t_filter_cookie_arr = json_decode( $t_setting_arr[1], true );
@@ -113,7 +113,7 @@ layout_page_header();
 	</div>
 </td></tr></table>
 
-<form method="post" action="view_all_set.php">
+<form method="post" action="filter_apply.php">
 <?php # CSRF protection not required here - form does not result in modifications ?>
 	<input type="hidden" name="type" value="1" />
 	<input type="hidden" name="print" value="1" />

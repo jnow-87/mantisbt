@@ -48,7 +48,7 @@ $f_news_id = gpc_get_int( 'news_id', null );
 
 layout_page_header();
 
-layout_page_begin( 'main_page.php' );
+layout_page_begin();
 ?>
 <div class="col-md-6-left col-xs-12">
 <?php

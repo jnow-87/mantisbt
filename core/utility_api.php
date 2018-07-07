@@ -167,7 +167,7 @@ function multi_sort( array $p_array, $p_key, $p_direction = ASCENDING ) {
 		trigger_error( ERROR_GENERIC, ERROR );
 	}
 
-	# Security measure: see http://www.mantisbt.org/bugs/view.php?id=9704 for details
+	# Security measure: see http://www.mantisbt.org/bugs/bug_page.php?id=9704 for details
 	if( array_key_exists( $p_key, current( $p_array ) ) ) {
 		uasort(
 			$p_array,

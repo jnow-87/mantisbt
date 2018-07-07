@@ -1251,7 +1251,7 @@ $s_timeline_issue_unassigned = '<span class="username">%1$s</span> hob die Zuord
 $s_timeline_no_activity = 'Keine Aktivität innerhalb des Zeitbereichs.';
 $s_timeline_title = 'Zeitleiste';
 $s_timeline_more = 'Weitere Ereignisse …';
-$s_missing_error_string = 'Fehlende Fehlerzeichenfolge: %1$s';
+$s_missing_error_string = '';
 $MANTIS_ERROR[ERROR_INVALID_MISSING_INPUT] = 'Ungültige oder fehlerhafe Eingabe \'%s\'';
 $MANTIS_ERROR[ERROR_GENERIC] = 'Ein Fehler ist während dieser Aktion aufgetreten. Sie können dies dem Ihnen zugeordneten Administrator mitteilen.';
 $MANTIS_ERROR[ERROR_SQL] = 'SQL-Fehler entdeckt.';

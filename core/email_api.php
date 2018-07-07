@@ -1907,3 +1907,19 @@ function email_get_actions() {
 	return $t_actions;
 }
 
+/**
+ *	return a list of events to receive mails on
+ */
+function email_events(){
+	return array(
+		'new',
+		'assigned',
+		'feedback',
+		'resolved',
+		'closed',
+		'reopened',
+		'bugnote',
+		'status',
+		'priority',
+	);
+}

@@ -88,7 +88,7 @@ $v_body 	= string_textarea( $v_body );
 
 layout_page_header( lang_get( 'edit_news_title' ) );
 
-layout_page_begin( 'main_page.php' );
+layout_page_begin();
 
 # Edit News Form BEGIN
 ?>

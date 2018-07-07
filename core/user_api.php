@@ -890,6 +890,20 @@ function user_get_row( $p_user_id ) {
 }
 
 /**
+ * return an empty user array
+ */
+function user_get_row_empty(){
+	return array(
+		'username' => '',
+		'realname' => '',
+		'email' => '',
+		'enabled' => false,
+		'protected' => false,
+		'access_level' => '',
+	);
+}
+
+/**
  * return the specified user field for the user id
  *
  * @param integer $p_user_id    A valid user identifier.
@@ -964,10 +978,13 @@ function user_get_realname( $p_user_id ) {
  * @return string
  */
 function user_get_name( $p_user_id ) {
+	if($p_user_id == 0)
+		return '[unassigned]';
+
 	$t_row = user_cache_row( $p_user_id, false );
 
 	if( false == $t_row ) {
-		return lang_get( 'prefix_for_deleted_users' ) . (int)$p_user_id;
+		return '[deleted user (' . (int)$p_user_id . ')]';
 	} else {
 		if( ON == config_get( 'show_realname' ) ) {
 			if( is_blank( $t_row['realname'] ) ) {
@@ -1215,10 +1232,11 @@ function user_get_all_accessible_projects( $p_user_id = null, $p_project_id = AL
 /**
  * Get a list of projects the specified user is assigned to.
  * @param integer $p_user_id A valid user identifier.
+ * @param boolean $p_ids_only return array of project ids instead of project data
  * @return array An array of projects by project id the specified user is assigned to.
  *		The array contains the id, name, view state, and project access level for the user.
  */
-function user_get_assigned_projects( $p_user_id ) {
+function user_get_assigned_projects( $p_user_id,  $p_ids_only = false ) {
 	db_param_push();
 	$t_query = 'SELECT DISTINCT p.id, p.name, p.view_state, u.access_level
 				FROM {project} p
@@ -1230,9 +1248,33 @@ function user_get_assigned_projects( $p_user_id ) {
 	$t_result = db_query( $t_query, array( $p_user_id ) );
 	$t_projects = array();
 	while( $t_row = db_fetch_array( $t_result ) ) {
-		$t_project_id = $t_row['id'];
-		$t_projects[$t_project_id] = $t_row;
+		if(!$p_ids_only)
+			$t_projects[$t_row['id']] = $t_row;
+		else
+			$t_projects[] = $t_row['id'];
 	}
+	return $t_projects;
+}
+
+function user_get_unassigned_projects($p_user_id, $p_ids_only = false){
+	db_param_push();
+	$t_query = 'SELECT DISTINCT p.id, p.name
+				FROM {project} p
+				LEFT JOIN {project_user_list} u
+				ON p.id=u.project_id AND u.user_id=' . db_param() . '
+				WHERE p.enabled = ' . db_param() . ' AND
+					u.user_id IS NULL
+				ORDER BY p.name';
+	$t_result = db_query( $t_query, array( (int)$p_user_id, true ) );
+	$t_projects = array();
+
+	while( $t_row = db_fetch_array( $t_result ) ) {
+		if(!$p_ids_only)
+			$t_projects[$t_row['id']] = $t_row;
+		else
+			$t_projects[] = $t_row['id'];
+	}
+
 	return $t_projects;
 }
 
@@ -1720,4 +1762,44 @@ function user_reset_password( $p_user_id, $p_send_email = true ) {
 	}
 
 	return true;
+}
+
+/**
+ *	get list of users
+ *
+ *	@param	string	$p_project_id	project to get versions for
+ *	@param	string	$p_reporter_id	user id that shall be used as author
+ *	@param	boolean	$p_meta_user	if true meta users such as 'author' are added
+ *									to the list. if false only existing users are
+ *									added to the list
+ *
+ *	@return	array of user names
+ */
+function user_list($p_project_id, $p_reporter_id = '', $p_meta_user = false){
+	$t_users = project_get_all_user_rows($p_project_id);
+	$t_user_names = array();
+
+	if($p_meta_user){
+		$t_user_names['[author]'] = $p_reporter_id;
+		$t_user_names['[me]'] = auth_get_current_user_id();
+		$t_user_names['[unassigned]'] = 0;
+	}
+	else
+		$t_user_names[''] = 0;
+
+	foreach($t_users as $t_id => $t_user)
+		$t_user_names[$t_user['username']] = $t_id;
+
+	ksort($t_user_names);
+
+	return $t_user_names;
+}
+
+function user_format_name($p_user_id){
+	$t_name = user_get_name($p_user_id);
+
+	if($p_user_id == 0 || !user_exists($p_user_id))
+		return $t_name;
+
+	return format_link($t_name, 'user_page.php', array('id' => $p_user_id));
 }

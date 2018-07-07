@@ -29,7 +29,7 @@ plugin_require_api( 'core/graph_api.php' );
 access_ensure_project_level( config_get( 'view_summary_threshold' ) );
 
 layout_page_header();
-layout_page_begin( 'summary_page.php' );
+layout_page_begin();
 
 print_summary_menu( 'summary_page.php' );
 print_summary_submenu();

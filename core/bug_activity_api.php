@@ -124,8 +124,6 @@ function bug_activity_get_all( $p_bug_id, $p_include_attachments = true ) {
 
 		if( TIME_TRACKING == $t_activity['note']->note_type ) {
 			$t_activity['style'] .= ' bugnote-time-tracking';
-		} else if( REMINDER == $t_activity['note']->note_type ) {
-			$t_activity['style'] .= ' bugnote-reminder';
 		}
 
 		if( $t_bug_readonly ) {

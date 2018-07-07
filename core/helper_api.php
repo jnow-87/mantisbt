@@ -705,3 +705,149 @@ function helper_filter_by_prefix( array $p_set, $p_prefix ) {
 	return $t_matches;
 }
 
+/**
+ *	get list of priorities
+ *
+ *	@return	array of priority names
+ */
+function priority_list(){
+	$t_prios = MantisEnum::getValues(config_get('priority_enum_string'));
+	$t_prio_names = array();
+
+	foreach($t_prios as $t_id)
+		$t_prio_names[get_enum_element('priority', $t_id)] = $t_id;
+
+	return $t_prio_names;
+}
+
+/**
+ *	get list of severities
+ *
+ *	@return	array of severity names
+ */
+function severity_list(){
+	$t_severities = MantisEnum::getValues(config_get('severity_enum_string'));
+	$t_severity_names = array();
+
+	foreach($t_severities as $t_id)
+		$t_severity_names[get_enum_element('severity', $t_id)] = $t_id;
+
+	return $t_severity_names;
+}
+
+/**
+ *	get list of view states
+ *
+ *	@return	array of view state names
+ */
+function view_status_list(){
+	$t_view_states = MantisEnum::getValues(config_get('view_state_enum_string'));
+	$t_view_state_names = array();
+
+	foreach($t_view_states as $t_id)
+		$t_view_state_names[get_enum_element('view_state', $t_id)] = $t_id;
+
+	return $t_view_state_names;
+}
+
+/**
+ *	get list of resolutions
+ *
+ *	@return	array of resolution names
+ */
+function resolution_list(){
+	$t_resolutions = MantisEnum::getValues(config_get('resolution_enum_string'));
+	$t_resolution_names = array();
+
+	foreach($t_resolutions as $t_id)
+		$t_resolution_names[get_enum_element('resolution', $t_id)] = $t_id;
+
+	return $t_resolution_names;
+}
+
+/**
+ *	get list of states
+ *
+ *	@return	array of state names
+ */
+function status_list(){
+	$t_states = MantisEnum::getValues(config_get('status_enum_string'));
+	$t_state_names = array();
+
+	foreach($t_states as $t_id)
+		$t_state_names[get_enum_element('status', $t_id)] = $t_id;
+
+	return $t_state_names;
+}
+
+/**
+ *	get list of project states
+ *
+ *	@return	array of project state names
+ */
+function project_status_list(){
+	$t_states = MantisEnum::getValues(config_get('project_status_enum_string'));
+	$t_state_names = array();
+
+	foreach($t_states as $t_id)
+		$t_state_names[get_enum_element('project_status', $t_id)] = $t_id;
+
+	return $t_state_names;
+}
+
+/**
+ *	get list of states
+ *
+ *	@return	array of state names
+ */
+function access_level_list(){
+	$t_lvls = MantisEnum::getValues(config_get('access_levels_enum_string'));
+	$t_lvl_names = array();
+
+	foreach($t_lvls as $t_id)
+		$t_lvl_names[get_enum_element('access_levels', $t_id)] = $t_id;
+
+	return $t_lvl_names;
+}
+
+/**
+ *	get list of plugin priorities
+ *
+ *	@return array of priorities
+ */
+function plugin_priority_list(){
+	$t_prios = array();
+
+	for($i = 5; $i>=1; $i--)
+		$t_prios[$i] = $i;
+
+	return $t_prios;
+}
+
+/**
+ *	get list of custom field types
+ *
+ *	@return	array of type names
+ */
+function custom_field_type_list(){
+	$t_types = MantisEnum::getValues(config_get('custom_field_type_enum_string'));
+	$t_type_names = array();
+
+	foreach($t_types as $t_id)
+		$t_type_names[get_enum_element('custom_field_type', $t_id)] = $t_id;
+
+	return $t_type_names;
+}
+
+/**
+ *	map ordering string to a name
+ *
+ *	@param	string	$p_order	either 'ASC' or 'DESC'
+ *
+ *	@param	name based on $p_order
+ */
+function helper_ordering_name($p_order){
+	if($p_order === 'ASC')			return 'Ascending';
+	else if($p_order === 'DESC')	return 'Descending';
+	else							return 'Invalid';
+}

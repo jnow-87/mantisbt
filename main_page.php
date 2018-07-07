@@ -69,19 +69,19 @@ layout_page_header( lang_get( 'main_link' ) );
 
 layout_page_begin();
 
-echo '<div class="col-md-6-left col-xs-12">';
+column_begin('6-left');
 
 if( !current_user_is_anonymous() ) {
 	$t_current_user_id = auth_get_current_user_id();
 	$t_hide_status = config_get( 'bug_resolved_status_threshold' );
 	echo '<span class="bigger-120">';
 	echo lang_get( 'open_and_assigned_to_me_label' ) . lang_get( 'word_separator' );
-	print_link( "view_all_set.php?type=1&handler_id=$t_current_user_id&hide_status=$t_hide_status", current_user_get_assigned_open_bug_count() );
+	print_link( "filter_apply.php?type=1&handler_id=$t_current_user_id&hide_status=$t_hide_status", current_user_get_assigned_open_bug_count() );
 
 	echo '<br />';
 
 	echo lang_get( 'open_and_reported_to_me_label' ) . lang_get( 'word_separator' );
-	print_link( "view_all_set.php?type=1&reporter_id=$t_current_user_id&hide_status=$t_hide_status", current_user_get_reported_open_bug_count() );
+	print_link( "filter_apply.php?type=1&reporter_id=$t_current_user_id&hide_status=$t_hide_status", current_user_get_reported_open_bug_count() );
 
 	echo '<br />';
 
@@ -90,8 +90,9 @@ if( !current_user_is_anonymous() ) {
 	echo '</span>';
 }
 
-echo '</div>';
-echo '<div class="col-md-6-left col-xs-12">';
+column_end();
+
+column_begin('6-left');
 
 if( news_is_enabled() && access_has_project_level( config_get( 'manage_news_threshold' ) ) ) {
 	# Admin can edit news for All Projects (site-wide)
@@ -101,9 +102,9 @@ if( news_is_enabled() && access_has_project_level( config_get( 'manage_news_thre
 		print_link_button( 'login_select_proj_page.php', lang_get( 'edit_news_link' ), 'pull-right');
 	}
 }
-echo '</div>';
+column_end();
 
-echo '<div class="col-md-6-left col-xs-12">';
+column_begin('6-left');
 
 if( news_is_enabled() ) {
 	$t_news_rows = news_get_limited_rows( $f_offset, $t_project_id );
@@ -148,5 +149,6 @@ if( news_is_enabled() ) {
 
 	echo '</div>';
 }
-echo '</div>';
+
+column_end();
 layout_page_end();

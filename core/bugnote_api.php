@@ -61,6 +61,12 @@ require_api( 'mention_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'worklog_api.php' );
+require_api('form_api.php');
+require_api('bug_activity_api.php');
+require_api('prepare_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
+
 
 # Cache of bugnotes arrays related to a bug, indexed by bug_id.
 # Each item is an array of BugnoteData objects
@@ -234,21 +240,24 @@ function bugnote_add( $p_bug_id, $p_bugnote_text, $p_time_tracking = '0:00', $p_
 
 	antispam_check();
 
-	if( REMINDER !== $p_type ) {
-		# Check if this is a time-tracking note
-		$t_time_tracking_enabled = config_get( 'time_tracking_enabled' );
-		if( ON == $t_time_tracking_enabled && $c_time_tracking > 0 ) {
-			$t_time_tracking_without_note = config_get( 'time_tracking_without_note' );
-			if( is_blank( $p_bugnote_text ) && OFF == $t_time_tracking_without_note ) {
-				error_parameters( lang_get( 'bugnote' ) );
-				trigger_error( ERROR_EMPTY_FIELD, ERROR );
-			}
-			$c_type = TIME_TRACKING;
-		} else if( is_blank( $p_bugnote_text ) ) {
-			# This is not time tracking (i.e. it's a normal bugnote)
-			# @todo should we not trigger an error in this case ?
-			return false;
+	if($p_type == REMINDER){
+		error_parameters('bugnote type REMINDER no longer supported');
+		trigger_error(ERROR_INVALID_MISSING_INPUT, ERROR);
+	}
+
+	# Check if this is a time-tracking note
+	$t_time_tracking_enabled = config_get( 'time_tracking_enabled' );
+	if( ON == $t_time_tracking_enabled && $c_time_tracking > 0 ) {
+		$t_time_tracking_without_note = config_get( 'time_tracking_without_note' );
+		if( is_blank( $p_bugnote_text ) && OFF == $t_time_tracking_without_note ) {
+			error_parameters( lang_get( 'bugnote' ) );
+			trigger_error( ERROR_EMPTY_FIELD, ERROR );
 		}
+		$c_type = TIME_TRACKING;
+	} else if( is_blank( $p_bugnote_text ) ) {
+		# This is not time tracking (i.e. it's a normal bugnote)
+		# @todo should we not trigger an error in this case ?
+		return false;
 	}
 
 	# Event integration
@@ -300,7 +309,8 @@ function bugnote_add( $p_bug_id, $p_bugnote_text, $p_time_tracking = '0:00', $p_
 	}
 
 	# create worklog entry
-	worklog_add($t_bugnote_id, $p_time_tracking);
+	if($c_time_tracking > 0)
+		worklog_add($t_bugnote_id, $p_time_tracking);
 
 	# log new bug
 	if( true == $p_log_history ) {
@@ -564,7 +574,7 @@ function bugnote_row_to_object( array $p_row ) {
 	$t_bugnote->note_attr = $p_row['note_attr'];
 	$t_bugnote->time_tracking = (int)$p_row['time_tracking'];
 
-	$t_bugnote->time_tracking = worklog_get_time($t_bugnote->id);
+	$t_bugnote->time_tracking = worklog_get_time_bugnote($t_bugnote->id);
 
 	# Handle old bugnotes before setting type to time tracking
 	if ( $t_bugnote->time_tracking != 0 ) {
@@ -831,4 +841,235 @@ function bugnote_clear_bug_cache( $p_bug_id = null ) {
 	}
 
 	return true;
+}
+
+
+function bugnote_view($p_bug_id){
+	#precache access levels
+	access_cache_matrix_project(helper_get_current_project());
+
+	$t_show_time_tracking = access_has_bug_level(config_get('time_tracking_view_threshold'), $p_bug_id);
+
+	# get attachments data
+	if(!isset($t_fields)){
+		$t_fields = config_get('bug_fields_show')['view'];
+		$t_fields = columns_filter_disabled($t_fields);
+	}
+
+	$t_show_attachments = in_array('attachments', $t_fields);
+
+	$t_result = bug_activity_get_all($p_bug_id, /* include_attachments */ $t_show_attachments);
+	$t_activities = $t_result['activities'];
+	$t_bugnotes = $t_result['bugnotes'];
+
+	# Pre-cache users
+	$t_users_to_cache = array();
+
+	foreach($t_activities as $t_activity)
+		$t_users_to_cache[$t_activity['user_id']] = true;
+
+	user_cache_array_rows(array_keys($t_users_to_cache));
+
+	$t_normal_date_format = config_get('normal_date_format');
+	$t_security_token_attachments_delete = form_security_token('bug_file_delete');
+
+	# clear security token
+	form_security_purge('bugnote_update');
+	form_security_purge('bugnote_set_view_state');
+
+	table_begin(array(), 'table-bordered');
+		if(count($t_activities) == 0) 
+			table_row(array('There are no notes attached to this issue', ''), '', array('class="center" colspan=2'));
+
+		event_signal('EVENT_VIEW_BUGNOTES_START', array($p_bug_id, $t_bugnotes));
+
+		$t_total_time = 0;
+
+		foreach($t_activities as $t_activity){
+			$t_id = $t_activity['id'];
+			$t_can_edit = $t_activity['can_edit'];
+			$t_rev_count = bug_revision_count($p_bug_id, REV_BUGNOTE, $t_id);
+			$t_private = $t_activity['private'];
+
+			if($t_activity['type'] == ENTRY_TYPE_NOTE && $t_activity['note']->time_tracking != 0){
+				$t_time_tracking_hhmm = db_minutes_to_hhmm($t_activity['note']->time_tracking);
+				$t_total_time += $t_activity['note']->time_tracking;
+			}
+			else
+				$t_time_tracking_hhmm = '';
+
+			$t_user = format_icon('fa-user', 'grey') . prepare_user_name($t_activity['user_id']);
+			$t_date = format_icon('fa-clock-o', 'grey') . 'Created: ' . date($t_normal_date_format, $t_activity['timestamp']);
+
+			if($t_activity['type'] == ENTRY_TYPE_NOTE)
+				$t_note_link = format_icon('fa-link', 'grey') . format_link(htmlentities(config_get_global('bugnote_link_tag')) . $t_activity['id_formatted'], string_get_bugnote_view_url($t_activity['note']->bug_id, $t_activity['note']->id));
+
+			$t_last_update = '';
+
+			if($t_activity['modified'])
+				$t_last_update = format_icon('fa-retweet', 'grey') . 'Last Updated: ' . date($t_normal_date_format, $t_activity['last_modified']);
+
+			$t_time_spent = '';
+
+			if($t_time_tracking_hhmm != '')
+				$t_time_spent = format_label('Time Spent:') . format_hspace('5px') . $t_time_tracking_hhmm;
+
+			$t_delete_btn = '';
+			if($t_activity['can_delete']){
+				if($t_activity['type'] == ENTRY_TYPE_NOTE)
+					$t_delete_btn = format_icon_confirm('fa-trash', 'Delete', 'bn-delete', format_href('bugnote_delete.php', array('bugnote_id' => $t_id, 'bugnote_delete_token' => form_security_token('bugnote_delete'))), 'Delete bug note?', 'danger', 'red', false);
+				else if($t_activity['can_delete'])
+					$t_delete_btn = format_icon_confirm('fa-trash', 'Delete', 'bn-delete', format_href('bug_file_delete.php', array('file_id' => $t_id, 'bug_file_delete_token' => $t_security_token_attachments_delete)), 'Delete attachment?', 'danger', 'red', false);
+			}
+
+			echo '<tr id="c' . $t_id . '">';
+				echo '<td class="category" width="15%">';
+					// bugnote details
+					table_begin(array(), 'no-border no-padding table-condensed transparent');
+					table_row(
+						array(
+							  (isset($t_note_link) ? $t_note_link . format_hspace('10px') : '')
+							. $t_user . format_hspace('10px')
+							. ($t_private ? format_icon('fa-eye-slash', 'red') : format_icon('fa-eye', 'grey'))
+							. format_link(($t_private ? 'private' : 'public'), 'bugnote_set_view_state.php', array('private' => ($t_private ? '0' : '1'), 'bugnote_id' => $t_id, 'bugnote_set_view_state_token' => form_security_token('bugnote_set_view_state')))
+							. '<div class="pull-right">' . $t_delete_btn . '</div>'
+						),
+						'',
+						array('class="no-margin lighter small" colspan="2"', 'class="pull-right"')
+					);
+					echo '<tr class="spacer"></tr>';
+
+					// time and revision
+					table_row(array($t_date), '', array('colspan="2" class="no-margin lighter small"'));
+					table_row(array($t_last_update), '', array('colspan="2" class="no-margin lighter small"'));
+
+					if($t_rev_count > 0)
+						table_row(array('', format_link('View Revisions', 'bug_revision_view_page.php', array('bugnote_id' => $t_id), 'inline-page-link', '', 'inline-page-reload')), '', array('', 'class="no-margin lighter small pull-right"'));
+
+					echo '<tr class="spacer"></tr>';
+
+					// worklog
+					table_row(array($t_time_spent, format_link('View Work Log', 'worklog_issue_page.php', array('bugnote_id' => $t_id, 'worklog_update_token' => form_security_token('worklog_update')), 'inline-page-link', '', 'inline-page-reload')), '', array('class="no-margin lighter small"', 'class="no-margin lighter small pull-right"'));
+					table_row(
+						array(
+							'', 
+							'<form action="worklog_update.php" method="post" class="input-hover-form input-hover-form-reload">'
+							. format_input_hidden('bugnote_id', $t_id)
+							. format_input_hidden('cmd', 'add')
+							. format_input_hidden('resp_type', RESP_JSON)
+							. format_input_hidden('worklog_update_token', form_security_token('worklog_update'))
+							. '<span id="log_work_div">'
+							. format_text('time_tracking_' . $t_id, 'time_tracking_0', '', 'hh:mm', 'input-xxs', '','size=5')
+							. format_hspace('2px')
+							. format_button('Log Work', 'log_work_div-action-0', 'submit', '', 'btn-xxs')
+							. '</span>'
+							. '</form>'
+						),
+						'',
+						array('', 'class="no-margin lighter small pull-right"')
+					);
+					table_end();
+				echo '</td>';
+
+				echo '<td class="' . $t_activity['style'] .'">';
+					if($t_activity['type'] == ENTRY_TYPE_NOTE){
+						echo '<form action="bugnote_update.php" method="post" class="input-hover-form">';
+							input_hidden('bugnote_id', $t_id);
+							echo form_security_field('bugnote_update');
+
+							input_hover_textarea('bugnote_text_' . $t_id, $t_activity['note']->note, '100%', '100px');
+						echo '</form>';
+					}
+					else
+						print_bug_attachment($t_activity['attachment'], $t_security_token_attachments_delete);
+
+					if(isset($t_activity['attachments']) && count($t_activity['attachments']) > 0){
+						foreach($t_activity['attachments'] as $t_attachment)
+							print_bug_attachment($t_attachment, $t_security_token_attachments_delete);
+					}
+				echo '</td>';
+			echo '</tr>';
+
+			if($t_activity['type'] == ENTRY_TYPE_NOTE)
+				event_signal('EVENT_VIEW_BUGNOTE', array($p_bug_id, $t_id, $t_activity['private']));
+		}
+
+		event_signal('EVENT_VIEW_BUGNOTES_END', $p_bug_id);
+	table_end();
+
+	if($t_total_time > 0 && $t_show_time_tracking)
+		echo '<div class="time-tracking-total pull-right">' . format_icon('fa-clock-o', 'red') . 'Total Time for Issue: ' . db_minutes_to_hhmm($t_total_time) . '</div>';
+
+	/* allow plugins to display stuff after notes */
+	event_signal('EVENT_VIEW_BUG_EXTRA', array($p_bug_id));
+}
+
+function bugnote_add_form($p_bug_id){
+	$t_default_bugnote_view_status = config_get('default_bugnote_view_status');
+
+
+	if(bug_is_readonly($p_bug_id)|| !access_has_bug_level(config_get('add_bugnote_threshold'), $p_bug_id))
+		return;
+
+	$t_allow_file_upload = file_allow_bug_upload($p_bug_id);
+	$t_form_prop = '';
+
+	if($t_allow_file_upload)
+		$t_form_prop = ' class="dz dropzone-form" ' . format_dropzone_form_data();
+
+
+	echo '<form id="bugnoteadd" method="post" action="bugnote_add.php" enctype="multipart/form-data"' . $t_form_prop . '>';
+		echo form_security_field('bugnote_add');
+		input_hidden('bug_id', $p_bug_id);
+
+		table_begin(array(), 'no-border table-condensed');
+			echo '<tr><td>';
+				textarea('bugnote_text', 'bugnote_text', '', 'input-xs', 'width:100%!important;height:150px;');
+			echo '</td></tr>';
+
+			if($t_allow_file_upload){
+				$t_max_file_size =(int)min(ini_get_number('upload_max_filesize'), ini_get_number('post_max_size'), config_get('max_file_size'));
+				$t_attach_style = ( $t_default_bugnote_view_status != VS_PUBLIC ) ? 'display: none;' : '';
+
+				echo '<tr id="bugnote-attach-files" style="' . $t_attach_style . '"><td>';
+					input_hidden('max_file_size', $t_max_file_size);
+					echo '<div class="dropzone center">';
+					icon('fa-cloud-upload', 'grey');
+					echo 'File Upload<br>';
+					echo '<span class="small">Max File Size: ' . get_filesize_info($t_max_file_size / 1000, 'kB') . '</span>';
+					echo '<div id="dropzone-previews-box" class="dz dropzone-previews dz-max-files-reached"></div>';
+					echo '</div>';
+					echo '<div class="fallback">';
+						echo '<input id="ufile[]" name="ufile[]" type="file" size="50" />';
+					echo '</div>';
+				echo '</td></tr>';
+			}
+
+			echo '<tr><td>';
+				actionbar_begin();
+
+				echo '<div class="pull-left">';
+
+				echo format_label('Private:') . format_hspace('5px');
+				checkbox('bugnote_add_view_status', 'private');
+
+				if(config_get('time_tracking_enabled')&& access_has_bug_level(config_get('time_tracking_edit_threshold'), $p_bug_id)){
+					echo format_hspace('10px') . format_label('Work Log:') . format_hspace('5px');
+					text('time_tracking', 'time_tracking', '', 'hh:mm', 'input-xs', '','size=5');
+				}
+
+				hspace('20px');
+
+				echo '</div>';
+				echo '<div class="pull-right">';
+
+				button('Add', 'bugnote-add-btn', 'submit', '', '', false, '', true);
+				echo '</div>';
+
+				actionbar_end();
+			echo '</td></tr>';
+			
+			event_signal('EVENT_BUGNOTE_ADD_FORM', array($p_bug_id));
+		table_end();
+	echo '</form>';
 }

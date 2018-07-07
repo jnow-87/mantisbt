@@ -505,18 +505,7 @@ $t_bugnotes = bugnote_get_all_visible_bugnotes( $t_id, $t_user_bugnote_order, $t
 			</td>
 	<td>
 <?php
-					switch ( $t_bugnote->note_type ) {
-						case REMINDER:
-							echo lang_get( 'reminder_sent_to' ) . ': ';
-							$t_note_attr = utf8_substr( $t_bugnote->note_attr, 1, utf8_strlen( $t_bugnote->note_attr ) - 2 );
-							$t_to = array();
-							foreach ( explode( '|', $t_note_attr ) as $t_recipient ) {
-								$t_to[] = prepare_user_name( $t_recipient );
-							}
-							echo implode( ', ', $t_to ) . '<br />';
-						default:
 							echo string_display_links( $t_bugnote->note );
-					}
 				?>
 			</td>
 		</tr>

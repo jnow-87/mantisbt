@@ -65,7 +65,7 @@ form_security_purge( 'news_update' );
 
 layout_page_header();
 
-layout_page_begin( 'main_page.php' );
+layout_page_begin();
 
 echo '<div class="space-20"></div>';
 

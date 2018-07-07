@@ -106,7 +106,7 @@ $t_result = db_query( $t_query, array( $t_user_id, $t_user_id, $t_pub, $t_user_i
 
 layout_page_header( lang_get( 'docs_link' ) );
 
-layout_page_begin( 'proj_doc_page.php' );
+layout_page_begin();
 
 print_doc_menu( 'proj_doc_page.php' );
 ?>

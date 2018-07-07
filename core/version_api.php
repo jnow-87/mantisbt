@@ -510,16 +510,6 @@ function version_get_all_rows( $p_project_id, $p_released = null, $p_obsolete = 
 
 	$t_query_params = array();
 
-	if( $p_released !== null ) {
-		$t_query .= ' AND released = ' . db_param();
-		$t_query_params[] = (bool)$p_released;
-	}
-
-	if( $p_obsolete !== null ) {
-		$t_query .= ' AND obsolete = ' . db_param();
-		$t_query_params[] = (bool)$p_obsolete;
-	}
-
 	$t_query .= ' ORDER BY date_order DESC';
 
 	$t_result = db_query( $t_query, $t_query_params );
@@ -675,16 +665,8 @@ function version_get( $p_version_id ) {
 	return new VersionData( $t_row );
 }
 
-/**
- * Checks whether the product version should be shown
- * (i.e. report, update, view, print).
- * @param integer $p_project_id The project id.
- * @return boolean true: show, false: otherwise.
- */
-function version_should_show_product_version( $p_project_id ) {
-	return ( ON == config_get( 'show_product_version', null, null, $p_project_id ) )
-		|| ( ( AUTO == config_get( 'show_product_version', null, null, $p_project_id ) )
-				&& ( count( version_get_all_rows( $p_project_id ) ) > 0 ) );
+function version_get_empty(){
+	return new VersionData();
 }
 
 /**
@@ -718,4 +700,26 @@ function version_get_project_where_clause( $p_project_id, $p_inherit ) {
 	}
 
 	return $t_project_where;
+}
+
+
+/**
+ *	get list of version names
+ *
+ *	@param	string	$p_project_id	project to get versions for
+ *	@param	boolean	$p_release		wether released versions shall
+ *									also be listed
+ *
+ *	@return	array containing the version names
+ */
+function version_list($p_project_id, $p_released = true){
+	$t_versions = version_get_all_rows((int)$p_project_id);
+	$t_version_names = array('' => '');
+
+	foreach($t_versions as $t_version){
+		if($p_released || $t_version['released'] == 0)
+			$t_version_names[$t_version['version']] = $t_version['version'];
+	}
+
+	return $t_version_names;
 }

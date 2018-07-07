@@ -8,8 +8,7 @@ access_ensure_global_level( config_get( 'manage_plugin_threshold' ) );
 
 layout_page_header( plugin_lang_get( 'title' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
-print_manage_menu( 'manage_plugin_page.php' );
+layout_page_begin();
 ?>
 
 <div class="col-md-12 col-xs-12">

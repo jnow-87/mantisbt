@@ -17,7 +17,6 @@
 /**
  * This page updates a user's information
  * If an account is protected then changes are forbidden
- * The page gets redirected back to account_page.php
  *
  * @package MantisBT
  * @copyright Copyright 2000 - 2002  Kenzaburo Ito - kenito@300baud.org

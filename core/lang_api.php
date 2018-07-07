@@ -370,3 +370,13 @@ function lang_get_current_datetime_locale() {
 
 	return $t_key_arr[0];
 }
+
+function language_list() {
+	$t_arr = config_get('language_choices_arr');
+	$t_res = array();
+
+	foreach($t_arr as $t_el)
+		$t_res[$t_el] = $t_el;
+
+	return $t_res;
+}

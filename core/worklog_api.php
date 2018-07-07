@@ -43,18 +43,6 @@ require_api('database_api.php');
 require_api('helper_api.php');
 
 
-# TODO
-#	overhaul layout
-#		improve layout of worklog in bug view
-#		move control panel to the top
-#		make use of tabs
-#		remove boxes, replacing them with a more open layout
-#		streamline toolbars
-#		add spaces between buttons
-#		which css files are used
-#
-#	check for potential caching
-
 class worklog_data{
 	public $id;
 	public $bugnote_id;
@@ -156,10 +144,11 @@ function worklog_delete($p_bugnote_id, $p_worklog_id){
  * @param	integer	$p_bugnote_id		id of the associated bugnote
  * @param	integer	$p_worklog_id		id of the target worklog entry
  * @param	string	$p_time_tracking	timetracking string, format hh:mm
+ * @param	string	$p_date				timestamp
  *
  * @return	result of the database operation
  */
-function worklog_update($p_bugnote_id, $p_worklog_id, $p_time_tracking) {
+function worklog_update($p_bugnote_id, $p_worklog_id, $p_time_tracking, $p_date = '') {
 	check_worklog_id($p_worklog_id);
 	check_worklog_user($p_worklog_id);
 	check_bugnote_id($p_bugnote_id);
@@ -169,7 +158,7 @@ function worklog_update($p_bugnote_id, $p_worklog_id, $p_time_tracking) {
 
 	db_param_push();
 	$t_query = 'UPDATE {worklog} SET time = ' . db_param() . ', date = ' . db_param() . ' WHERE id=' . db_param();
-	db_query($t_query, array($t_time_mm, db_now(), $p_worklog_id));
+	db_query($t_query, array($t_time_mm, ($p_date != '' ? $p_date : db_now()), $p_worklog_id));
 
 	bugnote_date_update($p_bugnote_id);
 }
@@ -201,7 +190,7 @@ function worklog_get($p_bugnote_id, $p_from = 0, $p_to = 0) {
 
 
 	db_param_push();
-	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param() . $t_from . ' ' . $t_to;
+	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param() . $t_from . ' ' . $t_to . ' ORDER BY date ASC';
 	$t_result = db_query($t_query, $t_params);
 
 	if($t_result == false)
@@ -231,7 +220,7 @@ function worklog_get($p_bugnote_id, $p_from = 0, $p_to = 0) {
  *
  * @return	number of minutes spent
  */
-function worklog_get_time($p_bugnote_id, $p_from = 0, $p_to = 0) {
+function worklog_get_time_bugnote($p_bugnote_id, $p_from = 0, $p_to = 0){
 	check_bugnote_id($p_bugnote_id);
 
 	$t_params = array($p_bugnote_id);
@@ -250,19 +239,49 @@ function worklog_get_time($p_bugnote_id, $p_from = 0, $p_to = 0) {
 
 
 	db_param_push();
-	$t_query = 'SELECT * FROM {worklog} WHERE bugnote_id=' . db_param() . $t_from . $t_to;
+	$t_query = 'SELECT SUM(wl.time) as time FROM {worklog} wl WHERE bugnote_id=' . db_param() . $t_from . $t_to;
 	$t_result = db_query($t_query, $t_params);
 
 	if($t_result == false)
 		return 0;
 
-	$t_time = 0;
+	return db_fetch_array($t_result)['time'];
+}
 
-	while($t_row = db_fetch_array($t_result)){
-		$t_time += $t_row['time'];
+/**
+ * get total time spent for a given bug in a given time period
+ *
+ * @param	integer	$p_bug_id			id of the associated bug
+ * @param	integer	$p_from				unix timestamp for start date, ignored if 0
+ * @param	integer $p_to				unix timestamp for end date, ignored if 0
+ *
+ * @return	number of minutes spent
+ */
+function worklog_get_time_bug($p_bug_id, $p_from = 0, $p_to = 0){
+	$t_params = array($p_bug_id);
+	$t_from = '';
+	$t_to = '';
+
+	if($p_from != 0){
+		$t_from = ' AND date >= ' . db_param();
+		$t_params[] = $p_from;
 	}
 
-	return $t_time;
+	if($p_to != 0){
+		$t_to = ' AND date <= ' . db_param();
+		$t_params[] = $p_to;
+	}
+
+
+	db_param_push();
+
+	$t_query = 'SELECT SUM(wl.time) as time FROM {bug} b, {bugnote} bn, {worklog} wl WHERE b.id=bn.bug_id AND bn.id=wl.bugnote_id AND b.id=' . db_param() . $t_from . $t_to;
+	$t_result = db_query($t_query, $t_params);
+
+	if($t_result == false)
+		return 0;
+
+	return db_fetch_array($t_result)['time'];
 }
 
 /**
@@ -299,13 +318,17 @@ function worklog_ensure_reporting_access( $p_project_id = null, $p_user_id = nul
  */
 function worklog_get_for_project( $p_project_id, $p_from, $p_to ) {
 	$t_params = array();
-	$c_to = strtotime( $p_to ) + SECONDS_PER_DAY - 1;
+	$c_to = strtotime( $p_to );
 	$c_from = strtotime( $p_from );
 
-	if( $c_to === false || $c_from === false ) {
-		error_parameters( array( $p_from, $p_to ) );
-		trigger_error( ERROR_GENERIC, ERROR );
-	}
+	if($c_from === false)
+		$c_from = 0;
+
+	if($c_to === false)
+		$c_to = time();
+
+	$c_to += SECONDS_PER_DAY - 1;
+
 
 	db_param_push();
 

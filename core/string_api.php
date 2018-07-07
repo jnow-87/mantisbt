@@ -619,32 +619,15 @@ function string_restore_valid_html_tags( $p_string, $p_multiline = true ) {
 }
 
 /**
- * return the name of a bug page
- * $p_action should be something like 'view', 'update', or 'report'
- * @param string  $p_action  A valid action being performed - currently one of view, update or report.
- * @return string
- */
-function string_get_bug_page( $p_action ) {
-	switch( $p_action ) {
-		case 'view':
-			return 'bug_view_page.php';
-		case 'update':
-			return 'bug_update_page.php';
-		case 'report':
-			return 'bug_report_page.php';
-	}
-
-	trigger_error( ERROR_GENERIC, ERROR );
-}
-
-/**
  * return an href anchor that links to a bug VIEW page for the given bug
  * @param integer $p_bug_id	     A bug identifier.
  * @param boolean $p_detail_info Whether to include more detailed information (e.g. title attribute / project) in the returned string.
  * @param boolean $p_fqdn        Whether to return an absolute or relative link.
  * @return string
  */
-function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = false ) {
+function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = false, $p_style = '' ) {
+	$t_link = '';
+
 	if( bug_exists( $p_bug_id ) ) {
 		$t_link = '<a href="';
 		if( $p_fqdn ) {
@@ -664,9 +647,11 @@ function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = f
 				$t_link .= ' class="resolved"';
 			}
 		}
+
+		if($p_style != '')
+			$t_link .= ' style="' . $p_style . '"';
+
 		$t_link .= '>' . bug_format_id( $p_bug_id ) . '</a>';
-	} else {
-		$t_link = bug_format_id( $p_bug_id );
 	}
 
 	return $t_link;
@@ -712,7 +697,7 @@ function string_get_bugnote_view_link( $p_bug_id, $p_bugnote_id, $p_detail_info 
  * @return string
  */
 function string_get_bug_view_url( $p_bug_id ) {
-	return 'view.php?id=' . $p_bug_id;
+	return 'bug_page.php?id=' . $p_bug_id . '#tab_0';
 }
 
 /**
@@ -731,7 +716,7 @@ function string_get_worklog_issue_url( $p_bugnote_id ){
  * @return string
  */
 function string_get_bugnote_view_url( $p_bug_id, $p_bugnote_id ) {
-	return 'view.php?id=' . $p_bug_id . '#c' . $p_bugnote_id;
+	return 'bug_page.php?id=' . $p_bug_id . '#c' . $p_bugnote_id;
 }
 
 /**
@@ -756,49 +741,6 @@ function string_get_bugnote_view_url_with_fqdn( $p_bug_id, $p_bugnote_id ) {
  */
 function string_get_bug_view_url_with_fqdn( $p_bug_id ) {
 	return config_get( 'path' ) . string_get_bug_view_url( $p_bug_id );
-}
-
-/**
- * return an href anchor that links to a bug UPDATE page for the given bug
- * @param integer $p_bug_id  A bug identifier.
- * @return string
- */
-function string_get_bug_update_link( $p_bug_id ) {
-	$t_summary = string_attribute( bug_get_field( $p_bug_id, 'summary' ) );
-	return '<a href="' . helper_mantis_url( string_get_bug_update_url( $p_bug_id ) ) . '" title="' . $t_summary . '">' . bug_format_id( $p_bug_id ) . '</a>';
-}
-
-/**
- * return the name and GET parameters of a bug UPDATE page
- * @param integer $p_bug_id  A bug identifier.
- * @return string
- */
-function string_get_bug_update_url( $p_bug_id ) {
-	return string_get_bug_update_page() . '?bug_id=' . $p_bug_id;
-}
-
-/**
- * return the name of a bug UPDATE page
- * @return string
- */
-function string_get_bug_update_page() {
-	return string_get_bug_page( 'update' );
-}
-
-/**
- * return an href anchor that links to a bug REPORT page
- * @return string
- */
-function string_get_bug_report_link() {
-	return '<a href="' . helper_mantis_url( string_get_bug_report_url() ) . '">' . lang_get( 'report_bug_link' ) . '</a>';
-}
-
-/**
- * return the name of a bug REPORT page
- * @return string
- */
-function string_get_bug_report_url() {
-	return string_get_bug_page( 'report' );
 }
 
 /**

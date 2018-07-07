@@ -360,10 +360,9 @@ function print_tag_attach_form( $p_bug_id, $p_string = '' ) {
 ?>
 	<form method="post" action="tag_attach.php" class="form-inline">
 	<?php echo form_security_field( 'tag_attach' )?>
-	<label class="inline small"><?php echo sprintf( lang_get( 'tag_separate_by' ), config_get( 'tag_separator' ) )?></label>
 	<input type="hidden" name="bug_id" value="<?php echo $p_bug_id?>" class="input-xs" />
-	<?php print_tag_input( $p_bug_id, $p_string ); ?>
-	<input type="submit" value="<?php echo lang_get( 'tag_attach' )?>" class="btn btn-primary btn-xs btn-white btn-round" />
+	<?php print_tag_input(0, $p_string) ?>
+	<?php button('Attach Tag(s)', '', 'submit') ?>
 	</form>
 <?php
 	return true;
@@ -377,9 +376,8 @@ function print_tag_attach_form( $p_bug_id, $p_string = '' ) {
  */
 function print_tag_input( $p_bug_id = 0, $p_string = '' ) {
 ?>
-	<?php echo sprintf( lang_get( 'tag_separate_by' ), config_get( 'tag_separator' ) )?>
 	<input type="hidden" id="tag_separator" value="<?php echo config_get( 'tag_separator' )?>" />
-	<input type="text" name="tag_string" id="tag_string" class="input-xs" value="<?php echo string_attribute( $p_string )?>" />
+	<input type="text" name="tag_string" id="tag_string" class="input-xs" value="<?php echo string_attribute( $p_string )?>" placeholder="separated by '<?php echo config_get('tag_separator') ?>'" />
 	<select class="input-xs" <?php echo helper_get_tab_index()?> name="tag_select" id="tag_select" class="input-xs">
 		<?php print_tag_option_list( $p_bug_id );?>
 	</select>
@@ -1112,67 +1110,6 @@ function print_all_bug_action_option_list( array $p_project_ids = null ) {
 }
 
 /**
- * list of users that are NOT in the specified project and that are enabled
- * if no project is specified use the current project
- * also exclude any administrators
- * @param integer $p_project_id A project identifier.
- * @return void
- */
-function print_project_user_list_option_list( $p_project_id = null ) {
-	$t_users = user_get_unassigned_by_project_id( $p_project_id );
-	foreach( $t_users as $t_id=>$t_name ) {
-		echo '<option value="' . $t_id . '">' . $t_name . '</option>';
-	}
-}
-
-/**
- * list of projects that a user is NOT in
- * @param integer $p_user_id An user identifier.
- * @return void
- */
-function print_project_user_list_option_list2( $p_user_id ) {
-	db_param_push();
-	$t_query = 'SELECT DISTINCT p.id, p.name
-				FROM {project} p
-				LEFT JOIN {project_user_list} u
-				ON p.id=u.project_id AND u.user_id=' . db_param() . '
-				WHERE p.enabled = ' . db_param() . ' AND
-					u.user_id IS NULL
-				ORDER BY p.name';
-	$t_result = db_query( $t_query, array( (int)$p_user_id, true ) );
-	$t_category_count = db_num_rows( $t_result );
-	while( $t_row = db_fetch_array( $t_result ) ) {
-		$t_project_name = string_attribute( $t_row['name'] );
-		$t_user_id = $t_row['id'];
-		echo '<option value="' . $t_user_id . '">' . $t_project_name . '</option>';
-	}
-}
-
-/**
- * list of projects that a user is in
- * @param integer $p_user_id             An user identifier.
- * @param boolean $p_include_remove_link Whether to display remove link.
- * @return void
- */
-function print_project_user_list( $p_user_id, $p_include_remove_link = true ) {
-	$t_projects = user_get_assigned_projects( $p_user_id );
-
-	foreach( $t_projects as $t_project_id=>$t_project ) {
-		$t_project_name = string_attribute( $t_project['name'] );
-		$t_view_state = $t_project['view_state'];
-		$t_access_level = $t_project['access_level'];
-		$t_access_level = get_enum_element( 'access_levels', $t_access_level );
-		$t_view_state = get_enum_element( 'project_view_state', $t_view_state );
-
-		echo $t_project_name . ' [' . $t_access_level . '] (' . $t_view_state . ')';
-		if( $p_include_remove_link && access_has_project_level( config_get( 'project_user_threshold' ), $t_project_id ) ) {
-			html_button( 'manage_user_proj_delete.php', lang_get( 'remove_link' ), array( 'project_id' => $t_project_id, 'user_id' => $p_user_id ) );
-		}
-		echo '<br />';
-	}
-}
-
-/**
  * List of projects with which the specified field id is linked.
  * For every project, the project name is listed and then the list of custom
  * fields linked in order with their sequence numbers.  The specified field
@@ -1185,13 +1122,13 @@ function print_custom_field_projects_list( $p_field_id ) {
 	$c_field_id = (integer)$p_field_id;
 	$t_project_ids = custom_field_get_project_ids( $p_field_id );
 
-	$t_security_token = form_security_param( 'manage_proj_custom_field_remove' );
+	$t_security_token = form_security_param( 'project_update' );
 
 	foreach( $t_project_ids as $t_project_id ) {
 		$t_project_name = project_get_field( $t_project_id, 'name' );
 		$t_sequence = custom_field_get_sequence( $p_field_id, $t_project_id );
 		echo '<strong>', string_display_line( $t_project_name ), '</strong>: ';
-		print_link_button( 'manage_proj_custom_field_remove.php?field_id=' . $c_field_id . '&project_id=' . $t_project_id . '&return=custom_field' . $t_security_token, lang_get( 'remove_link' ) );
+		print_link_button( 'settings/project_update.php?cmd=custom_field_rm&custom_field_id=' . $c_field_id . '&project_id=' . $t_project_id . '&return=custom_field' . $t_security_token, lang_get( 'remove_link' ) );
 		echo '<br />- ';
 
 		$t_linked_field_ids = custom_field_get_linked_ids( $t_project_id );
@@ -1311,7 +1248,7 @@ function print_view_bug_sort_link( $p_string, $p_sort_field, $p_sort, $p_dir, $p
 			}
 			$t_sort_field = rawurlencode( $p_sort_field );
 			$t_print_parameter = ( $p_columns_target == COLUMNS_TARGET_PRINT_PAGE ) ? '&print=1' : '';
-			print_link( 'view_all_set.php?sort_add=' . $t_sort_field . '&dir_add=' . $p_dir . '&type=2' . $t_print_parameter, $p_string );
+			print_link( 'filter_apply.php?sort_add=' . $t_sort_field . '&dir_add=' . $p_dir . '&type=2' . $t_print_parameter, $p_string );
 			break;
 		default:
 			echo $p_string;
@@ -1382,7 +1319,7 @@ function print_manage_project_sort_link( $p_page, $p_string, $p_field, $p_dir, $
  * needed). If otherwise specified (i.e. not null), the parameter must contain
  * a valid security token, previously generated by form_security_token().
  * Use this to avoid performance issues when loading pages having many calls to
- * this function, such as adm_config_report.php.
+ * this function.
  * @param string $p_action_page    The action page.
  * @param string $p_label          The button label.
  * @param array  $p_args_to_post   Associative array of arguments to be posted, with
@@ -1938,7 +1875,7 @@ function print_bug_attachment_header( array $p_attachment, $p_security_token ) {
 	if( $p_attachment['can_delete'] ) {
 		echo '<a class="noprint" href="bug_file_delete.php?file_id=' . $p_attachment['id'] .
 			form_security_param( 'bug_file_delete', $p_security_token ) . '">
-			<i class="1 ace-icon fa fa-trash-o"></i></a>';
+			<i class="1 ace-icon fa fa-trash red"></i></a>';
 	}
 
 }
@@ -2060,27 +1997,32 @@ function print_max_filesize( $p_size, $p_divider = 1000, $p_unit = 'kb' ) {
  * Populate form element with dropzone data attributes
  * @return void
  */
-function print_dropzone_form_data() {
-	echo 'data-force-fallback="' . ( config_get( 'dropzone_enabled' ) ? 'false' : 'true' ) . '"' . "\n";
-	echo "\t" . 'data-max-filesize="'. ceil( config_get( 'max_file_size' ) / (1000 * 1024) ) . '"' . "\n";
-	$t_allowed_files = config_get( 'allowed_files' );
-	if ( !empty ( $t_allowed_files ) ) {
-		$t_allowed_files = '.' . implode ( ',.', explode ( ',', config_get( 'allowed_files' ) ) );
-	}
-	echo "\t" . 'data-accepted-files="' . $t_allowed_files . '"' . "\n";
-	echo "\t" . 'data-default-message="' . htmlspecialchars( lang_get( 'dropzone_default_message' ) ) . '"' . "\n";
-	echo "\t" . 'data-fallback-message="' . htmlspecialchars( lang_get( 'dropzone_fallback_message' ) ) . '"' . "\n";
-	echo "\t" . 'data-fallback-text="' . htmlspecialchars( lang_get( 'dropzone_fallback_text' ) ) . '"' . "\n";
-	echo "\t" . 'data-file-too-big="' . htmlspecialchars( lang_get( 'dropzone_file_too_big' ) ) . '"' . "\n";
-	echo "\t" . 'data-invalid-file-type="' . htmlspecialchars( lang_get( 'dropzone_invalid_file_type' ) ) . '"' . "\n";
-	echo "\t" . 'data-response-error="' . htmlspecialchars( lang_get( 'dropzone_response_error' ) ) . '"' . "\n";
-	echo "\t" . 'data-cancel-upload="' . htmlspecialchars( lang_get( 'dropzone_cancel_upload' ) ) . '"' . "\n";
-	echo "\t" . 'data-cancel-upload-confirmation="' . htmlspecialchars( lang_get( 'dropzone_cancel_upload_confirmation' ) ) . '"' . "\n";
-	echo "\t" . 'data-remove-file="'. htmlspecialchars( lang_get( 'dropzone_remove_file' ) ) . '"' . "\n";
-	echo "\t" . 'data-remove-file-confirmation="' . htmlspecialchars( lang_get( 'dropzone_remove_file_confirmation' ) ) . '"' . "\n";
-	echo "\t" . 'data-max-files-exceeded="' . htmlspecialchars( lang_get( 'dropzone_max_files_exceeded' ) ) . '"' . "\n";
-	echo "\t" . 'data-dropzone-not-supported="' . htmlspecialchars( lang_get( 'dropzone_not_supported' ) ) . '"';
+function format_dropzone_form_data() {
+	$t_r = '';
 
+	$t_r .= 'data-force-fallback="' . ( config_get( 'dropzone_enabled' ) ? 'false' : 'true' ) . '"' . "\n";
+	$t_r .= "\t" . 'data-max-filesize="'. ceil( config_get( 'max_file_size' ) / (1000 * 1024) ) . '"' . "\n";
+	$t_allowed_files = config_get( 'allowed_files' );
+	if ( !empty ( $t_allowed_files ) )
+		$t_allowed_files = '.' . implode ( ',.', explode ( ',', config_get( 'allowed_files' ) ) );
+
+	if($t_allowed_files != '')
+		$t_r .= "\t" . 'data-accepted-files="' . $t_allowed_files . '"' . "\n";
+
+	$t_r .= "\t" . 'data-default-message="' . htmlspecialchars( lang_get( 'dropzone_default_message' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-fallback-message="' . htmlspecialchars( lang_get( 'dropzone_fallback_message' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-fallback-text="' . htmlspecialchars( lang_get( 'dropzone_fallback_text' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-file-too-big="' . htmlspecialchars( lang_get( 'dropzone_file_too_big' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-invalid-file-type="' . htmlspecialchars( lang_get( 'dropzone_invalid_file_type' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-response-error="' . htmlspecialchars( lang_get( 'dropzone_response_error' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-cancel-upload="' . htmlspecialchars( lang_get( 'dropzone_cancel_upload' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-cancel-upload-confirmation="' . htmlspecialchars( lang_get( 'dropzone_cancel_upload_confirmation' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-remove-file="'. htmlspecialchars( lang_get( 'dropzone_remove_file' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-remove-file-confirmation="' . htmlspecialchars( lang_get( 'dropzone_remove_file_confirmation' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-max-files-exceeded="' . htmlspecialchars( lang_get( 'dropzone_max_files_exceeded' ) ) . '"' . "\n";
+	$t_r .= "\t" . 'data-dropzone-not-supported="' . htmlspecialchars( lang_get( 'dropzone_not_supported' ) ) . '"';
+
+	return $t_r;
 }
 
 /**

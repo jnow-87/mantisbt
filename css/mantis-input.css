@@ -1,0 +1,51 @@
+.input-hover-master{
+	position: relative;
+	left: -5px;
+}
+
+.input-hover-overlay,
+.input-hover-overlay[readonly]{
+	cursor:pointer;
+	display: inline-block;
+	font-size: 12px !important;
+	vertical-align: middle !important;
+	padding: 0 30px 0 4px !important;
+	background: transparent !important;
+	color: #393939 !important;
+	border-color: transparent !important;
+}
+
+.input-hover-input{
+	display: none;
+	font-size: 12px !important;
+	color: #393939 !important;
+	vertical-align: middle !important;
+	padding: 0 30px 0 4px !important;
+}
+
+.input-hover-button{
+	border: 0;
+	padding: 0;
+	background: transparent;
+	color: #1d520a;
+	position: relative;
+	top: 0px;
+	z-index: 1;
+}
+
+.input-hover-reset-all{
+	display: none;
+}
+
+.input-hover-submit-all{
+	display: none;
+}
+
+select.input-hover-input{
+	height: 19px;
+	width: 95px;
+}
+
+.invisible{
+	visibility: hidden;
+}

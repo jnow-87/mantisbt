@@ -44,7 +44,7 @@ form_security_purge( 'plugin_xml_import_action' );
 
 layout_page_header( plugin_lang_get( 'import' ) );
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin();
 
 print_manage_menu( 'manage_import_issues_page.php' );
 
