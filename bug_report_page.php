@@ -137,7 +137,7 @@ event_signal('EVENT_REPORT_BUG_FORM_TOP', array());
 
 echo form_security_field('bug_report');
 
-column_begin('9');
+column_begin('12');
 	/* actionbar */
 	actionbar_begin();
 		echo '<div class="pull-left">';

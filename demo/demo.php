@@ -6,69 +6,6 @@ require_api('helper_api.php');
 require_api('elements_api.php');
 
 
-# TODO
-#	validation
-#		access control
-#			update access_has_bug_level and similar functions to return json data if requested
-#			test access level check (bug_page.php, ...)
-#
-#		check resolution in bug::check_builtin (if resolution is required it shall not be 'open')
-#		bug_page.php: only make field editable if the respective access level is available (update_bug_threshold)
-#		check if worklog is deleted with its bugnote
-#		logwork if timetracking is disabled
-#
-#
-#	features
-#		consistent error reporting
-#			init error reaction once per page instead of using parameter for report_error etc
-#			show error in inline pages if inline-page is present
-#			allow closing inline-pages on success but show error in case of an error
-#
-#		why does bug_report::clone not use bug_copy()
-#		check if bulk operations that change state perform required field checks
-#		add page titles
-#		add time estimate, time spent to bug view
-#		add persistent error message -> they need to be removed by the user
-#		allow showing statusbar messages when loading a page (php-based)
-#		handle markup for description, cf. plugins/BBCodePlus/files/markitup-init.js
-#		use user-defined filters for dashboard
-#			one button to open an inline page that allows to
-#				- add dashboard columns
-#				- elements to each column
-#				- define ordering of columns
-#				- button to define columns for filter elements
-#
-#		remove distinction between simple and advanced filters
-#		maybe remove platform/os/os version, replacing them with custom fields
-#			add 'category' custom fields to define their location on the bug view page
-#
-#		check if a configuration for which custom fields shall be shown in bug_page.php is meaningful
-#			-> may allow the configuration to be changed through pages instead of the config file
-#
-#		bug history: only view 'view full history' button if not all entries are displayed
-#
-#
-#	bugs
-#		fix inline-page-close
-#			reproduce:
-#				- select new bug status
-#				- trigger update either through 'return' or button
-#				- close the inline-page through the close button
-#
-#			behaviour:
-#				- input fields cannot be hovered
-#
-#		fix the delete input-hover button fpr tags that cause a line break is not shown properly
-#		use proper functions for displaying custom fields, cf. TODOs in bug_page.php, bug_change_status_page.php, bug_report_page.php
-#		fix filter errors
-#			- relationship_type: shows 'error Bad Request' -- true before layout overhaul
-#			- hide_status: does not filter correctly -- true before layout overhaul
-#			- date submitted/updated: does not filter correctly -- true before layout overhaul
-#			- profile, platform, os, os version, product build: do not show the values actually used
-#
-#		css of checkbox
-#			checkboxes sometimes look odd, compare view_all_bug_page and bugnote_add
-
 function tab_page0(){
 	echo '<div class="row">';
 	column_begin('6-left');
