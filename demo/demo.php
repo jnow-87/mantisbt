@@ -45,6 +45,8 @@ require_api('elements_api.php');
 #		check if a configuration for which custom fields shall be shown in bug_page.php is meaningful
 #			-> may allow the configuration to be changed through pages instead of the config file
 #
+#		bug history: only view 'view full history' button if not all entries are displayed
+#
 #
 #	bugs
 #		fix inline-page-close
@@ -56,7 +58,7 @@ require_api('elements_api.php');
 #			behaviour:
 #				- input fields cannot be hovered
 #
-#		fix the delete input-hover button fpr tags that cause a line is not shown properly
+#		fix the delete input-hover button fpr tags that cause a line break is not shown properly
 #		use proper functions for displaying custom fields, cf. TODOs in bug_page.php, bug_change_status_page.php, bug_report_page.php
 #		fix filter errors
 #			- relationship_type: shows 'error Bad Request' -- true before layout overhaul
@@ -296,10 +298,10 @@ column_begin('10');
 	</form>
 
 	<?php 
-	section_end() 
+	section_end();
 column_end();
 
-column_begin('12');
+column_begin('2');
 	section_begin('collapsed section', true);
 
 	table_begin(array('table right'), 'table-bordered table-condensed table-striped', '', array('colspan=3'));
