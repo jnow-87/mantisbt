@@ -214,7 +214,7 @@ column_begin('9');
 
 			table_row(array(
 				$t_edit_btn . $t_release_btn . $t_obsolete_btn . $t_delete_btn,
-				version_full_name($t_version['id'], false, $f_project_id),
+				format_link(version_full_name($t_version['id'], false, $f_project_id), helper_mantis_url('versions_page.php'), array('version_id' => $t_version['id'])),
 				date(config_get('short_date_format'), $t_version['date_order']),
 				$t_release_state,
 				string_display($t_version['description'])
