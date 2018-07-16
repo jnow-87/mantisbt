@@ -467,43 +467,6 @@ function layout_navbar() {
 
 	dropdown_menu('Issues', $t_menu, 'grey', 'fa-bug');
 
-	// projects
-	$t_project_search_hdr =
-		'<div id="projects-list">'
-		. '<input class="search form-control input-xs" placeholder="Search" style="width:100%!important" />'
-		. '<ul class="list dropdown-green no-margin">';
-
-	$t_project_search_footer = '</ul></div>';
-
-	$t_menu = array();
-	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_hdr);
-	$t_menu[] = array('label' => 'All Project', 'data' => array('link' => helper_mantis_url( 'set_project.php' ) . '?project_id=' . ALL_PROJECTS, 'icon' => ''));
-	$t_menu[] = array('label' => 'divider', 'data' => '');
-
-	$t_user_id = auth_get_current_user_id();
-	$t_project_ids = user_get_accessible_projects($t_user_id);
-	project_cache_array_rows( $t_project_ids );
-
-	foreach($t_project_ids as $t_id){
-		$t_link = helper_mantis_url('set_project.php') . '?project_id=' . $t_id;
-		$t_name = string_attribute(project_get_field($t_id, 'name'));
-
-		$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
-
-		$t_sub_projects = user_get_accessible_subprojects($t_user_id, $t_id);
-
-		foreach($t_sub_projects as $t_sub_id){
-			$t_link = helper_mantis_url('set_project.php') . '?project_id=' . $t_sub_id;
-			$t_name = format_icon('fa-angle-double-right') . string_attribute(project_get_field($t_sub_id, 'name'));
-
-			$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
-		}
-	}
-
-	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_footer);
-
-	dropdown_menu('Projects', $t_menu, 'grey', 'fa-book');
-
 	// reports
 	$t_menu = array(
 		array('label' => 'Work Log', 'data' => array('link' => helper_mantis_url('worklog_summary_page.php#tab_0'), 'icon' => 'fa-clock-o')),
@@ -537,7 +500,7 @@ function layout_navbar() {
 	echo '</form>';
 	echo '</div>';
 
-	echo '<div class="pull-right" style="padding-top:7px;padding-right:10px;">';
+	echo '<div class="pull-right" style="padding-right:10px;">';
 
 	/* recently visited */
 	if( last_visited_enabled() ) {
@@ -568,10 +531,46 @@ function layout_navbar() {
 	echo format_label('User:') . format_hspace('5px') . $t_user . format_hspace('5px');
 
 	/* project info */
+	$t_project_search_hdr =
+		'<div id="projects-list">'
+		. '<input class="search form-control input-xs" placeholder="Search" style="width:100%!important" />'
+		. '<ul class="list dropdown-green no-margin">';
+
+	$t_project_search_footer = '</ul></div>';
 	$t_current_project_id = helper_get_current_project();
 	$t_project = string_attribute(($t_current_project_id == ALL_PROJECTS ? 'All Projects' : project_get_field( $t_current_project_id, 'name' )));
 
-	echo format_label('Project:') . format_hspace('5px') . $t_project;
+	echo format_label('Project:') . format_hspace('5px');
+
+	$t_menu = array();
+	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_hdr);
+	$t_menu[] = array('label' => 'All Project', 'data' => array('link' => helper_mantis_url( 'set_project.php' ) . '?project_id=' . ALL_PROJECTS, 'icon' => ''));
+	$t_menu[] = array('label' => 'divider', 'data' => '');
+
+	$t_user_id = auth_get_current_user_id();
+	$t_project_ids = user_get_accessible_projects($t_user_id);
+	project_cache_array_rows( $t_project_ids );
+
+	foreach($t_project_ids as $t_id){
+		$t_link = helper_mantis_url('set_project.php') . '?project_id=' . $t_id;
+		$t_name = string_attribute(project_get_field($t_id, 'name'));
+
+		$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
+
+		$t_sub_projects = user_get_accessible_subprojects($t_user_id, $t_id);
+
+		foreach($t_sub_projects as $t_sub_id){
+			$t_link = helper_mantis_url('set_project.php') . '?project_id=' . $t_sub_id;
+			$t_name = format_icon('fa-angle-double-right') . string_attribute(project_get_field($t_sub_id, 'name'));
+
+			$t_menu[] = array('label' => $t_name, 'data' => array('link' => $t_link, 'class' => 'project-link'));
+		}
+	}
+
+	$t_menu[] = array('label' => 'bare', 'data' => $t_project_search_footer);
+
+	dropdown_menu($t_project, $t_menu, 'grey', '', 'dropdown-menu-right');
+
 
 	echo '</div>';
 	echo '</div>';
