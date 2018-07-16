@@ -451,7 +451,7 @@ function layout_navbar() {
 
 	/* mantis logo */
 	echo '<div class="pull-left">';
-	echo '<a href="about_page.php">' .
+	echo '<a href="' . helper_mantis_url('about_page.php') . '">' .
 		 '<img src="' . helper_mantis_url( 'images/mantis_logo_title.png' ) . '"height="30" style="margin-right:20px"/>' .
 		 '</a>';
 	echo '</div>';
