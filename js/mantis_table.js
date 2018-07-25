@@ -4,21 +4,14 @@ function mantis_table_init(){
 		'retrieve': true,
 		'dom': '<"pull-left"il><"pull-right"f><"table-center"p><t><"pull-left"il><"pull-right"f><"table-center"p>',
 		'lengthMenu': [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
-		'paging': true,
+		'paging': false,
+		'scrollY': '300px',
+		'scrollCollapse': true,
 		'ordering': true,
 		'columnDefs':[{
 			'targets': 'no-sort',
 			'orderable': false,
 		}],
-	});
-
-	$('table.table-paging').DataTable({
-		'retrieve': true,
-		'dom': '<"pull-left"il><"pull-right"f><"table-center"p><t><"pull-left"il><"pull-right"f><"table-center"p>',
-		'lengthMenu': [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
-		'searching': false,
-		'paging': true,
-		'ordering': false,
 	});
 
 	$('table.table-searchable').DataTable({

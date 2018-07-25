@@ -39,6 +39,10 @@ div.dataTables_wrapper div.dataTables_info{
 	border-color: #cae8bf;
 }
 
+.dataTables_wrapper .dataTables_scrollBody{
+	border-bottom: 0px solid #ddd !important;
+}
+
 .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
 	color: white !important;
 	background: #1d520a;
