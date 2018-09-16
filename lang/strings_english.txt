@@ -154,8 +154,8 @@ $s_update_subproject_inheritance = 'Update Subproject Inheritance';
 $s_duplicate_of = 'duplicate of';
 $s_has_duplicate = 'has duplicate';
 $s_related_to = 'related to';
-$s_dependant_on = 'parent of';
-$s_blocks = 'child of';
+$s_dependant_on = 'depends on';
+$s_blocks = 'blocks';
 
 $s_new_bug = 'New Issue';
 $s_bugnote_added = 'Note Added';
